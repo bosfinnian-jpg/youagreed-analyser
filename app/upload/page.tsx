@@ -1,8 +1,254 @@
 'use client';
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { analyseChatHistory } from '@/lib/analyser';
+
+// CSS Keyframes injected once - much more performant than JS animations
+const GlobalStyles = () => (
+  <style jsx global>{`
+    @keyframes gradient-rotate {
+      0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+      50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.15); }
+      100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+    }
+    
+    @keyframes gradient-rotate-reverse {
+      0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+      50% { transform: translate(-50%, -50%) rotate(-180deg) scale(1.2); }
+      100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1); }
+    }
+    
+    @keyframes light-sweep {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    @keyframes pulse-ring {
+      0% { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    
+    @keyframes breathe {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    
+    .gradient-orb-1 {
+      animation: gradient-rotate 30s ease-in-out infinite;
+      will-change: transform;
+      contain: strict;
+    }
+    
+    .gradient-orb-2 {
+      animation: gradient-rotate-reverse 35s ease-in-out infinite;
+      animation-delay: -5s;
+      will-change: transform;
+      contain: strict;
+    }
+    
+    .light-sweep {
+      animation: light-sweep 60s linear infinite;
+      will-change: transform;
+      contain: strict;
+    }
+    
+    .pulse-ring {
+      animation: pulse-ring 2s ease-out infinite;
+      will-change: transform, opacity;
+    }
+    
+    .spin-slow {
+      animation: spin-slow 3s linear infinite;
+      will-change: transform;
+    }
+    
+    .shimmer {
+      animation: shimmer 1.5s linear infinite;
+      will-change: transform;
+    }
+    
+    .breathe {
+      animation: breathe 2s ease-in-out infinite;
+    }
+    
+    /* Optimized backdrop blur - only where essential */
+    .glass-subtle {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glass-medium {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    
+    /* GPU acceleration hints */
+    .gpu-accelerated {
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+    
+    /* Contain paint for complex elements */
+    .contain-paint {
+      contain: paint;
+    }
+  `}</style>
+);
+
+// Memoized static background - never re-renders
+const BackgroundEffects = () => (
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    {/* Gradient orbs - CSS animated, GPU accelerated */}
+    <div
+      className="gradient-orb-1 absolute top-1/2 left-1/4"
+      style={{
+        width: '1000px',
+        height: '1000px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(36, 121, 223, 0.35) 0%, transparent 70%)',
+        filter: 'blur(80px)',
+        contain: 'strict',
+      }}
+    />
+    <div
+      className="gradient-orb-2 absolute top-1/4 right-0"
+      style={{
+        width: '1200px',
+        height: '1200px',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(176, 195, 253, 0.3) 0%, transparent 70%)',
+        filter: 'blur(100px)',
+        contain: 'strict',
+      }}
+    />
+    
+    {/* Static grid - no animation needed */}
+    <div 
+      className="absolute inset-0"
+      style={{
+        backgroundImage: `
+          linear-gradient(rgba(59, 155, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(59, 155, 255, 0.03) 1px, transparent 1px)
+        `,
+        backgroundSize: '64px 64px',
+        maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)',
+        WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)',
+      }}
+    />
+    
+    {/* Light sweep - CSS animated */}
+    <div 
+      className="light-sweep absolute top-1/2 left-1/2 opacity-20"
+      style={{
+        width: '800px',
+        height: '800px',
+        background: 'conic-gradient(from 0deg, transparent 0deg, rgba(59, 155, 255, 0.15) 45deg, transparent 90deg)',
+        contain: 'strict',
+      }}
+    />
+  </div>
+);
+
+// Memoized feature card component
+const FeatureCard = ({ feature, index }: { feature: typeof FEATURES[0]; index: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.7 + index * 0.1, duration: 0.5 }}
+    whileHover={{ y: -8 }}
+    className="relative group gpu-accelerated"
+  >
+    <div 
+      className="relative p-8 rounded-3xl h-full glass-subtle transition-all duration-300 group-hover:border-white/20"
+      style={{
+        boxShadow: `0 10px 40px ${feature.glowColor}`,
+      }}
+    >
+      <div className="relative z-10">
+        <div 
+          className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6 transition-transform duration-300 group-hover:scale-110"
+          style={{
+            background: `linear-gradient(135deg, ${feature.colors[0]}20, ${feature.colors[1]}20)`,
+            boxShadow: `0 10px 30px ${feature.glowColor}`,
+          }}
+        >
+          {feature.emoji}
+        </div>
+        <h3 className="text-2xl font-bold text-white mb-3">{feature.title}</h3>
+        <p className="text-white/70 leading-relaxed">{feature.description}</p>
+      </div>
+      
+      {/* Bottom accent - CSS transition only */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 h-1 rounded-b-3xl transition-transform duration-500 origin-left scale-x-0 group-hover:scale-x-100"
+        style={{ background: `linear-gradient(90deg, ${feature.colors[0]}, ${feature.colors[1]})` }}
+      />
+    </div>
+  </motion.div>
+);
+
+// Static data - defined outside component to prevent recreation
+const STAGES = [
+  'Reading file...',
+  'Parsing conversations...',
+  'Extracting patterns...',
+  'Analysing vulnerability...',
+  'Finding sensitive data...',
+  'Finalising results...'
+];
+
+const FEATURES = [
+  {
+    emoji: '🔐',
+    title: 'Privacy insights',
+    description: "See exactly what personal data you've shared with AI and get actionable privacy recommendations.",
+    colors: ['#2479df', '#5eb3ff'],
+    glowColor: 'rgba(36, 121, 223, 0.25)',
+  },
+  {
+    emoji: '📊',
+    title: 'Conversation patterns',
+    description: 'Beautiful visualizations of your topics, habits, and engagement over time.',
+    colors: ['#3b9bff', '#b0c3fd'],
+    glowColor: 'rgba(59, 155, 255, 0.25)',
+  },
+  {
+    emoji: '🌍',
+    title: 'Carbon footprint',
+    description: 'Calculate your environmental impact and see how it compares to real-world activities.',
+    colors: ['#b0c3fd', '#ffccee'],
+    glowColor: 'rgba(176, 195, 253, 0.25)',
+  },
+];
+
+const STATS = [
+  { number: '40', label: 'Credit project', colors: ['#2479df', '#3b9bff'] },
+  { number: 'May', label: '2026 Exhibition', colors: ['#3b9bff', '#b0c3fd'] },
+  { number: '100%', label: 'Browser-local', colors: ['#b0c3fd', '#d4b8ff'] },
+];
+
+const ANALYSIS_STEPS = [
+  { emoji: '📊', label: 'Parsing', color: '#2479df', threshold: 30 },
+  { emoji: '🔍', label: 'Patterns', color: '#3b9bff', threshold: 60 },
+  { emoji: '🌍', label: 'Impact', color: '#b0c3fd', threshold: 90 },
+];
 
 export default function UploadPage() {
   const [isDragging, setIsDragging] = useState(false);
@@ -11,67 +257,73 @@ export default function UploadPage() {
   const [progress, setProgress] = useState(0);
   const [stage, setStage] = useState<string>('');
   const router = useRouter();
+  const prefersReducedMotion = useReducedMotion();
 
-  const stages = [
-    'Reading file...',
-    'Parsing conversations...',
-    'Extracting patterns...',
-    'Analysing vulnerability...',
-    'Finding sensitive data...',
-    'Finalising results...'
-  ];
+  // Memoized animation variants
+  const containerVariants = useMemo(() => ({
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { duration: prefersReducedMotion ? 0 : 0.5 }
+    },
+    exit: { 
+      opacity: 0,
+      transition: { duration: prefersReducedMotion ? 0 : 0.3 }
+    }
+  }), [prefersReducedMotion]);
 
-  const handleFile = async (file: File) => {
+  const handleFile = useCallback(async (file: File) => {
     setError(null);
     setIsAnalysing(true);
     setProgress(0);
-    setStage(stages[0]);
+    setStage(STAGES[0]);
 
     try {
       const text = await file.text();
       setProgress(15);
-      setStage(stages[1]);
-      await new Promise(resolve => setTimeout(resolve, 300));
+      setStage(STAGES[1]);
+      await new Promise(resolve => setTimeout(resolve, 250));
 
       let jsonData;
       try {
         jsonData = JSON.parse(text);
-      } catch (e) {
+      } catch {
         throw new Error('Invalid JSON file. Please upload a ChatGPT export.');
       }
       setProgress(30);
-      setStage(stages[2]);
-      await new Promise(resolve => setTimeout(resolve, 300));
+      setStage(STAGES[2]);
+      await new Promise(resolve => setTimeout(resolve, 250));
 
       setProgress(45);
-      setStage(stages[3]);
-      await new Promise(resolve => setTimeout(resolve, 300));
+      setStage(STAGES[3]);
+      await new Promise(resolve => setTimeout(resolve, 250));
 
       const results = analyseChatHistory(jsonData);
       setProgress(70);
-      setStage(stages[4]);
-      await new Promise(resolve => setTimeout(resolve, 300));
+      setStage(STAGES[4]);
+      await new Promise(resolve => setTimeout(resolve, 250));
 
       setProgress(85);
-      setStage(stages[5]);
-      await new Promise(resolve => setTimeout(resolve, 300));
+      setStage(STAGES[5]);
+      await new Promise(resolve => setTimeout(resolve, 250));
 
       sessionStorage.setItem('analysisResults', JSON.stringify(results));
       setProgress(100);
 
       setTimeout(() => {
         router.push('/results');
-      }, 800);
+      }, 600);
 
-    } catch (err: any) {
-      setError(err.message || 'Failed to analyse file');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to analyse file';
+      setError(message);
       setIsAnalysing(false);
       setProgress(0);
       setStage('');
     }
-  };
+  }, [router]);
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
 
@@ -83,94 +335,43 @@ export default function UploadPage() {
         setError('Please upload a JSON file');
       }
     }
-  };
+  }, [handleFile]);
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       handleFile(file);
     }
-  };
+  }, [handleFile]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setIsDragging(false);
+  }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{
-      background: 'linear-gradient(180deg, #0a0a14 0%, #1a0a28 50%, #0a1428 100%)'
-    }}>
-      {/* Optimized gradient mesh - reduced complexity */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="absolute -top-1/2 -left-1/2 w-[1000px] h-[1000px] rounded-full opacity-30 blur-[120px]"
-          style={{
-            background: 'radial-gradient(circle, #2479df 0%, transparent 70%)',
-            willChange: 'transform',
-          }}
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, -90, 0],
-          }}
-          transition={{
-            duration: 35,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 5
-          }}
-          className="absolute top-0 -right-1/2 w-[1200px] h-[1200px] rounded-full opacity-25 blur-[140px]"
-          style={{
-            background: 'radial-gradient(circle, #b0c3fd 0%, transparent 70%)',
-            willChange: 'transform',
-          }}
-        />
-      </div>
-
-      {/* Static grid pattern - no animation needed */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: `
-          linear-gradient(rgba(59, 155, 255, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(59, 155, 255, 0.03) 1px, transparent 1px)
-        `,
-        backgroundSize: '64px 64px',
-        maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)',
-        WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)',
-      }} />
-
-      {/* Simplified light beams */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
-        <motion.div
-          animate={{
-            rotate: [0, 360],
-          }}
-          transition={{
-            duration: 60,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]"
-          style={{
-            background: 'conic-gradient(from 0deg, transparent 0deg, rgba(59, 155, 255, 0.1) 45deg, transparent 90deg)',
-            willChange: 'transform',
-          }}
-        />
-      </div>
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        background: 'linear-gradient(180deg, #0a0a14 0%, #1a0a28 50%, #0a1428 100%)'
+      }}
+    >
+      <GlobalStyles />
+      <BackgroundEffects />
 
       <div className="relative z-10">
         <AnimatePresence mode="wait">
           {!isAnalysing ? (
             <motion.div
               key="content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               className="max-w-[1400px] mx-auto px-6 py-16"
             >
               {/* Header */}
@@ -178,22 +379,19 @@ export default function UploadPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full mb-8 backdrop-blur-xl"
+                  transition={{ duration: 0.4 }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full mb-8"
                   style={{
                     background: 'linear-gradient(135deg, rgba(36, 121, 223, 0.2), rgba(176, 195, 253, 0.2))',
                     border: '1px solid rgba(59, 155, 255, 0.3)',
-                    boxShadow: '0 0 40px rgba(59, 155, 255, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 0 40px rgba(59, 155, 255, 0.15)',
                   }}
                 >
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="w-2 h-2 rounded-full"
+                  <div
+                    className="w-2 h-2 rounded-full spin-slow"
                     style={{
                       background: 'linear-gradient(135deg, #3b9bff, #b0c3fd)',
                       boxShadow: '0 0 10px rgba(59, 155, 255, 0.5)',
-                      willChange: 'transform',
                     }}
                   />
                   <span className="text-white font-semibold text-sm">
@@ -204,14 +402,13 @@ export default function UploadPage() {
                 <motion.h1
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
                   className="text-7xl md:text-8xl font-black mb-6 tracking-tight leading-none"
                   style={{
                     background: 'linear-gradient(135deg, #ffffff 20%, #3b9bff 50%, #b0c3fd 80%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     backgroundClip: 'text',
-                    textShadow: '0 0 80px rgba(59, 155, 255, 0.3)',
                   }}
                 >
                   Discover what
@@ -222,7 +419,7 @@ export default function UploadPage() {
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   className="text-2xl text-white/70 max-w-3xl mx-auto mb-10 leading-relaxed"
                 >
                   Visualize your AI conversations. Understand your privacy. Calculate your impact.
@@ -231,26 +428,25 @@ export default function UploadPage() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
                   className="flex flex-wrap items-center justify-center gap-8 text-white/60"
                 >
                   {['⚡ Instant', '🔒 Private', '✓ Free'].map((item, i) => (
-                    <motion.div
+                    <span
                       key={i}
-                      whileHover={{ scale: 1.05, color: 'rgba(255, 255, 255, 0.9)' }}
-                      className="flex items-center gap-2 text-lg font-medium"
+                      className="flex items-center gap-2 text-lg font-medium transition-colors duration-200 hover:text-white/90"
                     >
                       {item}
-                    </motion.div>
+                    </span>
                   ))}
                 </motion.div>
               </div>
 
-              {/* Main upload section - optimized animations */}
+              {/* Upload section */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
                 className="max-w-5xl mx-auto mb-20"
               >
                 <input
@@ -262,81 +458,62 @@ export default function UploadPage() {
                 />
                 
                 <label htmlFor="file-upload" className="cursor-pointer block">
-                  <motion.div
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setIsDragging(true);
-                    }}
-                    onDragLeave={() => setIsDragging(false)}
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    whileHover={{ scale: 1.02 }}
-                    animate={{
-                      boxShadow: isDragging 
-                        ? '0 30px 90px rgba(59, 155, 255, 0.4), 0 0 0 2px rgba(59, 155, 255, 0.4), inset 0 0 60px rgba(59, 155, 255, 0.2)'
-                        : '0 20px 60px rgba(36, 121, 223, 0.3), 0 0 0 1px rgba(59, 155, 255, 0.2)',
-                    }}
-                    className="relative p-16 rounded-[32px] backdrop-blur-xl overflow-hidden group transition-all duration-500"
+                    className={`
+                      relative p-16 rounded-[32px] overflow-hidden group
+                      transition-all duration-300 ease-out
+                      ${isDragging ? 'scale-[1.02]' : 'hover:scale-[1.01]'}
+                    `}
                     style={{
                       background: isDragging
                         ? 'linear-gradient(135deg, rgba(36, 121, 223, 0.15), rgba(59, 155, 255, 0.15))'
                         : 'linear-gradient(135deg, rgba(36, 121, 223, 0.08), rgba(176, 195, 253, 0.08))',
+                      boxShadow: isDragging 
+                        ? '0 30px 90px rgba(59, 155, 255, 0.35), 0 0 0 2px rgba(59, 155, 255, 0.4)'
+                        : '0 20px 60px rgba(36, 121, 223, 0.25), 0 0 0 1px rgba(59, 155, 255, 0.2)',
                     }}
                   >
-                    {/* Simplified hover effects */}
-                    <motion.div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                    {/* Hover gradient border effect */}
+                    <div
+                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-[32px]"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(59, 155, 255, 0.2), rgba(176, 195, 253, 0.2), rgba(255, 204, 238, 0.2))',
+                        background: 'linear-gradient(135deg, rgba(59, 155, 255, 0.3), rgba(176, 195, 253, 0.3), rgba(255, 204, 238, 0.3))',
+                        padding: '2px',
                         maskImage: 'linear-gradient(black, black) content-box, linear-gradient(black, black)',
                         maskComposite: 'exclude',
                         WebkitMaskComposite: 'xor',
-                        padding: '2px',
-                        borderRadius: '32px',
                       }}
                     />
 
                     {/* Content */}
                     <div className="relative z-10 text-center">
-                      <motion.div
-                        animate={{
-                          y: isDragging ? -15 : 0,
-                        }}
-                        className="mb-10 inline-block"
-                      >
+                      <div className={`mb-10 inline-block transition-transform duration-300 ${isDragging ? '-translate-y-4' : ''}`}>
                         <div 
-                          className="relative w-32 h-32 rounded-3xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500"
+                          className="relative w-32 h-32 rounded-3xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
                           style={{
                             background: 'linear-gradient(135deg, #2479df 0%, #3b9bff 50%, #b0c3fd 100%)',
                             boxShadow: '0 25px 70px rgba(36, 121, 223, 0.5), inset 0 2px 30px rgba(255, 255, 255, 0.3)',
                           }}
                         >
-                          <motion.div
-                            animate={{
-                              rotate: isDragging ? [0, 180] : 0,
-                            }}
-                            transition={{ duration: 0.6 }}
-                          >
+                          <div className={`transition-transform duration-300 ${isDragging ? 'rotate-180' : ''}`}>
                             <svg className="w-16 h-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
-                          </motion.div>
+                          </div>
 
-                          {/* Simplified pulsing glow */}
-                          <motion.div
-                            className="absolute inset-0 rounded-3xl"
-                            animate={{
-                              boxShadow: [
-                                '0 0 0 0 rgba(59, 155, 255, 0.7)',
-                                '0 0 0 40px rgba(59, 155, 255, 0)',
-                              ],
-                            }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
+                          {/* Pulse ring - CSS animated */}
+                          <div 
+                            className="absolute inset-0 rounded-3xl pulse-ring"
+                            style={{ 
+                              border: '2px solid rgba(59, 155, 255, 0.5)',
+                              pointerEvents: 'none',
                             }}
                           />
                         </div>
-                      </motion.div>
+                      </div>
 
                       <h3 
                         className="text-4xl font-bold mb-4"
@@ -354,11 +531,7 @@ export default function UploadPage() {
                       </p>
 
                       <div 
-                        className="inline-flex items-center gap-4 px-6 py-4 rounded-2xl backdrop-blur-sm"
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          border: '1px solid rgba(255, 255, 255, 0.1)',
-                        }}
+                        className="inline-flex items-center gap-4 px-6 py-4 rounded-2xl glass-subtle"
                       >
                         <div 
                           className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -375,121 +548,38 @@ export default function UploadPage() {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </label>
               </motion.div>
 
-              {/* Feature cards - optimized */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.6 }}
-                className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto mb-20"
-              >
-                {[
-                  {
-                    emoji: '🔐',
-                    title: 'Privacy insights',
-                    description: 'See exactly what personal data you\'ve shared with AI and get actionable privacy recommendations.',
-                    gradient: 'from-[#2479df] to-[#5eb3ff]',
-                    glowColor: 'rgba(36, 121, 223, 0.4)',
-                  },
-                  {
-                    emoji: '📊',
-                    title: 'Conversation patterns',
-                    description: 'Beautiful visualizations of your topics, habits, and engagement over time.',
-                    gradient: 'from-[#3b9bff] to-[#b0c3fd]',
-                    glowColor: 'rgba(59, 155, 255, 0.4)',
-                  },
-                  {
-                    emoji: '🌍',
-                    title: 'Carbon footprint',
-                    description: 'Calculate your environmental impact and see how it compares to real-world activities.',
-                    gradient: 'from-[#b0c3fd] to-[#ffccee]',
-                    glowColor: 'rgba(176, 195, 253, 0.4)',
-                  },
-                ].map((feature, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.7 + i * 0.1 }}
-                    whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                    className="relative group"
-                  >
-                    <div 
-                      className="relative p-8 rounded-3xl h-full backdrop-blur-xl transition-all duration-500"
-                      style={{
-                        background: `linear-gradient(135deg, ${feature.gradient.split('-')[1].replace('[', '').replace(']', '')}15, ${feature.gradient.split('-')[2].replace('[', '').replace(']', '')}15)`,
-                        border: `1px solid ${feature.gradient.split('-')[1].replace('[', '').replace(']', '')}30`,
-                        boxShadow: `0 10px 40px ${feature.glowColor}`,
-                      }}
-                    >
-                      <div className="relative z-10">
-                        <div 
-                          className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-500"
-                          style={{
-                            background: `linear-gradient(135deg, ${feature.gradient.split('-')[1].replace('[', '').replace(']', '')}15, ${feature.gradient.split('-')[2].replace('[', '').replace(']', '')}15)`,
-                            boxShadow: `0 10px 30px ${feature.glowColor}`,
-                          }}
-                        >
-                          {feature.emoji}
-                        </div>
-
-                        <h3 className="text-2xl font-bold text-white mb-3">
-                          {feature.title}
-                        </h3>
-                        <p className="text-white/70 leading-relaxed">
-                          {feature.description}
-                        </p>
-                      </div>
-
-                      {/* Animated bottom border */}
-                      <motion.div 
-                        className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.gradient}`}
-                        initial={{ scaleX: 0 }}
-                        whileInView={{ scaleX: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.8 + i * 0.1 }}
-                        style={{ transformOrigin: 'left' }}
-                      />
-                    </div>
-                  </motion.div>
+              {/* Feature cards */}
+              <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto mb-20">
+                {FEATURES.map((feature, i) => (
+                  <FeatureCard key={i} feature={feature} index={i} />
                 ))}
-              </motion.div>
+              </div>
 
-              {/* Stats with gradient cards - updated with honest claims */}
+              {/* Stats */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
                 className="max-w-5xl mx-auto mb-16"
               >
                 <div className="grid grid-cols-3 gap-6">
-                  {[
-                    { number: '40', label: 'Credit project', gradient: 'from-[#2479df] to-[#3b9bff]' },
-                    { number: 'May', label: '2026 Exhibition', gradient: 'from-[#3b9bff] to-[#b0c3fd]' },
-                    { number: '100%', label: 'Browser-local', gradient: 'from-[#b0c3fd] to-[#d4b8ff]' },
-                  ].map((stat, i) => (
+                  {STATS.map((stat, i) => (
                     <motion.div
                       key={i}
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1 + i * 0.1, type: "spring" }}
+                      transition={{ delay: 1 + i * 0.1, type: "spring", stiffness: 200 }}
                       whileHover={{ scale: 1.05 }}
-                      className="relative p-6 rounded-2xl backdrop-blur-xl text-center"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                      }}
+                      className="relative p-6 rounded-2xl glass-subtle text-center gpu-accelerated"
                     >
                       <div 
                         className="text-5xl font-black mb-2"
                         style={{
-                          background: `linear-gradient(135deg, 
-                          ${stat.gradient.split('-')[1].replace('[', '').replace(']', '')}, 
-                          ${stat.gradient.split('-')[2].replace('[', '').replace(']', '')}
-                        )`,                        
+                          background: `linear-gradient(135deg, ${stat.colors[0]}, ${stat.colors[1]})`,                        
                           WebkitBackgroundClip: 'text',
                           WebkitTextFillColor: 'transparent',
                           backgroundClip: 'text',
@@ -503,19 +593,19 @@ export default function UploadPage() {
                 </div>
               </motion.div>
 
-              {/* Privacy notice - simplified animations */}
+              {/* Privacy notice */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.1 }}
+                transition={{ delay: 1.1, duration: 0.5 }}
                 className="max-w-3xl mx-auto"
               >
                 <div 
-                  className="relative p-8 rounded-3xl backdrop-blur-xl overflow-hidden"
+                  className="relative p-8 rounded-3xl overflow-hidden"
                   style={{
                     background: 'linear-gradient(135deg, rgba(36, 121, 223, 0.12), rgba(176, 195, 253, 0.12))',
                     border: '1px solid rgba(59, 155, 255, 0.3)',
-                    boxShadow: '0 20px 60px rgba(36, 121, 223, 0.2)',
+                    boxShadow: '0 20px 60px rgba(36, 121, 223, 0.15)',
                   }}
                 >
                   <div className="relative z-10 flex items-start gap-5">
@@ -553,19 +643,17 @@ export default function UploadPage() {
                     className="max-w-2xl mx-auto mt-8"
                   >
                     <div 
-                      className="p-6 rounded-2xl backdrop-blur-xl"
+                      className="p-6 rounded-2xl"
                       style={{
                         background: 'linear-gradient(135deg, rgba(245, 108, 92, 0.15), rgba(245, 108, 92, 0.1))',
                         border: '1px solid rgba(245, 108, 92, 0.3)',
-                        boxShadow: '0 10px 40px rgba(245, 108, 92, 0.3)',
+                        boxShadow: '0 10px 40px rgba(245, 108, 92, 0.2)',
                       }}
                     >
                       <div className="flex items-start gap-4">
                         <div 
                           className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
-                          style={{
-                            background: 'rgba(245, 108, 92, 0.2)',
-                          }}
+                          style={{ background: 'rgba(245, 108, 92, 0.2)' }}
                         >
                           <span className="text-2xl">⚠️</span>
                         </div>
@@ -580,45 +668,37 @@ export default function UploadPage() {
               </AnimatePresence>
             </motion.div>
           ) : (
+            /* Analysis state */
             <motion.div
               key="analysing"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               className="flex items-center justify-center min-h-screen px-6"
             >
               <div className="max-w-2xl w-full text-center">
                 {/* Animated icon */}
-                <motion.div className="relative inline-block mb-12">
-                  <motion.div
+                <div className="relative inline-block mb-12">
+                  <div
                     className="w-40 h-40 rounded-3xl flex items-center justify-center"
                     style={{
                       background: 'linear-gradient(135deg, #2479df 0%, #3b9bff 50%, #b0c3fd 100%)',
                       boxShadow: '0 30px 80px rgba(36, 121, 223, 0.5)',
                     }}
                   >
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                      style={{ willChange: 'transform' }}
-                    >
+                    <div className="spin-slow">
                       <svg className="w-20 h-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                      className="absolute inset-0 rounded-3xl"
-                      animate={{
-                        boxShadow: [
-                          '0 0 0 0 rgba(59, 155, 255, 0.7)',
-                          '0 0 0 50px rgba(59, 155, 255, 0)',
-                        ],
-                      }}
-                      transition={{ duration: 2, repeat: Infinity }}
+                    <div 
+                      className="absolute inset-0 rounded-3xl pulse-ring"
+                      style={{ border: '2px solid rgba(59, 155, 255, 0.6)' }}
                     />
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
 
                 <h2 
                   className="text-6xl font-black mb-4"
@@ -633,37 +713,30 @@ export default function UploadPage() {
                 </h2>
                 <p className="text-white/60 text-xl mb-16">{stage}</p>
 
-                {/* Progress */}
+                {/* Progress bar */}
                 <div className="mb-16">
                   <div 
-                    className="h-4 rounded-full overflow-hidden backdrop-blur-sm mb-4"
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.1)',
-                    }}
+                    className="h-4 rounded-full overflow-hidden mb-4"
+                    style={{ background: 'rgba(255, 255, 255, 0.1)' }}
                   >
-                    <motion.div
-                      className="h-full relative"
+                    <div
+                      className="h-full relative transition-[width] duration-300 ease-out"
                       style={{
+                        width: `${progress}%`,
                         background: 'linear-gradient(90deg, #2479df 0%, #3b9bff 50%, #b0c3fd 100%)',
                         boxShadow: '0 0 30px rgba(59, 155, 255, 0.8)',
                       }}
-                      initial={{ width: 0 }}
-                      animate={{ width: `${progress}%` }}
                     >
-                      <motion.div
-                        className="absolute inset-0"
+                      <div
+                        className="absolute inset-0 shimmer"
                         style={{
-                          background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent)',
+                          background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
                         }}
-                        animate={{ x: ['-100%', '200%'] }}
-                        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                       />
-                    </motion.div>
+                    </div>
                   </div>
-                  <motion.div
-                    animate={{ opacity: [0.6, 1, 0.6] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="text-2xl font-bold"
+                  <div
+                    className="text-2xl font-bold breathe"
                     style={{
                       background: 'linear-gradient(135deg, #3b9bff, #b0c3fd)',
                       WebkitBackgroundClip: 'text',
@@ -672,39 +745,36 @@ export default function UploadPage() {
                     }}
                   >
                     {progress}%
-                  </motion.div>
+                  </div>
                 </div>
 
-                {/* Steps */}
+                {/* Analysis steps */}
                 <div className="grid grid-cols-3 gap-6">
-                  {[
-                    { emoji: '📊', label: 'Parsing', color: '#2479df', threshold: 30 },
-                    { emoji: '🔍', label: 'Patterns', color: '#3b9bff', threshold: 60 },
-                    { emoji: '🌍', label: 'Impact', color: '#b0c3fd', threshold: 90 },
-                  ].map((step, i) => (
-                    <motion.div
-                      key={i}
-                      animate={{ 
-                        opacity: progress > step.threshold ? 1 : 0.3,
-                        scale: progress > step.threshold ? 1 : 0.9,
-                      }}
-                      className="p-6 rounded-2xl backdrop-blur-xl"
-                      style={{
-                        background: progress > step.threshold 
-                          ? `linear-gradient(135deg, ${step.color}30, ${step.color}15)`
-                          : 'rgba(255, 255, 255, 0.03)',
-                        border: progress > step.threshold 
-                          ? `1px solid ${step.color}40`
-                          : '1px solid rgba(255, 255, 255, 0.05)',
-                        boxShadow: progress > step.threshold 
-                          ? `0 10px 30px ${step.color}30`
-                          : 'none',
-                      }}
-                    >
-                      <div className="text-4xl mb-3">{step.emoji}</div>
-                      <div className="text-white/80 font-semibold">{step.label}</div>
-                    </motion.div>
-                  ))}
+                  {ANALYSIS_STEPS.map((step, i) => {
+                    const isActive = progress > step.threshold;
+                    return (
+                      <div
+                        key={i}
+                        className="p-6 rounded-2xl transition-all duration-300"
+                        style={{
+                          opacity: isActive ? 1 : 0.3,
+                          transform: isActive ? 'scale(1)' : 'scale(0.95)',
+                          background: isActive 
+                            ? `linear-gradient(135deg, ${step.color}30, ${step.color}15)`
+                            : 'rgba(255, 255, 255, 0.03)',
+                          border: isActive 
+                            ? `1px solid ${step.color}40`
+                            : '1px solid rgba(255, 255, 255, 0.05)',
+                          boxShadow: isActive 
+                            ? `0 10px 30px ${step.color}25`
+                            : 'none',
+                        }}
+                      >
+                        <div className="text-4xl mb-3">{step.emoji}</div>
+                        <div className="text-white/80 font-semibold">{step.label}</div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>

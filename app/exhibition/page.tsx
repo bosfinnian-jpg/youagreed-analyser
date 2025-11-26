@@ -1,766 +1,677 @@
 'use client';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
+import Link from 'next/link';
 
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { 
-  Text,
-  Center,
-  Float,
-  MeshReflectorMaterial,
-  Sparkles,
-  Stars
-} from '@react-three/drei';
-import { useRef, useState, useEffect } from 'react';
-import * as THREE from 'three';
-import { useRouter } from 'next/navigation';
-import { Physics, useBox, useSphere, usePlane } from '@react-three/cannon';
+/**
+ * You Agreed — Museum-Quality Landing Page
+ * 
+ * Architecture:
+ * - Single scroll container with fixed height
+ * - All sections pinned to viewport center
+ * - Raw scroll progress for opacity (instant response)
+ * - Subtle eased transforms for polish
+ * - GPU-accelerated with will-change and transform3d
+ * - Pointer-events disabled on invisible sections
+ */
 
-// ============================================
-// VEHICLE CONTROLLER (SIMPLIFIED)
-// ============================================
-interface VehicleProps {
-  position?: [number, number, number];
-  onPositionUpdate?: (pos: [number, number, number]) => void;
-}
+// ═══════════════════════════════════════════════════════════════════════════
+// DESIGN TOKENS
+// ═══════════════════════════════════════════════════════════════════════════
 
-function Vehicle({ position = [0, 1, 0], onPositionUpdate }: VehicleProps) {
-  const [speed, setSpeed] = useState(0);
-  const [steer, setSteer] = useState(0);
+const COLORS = {
+  blue: '#2479df',
+  skyBlue: '#3b9bff',
+  softPink: '#ffccee',
+  purple: '#b0c3fd',
+  white: '#ffffff',
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMPONENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+const GradientOrb = ({ 
+  className, 
+  colors, 
+  delay = 0 
+}: { 
+  className: string; 
+  colors: string[]; 
+  delay?: number;
+}) => (
+  <motion.div
+    className={`absolute rounded-full pointer-events-none ${className}`}
+    animate={{
+      scale: [1, 1.08, 1],
+      opacity: [0.3, 0.45, 0.3],
+    }}
+    transition={{
+      duration: 20,
+      repeat: Infinity,
+      ease: "easeInOut",
+      delay,
+    }}
+    style={{
+      background: `radial-gradient(circle at 30% 30%, ${colors[0]}, ${colors[1]}, transparent 70%)`,
+      filter: 'blur(80px)',
+      willChange: 'transform, opacity',
+    }}
+  />
+);
+
+const GlassCard = ({ 
+  children, 
+  className = '',
+  hover = true,
+}: { 
+  children: React.ReactNode; 
+  className?: string;
+  hover?: boolean;
+}) => (
+  <motion.div
+    whileHover={hover ? { 
+      y: -4, 
+      transition: { duration: 0.5, ease: [0.23, 1, 0.32, 1] }
+    } : undefined}
+    className={`
+      relative overflow-hidden rounded-[2rem] p-8 md:p-10
+      bg-white/[0.03] backdrop-blur-2xl
+      border border-white/[0.08]
+      shadow-[0_8px_32px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.05)]
+      ${className}
+    `}
+  >
+    <div 
+      className="absolute inset-0 rounded-[2rem] opacity-40 pointer-events-none"
+      style={{
+        background: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.06) 0%, transparent 50%)',
+      }}
+    />
+    <div className="relative z-10">{children}</div>
+  </motion.div>
+);
+
+// Pinned section with GPU optimization
+const PinnedSection = ({ 
+  children, 
+  opacity,
+  y,
+  zIndex,
+  scale,
+}: { 
+  children: React.ReactNode;
+  opacity: MotionValue<number>;
+  y: MotionValue<number>;
+  zIndex: number;
+  scale?: MotionValue<number>;
+}) => {
+  // Derive pointer-events from opacity
+  const pointerEvents = useTransform(opacity, (v) => v > 0.1 ? 'auto' : 'none');
   
-  // Vehicle body
-  const [ref, api] = useBox<THREE.Mesh>(() => ({
-    mass: 100,
-    position,
-    args: [2, 1, 4],
-    allowSleep: false,
-    linearDamping: 0.4,
-    angularDamping: 0.4,
-  }));
-
-  // Subscribe to position for camera follow
-  useEffect(() => {
-    if (!api.position) return;
-    const unsubscribe = api.position.subscribe((pos) => {
-      if (onPositionUpdate) {
-        onPositionUpdate(pos as [number, number, number]);
-      }
-    });
-    return unsubscribe;
-  }, [api, onPositionUpdate]);
-
-  // Controls
-  function Vehicle({ position = [0, 1, 0], onPositionUpdate }: VehicleProps) {
-    const [speed, setSpeed] = useState(0);
-    const [steer, setSteer] = useState(0);
-    
-    // Vehicle body - CHANGED: useBox now returns a Group, not a Mesh
-    const [ref, api] = useBox<THREE.Group>(() => ({
-      mass: 100,
-      position,
-      args: [2, 1, 4],
-      allowSleep: false,
-      linearDamping: 0.4,
-      angularDamping: 0.4,
-    }));
-  
-    // Subscribe to position for camera follow
-    useEffect(() => {
-      if (!api.position) return;
-      const unsubscribe = api.position.subscribe((pos) => {
-        if (onPositionUpdate) {
-          onPositionUpdate(pos as [number, number, number]);
-        }
-      });
-      return unsubscribe;
-    }, [api, onPositionUpdate]);
-  
-   // Controls - Direct state updates
-useEffect(() => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    const key = e.key.toLowerCase();
-    console.log('Key down:', key);
-    
-    if (key === 'w' || key === 'arrowup') setSpeed(5);
-    if (key === 's' || key === 'arrowdown') setSpeed(-3);
-    if (key === 'a' || key === 'arrowleft') setSteer(1);
-    if (key === 'd' || key === 'arrowright') setSteer(-1);
-  };
-
-  const handleKeyUp = (e: KeyboardEvent) => {
-    const key = e.key.toLowerCase();
-    console.log('Key up:', key);
-    
-    if (key === 'w' || key === 'arrowup' || key === 's' || key === 'arrowdown') setSpeed(0);
-    if (key === 'a' || key === 'arrowleft' || key === 'd' || key === 'arrowright') setSteer(0);
-  };
-
-  window.addEventListener('keydown', handleKeyDown);
-  window.addEventListener('keyup', handleKeyUp);
-
-  return () => {
-    window.removeEventListener('keydown', handleKeyDown);
-    window.removeEventListener('keyup', handleKeyUp);
-  };
-}, []);
-  
-    // Apply forces
-  useFrame(() => {
-    if (!ref.current || !api) return;
-    
-    // Get current rotation
-    const rotation = ref.current.rotation.y;
-    
-    // Apply movement force in the direction the car is facing
-    if (speed !== 0) {
-      const force = new THREE.Vector3(
-        Math.sin(rotation) * speed * 20,
-        0,
-        Math.cos(rotation) * speed * 20
-      );
-      api.applyForce(force.toArray(), [0, 0, 0]);
-    }
-    
-    // Apply rotation
-    if (steer !== 0 && Math.abs(speed) > 0.1) {
-      api.angularVelocity.set(0, steer * speed * 0.5, 0);
-    }
-  }); // <-- This closes useFrame
-
-  return (  // <-- Make sure this is here!
-    <group ref={ref}>
-      {/* Car body */}
-      <mesh castShadow>
-        <boxGeometry args={[2, 1, 4]} />
-        <meshStandardMaterial color="#e94560" metalness={0.8} roughness={0.2} />
-      </mesh>
-      
-      {/* Wheels (visual only) */}
-      <mesh position={[-0.8, -0.3, 1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-      <mesh position={[0.8, -0.3, 1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-      <mesh position={[-0.8, -0.3, -1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-      <mesh position={[0.8, -0.3, -1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-    </group>
-  ); // <-- This closes return
-} // <-- This closes Vehicle function
-// Apply forces
-useFrame(() => {
-  if (!ref.current || !api) {
-    console.log('No ref or api');
-    return;
-  }
-  
-  console.log('Speed:', speed, 'Steer:', steer);
-  
-  // Get current rotation
-  const rotation = ref.current.rotation.y;
-  
-  // Apply movement force in the direction the car is facing
-  if (speed !== 0) {
-    const force = new THREE.Vector3(
-      Math.sin(rotation) * speed * 20,
-      0,
-      Math.cos(rotation) * speed * 20
-    );
-    console.log('Applying force:', force);
-    api.applyForce(force.toArray(), [0, 0, 0]);
-  }
-  
-  // Apply rotation
-  if (steer !== 0 && Math.abs(speed) > 0.1) {
-    api.applyTorque([0, steer * speed * 2, 0]);
-  }
-});
-
   return (
-    <group>
-      {/* Car body */}
-      <mesh ref={ref} castShadow>
-        <boxGeometry args={[2, 1, 4]} />
-        <meshStandardMaterial color="#e94560" metalness={0.8} roughness={0.2} />
-      </mesh>
-      
-      {/* Wheels (visual only) */}
-      <mesh position={[-0.8, -0.3, 1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-      <mesh position={[0.8, -0.3, 1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-      <mesh position={[-0.8, -0.3, -1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-      <mesh position={[0.8, -0.3, -1.2]} rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 0.2, 16]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
-    </group>
+    <motion.section
+      className="fixed inset-0 flex items-center justify-center"
+      style={{ 
+        opacity,
+        y,
+        scale: scale || 1,
+        zIndex,
+        pointerEvents,
+        willChange: 'transform, opacity',
+        transform: 'translate3d(0, 0, 0)', // Force GPU layer
+      }}
+    >
+      {children}
+    </motion.section>
   );
-}
+};
 
-// ============================================
-// BRAIN INSTALLATION
-// ============================================
-interface BrainData {
-  id: string;
-  position: [number, number, number];
-  name: string;
-  messagesCount: number;
-  dataPoints: string[];
-  carbonFootprint: number;
-  privacyScore: number;
-  platform: 'Meta' | 'OpenAI' | 'Google' | 'Anthropic';
-  color: string;
-  excerpts: string[];
-}
+// ═══════════════════════════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════════════════════════════════════
 
-const brainData: BrainData[] = [
-  {
-    id: 'subject-001',
-    position: [-20, 3, -15],
-    name: 'Sarah M.',
-    messagesCount: 12847,
-    dataPoints: ['Medical history', 'Family relationships', 'Work stress', 'Financial worries'],
-    carbonFootprint: 64.2,
-    privacyScore: 9.2,
-    platform: 'Meta',
-    color: '#1877f2',
-    excerpts: [
-      'I haven\'t told anyone about my diagnosis yet...',
-      'My mother would be devastated if she knew...',
-      'The debt is crushing me, I don\'t know what to do...'
-    ]
-  },
-  {
-    id: 'subject-002',
-    position: [25, 3, -10],
-    name: 'David K.',
-    messagesCount: 8934,
-    dataPoints: ['Legal issues', 'Relationship problems', 'Mental health', 'Location data'],
-    carbonFootprint: 44.7,
-    privacyScore: 8.7,
-    platform: 'OpenAI',
-    color: '#74aa9c',
-    excerpts: [
-      'The divorce lawyer says I might lose custody...',
-      'I\'ve been having these thoughts again, the dark ones...',
-      'I work at [REDACTED] and live at [REDACTED]...'
-    ]
-  },
-  {
-    id: 'subject-003',
-    position: [-15, 3, 25],
-    name: 'Emma L.',
-    messagesCount: 15632,
-    dataPoints: ['Political views', 'Sexual orientation', 'Health conditions', 'Shopping habits'],
-    carbonFootprint: 78.2,
-    privacyScore: 9.8,
-    platform: 'Google',
-    color: '#4285f4',
-    excerpts: [
-      'I\'ve never told my parents about my girlfriend...',
-      'The medication isn\'t working anymore...',
-      'I spend too much, it\'s becoming a problem...'
-    ]
-  },
-  {
-    id: 'subject-004',
-    position: [30, 3, 30],
-    name: 'Marcus T.',
-    messagesCount: 6234,
-    dataPoints: ['Career anxieties', 'Educational background', 'Social network', 'Daily routines'],
-    carbonFootprint: 31.2,
-    privacyScore: 7.3,
-    platform: 'Anthropic',
-    color: '#d4a574',
-    excerpts: [
-      'I lied on my resume about my degree...',
-      'I wake up at 5:30am every day for my commute to [REDACTED]...',
-      'My boss doesn\'t know I\'m looking for other jobs...'
-    ]
-  },
-  {
-    id: 'subject-005',
-    position: [0, 3, -30],
-    name: 'Lisa W.',
-    messagesCount: 21456,
-    dataPoints: ['Childhood trauma', 'Addiction recovery', 'Family secrets', 'Income details'],
-    carbonFootprint: 107.3,
-    privacyScore: 9.9,
-    platform: 'Meta',
-    color: '#1877f2',
-    excerpts: [
-      'What happened when I was 7 still haunts me...',
-      'Day 47 clean, but the cravings are unbearable...',
-      'I make $[REDACTED] but feel worthless...'
-    ]
-  }
-];
+export default function Home() {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-interface BrainInstallationProps {
-  data: BrainData;
-  vehiclePosition: [number, number, number];
-  onApproach: (data: BrainData | null) => void;
-}
-
-function BrainInstallation({ 
-  data, 
-  vehiclePosition,
-  onApproach 
-}: BrainInstallationProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const [isNear, setIsNear] = useState(false);
-  const [excerptIndex, setExcerptIndex] = useState(0);
-  
-  // Physics body for collision
-  const [ref] = useSphere<THREE.Mesh>(() => ({
-    type: 'Static',
-    position: data.position,
-    args: [3],
-  }));
-
-  // Rotation and proximity check
-  useFrame((state) => {
-    if (meshRef.current) {
-      // Gentle rotation
-      meshRef.current.rotation.y += 0.005;
-      
-      // Pulsing effect
-      const pulse = Math.sin(state.clock.elapsedTime * 2 + data.position[0]) * 0.1 + 1;
-      meshRef.current.scale.setScalar(pulse * 2);
-      
-      // Check distance to vehicle
-      const distance = Math.sqrt(
-        Math.pow(vehiclePosition[0] - data.position[0], 2) +
-        Math.pow(vehiclePosition[2] - data.position[2], 2)
-      );
-      
-      if (distance < 10) {
-        if (!isNear) {
-          setIsNear(true);
-          onApproach(data);
-        }
-      } else {
-        if (isNear) {
-          setIsNear(false);
-          onApproach(null);
-        }
-      }
-    }
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end end'],
   });
 
-  // Cycle through excerpts
-  useEffect(() => {
-    if (isNear) {
-      const interval = setInterval(() => {
-        setExcerptIndex((prev) => (prev + 1) % data.excerpts.length);
-      }, 3000);
-      return () => clearInterval(interval);
-    }
-  }, [isNear, data.excerpts.length]);
+  // ─────────────────────────────────────────────────────────────────────────
+  // SCROLL TRANSFORMS
+  // 
+  // Total scroll: 600vh (6 screen heights)
+  // Each section: ~100vh of "active" time with crossfade buffers
+  // 
+  // Using raw scrollYProgress (no spring) for opacity = instant response
+  // Subtle Y transforms add polish without lag
+  // ─────────────────────────────────────────────────────────────────────────
 
-  return (
-    <group position={data.position}>
-      {/* Invisible collision sphere */}
-      <mesh ref={ref} visible={false}>
-        <sphereGeometry args={[3]} />
-      </mesh>
-      
-      {/* Visual brain */}
-      <mesh ref={meshRef} castShadow receiveShadow>
-        <icosahedronGeometry args={[2, 3]} />
-        <meshStandardMaterial
-          color={data.color}
-          metalness={0.3}
-          roughness={0.2}
-          emissive={data.color}
-          emissiveIntensity={isNear ? 0.5 : 0.2}
-          wireframe={false}
-        />
-      </mesh>
-      
-      {/* Neural sparkles */}
-      <Sparkles
-        count={100}
-        scale={6}
-        size={3}
-        speed={0.5}
-        color={data.color}
-        opacity={isNear ? 0.8 : 0.3}
-      />
-      
-      {/* Platform ring */}
-      <mesh position={[0, -2.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[3, 3.5, 32]} />
-        <meshStandardMaterial 
-          color={data.color} 
-          emissive={data.color}
-          emissiveIntensity={0.2}
-          opacity={0.5} 
-          transparent 
-        />
-      </mesh>
-      
-      {/* Info display when near */}
-      {isNear && (
-        <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-          <group position={[0, 5, 0]}>
-            <Center>
-              <Text
-                fontSize={0.5}
-                color="white"
-                anchorX="center"
-                anchorY="middle"
-                font="/fonts/Inter-Bold.woff"
-              >
-                {data.name}
-              </Text>
-            </Center>
-            <Center position={[0, -0.7, 0]}>
-              <Text
-                fontSize={0.25}
-                color="#999"
-                anchorX="center"
-                anchorY="middle"
-              >
-                {`${data.messagesCount.toLocaleString()} messages`}
-              </Text>
-            </Center>
-            <Center position={[0, -1.2, 0]}>
-              <Text
-                fontSize={0.2}
-                color="#666"
-                anchorX="center"
-                anchorY="middle"
-              >
-                {`${data.carbonFootprint} kg CO₂`}
-              </Text>
-            </Center>
-            <Center position={[0, -2, 0]}>
-              <Text
-                fontSize={0.18}
-                color="#e94560"
-                anchorX="center"
-                anchorY="middle"
-                maxWidth={8}
-                textAlign="center"
-                font="/fonts/Inter-Regular.woff"
-              >
-                {data.excerpts[excerptIndex]}
-              </Text>
-            </Center>
-          </group>
-        </Float>
-      )}
-    </group>
+  // Hero: visible 0-12%, fade out 12-18%
+  const heroOpacity = useTransform(
+    scrollYProgress, 
+    [0, 0.12, 0.18], 
+    [1, 1, 0]
   );
-}
-
-// ============================================
-// GROUND
-// ============================================
-function Ground() {
-  const [ref] = usePlane<THREE.Mesh>(() => ({
-    rotation: [-Math.PI / 2, 0, 0],
-    position: [0, 0, 0],
-    type: 'Static',
-  }));
-
-  return (
-    <mesh ref={ref} receiveShadow>
-      <planeGeometry args={[200, 200]} />
-      <MeshReflectorMaterial
-        blur={[300, 30]}
-        resolution={2048}
-        mixBlur={1}
-        mixStrength={180}
-        roughness={1}
-        depthScale={1.2}
-        minDepthThreshold={0.4}
-        maxDepthThreshold={1.4}
-        color="#0a0a0a"
-        metalness={0.8}
-      />
-    </mesh>
+  const heroScale = useTransform(
+    scrollYProgress, 
+    [0, 0.12, 0.18], 
+    [1, 1, 0.97]
   );
-}
+  const heroY = useTransform(
+    scrollYProgress, 
+    [0, 0.18], 
+    [0, -30]
+  );
 
-// ============================================
-// CAMERA CONTROLLER
-// ============================================
-interface CameraControllerProps {
-  vehiclePosition: [number, number, number];
-}
+  // Section 1: fade in 14-20%, visible 20-30%, fade out 30-36%
+  const s1Opacity = useTransform(
+    scrollYProgress, 
+    [0.14, 0.20, 0.30, 0.36], 
+    [0, 1, 1, 0]
+  );
+  const s1Y = useTransform(
+    scrollYProgress, 
+    [0.14, 0.20, 0.30, 0.36], 
+    [50, 0, 0, -30]
+  );
 
-function CameraController({ vehiclePosition }: CameraControllerProps) {
-  const { camera } = useThree();
-  
-  useFrame(() => {
-    // Smooth camera follow
-    const idealPosition = new THREE.Vector3(
-      vehiclePosition[0],
-      vehiclePosition[1] + 15,
-      vehiclePosition[2] + 20
-    );
-    
-    camera.position.lerp(idealPosition, 0.05);
-    
-    const lookAtPoint = new THREE.Vector3(
-      vehiclePosition[0],
-      vehiclePosition[1],
-      vehiclePosition[2]
-    );
-    
-    const currentLookAt = new THREE.Vector3();
-    camera.getWorldDirection(currentLookAt);
-    currentLookAt.multiplyScalar(10).add(camera.position);
-    
-    currentLookAt.lerp(lookAtPoint, 0.05);
-    camera.lookAt(currentLookAt);
-  });
-  
-  return null;
-}
+  // Section 2: fade in 32-38%, visible 38-52%, fade out 52-58%
+  const s2Opacity = useTransform(
+    scrollYProgress, 
+    [0.32, 0.38, 0.52, 0.58], 
+    [0, 1, 1, 0]
+  );
+  const s2Y = useTransform(
+    scrollYProgress, 
+    [0.32, 0.38, 0.52, 0.58], 
+    [50, 0, 0, -30]
+  );
 
-// ============================================
-// INFO PANEL
-// ============================================
-interface InfoPanelProps {
-  brainData: BrainData | null;
-}
+  // Section 3: fade in 54-60%, visible 60-72%, fade out 72-78%
+  const s3Opacity = useTransform(
+    scrollYProgress, 
+    [0.54, 0.60, 0.72, 0.78], 
+    [0, 1, 1, 0]
+  );
+  const s3Y = useTransform(
+    scrollYProgress, 
+    [0.54, 0.60, 0.72, 0.78], 
+    [50, 0, 0, -30]
+  );
 
-function InfoPanel({ brainData }: InfoPanelProps) {
-  if (!brainData) return null;
+  // CTA: fade in 74-82%, stays visible
+  const ctaOpacity = useTransform(
+    scrollYProgress, 
+    [0.74, 0.82, 1], 
+    [0, 1, 1]
+  );
+  const ctaY = useTransform(
+    scrollYProgress, 
+    [0.74, 0.82], 
+    [40, 0]
+  );
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // DATA
+  // ─────────────────────────────────────────────────────────────────────────
+
+  const insights = [
+    {
+      icon: (
+        <svg className="w-7 h-7" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="12" stroke="currentColor" strokeWidth="1.5"/>
+          <circle cx="16" cy="16" r="5" fill="currentColor" opacity="0.3"/>
+          <circle cx="16" cy="16" r="2" fill="currentColor"/>
+        </svg>
+      ),
+      title: "Privacy Exposure",
+      description: "Every name, location, health detail, and financial fragment you've shared — mapped and visualised.",
+      gradient: `linear-gradient(135deg, ${COLORS.blue}, ${COLORS.skyBlue})`,
+    },
+    {
+      icon: (
+        <svg className="w-7 h-7" viewBox="0 0 32 32" fill="none">
+          <path d="M4 24L12 16L18 22L28 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="28" cy="8" r="2.5" fill="currentColor" opacity="0.4"/>
+        </svg>
+      ),
+      title: "Conversation Patterns",
+      description: "Your topics, habits, and evolving relationship with AI — transformed into beautiful data narratives.",
+      gradient: `linear-gradient(135deg, ${COLORS.skyBlue}, ${COLORS.purple})`,
+    },
+    {
+      icon: (
+        <svg className="w-7 h-7" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="11" stroke="currentColor" strokeWidth="1.5"/>
+          <path d="M16 5C16 5 9 10 9 16C9 22 16 27 16 27" stroke="currentColor" strokeWidth="1.5"/>
+          <path d="M16 5C16 5 23 10 23 16C23 22 16 27 16 27" stroke="currentColor" strokeWidth="1.5"/>
+          <ellipse cx="16" cy="16" rx="11" ry="4.5" stroke="currentColor" strokeWidth="1.5"/>
+        </svg>
+      ),
+      title: "Carbon Footprint",
+      description: "The environmental cost of each conversation — contextualised against everyday activities.",
+      gradient: `linear-gradient(135deg, ${COLORS.purple}, ${COLORS.softPink})`,
+    },
+  ];
+
+  const features = [
+    { icon: "◐", label: "100% Local", detail: "Browser-only processing" },
+    { icon: "◉", label: "Zero Upload", detail: "Your data never leaves" },
+    { icon: "◈", label: "Instant", detail: "Results in seconds" },
+  ];
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // RENDER
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
-    <div className="fixed top-4 right-4 w-96 bg-black/95 backdrop-blur-xl border border-white/10 rounded-lg p-6 text-white">
-      <h2 className="text-2xl font-light mb-4">{brainData.name}</h2>
-      <div className="space-y-3 text-sm">
-        <div className="flex justify-between">
-          <span className="text-white/60">Platform:</span>
-          <span style={{ color: brainData.color }} className="font-medium">
-            {brainData.platform}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-white/60">Messages analyzed:</span>
-          <span>{brainData.messagesCount.toLocaleString()}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-white/60">Carbon footprint:</span>
-          <span className="text-orange-400">{brainData.carbonFootprint} kg CO₂</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-white/60">Privacy exposure:</span>
-          <div className="flex items-center gap-2">
-            <div className="w-24 h-2 bg-white/10 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-red-500 to-red-400"
-                style={{ width: `${brainData.privacyScore * 10}%` }}
-              />
+    <>
+      {/* ═══════════════════════════════════════════════════════════════════
+          ATMOSPHERIC BACKGROUND — Fixed, lowest layer
+      ═══════════════════════════════════════════════════════════════════ */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: 'linear-gradient(180deg, hsl(240, 30%, 4%) 0%, hsl(250, 40%, 5%) 50%, hsl(260, 35%, 4%) 100%)',
+          }}
+        />
+        
+        <GradientOrb 
+          className="w-[800px] h-[800px] -top-[250px] -left-[250px]"
+          colors={[COLORS.blue, COLORS.skyBlue]}
+        />
+        <GradientOrb 
+          className="w-[900px] h-[900px] -top-[150px] -right-[350px]"
+          colors={[COLORS.purple, COLORS.skyBlue]}
+          delay={7}
+        />
+        <GradientOrb 
+          className="w-[700px] h-[700px] bottom-[5%] left-[15%]"
+          colors={[COLORS.softPink, COLORS.purple]}
+          delay={14}
+        />
+
+        {/* Subtle grid */}
+        <div 
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)
+            `,
+            backgroundSize: '80px 80px',
+            maskImage: 'radial-gradient(ellipse at 50% 50%, black 20%, transparent 70%)',
+          }}
+        />
+
+        {/* Film grain */}
+        <div 
+          className="absolute inset-0 opacity-[0.015] mix-blend-overlay"
+          style={{
+            backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'n\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.85\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\'/%3E%3C/svg%3E")',
+          }}
+        />
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          NAVIGATION — Fixed, highest layer
+      ═══════════════════════════════════════════════════════════════════ */}
+      <motion.nav
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
+        className="fixed top-0 left-0 right-0 px-6 py-5"
+        style={{ zIndex: 100 }}
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div 
+              className="w-9 h-9 rounded-xl flex items-center justify-center"
+              style={{
+                background: `linear-gradient(135deg, ${COLORS.blue}, ${COLORS.skyBlue})`,
+                boxShadow: `0 4px 20px ${COLORS.blue}40`,
+              }}
+            >
+              <span className="text-white font-semibold text-base">Y</span>
             </div>
-            <span className="text-red-400">{brainData.privacyScore}/10</span>
+            <span className="text-white/80 font-medium tracking-tight text-sm">You Agreed</span>
           </div>
+          
+          <Link href="/terms">
+            <motion.button
+              whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.12)' }}
+              whileTap={{ scale: 0.98 }}
+              className="px-5 py-2.5 rounded-full text-sm font-medium
+                bg-white/[0.06] backdrop-blur-xl border border-white/[0.08]
+                transition-colors duration-300"
+            >
+              Start Analysis
+            </motion.button>
+          </Link>
         </div>
-        <div className="mt-4 pt-4 border-t border-white/10">
-          <p className="text-white/60 mb-2">Data collected:</p>
-          <div className="flex flex-wrap gap-2">
-            {brainData.dataPoints.map((point, i) => (
-              <span key={i} className="px-2 py-1 bg-white/5 border border-white/10 rounded text-xs">
-                {point}
+      </motion.nav>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          SCROLL CONTAINER — Creates the scrollable height
+      ═══════════════════════════════════════════════════════════════════ */}
+      <div
+        ref={containerRef}
+        className="relative bg-transparent text-white selection:bg-white/20"
+        style={{ height: '600vh' }}
+      >
+        {/* ═══════════════════════════════════════════════════════════════════
+            HERO
+        ═══════════════════════════════════════════════════════════════════ */}
+        <PinnedSection 
+          opacity={heroOpacity} 
+          y={heroY} 
+          scale={heroScale}
+          zIndex={10}
+        >
+          <div className="text-center px-6 w-full max-w-5xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+              className="mb-8"
+            >
+              <span 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-medium uppercase tracking-[0.2em]
+                  bg-white/[0.05] border border-white/[0.06] text-white/50"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+                COMM3705 Digital Media Project
               </span>
-            ))}
-          </div>
-        </div>
-        <div className="mt-4 pt-4 border-t border-white/10">
-          <p className="text-xs text-white/40 italic leading-relaxed">
-            {'"We may use your conversations to improve our services and train our models. '}
-            {'This data may be retained indefinitely and shared with third parties."'}
-          </p>
-          <p className="text-xs text-white/20 mt-2">
-            — Terms of Service, Section 19
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
+            </motion.div>
 
-// ============================================
-// MAIN EXHIBITION COMPONENT
-// ============================================
-export default function Exhibition() {
-  const [currentBrain, setCurrentBrain] = useState<BrainData | null>(null);
-  const [vehiclePosition, setVehiclePosition] = useState<[number, number, number]>([0, 1, 0]);
-  const router = useRouter();
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.4, ease: [0.23, 1, 0.32, 1] }}
+              className="text-[clamp(4rem,14vw,11rem)] font-semibold tracking-[-0.04em] leading-[0.95] mb-10"
+            >
+              <span 
+                className="block"
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.white} 0%, ${COLORS.purple} 60%, ${COLORS.skyBlue} 100%)`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                You
+              </span>
+              <span 
+                className="block"
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.skyBlue} 0%, ${COLORS.softPink} 100%)`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Agreed.
+              </span>
+            </motion.h1>
 
-  return (
-    <div className="w-full h-screen bg-black relative overflow-hidden">
-      {/* Header */}
-      <div className="absolute top-4 left-4 z-10 bg-black/90 backdrop-blur-xl border border-white/10 rounded-lg p-4 text-white max-w-md">
-        <h1 className="text-2xl font-light mb-2 text-white/90">
-          Exhibition: <span className="text-red-400">Data Harvest</span>
-        </h1>
-        <p className="text-sm text-white/60 mb-3 leading-relaxed">
-          Each brain contains thousands of AI conversations. 
-          <span className="text-white/80"> Drive between the minds to explore what they agreed to share.</span>
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-xs text-white/40">
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-0.5 bg-white/10 rounded">↑/W</kbd>
-            <span>Forward</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-0.5 bg-white/10 rounded">↓/S</kbd>
-            <span>Reverse</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-0.5 bg-white/10 rounded">←/A</kbd>
-            <span>Turn Left</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <kbd className="px-2 py-0.5 bg-white/10 rounded">→/D</kbd>
-            <span>Turn Right</span>
-          </div>
-        </div>
-      </div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.6, ease: [0.23, 1, 0.32, 1] }}
+              className="text-lg md:text-xl text-white/40 font-light max-w-md mx-auto leading-relaxed"
+            >
+              Discover what you've shared with AI.
+            </motion.p>
 
-      {/* Back button */}
-      <button
-        onClick={() => router.push('/')}
-        className="absolute bottom-4 left-4 z-10 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded text-white hover:bg-white/20 transition-all duration-200 text-sm"
-      >
-        ← Exit Exhibition
-      </button>
+            {/* Scroll indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 1.2 }}
+              className="absolute bottom-20 left-1/2 -translate-x-1/2"
+            >
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                className="flex flex-col items-center gap-3"
+              >
+                <span className="text-white/25 text-[10px] tracking-[0.25em] uppercase">Scroll</span>
+                <div className="w-px h-12 bg-gradient-to-b from-white/20 to-transparent" />
+              </motion.div>
+            </motion.div>
+          </div>
+        </PinnedSection>
 
-      {/* Stats */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-black/90 backdrop-blur-xl border border-white/10 rounded-lg px-6 py-2 text-white">
-        <div className="flex items-center gap-8 text-xs">
-          <div>
-            <span className="text-white/40">Total Messages:</span>{' '}
-            <span className="text-white/80 font-mono">
-              {brainData.reduce((acc, b) => acc + b.messagesCount, 0).toLocaleString()}
+        {/* ═══════════════════════════════════════════════════════════════════
+            SECTION 1: THE REVELATION
+        ═══════════════════════════════════════════════════════════════════ */}
+        <PinnedSection opacity={s1Opacity} y={s1Y} zIndex={20}>
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <span 
+              className="inline-block px-4 py-1.5 rounded-full text-[11px] font-medium tracking-widest uppercase
+                bg-white/[0.04] border border-white/[0.06] text-white/40 mb-8"
+            >
+              The Revelation
             </span>
+
+            <h2 className="text-[clamp(2.2rem,7vw,5rem)] font-semibold tracking-[-0.03em] leading-[1.1] mb-8">
+              <span 
+                className="block"
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.white} 20%, ${COLORS.purple} 90%)`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Every conversation
+              </span>
+              <span 
+                className="block"
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.purple} 0%, ${COLORS.softPink} 100%)`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                tells a story about you.
+              </span>
+            </h2>
+
+            <p className="text-base md:text-lg text-white/35 font-light max-w-xl mx-auto leading-relaxed">
+              Upload your ChatGPT export and see the patterns, privacy exposure, 
+              and environmental cost of your AI interactions — visualised beautifully.
+            </p>
           </div>
-          <div>
-            <span className="text-white/40">Total CO₂:</span>{' '}
-            <span className="text-orange-400 font-mono">
-              {brainData.reduce((acc, b) => acc + b.carbonFootprint, 0).toFixed(1)} kg
-            </span>
+        </PinnedSection>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            SECTION 2: TRUST SIGNALS
+        ═══════════════════════════════════════════════════════════════════ */}
+        <PinnedSection opacity={s2Opacity} y={s2Y} zIndex={30}>
+          <div className="max-w-6xl mx-auto px-6 w-full">
+            <div className="text-center mb-14">
+              <span 
+                className="inline-block px-4 py-1.5 rounded-full text-[11px] font-medium tracking-widest uppercase
+                  bg-white/[0.04] border border-white/[0.06] text-white/40 mb-8"
+              >
+                Privacy First
+              </span>
+
+              <h2 className="text-[clamp(2rem,6vw,4rem)] font-semibold tracking-[-0.02em] leading-[1.15] mb-5">
+                <span 
+                  style={{
+                    background: `linear-gradient(135deg, ${COLORS.white} 0%, ${COLORS.skyBlue} 100%)`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  Your data never leaves your device.
+                </span>
+              </h2>
+
+              <p className="text-base text-white/35 font-light max-w-lg mx-auto">
+                Complete analysis happens entirely in your browser. 
+                No servers. No accounts. No tracking.
+              </p>
+            </div>
+
+            {/* Feature pills */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-14">
+              {features.map((feature, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 px-5 py-3.5 rounded-2xl
+                    bg-white/[0.025] border border-white/[0.05] backdrop-blur-xl"
+                >
+                  <span className="text-xl" style={{ color: COLORS.skyBlue }}>
+                    {feature.icon}
+                  </span>
+                  <div className="text-left">
+                    <div className="text-white/80 font-medium text-sm">{feature.label}</div>
+                    <div className="text-white/35 text-xs">{feature.detail}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Insight cards */}
+            <div className="grid md:grid-cols-3 gap-5">
+              {insights.map((insight, i) => (
+                <GlassCard key={i} className="text-left">
+                  <div 
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
+                    style={{ 
+                      background: insight.gradient,
+                      boxShadow: `0 8px 24px ${COLORS.blue}25`,
+                      color: COLORS.white,
+                    }}
+                  >
+                    {insight.icon}
+                  </div>
+                  <h3 className="text-lg font-semibold text-white/90 mb-2">{insight.title}</h3>
+                  <p className="text-white/40 leading-relaxed text-sm">{insight.description}</p>
+                </GlassCard>
+              ))}
+            </div>
           </div>
-          <div>
-            <span className="text-white/40">Subjects:</span>{' '}
-            <span className="text-red-400 font-mono">{brainData.length}</span>
+        </PinnedSection>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            SECTION 3: THE TENSION
+        ═══════════════════════════════════════════════════════════════════ */}
+        <PinnedSection opacity={s3Opacity} y={s3Y} zIndex={40}>
+          <div className="max-w-4xl mx-auto px-6 w-full">
+            <GlassCard hover={false} className="text-center py-14 md:py-20">
+              <span 
+                className="inline-block px-4 py-1.5 rounded-full text-[11px] font-medium tracking-widest uppercase
+                  bg-white/[0.04] border border-white/[0.06] text-white/40 mb-10"
+              >
+                The Critical Tension
+              </span>
+
+              <blockquote className="text-[clamp(1.3rem,3.5vw,2rem)] font-light leading-[1.5] text-white/70 mb-10 max-w-2xl mx-auto">
+                <span className="text-white/20">"</span>
+                Surveillance capitalism doesn't look threatening. 
+                It looks polished, professional, even <em className="text-white/90 font-normal">beautiful</em>.
+                <span className="text-white/20">"</span>
+              </blockquote>
+
+              <p className="text-white/35 text-sm max-w-lg mx-auto leading-relaxed">
+                This installation uses the visual language of the systems it critiques — 
+                the same friendly blues and approachable design that facilitate extraction.
+              </p>
+
+              {/* Decorative dots */}
+              <div className="mt-10 flex justify-center gap-1.5">
+                {[COLORS.blue, COLORS.skyBlue, COLORS.purple, COLORS.softPink].map((color, i) => (
+                  <div
+                    key={i}
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ background: color, opacity: 0.5 }}
+                  />
+                ))}
+              </div>
+            </GlassCard>
           </div>
-        </div>
+        </PinnedSection>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            CTA
+        ═══════════════════════════════════════════════════════════════════ */}
+        <PinnedSection opacity={ctaOpacity} y={ctaY} zIndex={50}>
+          <div className="max-w-3xl mx-auto px-6 text-center">
+            <h2 className="text-[clamp(2.5rem,9vw,7rem)] font-semibold tracking-[-0.04em] leading-[0.95] mb-10">
+              <span 
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.white} 0%, ${COLORS.skyBlue} 50%, ${COLORS.softPink} 100%)`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Ready to see?
+              </span>
+            </h2>
+
+            <p className="text-base md:text-lg text-white/35 font-light max-w-md mx-auto mb-12 leading-relaxed">
+              Upload your ChatGPT export and discover the truth about your AI conversations.
+            </p>
+
+            <Link href="/terms">
+              <motion.button
+                whileHover={{ 
+                  scale: 1.02,
+                  boxShadow: `0 20px 50px ${COLORS.blue}35`,
+                }}
+                whileTap={{ scale: 0.98 }}
+                className="group relative px-10 py-4 rounded-full text-base font-semibold overflow-hidden"
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.blue}, ${COLORS.skyBlue})`,
+                  boxShadow: `0 10px 35px ${COLORS.blue}25`,
+                }}
+              >
+                <motion.div
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)',
+                  }}
+                  animate={{ x: ['-100%', '200%'] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                />
+                <span className="relative z-10 text-white">Begin Analysis</span>
+              </motion.button>
+            </Link>
+
+            {/* Footer */}
+            <div className="mt-20 flex flex-col items-center gap-5">
+              <div className="flex items-center gap-3 text-white/20 text-xs tracking-wide">
+                <span>University of Leeds</span>
+                <span className="w-0.5 h-0.5 rounded-full bg-current" />
+                <span>COMM3705</span>
+                <span className="w-0.5 h-0.5 rounded-full bg-current" />
+                <span>May 2026</span>
+              </div>
+              
+              <div 
+                className="w-7 h-7 rounded-lg flex items-center justify-center"
+                style={{
+                  background: `linear-gradient(135deg, ${COLORS.blue}15, ${COLORS.skyBlue}15)`,
+                  border: `1px solid ${COLORS.blue}20`,
+                }}
+              >
+                <span className="text-white/30 font-semibold text-xs">Y</span>
+              </div>
+            </div>
+          </div>
+        </PinnedSection>
       </div>
-
-      {/* Info panel */}
-      <InfoPanel brainData={currentBrain} />
-
-      {/* 3D Scene */}
-      <Canvas
-        shadows
-        camera={{ position: [0, 15, 20], fov: 50 }}
-      >
-        <color attach="background" args={['#000000']} />
-        <fog attach="fog" args={['#000000', 20, 100]} />
-        
-        {/* Lighting */}
-        <ambientLight intensity={0.2} />
-        <directionalLight
-          position={[20, 20, 10]}
-          intensity={1}
-          castShadow
-          shadow-mapSize={[2048, 2048]}
-          shadow-camera-far={100}
-          shadow-camera-left={-50}
-          shadow-camera-right={50}
-          shadow-camera-top={50}
-          shadow-camera-bottom={-50}
-        />
-        
-        {/* Colored accent lights */}
-        <pointLight position={[-20, 10, -20]} intensity={0.5} color="#569AFF" />
-        <pointLight position={[20, 10, 20]} intensity={0.5} color="#e94560" />
-        <pointLight position={[0, 10, 0]} intensity={0.3} color="#d4a574" />
-        
-        {/* Physics world */}
-        <Physics gravity={[0, -9.81, 0]}>
-          <Ground />
-          <Vehicle position={[0, 1, 0]} onPositionUpdate={setVehiclePosition} />
-          
-          {/* Brain installations */}
-          {brainData.map((brain) => (
-            <BrainInstallation
-              key={brain.id}
-              data={brain}
-              vehiclePosition={vehiclePosition}
-              onApproach={setCurrentBrain}
-            />
-          ))}
-          
-          {/* Invisible boundary walls */}
-          <mesh position={[0, 5, -50]}>
-            <boxGeometry args={[200, 20, 1]} />
-            <meshBasicMaterial visible={false} />
-          </mesh>
-          <mesh position={[0, 5, 50]}>
-            <boxGeometry args={[200, 20, 1]} />
-            <meshBasicMaterial visible={false} />
-          </mesh>
-          <mesh position={[-50, 5, 0]}>
-            <boxGeometry args={[1, 20, 200]} />
-            <meshBasicMaterial visible={false} />
-          </mesh>
-          <mesh position={[50, 5, 0]}>
-            <boxGeometry args={[1, 20, 200]} />
-            <meshBasicMaterial visible={false} />
-          </mesh>
-        </Physics>
-        
-        {/* Atmospheric particles */}
-        <Stars 
-          radius={100} 
-          depth={50} 
-          count={5000} 
-          factor={4} 
-          saturation={0} 
-          fade 
-          speed={1} 
-        />
-        
-        <Sparkles 
-          count={200} 
-          scale={[100, 20, 100]} 
-          size={2} 
-          speed={0.1} 
-          color="#ffffff" 
-          opacity={0.1} 
-        />
-        
-        {/* Camera controller */}
-        <CameraController vehiclePosition={vehiclePosition} />
-      </Canvas>
-
-      {/* Quote overlay */}
-      <div className="absolute bottom-4 right-4 max-w-md text-right text-white/30 text-xs italic">
-        {'"Your content may be used to train our AI systems and shared with partners '}
-        {'for product improvement." — Every Terms of Service'}
-      </div>
-    </div>
+    </>
   );
 }

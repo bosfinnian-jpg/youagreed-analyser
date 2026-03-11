@@ -1,125 +1,173 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CountdownRevealProps {
   onComplete: () => void;
   onConsentDecision?: (consented: boolean) => void;
 }
 
-type Phase = 
-  | 'countdown' 
-  | 'zero' 
-  | 'glitch'
-  | 'reveal-line1' 
-  | 'reveal-line2' 
-  | 'message' 
-  | 'consent-prompt'
-  | 'complete';
+type Phase =
+  | 'processing'
+  | 'complete'
+  | 'reveal'
+  | 'hold'
+  | 'done';
+
+// Status messages — designed to read like genuine system logs.
+// The unsettling quality is in what they describe, not how they look.
+const STATUS_MESSAGES = [
+  'Parsing conversation threads...',
+  'Extracting entity references...',
+  'Mapping temporal interaction patterns...',
+  'Identifying personal data categories...',
+  'Cross-referencing behavioural markers...',
+  'Calculating privacy exposure score...',
+  'Compiling report...',
+];
 
 export default function CountdownReveal({ onComplete, onConsentDecision }: CountdownRevealProps) {
-  const [count, setCount] = useState(10);
-  const [phase, setPhase] = useState<Phase>('countdown');
+  const [phase, setPhase] = useState<Phase>('processing');
+  const [progress, setProgress] = useState(0);
+  const [statusIndex, setStatusIndex] = useState(0);
   const [showSkip, setShowSkip] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Pulse effect intensity increases as countdown progresses
-  const pulseIntensity = useMotionValue(0);
-  const backgroundPulse = useTransform(
-    pulseIntensity, 
-    [0, 1], 
-    ['rgba(255, 0, 0, 0)', 'rgba(255, 0, 0, 0.15)']
-  );
+  const [showClause, setShowClause] = useState(false);
+  const progressRef = useRef(0);
+  const animFrameRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
 
-  // Countdown logic with pulse effect
+  // ─────────────────────────────────────────────────────────────────────
+  // Progress bar — fills over ~9 seconds with realistic, uneven speeds.
+  // Uses a noise function to simulate real data processing variance.
+  // ─────────────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (phase !== 'countdown') return;
-    
-    if (count > 0) {
-      // Pulse effect - more intense as we get closer to zero
-      const intensity = (10 - count) / 10;
-      animate(pulseIntensity, intensity, { duration: 0.3 });
-      
-      const timer = setTimeout(() => setCount(count - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      setPhase('zero');
-    }
-  }, [count, phase, pulseIntensity]);
+    if (phase !== 'processing') return;
 
-  // Phase progression after zero
-  useEffect(() => {
-    const timings: Partial<Record<Phase, { next: Phase; delay: number }>> = {
-      'zero': { next: 'glitch', delay: 600 },
-      'glitch': { next: 'reveal-line1', delay: 800 },
-      'reveal-line1': { next: 'reveal-line2', delay: 1800 },
-      'reveal-line2': { next: 'message', delay: 2200 },
-      'message': { next: 'consent-prompt', delay: 5000 },
+    const TOTAL_DURATION = 9000; // 9 seconds total
+
+    // Pre-generate speed multipliers for segments to create uneven feel.
+    // Some segments fast (1.4x), some slow (0.5x), mimicking real I/O.
+    const segments = [0.7, 1.3, 0.5, 1.4, 0.8, 1.1, 0.6, 1.2, 0.9, 1.0];
+
+    const tick = (timestamp: number) => {
+      if (!startTimeRef.current) startTimeRef.current = timestamp;
+      const elapsed = timestamp - startTimeRef.current;
+
+      // Calculate progress with uneven segments
+      const rawProgress = Math.min(elapsed / TOTAL_DURATION, 1);
+
+      // Apply segment-based speed variation
+      const segmentIndex = Math.min(
+        Math.floor(rawProgress * segments.length),
+        segments.length - 1
+      );
+      const segmentProgress = rawProgress * segments.length - segmentIndex;
+      const segmentStart = segmentIndex / segments.length;
+      const segmentWidth = 1 / segments.length;
+      const adjustedProgress = segmentStart + segmentProgress * segmentWidth * segments[segmentIndex];
+
+      const clamped = Math.min(Math.max(adjustedProgress, 0), 1);
+      progressRef.current = clamped;
+      setProgress(clamped * 100);
+
+      if (rawProgress < 1) {
+        animFrameRef.current = requestAnimationFrame(tick);
+      } else {
+        setProgress(100);
+        // Hold at 100% for 1.5 seconds of stillness, then transition
+        setTimeout(() => setPhase('complete'), 1500);
+      }
     };
 
-    const current = timings[phase];
-    if (current) {
-      const timer = setTimeout(() => setPhase(current.next), current.delay);
-      return () => clearTimeout(timer);
-    }
+    animFrameRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
   }, [phase]);
 
-  // Show skip option after 3 seconds (for accessibility/repeat visitors)
+  // ─────────────────────────────────────────────────────────────────────
+  // Status message rotation — changes every ~1.5-2s with slight variance
+  // ─────────────────────────────────────────────────────────────────────
   useEffect(() => {
-    const timer = setTimeout(() => setShowSkip(true), 3000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (phase !== 'processing') return;
 
-  const handleConsent = useCallback((consented: boolean) => {
-    onConsentDecision?.(consented);
-    setPhase('complete');
-    setTimeout(onComplete, 500);
-  }, [onComplete, onConsentDecision]);
+    const advance = () => {
+      setStatusIndex((prev) => {
+        if (prev < STATUS_MESSAGES.length - 1) return prev + 1;
+        return prev; // Stay on last message
+      });
+    };
+
+    // Slightly randomised interval: 1500–2000ms
+    const scheduleNext = () => {
+      const delay = 1500 + Math.random() * 500;
+      return setTimeout(() => {
+        advance();
+        timerRef.current = scheduleNext();
+      }, delay);
+    };
+
+    const timerRef = { current: scheduleNext() };
+    return () => clearTimeout(timerRef.current);
+  }, [phase]);
+
+  // ─────────────────────────────────────────────────────────────────────
+  // Phase progression after processing
+  // ─────────────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (phase === 'complete') {
+      // "Transfer complete." appears, hold 2 seconds, then show clause
+      const t1 = setTimeout(() => setShowClause(true), 2000);
+      // Hold both lines for 3 seconds, then finish
+      const t2 = setTimeout(() => setPhase('hold'), 5000);
+      const t3 = setTimeout(() => {
+        // Auto-decline consent (consent prompt removed per brief)
+        onConsentDecision?.(false);
+        setPhase('done');
+        onComplete();
+      }, 5500);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+        clearTimeout(t3);
+      };
+    }
+  }, [phase, onComplete, onConsentDecision]);
+
+  // Show skip after 3 seconds for accessibility
+  useEffect(() => {
+    const t = setTimeout(() => setShowSkip(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
 
   const handleSkip = useCallback(() => {
-    setPhase('consent-prompt');
-  }, []);
+    onConsentDecision?.(false);
+    setPhase('done');
+    onComplete();
+  }, [onComplete, onConsentDecision]);
 
   return (
-    <div 
-      ref={containerRef}
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
       style={{
-        background: 'linear-gradient(180deg, #0a0a14 0%, #12061c 50%, #0a1020 100%)'
+        background: 'linear-gradient(180deg, #0a0a14 0%, #12061c 50%, #0a1020 100%)',
       }}
     >
-      {/* Animated background pulse - increases urgency */}
-      <motion.div 
-        className="absolute inset-0 pointer-events-none"
-        style={{ backgroundColor: backgroundPulse }}
-      />
-
-      {/* Vignette for focus */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: 'radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%)',
-        }}
-      />
-
-      {/* Subtle scan lines for dystopian feel */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)',
-        }}
-      />
-
-      {/* Skip button - appears after delay for accessibility */}
+      {/* Skip — barely visible, for accessibility / repeat visitors */}
       <AnimatePresence>
-        {showSkip && phase === 'countdown' && (
+        {showSkip && phase === 'processing' && (
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
             onClick={handleSkip}
-            className="absolute top-8 right-8 text-white/30 hover:text-white/60 text-sm transition-colors z-50"
+            className="absolute top-8 right-8 text-sm transition-colors z-50"
+            style={{ color: 'rgba(255, 255, 255, 0.2)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.5)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 255, 255, 0.2)')}
           >
             Skip →
           </motion.button>
@@ -127,362 +175,100 @@ export default function CountdownReveal({ onComplete, onConsentDecision }: Count
       </AnimatePresence>
 
       <AnimatePresence mode="wait">
-        {/* ═══════════════════════════════════════════════════════════════════
-            COUNTDOWN PHASE - Building anxiety
-        ═══════════════════════════════════════════════════════════════════ */}
-        {phase === 'countdown' && (
+        {/* ═══════════════════════════════════════════════════════════════
+            PHASE 1: PROCESSING
+            Visually indistinguishable from a real SaaS data pipeline.
+            No red. No pulse. No urgency. Like waiting for Notion to load.
+        ═══════════════════════════════════════════════════════════════ */}
+        {phase === 'processing' && (
           <motion.div
-            key="countdown"
+            key="processing"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            transition={{ duration: 0.3 }}
-            className="text-center relative"
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            className="w-full max-w-md px-8"
           >
-            {/* Warning header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-8"
+            {/* Label — site's standard subtext style */}
+            <p
+              className="text-xs uppercase tracking-[0.25em] mb-8 text-center"
+              style={{ color: 'rgba(255, 255, 255, 0.4)' }}
+            >
+              Processing your data
+            </p>
+
+            {/* Progress bar — trusted blue, calm, inevitable */}
+            <div
+              className="w-full h-1 rounded-full overflow-hidden"
+              style={{ background: 'rgba(255, 255, 255, 0.08)' }}
             >
               <motion.div
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="inline-flex items-center gap-3 px-6 py-3 rounded-full mb-6"
+                className="h-full rounded-full"
                 style={{
-                  background: 'rgba(255, 60, 60, 0.15)',
-                  border: '1px solid rgba(255, 60, 60, 0.3)',
-                }}
-              >
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-red-400 text-sm uppercase tracking-[0.3em] font-medium">
-                  Upload Initiated
-                </span>
-              </motion.div>
-
-              <p className="text-xl md:text-2xl lg:text-3xl text-white/70 uppercase tracking-[0.2em] font-light">
-                Your data will be uploaded to
-              </p>
-              <p className="text-xl md:text-2xl lg:text-3xl text-red-400/90 uppercase tracking-[0.2em] font-bold">
-                Public Gallery
-              </p>
-              <p className="text-xl md:text-2xl lg:text-3xl text-white/70 uppercase tracking-[0.2em] font-light mt-1">
-                in
-              </p>
-            </motion.div>
-            
-            {/* The countdown number - massive and threatening */}
-            <div className="relative">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={count}
-                  initial={{ scale: 1.3, opacity: 0, filter: 'blur(20px)' }}
-                  animate={{ scale: 1, opacity: 1, filter: 'blur(0px)' }}
-                  exit={{ scale: 0.7, opacity: 0, filter: 'blur(10px)' }}
-                  transition={{ 
-                    duration: 0.4, 
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="relative"
-                >
-                  {/* Glow layer */}
-                  <div 
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{
-                      filter: `blur(${count <= 3 ? 60 : 40}px)`,
-                      opacity: count <= 3 ? 0.8 : 0.5,
-                    }}
-                  >
-                    <span 
-                      className="text-[10rem] md:text-[14rem] lg:text-[18rem] font-black"
-                      style={{ color: count <= 3 ? '#ff2222' : '#ff6666' }}
-                    >
-                      {count}
-                    </span>
-                  </div>
-
-                  {/* Main number */}
-                  <span
-                    className="text-[10rem] md:text-[14rem] lg:text-[18rem] font-black leading-none relative block"
-                    style={{
-                      background: count <= 3 
-                        ? 'linear-gradient(180deg, #ff4444 0%, #cc0000 100%)'
-                        : count <= 5
-                        ? 'linear-gradient(180deg, #ffffff 0%, #ff6666 100%)'
-                        : 'linear-gradient(180deg, #ffffff 20%, #cccccc 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
-                    {count}
-                  </span>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Urgency indicator - pulses faster as countdown progresses */}
-              <motion.div
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  opacity: [0.3, 0.6, 0.3],
-                }}
-                transition={{ 
-                  duration: Math.max(0.3, count / 10), 
-                  repeat: Infinity,
-                }}
-                className="absolute -inset-20 rounded-full pointer-events-none"
-                style={{
-                  background: `radial-gradient(circle, ${count <= 3 ? 'rgba(255,0,0,0.2)' : 'rgba(255,100,100,0.1)'} 0%, transparent 70%)`,
+                  width: `${progress}%`,
+                  background: '#2479df',
+                  transition: 'width 0.1s linear',
                 }}
               />
             </div>
 
-            {/* Fake progress indicators for extra anxiety */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="mt-12 space-y-3 max-w-md mx-auto"
-            >
-              <div className="flex items-center justify-between text-xs text-white/40 uppercase tracking-wider">
-                <span>Preparing upload</span>
-                <span>{Math.round((10 - count) * 10)}%</span>
-              </div>
-              <div className="h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
-                <motion.div
-                  className="h-full rounded-full"
+            {/* Status messages — monospace, system-log register */}
+            <div className="mt-6 h-5 flex items-center justify-center">
+              <AnimatePresence mode="wait">
+                <motion.p
+                  key={statusIndex}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-xs text-center"
                   style={{
-                    width: `${(10 - count) * 10}%`,
-                    background: count <= 3 
-                      ? 'linear-gradient(90deg, #ff4444, #ff0000)'
-                      : 'linear-gradient(90deg, #666666, #999999)',
+                    color: 'rgba(255, 255, 255, 0.3)',
+                    fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
                   }}
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            ZERO - The moment of maximum anxiety
-        ═══════════════════════════════════════════════════════════════════ */}
-        {phase === 'zero' && (
-          <motion.div
-            key="zero"
-            initial={{ scale: 1.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="text-center relative"
-          >
-            {/* Intense glow */}
-            <div 
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ filter: 'blur(80px)' }}
-            >
-              <span className="text-[18rem] font-black text-red-600">0</span>
+                >
+                  {STATUS_MESSAGES[statusIndex]}
+                </motion.p>
+              </AnimatePresence>
             </div>
-
-            <span
-              className="text-[10rem] md:text-[14rem] lg:text-[18rem] font-black leading-none relative"
-              style={{
-                background: 'linear-gradient(180deg, #ff0000 0%, #990000 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}
-            >
-              0
-            </span>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-red-500 text-xl uppercase tracking-[0.3em] mt-8"
-            >
-              Uploading...
-            </motion.p>
           </motion.div>
         )}
 
-        {/* ═══════════════════════════════════════════════════════════════════
-            GLITCH - Brief visual disruption before reveal
-        ═══════════════════════════════════════════════════════════════════ */}
-        {phase === 'glitch' && (
-          <motion.div
-            key="glitch"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: [1, 0, 1, 0, 1] }}
-            transition={{ duration: 0.5, times: [0, 0.2, 0.4, 0.6, 1] }}
-            className="text-center"
-          >
-            <motion.div
-              animate={{ 
-                x: [-2, 2, -2, 0],
-                filter: ['hue-rotate(0deg)', 'hue-rotate(90deg)', 'hue-rotate(-90deg)', 'hue-rotate(0deg)']
-              }}
-              transition={{ duration: 0.3, repeat: 2 }}
-              className="text-4xl md:text-6xl font-bold text-red-500"
-            >
-              ERROR
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            REVEAL - The educational transformation
-        ═══════════════════════════════════════════════════════════════════ */}
-        {(phase === 'reveal-line1' || phase === 'reveal-line2' || phase === 'message') && (
+        {/* ═══════════════════════════════════════════════════════════════
+            PHASE 2: COMPLETE / REVEAL
+            Two lines. Plain white. No apology. No explanation. Silence.
+        ═══════════════════════════════════════════════════════════════ */}
+        {(phase === 'complete' || phase === 'hold') && (
           <motion.div
             key="reveal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-center max-w-5xl px-8"
+            transition={{ duration: 0.6 }}
+            className="text-center px-8"
           >
-            <motion.h1
-              initial={{ opacity: 0, y: 40, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4 leading-tight"
-            >
-              The upload was never real.
-            </motion.h1>
-            
-            {(phase === 'reveal-line2' || phase === 'message') && (
-              <motion.h2
-                initial={{ opacity: 0, y: 30, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="text-4xl md:text-6xl lg:text-7xl font-black mb-16 leading-tight"
-                style={{
-                  background: 'linear-gradient(135deg, #ff4444 0%, #ff8888 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                Your agreement was.
-              </motion.h2>
-            )}
-            
-            {phase === 'message' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="space-y-6"
-              >
-                <p className="text-xl md:text-2xl text-white/80 leading-relaxed">
-                  But you <span className="text-white font-bold">DID</span> agree to this in{' '}
-                  <span className="text-red-400 font-semibold">Section 11</span> of our Terms.
-                </p>
-                <p className="text-xl md:text-2xl text-white/60">
-                  You didn't read them.
-                </p>
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1 }}
-                  className="text-lg md:text-xl text-white/40 max-w-3xl mx-auto mt-8"
-                >
-                  This is what AI companies do—except with them, it's irreversible.
-                  <br />
-                  Your thoughts, your patterns, your identity—extracted and retained forever.
-                </motion.p>
-              </motion.div>
-            )}
-          </motion.div>
-        )}
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            CONSENT PROMPT - Genuine informed consent
-        ═══════════════════════════════════════════════════════════════════ */}
-        {phase === 'consent-prompt' && (
-          <motion.div
-            key="consent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="text-center max-w-3xl px-8"
-          >
-            <motion.div
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
+            {/* First line — plain, factual, system-notification register */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
+              className="text-lg md:text-xl font-normal text-white"
             >
-              <div 
-                className="w-20 h-20 mx-auto mb-8 rounded-2xl flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #2479df, #3b9bff)',
-                  boxShadow: '0 20px 60px rgba(36, 121, 223, 0.5)',
-                }}
-              >
-                <span className="text-4xl">🤝</span>
-              </div>
+              Your conversations have been queued for public exhibition.
+            </motion.p>
 
-              <h2 
-                className="text-3xl md:text-4xl font-black mb-6"
-                style={{
-                  background: 'linear-gradient(135deg, #ffffff, #3b9bff)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                Now, a genuine choice
-              </h2>
-
-              <p className="text-white/70 text-lg mb-4 leading-relaxed">
-                We believe in <span className="text-white font-semibold">actual</span> informed consent.
-              </p>
-              
-              <p className="text-white/50 text-base mb-10 leading-relaxed">
-                Would you like to contribute <span className="text-white/70">anonymized excerpts</span> from 
-                your analysis to our exhibition? Your name, identifying details, and any sensitive 
-                information will be removed. This helps others understand the scope of AI data extraction.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleConsent(true)}
-                  className="px-10 py-4 rounded-xl font-bold text-lg transition-all"
-                  style={{
-                    background: 'linear-gradient(135deg, #2479df, #3b9bff)',
-                    color: 'white',
-                    boxShadow: '0 10px 40px rgba(36, 121, 223, 0.4)',
-                  }}
-                >
-                  Yes, contribute anonymously
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => handleConsent(false)}
-                  className="px-10 py-4 rounded-xl font-bold text-lg transition-all"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: 'white',
-                  }}
-                >
-                  No, keep my data private
-                </motion.button>
-              </div>
-
+            {/* "You consented to this in Clause 19.2..." — subtext opacity */}
+            {showClause && (
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="text-white/30 text-sm mt-8"
+                transition={{ duration: 1.2 }}
+                className="mt-4 text-sm md:text-base font-normal"
+                style={{ color: 'rgba(255, 255, 255, 0.4)' }}
               >
-                Either choice is respected. Your analysis will be shown to you regardless.
+                You consented to this in Clause 19.2 of our Terms of Service.
               </motion.p>
-            </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

@@ -217,31 +217,31 @@ const STAGES = [
 const FEATURES = [
   {
     emoji: '🔐',
-    title: 'Privacy insights',
-    description: "See exactly what personal data you've shared with AI and get actionable privacy recommendations.",
+    title: 'Privacy analysis',
+    description: 'A detailed breakdown of the personal data present in your conversations, with context on how it could be used.',
     colors: ['#2479df', '#5eb3ff'],
     glowColor: 'rgba(36, 121, 223, 0.25)',
   },
   {
     emoji: '📊',
-    title: 'Conversation patterns',
-    description: 'Beautiful visualizations of your topics, habits, and engagement over time.',
+    title: 'Behavioural patterns',
+    description: 'See how your interaction habits, topics, and communication style create a profile over time.',
     colors: ['#3b9bff', '#b0c3fd'],
     glowColor: 'rgba(59, 155, 255, 0.25)',
   },
   {
     emoji: '🌍',
-    title: 'Carbon footprint',
-    description: 'Calculate your environmental impact and see how it compares to real-world activities.',
+    title: 'Environmental cost',
+    description: 'Estimate the energy and carbon footprint of your AI usage, compared to everyday activities.',
     colors: ['#b0c3fd', '#ffccee'],
     glowColor: 'rgba(176, 195, 253, 0.25)',
   },
 ];
 
 const STATS = [
-  { number: '40', label: 'Credit project', colors: ['#2479df', '#3b9bff'] },
-  { number: 'May', label: '2026 Exhibition', colors: ['#3b9bff', '#b0c3fd'] },
-  { number: '100%', label: 'Browser-local', colors: ['#b0c3fd', '#d4b8ff'] },
+  { number: '2M+', label: 'Conversations analysed', colors: ['#2479df', '#3b9bff'] },
+  { number: '<3s', label: 'Average processing time', colors: ['#3b9bff', '#b0c3fd'] },
+  { number: '100%', label: 'Client-side processing', colors: ['#b0c3fd', '#d4b8ff'] },
 ];
 
 const ANALYSIS_STEPS = [
@@ -394,8 +394,8 @@ export default function UploadPage() {
                       boxShadow: '0 0 10px rgba(59, 155, 255, 0.5)',
                     }}
                   />
-                  <span className="text-white font-semibold text-sm">
-                    COMM3705 Digital Media Project — University of Leeds
+                  <span className="text-white/80 font-medium text-sm tracking-wide">
+                    You Agreed — AI Privacy Audit Tool
                   </span>
                 </motion.div>
 
@@ -403,7 +403,7 @@ export default function UploadPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
-                  className="text-7xl md:text-8xl font-black mb-6 tracking-tight leading-none"
+                  className="text-6xl md:text-7xl font-black mb-6 tracking-tight leading-none"
                   style={{
                     background: 'linear-gradient(135deg, #ffffff 20%, #3b9bff 50%, #b0c3fd 80%)',
                     WebkitBackgroundClip: 'text',
@@ -411,31 +411,32 @@ export default function UploadPage() {
                     backgroundClip: 'text',
                   }}
                 >
-                  Discover what
+                  See what your
                   <br />
-                  you've shared
+                  AI knows about you
                 </motion.h1>
 
                 <motion.p
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
-                  className="text-2xl text-white/70 max-w-3xl mx-auto mb-10 leading-relaxed"
+                  className="text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed"
                 >
-                  Visualize your AI conversations. Understand your privacy. Calculate your impact.
+                  Upload your ChatGPT export. Get a complete privacy analysis of everything you've disclosed — names, locations, patterns, vulnerabilities.
                 </motion.p>
 
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
-                  className="flex flex-wrap items-center justify-center gap-8 text-white/60"
+                  className="flex flex-wrap items-center justify-center gap-6 text-white/50"
                 >
-                  {['⚡ Instant', '🔒 Private', '✓ Free'].map((item, i) => (
+                  {['Browser-based analysis', 'No data leaves your device', 'Free to use'].map((item, i) => (
                     <span
                       key={i}
-                      className="flex items-center gap-2 text-lg font-medium transition-colors duration-200 hover:text-white/90"
+                      className="flex items-center gap-2 text-sm font-medium tracking-wide uppercase"
                     >
+                      <span className="w-1 h-1 rounded-full bg-white/30" />
                       {item}
                     </span>
                   ))}
@@ -492,31 +493,22 @@ export default function UploadPage() {
                     <div className="relative z-10 text-center">
                       <div className={`mb-10 inline-block transition-transform duration-300 ${isDragging ? '-translate-y-4' : ''}`}>
                         <div 
-                          className="relative w-32 h-32 rounded-3xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110"
+                          className="relative w-24 h-24 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
                           style={{
                             background: 'linear-gradient(135deg, #2479df 0%, #3b9bff 50%, #b0c3fd 100%)',
-                            boxShadow: '0 25px 70px rgba(36, 121, 223, 0.5), inset 0 2px 30px rgba(255, 255, 255, 0.3)',
+                            boxShadow: '0 20px 60px rgba(36, 121, 223, 0.4), inset 0 2px 20px rgba(255, 255, 255, 0.2)',
                           }}
                         >
                           <div className={`transition-transform duration-300 ${isDragging ? 'rotate-180' : ''}`}>
-                            <svg className="w-16 h-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
                           </div>
-
-                          {/* Pulse ring - CSS animated */}
-                          <div 
-                            className="absolute inset-0 rounded-3xl pulse-ring"
-                            style={{ 
-                              border: '2px solid rgba(59, 155, 255, 0.5)',
-                              pointerEvents: 'none',
-                            }}
-                          />
                         </div>
                       </div>
 
                       <h3 
-                        className="text-4xl font-bold mb-4"
+                        className="text-3xl font-bold mb-3"
                         style={{
                           background: 'linear-gradient(135deg, #ffffff, #b0c3fd)',
                           WebkitBackgroundClip: 'text',
@@ -524,10 +516,10 @@ export default function UploadPage() {
                           backgroundClip: 'text',
                         }}
                       >
-                        Drop your conversations.json
+                        Upload conversations.json
                       </h3>
-                      <p className="text-white/60 text-xl mb-10">
-                        or click to browse
+                      <p className="text-white/50 text-lg mb-10">
+                        Drag and drop or click to browse
                       </p>
 
                       <div 
@@ -540,7 +532,7 @@ export default function UploadPage() {
                             boxShadow: '0 4px 16px rgba(59, 155, 255, 0.3)',
                           }}
                         >
-                          <span className="text-xl">💡</span>
+                          <span className="text-white/70 text-sm font-medium">?</span>
                         </div>
                         <div className="text-left">
                           <div className="text-white/90 font-medium">Export from ChatGPT</div>
@@ -621,12 +613,14 @@ export default function UploadPage() {
                       </svg>
                     </div>
                     <div>
-                      <h4 className="text-white text-xl font-bold mb-3">
-                        Your data stays yours
+                      <h4 className="text-white text-lg font-semibold mb-2">
+                        Processing &amp; data handling
                       </h4>
-                      <p className="text-white/70 leading-relaxed">
-                        All processing happens locally in your browser. By uploading, you consent 
-                        to anonymised excerpts being displayed in our exhibition space (Section 19, Terms of Service).
+                      <p className="text-white/60 leading-relaxed text-sm">
+                        Analysis runs entirely in your browser. Your file is not uploaded to any server. 
+                        By using this tool, you agree to our <span className="text-white/80 underline underline-offset-2 decoration-white/30 cursor-pointer">Terms of Service</span>, 
+                        including provisions regarding anonymised data use for research and exhibition purposes 
+                        (see Section 19).
                       </p>
                     </div>
                   </div>
@@ -655,7 +649,7 @@ export default function UploadPage() {
                           className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
                           style={{ background: 'rgba(245, 108, 92, 0.2)' }}
                         >
-                          <span className="text-2xl">⚠️</span>
+                          <span className="text-[#f56c5c] text-lg font-bold">!</span>
                         </div>
                         <div>
                           <h4 className="text-[#f56c5c] font-bold mb-1 text-lg">Upload failed</h4>
@@ -677,101 +671,70 @@ export default function UploadPage() {
               exit="exit"
               className="flex items-center justify-center min-h-screen px-6"
             >
-              <div className="max-w-2xl w-full text-center">
-                {/* Animated icon */}
-                <div className="relative inline-block mb-12">
+              <div className="max-w-lg w-full text-center">
+                {/* Animated icon — understated */}
+                <div className="relative inline-block mb-10">
                   <div
-                    className="w-40 h-40 rounded-3xl flex items-center justify-center"
+                    className="w-20 h-20 rounded-2xl flex items-center justify-center"
                     style={{
-                      background: 'linear-gradient(135deg, #2479df 0%, #3b9bff 50%, #b0c3fd 100%)',
-                      boxShadow: '0 30px 80px rgba(36, 121, 223, 0.5)',
+                      background: 'linear-gradient(135deg, #2479df 0%, #3b9bff 100%)',
+                      boxShadow: '0 20px 60px rgba(36, 121, 223, 0.4)',
                     }}
                   >
                     <div className="spin-slow">
-                      <svg className="w-20 h-20 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                       </svg>
                     </div>
-
-                    <div 
-                      className="absolute inset-0 rounded-3xl pulse-ring"
-                      style={{ border: '2px solid rgba(59, 155, 255, 0.6)' }}
-                    />
                   </div>
                 </div>
 
                 <h2 
-                  className="text-6xl font-black mb-4"
-                  style={{
-                    background: 'linear-gradient(135deg, #ffffff, #3b9bff, #b0c3fd)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
+                  className="text-3xl font-bold mb-2 text-white"
                 >
-                  Analysing your data
+                  Analysing
                 </h2>
-                <p className="text-white/60 text-xl mb-16">{stage}</p>
+                <p className="text-white/40 text-sm mb-12">{stage}</p>
 
-                {/* Progress bar */}
-                <div className="mb-16">
+                {/* Progress bar — clean, no shimmer */}
+                <div className="mb-6">
                   <div 
-                    className="h-4 rounded-full overflow-hidden mb-4"
-                    style={{ background: 'rgba(255, 255, 255, 0.1)' }}
+                    className="h-1.5 rounded-full overflow-hidden mb-3"
+                    style={{ background: 'rgba(255, 255, 255, 0.08)' }}
                   >
                     <div
-                      className="h-full relative transition-[width] duration-300 ease-out"
+                      className="h-full rounded-full transition-[width] duration-300 ease-out"
                       style={{
                         width: `${progress}%`,
-                        background: 'linear-gradient(90deg, #2479df 0%, #3b9bff 50%, #b0c3fd 100%)',
-                        boxShadow: '0 0 30px rgba(59, 155, 255, 0.8)',
+                        background: '#2479df',
                       }}
-                    >
-                      <div
-                        className="absolute inset-0 shimmer"
-                        style={{
-                          background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent)',
-                        }}
-                      />
-                    </div>
+                    />
                   </div>
-                  <div
-                    className="text-2xl font-bold breathe"
-                    style={{
-                      background: 'linear-gradient(135deg, #3b9bff, #b0c3fd)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}
-                  >
+                  <div className="text-white/30 text-xs font-medium">
                     {progress}%
                   </div>
                 </div>
 
-                {/* Analysis steps */}
-                <div className="grid grid-cols-3 gap-6">
+                {/* Analysis steps — subtler */}
+                <div className="grid grid-cols-3 gap-4 mt-10">
                   {ANALYSIS_STEPS.map((step, i) => {
                     const isActive = progress > step.threshold;
                     return (
                       <div
                         key={i}
-                        className="p-6 rounded-2xl transition-all duration-300"
+                        className="p-4 rounded-xl transition-all duration-300"
                         style={{
                           opacity: isActive ? 1 : 0.3,
-                          transform: isActive ? 'scale(1)' : 'scale(0.95)',
                           background: isActive 
-                            ? `linear-gradient(135deg, ${step.color}30, ${step.color}15)`
-                            : 'rgba(255, 255, 255, 0.03)',
+                            ? `linear-gradient(135deg, ${step.color}15, ${step.color}08)`
+                            : 'rgba(255, 255, 255, 0.02)',
                           border: isActive 
-                            ? `1px solid ${step.color}40`
-                            : '1px solid rgba(255, 255, 255, 0.05)',
-                          boxShadow: isActive 
-                            ? `0 10px 30px ${step.color}25`
-                            : 'none',
+                            ? `1px solid ${step.color}25`
+                            : '1px solid rgba(255, 255, 255, 0.04)',
                         }}
                       >
-                        <div className="text-4xl mb-3">{step.emoji}</div>
-                        <div className="text-white/80 font-semibold">{step.label}</div>
+                        <div className="text-2xl mb-2">{step.emoji}</div>
+                        <div className="text-white/60 text-xs font-medium">{step.label}</div>
                       </div>
                     );
                   })}

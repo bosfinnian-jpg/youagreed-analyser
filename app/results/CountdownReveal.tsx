@@ -29,10 +29,11 @@ interface CountdownRevealProps {
 type Phase =
   | 'processing'
   | 'flash'
-  | 'displayed'
   | 'black'
-  | 'line1'
-  | 'line2'
+  | 'reveal-1'
+  | 'reveal-2'
+  | 'reveal-3'
+  | 'reveal-4'
   | 'done';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -42,197 +43,19 @@ type Phase =
 const STATUS_MESSAGES = [
   'Reading conversation history...',
   'Parsing message metadata...',
-  'Extracting entity references...',
-  'Identifying personal data categories...',
-  'Mapping behavioural patterns...',
-  'Cross-referencing disclosure events...',
-  'Encrypting transfer package...',
-  'Connecting to exhibition server...',
-  'Transfer complete.',
+  'Extracting cognitive patterns...',
+  'Mapping emotional disclosure events...',
+  'Identifying vulnerability windows...',
+  'Tokenising conversational data...',
+  'Embedding patterns into model weights...',
+  'Distributing across parameter space...',
+  'Process complete.',
 ];
 
-const EXHIBITION_URL = 'exhibition.youagreed.co.uk/live';
-
-// ─────────────────────────────────────────────────────────────────────────────
-// GALLERY CARD
-// ─────────────────────────────────────────────────────────────────────────────
-
-function GalleryCard({ data }: { data: RevealData }) {
-  const name = data.name || 'Anonymous';
-  const location = data.location || 'United Kingdom';
-  const window = data.vulnerabilityWindow || 'Late Night (12am–6am)';
-  const tone = data.emotionalTone || 'seeking help';
-  const topic = data.topTopic || 'personal struggles';
-  const count = data.messageCount;
-
-  const displayQuote =
-    data.revealingMoment?.content ||
-    "Give me reasons why you shouldn't care what anyone thinks...";
-
-  const displayTime =
-    data.revealingMoment?.timestamp || '01/02/2025, 01:33:15';
-
-  const entryNum = String(Math.floor(Math.random() * 60) + 10).padStart(3, '0');
-
-  return (
-    <div style={{
-      width: '100%',
-      maxWidth: '700px',
-      padding: '0 2.5rem',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      {/* Header */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingBottom: '1.4rem',
-        borderBottom: '1px solid rgba(255,255,255,0.1)',
-        marginBottom: '2.4rem',
-      }}>
-        <div>
-          <p style={{
-            fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-            fontSize: '9px',
-            letterSpacing: '0.18em',
-            color: 'rgba(255,255,255,0.35)',
-            textTransform: 'uppercase',
-            marginBottom: '0.35rem',
-          }}>
-            YOU AGREED. — Public Exhibition · Leeds Television Studio
-          </p>
-          <p style={{
-            fontFamily: '"Courier New", monospace',
-            fontSize: '9px',
-            color: 'rgba(255,255,255,0.18)',
-            letterSpacing: '0.06em',
-          }}>
-            {EXHIBITION_URL} · Entry #{entryNum}
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            background: '#4ade80',
-            boxShadow: '0 0 10px rgba(74,222,128,0.7)',
-            animation: 'livePulse 1.6s ease-in-out infinite',
-          }} />
-          <p style={{
-            fontFamily: '"Courier New", monospace',
-            fontSize: '9px',
-            color: 'rgba(74,222,128,0.7)',
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-          }}>
-            Live
-          </p>
-        </div>
-      </div>
-
-      {/* Name */}
-      <div style={{ marginBottom: '2rem' }}>
-        <p style={{
-          fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-          fontSize: '9px',
-          letterSpacing: '0.16em',
-          color: 'rgba(255,255,255,0.22)',
-          textTransform: 'uppercase',
-          marginBottom: '0.6rem',
-        }}>
-          Submitted by
-        </p>
-        <p style={{
-          fontFamily: '"Georgia", "Times New Roman", serif',
-          fontSize: 'clamp(1.05rem, 1.9vw, 1.25rem)',
-          color: 'rgba(255,255,255,0.7)',
-          fontWeight: 400,
-          letterSpacing: '-0.01em',
-        }}>
-          {name} · {location}
-        </p>
-      </div>
-
-      {/* The quote */}
-      <div style={{ marginBottom: '2.4rem' }}>
-        <p style={{
-          fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-          fontSize: '9px',
-          letterSpacing: '0.16em',
-          color: 'rgba(255,255,255,0.22)',
-          textTransform: 'uppercase',
-          marginBottom: '1rem',
-        }}>
-          Extracted · {displayTime}
-        </p>
-        <p style={{
-          fontFamily: '"Georgia", "Times New Roman", serif',
-          fontSize: 'clamp(1.2rem, 2.5vw, 1.65rem)',
-          color: 'rgba(255,255,255,0.92)',
-          lineHeight: 1.62,
-          fontWeight: 400,
-          letterSpacing: '-0.015em',
-          fontStyle: 'italic',
-        }}>
-          "{displayQuote}"
-        </p>
-      </div>
-
-      {/* Metadata grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gap: '1.5rem',
-        paddingTop: '1.4rem',
-        borderTop: '1px solid rgba(255,255,255,0.07)',
-        marginBottom: '1.8rem',
-      }}>
-        {[
-          { label: 'Peak vulnerability', value: window },
-          { label: 'Emotional tone', value: tone },
-          { label: 'Primary concern', value: topic },
-        ].map(({ label, value }) => (
-          <div key={label}>
-            <p style={{
-              fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-              fontSize: '8px',
-              letterSpacing: '0.14em',
-              color: 'rgba(255,255,255,0.18)',
-              textTransform: 'uppercase',
-              marginBottom: '0.4rem',
-            }}>
-              {label}
-            </p>
-            <p style={{
-              fontFamily: '"Georgia", serif',
-              fontSize: '0.82rem',
-              color: 'rgba(255,255,255,0.5)',
-              fontWeight: 400,
-            }}>
-              {value}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {/* Footer */}
-      <p style={{
-        fontFamily: '"Courier New", monospace',
-        fontSize: '8px',
-        color: 'rgba(255,255,255,0.1)',
-        letterSpacing: '0.1em',
-        textTransform: 'uppercase',
-      }}>
-        Consented via Clause 19.2
-        {count ? ` · ${count} messages analysed` : ''}
-        {' · Now displaying on 150" exhibition screen'}
-      </p>
-    </div>
-  );
-}
+const TYPE = {
+  serif: '"EB Garamond", Georgia, "Times New Roman", serif',
+  mono: '"Courier New", monospace',
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MAIN COMPONENT
@@ -247,14 +70,14 @@ export default function CountdownReveal({
   const [progress, setProgress] = useState(0);
   const [statusIndex, setStatusIndex] = useState(0);
   const [showSkip, setShowSkip] = useState(false);
-  const [urlVisible, setUrlVisible] = useState(false);
+  const [paramCount, setParamCount] = useState(0);
   const animFrameRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
 
-  // Progress bar
+  // ── Progress bar ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (phase !== 'processing') return;
-    const TOTAL = 11000;
+    const TOTAL = 12000;
 
     const tick = (ts: number) => {
       if (!startTimeRef.current) startTimeRef.current = ts;
@@ -263,15 +86,15 @@ export default function CountdownReveal({
       const eased = raw < 0.5
         ? 2 * raw * raw
         : 1 - Math.pow(-2 * raw + 2, 2) / 2;
-      // Small hesitation ~60% — feels like a large file transferring
-      const adjusted = (raw > 0.55 && raw < 0.65) ? eased * 0.92 : eased;
+      // Hesitation around 60-70% — feels like heavy computation
+      const adjusted = (raw > 0.55 && raw < 0.70) ? eased * 0.88 : eased;
       setProgress(adjusted * 100);
 
       if (raw < 1) {
         animFrameRef.current = requestAnimationFrame(tick);
       } else {
         setProgress(100);
-        setTimeout(() => setPhase('flash'), 900);
+        setTimeout(() => setPhase('flash'), 1200);
       }
     };
 
@@ -279,7 +102,7 @@ export default function CountdownReveal({
     return () => { if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current); };
   }, [phase]);
 
-  // Status messages
+  // ── Status messages ───────────────────────────────────────────────────────
   useEffect(() => {
     if (phase !== 'processing') return;
     let current = 0;
@@ -288,49 +111,74 @@ export default function CountdownReveal({
       current += 1;
       if (current < STATUS_MESSAGES.length - 1) {
         setStatusIndex(current);
-        timer = setTimeout(advance, 1200 + Math.random() * 500);
+        timer = setTimeout(advance, 1300 + Math.random() * 500);
       } else {
         setStatusIndex(STATUS_MESSAGES.length - 1);
       }
     };
 
-    let timer = setTimeout(advance, 1300);
-    const urlTimer = setTimeout(() => setUrlVisible(true), 7500);
-
-    return () => { clearTimeout(timer); clearTimeout(urlTimer); };
+    let timer = setTimeout(advance, 1400);
+    return () => { clearTimeout(timer); };
   }, [phase]);
 
-  // Phase chain
+  // ── Parameter counter animation (during processing) ───────────────────────
+  useEffect(() => {
+    if (phase !== 'processing') return;
+    const target = 175000000000; // 175 billion
+    let frame: number;
+    let start: number | null = null;
+
+    const tick = (ts: number) => {
+      if (!start) start = ts;
+      const elapsed = ts - start;
+      const raw = Math.min(elapsed / 12000, 1);
+      const eased = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+      setParamCount(Math.floor(eased * target));
+      if (raw < 1) frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [phase]);
+
+  // ── Phase chain ───────────────────────────────────────────────────────────
   useEffect(() => {
     if (phase === 'flash') {
-      const t = setTimeout(() => setPhase('displayed'), 80);
-      return () => clearTimeout(t);
-    }
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase === 'displayed') {
-      const t = setTimeout(() => setPhase('black'), 4000);
+      const t = setTimeout(() => setPhase('black'), 100);
       return () => clearTimeout(t);
     }
   }, [phase]);
 
   useEffect(() => {
     if (phase === 'black') {
-      const t = setTimeout(() => setPhase('line1'), 3000);
+      const t = setTimeout(() => setPhase('reveal-1'), 2500);
       return () => clearTimeout(t);
     }
   }, [phase]);
 
   useEffect(() => {
-    if (phase === 'line1') {
-      const t = setTimeout(() => setPhase('line2'), 4000);
+    if (phase === 'reveal-1') {
+      const t = setTimeout(() => setPhase('reveal-2'), 5000);
       return () => clearTimeout(t);
     }
   }, [phase]);
 
   useEffect(() => {
-    if (phase === 'line2') {
+    if (phase === 'reveal-2') {
+      const t = setTimeout(() => setPhase('reveal-3'), 5500);
+      return () => clearTimeout(t);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === 'reveal-3') {
+      const t = setTimeout(() => setPhase('reveal-4'), 5500);
+      return () => clearTimeout(t);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === 'reveal-4') {
       const t = setTimeout(() => {
         onConsentDecision?.(false);
         setPhase('done');
@@ -340,9 +188,9 @@ export default function CountdownReveal({
     }
   }, [phase, onComplete, onConsentDecision]);
 
-  // Skip
+  // ── Skip ──────────────────────────────────────────────────────────────────
   useEffect(() => {
-    const t = setTimeout(() => setShowSkip(true), 4000);
+    const t = setTimeout(() => setShowSkip(true), 5000);
     return () => clearTimeout(t);
   }, []);
 
@@ -353,19 +201,34 @@ export default function CountdownReveal({
     onComplete();
   }, [onComplete, onConsentDecision]);
 
-  const getBg = () => {
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  const formatParams = (n: number) => {
+    if (n >= 1e9) return `${(n / 1e9).toFixed(1)}B`;
+    if (n >= 1e6) return `${(n / 1e6).toFixed(0)}M`;
+    if (n >= 1e3) return `${(n / 1e3).toFixed(0)}K`;
+    return String(n);
+  };
+
+  const messageCount = data.messageCount || 0;
+  const name = data.name || 'Anonymous';
+
+  const getBg = (): string => {
     if (phase === 'flash') return '#ffffff';
-    if (phase === 'displayed') return '#0a0a0a';
     if (phase === 'black') return '#000000';
+    if (phase === 'processing') return '#f5f4f0';
     return '#f5f4f0';
   };
+
+  const isRevealPhase = phase.startsWith('reveal');
 
   return (
     <>
       <style>{`
-        @keyframes livePulse {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.3; transform: scale(0.8); }
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+        body::before {
+          content:''; position:fixed; inset:0; z-index:10000;
+          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+          opacity:0.028; pointer-events:none;
         }
       `}</style>
 
@@ -377,11 +240,12 @@ export default function CountdownReveal({
         alignItems: 'center',
         justifyContent: 'center',
         background: getBg(),
+        transition: phase === 'flash' ? 'none' : 'background 1.5s ease',
       }}>
 
         {/* Skip */}
         <AnimatePresence>
-          {showSkip && phase === 'processing' && (
+          {showSkip && (phase === 'processing' || isRevealPhase) && (
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -389,20 +253,14 @@ export default function CountdownReveal({
               transition={{ duration: 1.2 }}
               onClick={handleSkip}
               style={{
-                position: 'absolute',
-                top: '2rem',
-                right: '2rem',
-                fontFamily: '"Courier New", monospace',
-                fontSize: '10px',
+                position: 'absolute', top: '2rem', right: '2rem',
+                fontFamily: TYPE.mono, fontSize: '10px',
                 letterSpacing: '0.12em',
-                color: 'rgba(0,0,0,0.18)',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                zIndex: 60,
+                color: phase === 'processing' ? 'rgba(0,0,0,0.18)' : 'rgba(26,26,26,0.18)',
+                background: 'none', border: 'none', cursor: 'pointer', zIndex: 60,
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = 'rgba(0,0,0,0.45)')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'rgba(0,0,0,0.18)')}
+              onMouseEnter={e => (e.currentTarget.style.color = phase === 'processing' ? 'rgba(0,0,0,0.45)' : 'rgba(26,26,26,0.45)')}
+              onMouseLeave={e => (e.currentTarget.style.color = phase === 'processing' ? 'rgba(0,0,0,0.18)' : 'rgba(26,26,26,0.18)')}
             >
               SKIP
             </motion.button>
@@ -417,40 +275,36 @@ export default function CountdownReveal({
               key="processing"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.3 } }}
+              exit={{ opacity: 0, transition: { duration: 0.4 } }}
               transition={{ duration: 0.5 }}
-              style={{ width: '100%', maxWidth: '380px', padding: '0 2rem' }}
+              style={{ width: '100%', maxWidth: '420px', padding: '0 2rem' }}
             >
+              {/* Reference number */}
               <p style={{
-                fontFamily: '"Courier New", monospace',
-                fontSize: '10px',
-                color: 'rgba(0,0,0,0.22)',
-                letterSpacing: '0.08em',
-                marginBottom: '2.2rem',
+                fontFamily: TYPE.mono, fontSize: '10px',
+                color: 'rgba(0,0,0,0.22)', letterSpacing: '0.08em',
+                marginBottom: '2.5rem',
               }}>
                 REF: YA-{Date.now().toString(36).toUpperCase().slice(-8)}
               </p>
 
+              {/* Progress bar */}
               <div style={{
-                width: '100%',
-                height: '1px',
+                width: '100%', height: '1px',
                 background: 'rgba(0,0,0,0.08)',
-                marginBottom: '0.75rem',
-                overflow: 'hidden',
+                marginBottom: '0.75rem', overflow: 'hidden',
               }}>
                 <div style={{
                   width: `${Math.min(progress, 100)}%`,
-                  height: '100%',
-                  background: '#1a1a1a',
+                  height: '100%', background: '#1a1a1a',
                   transition: 'width 0.12s linear',
                 }} />
               </div>
 
+              {/* Status + percentage */}
               <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1.6rem',
+                display: 'flex', justifyContent: 'space-between',
+                alignItems: 'center', marginBottom: '2rem',
               }}>
                 <AnimatePresence mode="wait">
                   <motion.p
@@ -460,53 +314,65 @@ export default function CountdownReveal({
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.25 }}
                     style={{
-                      fontFamily: '"Courier New", monospace',
-                      fontSize: '11px',
-                      color: 'rgba(0,0,0,0.38)',
-                      letterSpacing: '0.04em',
+                      fontFamily: TYPE.mono, fontSize: '11px',
+                      color: 'rgba(0,0,0,0.38)', letterSpacing: '0.04em',
                     }}
                   >
                     {STATUS_MESSAGES[statusIndex]}
                   </motion.p>
                 </AnimatePresence>
                 <p style={{
-                  fontFamily: '"Courier New", monospace',
-                  fontSize: '11px',
+                  fontFamily: TYPE.mono, fontSize: '11px',
                   color: 'rgba(0,0,0,0.28)',
                 }}>
                   {Math.round(Math.min(progress, 100))}%
                 </p>
               </div>
 
-              {/* Destination URL — appears late, makes the threat specific */}
+              {/* Parameter counter — appears after 3 seconds */}
               <AnimatePresence>
-                {urlVisible && (
+                {progress > 25 && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 1.4 }}
+                    transition={{ duration: 1.5 }}
                     style={{
-                      paddingTop: '1.2rem',
+                      paddingTop: '1.5rem',
                       borderTop: '1px solid rgba(0,0,0,0.06)',
                     }}
                   >
                     <p style={{
-                      fontFamily: '"Courier New", monospace',
-                      fontSize: '9px',
-                      color: 'rgba(0,0,0,0.16)',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      marginBottom: '0.3rem',
+                      fontFamily: TYPE.mono, fontSize: '9px',
+                      color: 'rgba(0,0,0,0.16)', letterSpacing: '0.12em',
+                      textTransform: 'uppercase' as const, marginBottom: '0.4rem',
                     }}>
-                      Destination
+                      Model parameters affected
                     </p>
                     <p style={{
-                      fontFamily: '"Courier New", monospace',
-                      fontSize: '10px',
-                      color: 'rgba(0,0,0,0.3)',
-                      letterSpacing: '0.04em',
+                      fontFamily: TYPE.mono, fontSize: '13px',
+                      color: 'rgba(0,0,0,0.32)', letterSpacing: '0.04em',
                     }}>
-                      {EXHIBITION_URL}
+                      {formatParams(paramCount)}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Irreversibility notice — appears near end */}
+              <AnimatePresence>
+                {progress > 75 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 2 }}
+                    style={{ marginTop: '1.5rem' }}
+                  >
+                    <p style={{
+                      fontFamily: TYPE.mono, fontSize: '9px',
+                      color: 'rgba(168,36,36,0.35)', letterSpacing: '0.1em',
+                      textTransform: 'uppercase' as const,
+                    }}>
+                      This process is irreversible
                     </p>
                   </motion.div>
                 )}
@@ -517,84 +383,126 @@ export default function CountdownReveal({
           {/* ── FLASH — white cut ──────────────────────────────────────── */}
           {phase === 'flash' && <div key="flash" style={{ display: 'none' }} />}
 
-          {/* ── DISPLAYED ─────────────────────────────────────────────── */}
-          {phase === 'displayed' && (
+          {/* ── BLACK — breathing room ─────────────────────────────────── */}
+          {phase === 'black' && (
             <motion.div
-              key="displayed"
+              key="black"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 1, transition: { duration: 0 } }}
-              transition={{ duration: 0.9 }}
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '100vh',
-              }}
-            >
-              <GalleryCard data={data} />
-            </motion.div>
+              transition={{ duration: 1.5 }}
+              style={{ position: 'fixed', inset: 0, background: '#000' }}
+            />
           )}
 
-          {/* ── BLACK ─────────────────────────────────────────────────── */}
-          {phase === 'black' && (
-            <div key="black" style={{
-              position: 'fixed',
-              inset: 0,
-              background: '#000',
-            }} />
-          )}
-
-          {/* ── REVEAL ────────────────────────────────────────────────── */}
-          {(phase === 'line1' || phase === 'line2') && (
+          {/* ── REVEAL SEQUENCE ────────────────────────────────────────── */}
+          {isRevealPhase && (
             <motion.div
               key="reveal"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.8 }}
+              exit={{ opacity: 0, transition: { duration: 1.5 } }}
+              transition={{ duration: 2 }}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '2.8rem',
-                textAlign: 'center',
-                padding: '0 2rem',
-                maxWidth: '600px',
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                textAlign: 'center', padding: '0 2.5rem',
+                maxWidth: '620px', gap: '0',
               }}
             >
+              {/* Beat 1: What was taken */}
               <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.0, delay: 0.1 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.5, delay: 0.2 }}
                 style={{
-                  fontFamily: '"Georgia", "Times New Roman", serif',
-                  fontSize: 'clamp(1.15rem, 2.6vw, 1.55rem)',
-                  color: '#1a1a1a',
-                  lineHeight: 1.5,
-                  fontWeight: 400,
-                  letterSpacing: '-0.01em',
+                  fontFamily: TYPE.serif,
+                  fontSize: 'clamp(1.15rem, 2.6vw, 1.5rem)',
+                  color: '#1a1a1a', lineHeight: 1.65,
+                  fontWeight: 400, letterSpacing: '-0.01em',
                 }}
               >
-                The upload was never real.
+                {messageCount > 0
+                  ? `${messageCount.toLocaleString()} messages.`
+                  : 'Your entire conversation history.'
+                }
               </motion.p>
 
-              {phase === 'line2' && (
+              {/* Beat 2: Embedded permanently */}
+              {(phase === 'reveal-2' || phase === 'reveal-3' || phase === 'reveal-4') && (
+                <motion.p
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 1.8, delay: 0.3 }}
+                  style={{
+                    fontFamily: TYPE.serif,
+                    fontSize: 'clamp(1.15rem, 2.6vw, 1.5rem)',
+                    color: '#1a1a1a', lineHeight: 1.65,
+                    fontWeight: 400, letterSpacing: '-0.01em',
+                    marginTop: '2.2rem',
+                  }}
+                >
+                  Every pattern. Every vulnerability. Every thought you believed was private.
+                  <br />
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 2.2, duration: 1.5 }}
+                    style={{ color: 'rgba(168,36,36,0.85)' }}
+                  >
+                    Now embedded in model weights you cannot inspect, audit, or delete.
+                  </motion.span>
+                </motion.p>
+              )}
+
+              {/* Beat 3: The consent line */}
+              {(phase === 'reveal-3' || phase === 'reveal-4') && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 2, delay: 0.5 }}
+                  style={{ marginTop: '3.5rem' }}
+                >
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ duration: 1.5, delay: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    style={{
+                      width: '40px', height: '1px', margin: '0 auto 2rem',
+                      background: 'rgba(26,26,26,0.15)', transformOrigin: 'center',
+                    }}
+                  />
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 2, delay: 1 }}
+                    style={{
+                      fontFamily: TYPE.serif,
+                      fontSize: 'clamp(1.15rem, 2.6vw, 1.5rem)',
+                      color: '#1a1a1a', lineHeight: 1.65,
+                      fontWeight: 400, letterSpacing: '-0.01em',
+                    }}
+                  >
+                    You agreed to this.
+                  </motion.p>
+                </motion.div>
+              )}
+
+              {/* Beat 4: The kicker */}
+              {phase === 'reveal-4' && (
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 2.2, delay: 1.4 }}
+                  transition={{ duration: 2.5, delay: 1.5 }}
                   style={{
-                    fontFamily: '"Georgia", "Times New Roman", serif',
-                    fontSize: 'clamp(1.15rem, 2.6vw, 1.55rem)',
-                    color: '#1a1a1a',
-                    lineHeight: 1.5,
-                    fontWeight: 400,
-                    letterSpacing: '-0.01em',
+                    fontFamily: TYPE.serif,
+                    fontSize: 'clamp(0.95rem, 1.8vw, 1.1rem)',
+                    color: 'rgba(26,26,26,0.35)',
+                    lineHeight: 1.65, fontStyle: 'italic',
+                    fontWeight: 400, letterSpacing: '-0.005em',
+                    marginTop: '2rem',
                   }}
                 >
-                  Your agreement was.
+                  Clause 19.2. You scrolled past it.
                 </motion.p>
               )}
             </motion.div>

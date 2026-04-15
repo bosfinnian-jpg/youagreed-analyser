@@ -10,7 +10,7 @@ import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
 
 // ============================================================================
-// TYPES
+// TYPES — extended to include deep parser fields
 // ============================================================================
 interface AnalysisResult {
   privacyScore: number;
@@ -30,13 +30,34 @@ interface AnalysisResult {
     repetitiveThemes: any[];
   };
   juiciestMoments: any[];
-  stats: {
+  stats?: {
     totalMessages: number;
     userMessages: number;
     assistantMessages: number;
     timeSpan: string;
     avgMessageLength: number;
   };
+  // Deep parser fields (from analyzeExport → deepParser)
+  rawStats?: {
+    totalMessages: number;
+    userMessages: number;
+    timeSpan: string;
+    avgMessageLength: number;
+  };
+  totalUserMessages?: number;
+  timespan?: { first: string; last: string; days: number };
+  emotionalTimeline?: any;
+  commercialProfile?: any;
+  dependency?: any;
+  lifeEvents?: any[];
+  topicsByPeriod?: { early: string[]; mid: string[]; recent: string[] };
+  hourDistribution?: number[];
+  dayDistribution?: number[];
+  nighttimeRatio?: number;
+  avgIntimacy?: number;
+  avgAnxiety?: number;
+  mostVulnerablePeriod?: string;
+  typeBreakdown?: Record<string, number>;
 }
 
 type Stage = 'countdown' | 'dashboard';
@@ -247,7 +268,7 @@ const RISK_SCENARIOS = [
     heading: 'You did not get the interview. You were never told why.',
     body: 'In 2024, a US federal court allowed a case against Workday to proceed — a plaintiff had applied to over 100 jobs using Workday\'s AI screening tools and was rejected from every single one. The claim: the system detected indicators of anxiety and depression. 83% of employers now use automated tools at some point in hiring.',
     precedent: 'Humantic AI generates personality profiles from written language alone, claiming 78-85% accuracy. No test required. No consent requested. If your conversation data has been used in model training, the patterns are embedded in the model that reads your next cover letter.',
-    check: (r: AnalysisResult) => (r.stats.userMessages || 0) > 200,
+    check: (r: AnalysisResult) => (r.totalUserMessages || r.stats?.userMessages || 0) > 200,
   },
   {
     id: 'targeting',
@@ -293,8 +314,9 @@ function RiskBlock({ scenario, index, results }: { scenario: typeof RISK_SCENARI
   const generateAI = async () => {
     setAiLoading(true);
     try {
+      const stats = results.stats || results.rawStats;
       const summary = {
-        userMessages: results.stats.userMessages,
+        userMessages: stats?.userMessages || results.totalUserMessages,
         topThemes: results.findings.repetitiveThemes?.slice(0, 4).map((t: any) => t.theme),
         sensitiveTopics: results.findings.sensitiveTopics?.slice(0, 3).map((t: any) => t.category),
         lateNightMessages: results.findings.vulnerabilityPatterns?.find((p: any) =>
@@ -388,8 +410,9 @@ Rules: Cold, clinical, specific. Use their actual numbers. At least one sentence
 // COGNITIVE PROFILE GENERATOR
 // ============================================================================
 function generateCognitiveProfile(results: AnalysisResult) {
-  const totalMessages = results.stats.userMessages;
-  const avgLength = results.stats.avgMessageLength;
+  const stats = results.stats || results.rawStats;
+  const totalMessages = stats?.userMessages || results.totalUserMessages || 0;
+  const avgLength = stats?.avgMessageLength || 0;
   const themes = results.findings.repetitiveThemes || [];
   const analyticalScore = Math.min(95, (avgLength / 300) * 100 + 20);
   const creativeScore = Math.min(85, themes.length * 8 + 25);
@@ -428,10 +451,7 @@ export default function ResultsPage() {
   }, [router]);
 
   const handleUpload = useCallback((sourceId: string, file: File) => {
-    // For exhibition: just mark as connected
-    // In production: parse the file and merge data into results
     setSources(prev => prev.map(s => s.id === sourceId ? { ...s, connected: true } : s));
-    // TODO: parse file and enrich results
   }, []);
 
   if (!results) {
@@ -446,6 +466,7 @@ export default function ResultsPage() {
   }
 
   if (stage === 'countdown') {
+    const stats = results.stats || results.rawStats;
     const revealData: RevealData = {
       name: results.findings.personalInfo.names[0]?.name,
       location: results.findings.personalInfo.locations[0]?.location,
@@ -454,8 +475,20 @@ export default function ResultsPage() {
         timestamp: new Date(results.juiciestMoments[0].timestamp).toLocaleString('en-GB'),
         content: results.juiciestMoments[0].excerpt?.substring(0, 180) || '',
       } : undefined,
-      messageCount: results.stats.totalMessages,
+      messageCount: results.totalUserMessages || stats?.totalMessages,
       topTopic: results.findings.repetitiveThemes[0]?.theme,
+      // Deep parser fields — passed through if available
+      lateNightCount: results.hourDistribution
+        ? results.hourDistribution.slice(0, 5).reduce((a: number, b: number) => a + b, 0)
+        : undefined,
+      lifeEventCount: results.lifeEvents?.length,
+      crisisPeriods: results.emotionalTimeline?.crisisPeriods?.length,
+      dependencyScore: results.dependency?.dependencyScore,
+      topSegment: results.commercialProfile?.segments?.[0]?.label,
+      firstMessageDate: results.timespan?.first
+        ? new Date(results.timespan.first).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+        : undefined,
+      confessionalCount: results.typeBreakdown?.confessional,
     };
 
     return (
@@ -466,13 +499,11 @@ export default function ResultsPage() {
     );
   }
 
-  const connectedSources = sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>);
-
   return (
     <DashboardLayout results={results} page={page} setPage={setPage}>
       {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={setPage} />}
       {page === 'profile' && <ProfilePage results={results} />}
-      {page === 'sources' && <SourcesPage connectedSources={connectedSources} onUpload={handleUpload} />}
+      {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} />}
       {page === 'risk' && <RiskPage results={results} />}
       {page === 'understand' && <UnderstandPage />}
     </DashboardLayout>

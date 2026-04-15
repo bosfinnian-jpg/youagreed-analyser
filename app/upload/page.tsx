@@ -2,7 +2,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { analyseChatHistory } from '@/lib/analyser';
+import { analyzeExport } from '@/app/results/analyzeExport';
 
 // CSS Keyframes injected once - much more performant than JS animations
 const GlobalStyles = () => (
@@ -298,7 +298,7 @@ export default function UploadPage() {
       setStage(STAGES[3]);
       await new Promise(resolve => setTimeout(resolve, 250));
 
-      const results = analyseChatHistory(jsonData);
+      await analyzeExport(jsonData);
       setProgress(70);
       setStage(STAGES[4]);
       await new Promise(resolve => setTimeout(resolve, 250));

@@ -5,6 +5,12 @@ import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE, type DashPage } from './DashboardLayout';
 import DataProductSummary from './DataProductSummary';
 import EmotionalTimelineChart from './EmotionalTimelineChart';
+import PersonalisedSummary from './PersonalisedSummary';
+import ScoreBreakdown from './ScoreBreakdown';
+import ReduceExposure from './ReduceExposure';
+import ExposureToggle from './ExposureToggle';
+import { ConfidenceLimitations, getActiveEmptyStates, EmptyStateNotice } from './EmptyStatesAndLimitations';
+import ClosureSection from './ClosureSection';
 
 function ExposureRing({ score }: { score: number }) {
   const [count, setCount] = useState(0);
@@ -75,7 +81,7 @@ function OpeningQuoteCard({ results }: { results: any }) {
         Most exposing moment
       </p>
       <blockquote style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.2rem)', fontStyle: 'italic', color: PALETTE.ink, lineHeight: 1.6, marginBottom: '1.2rem' }}>
-        "{moment.excerpt?.substring(0, 220)}{moment.excerpt?.length > 220 ? '...' : ''}"
+        &ldquo;{moment.excerpt?.substring(0, 220)}{moment.excerpt?.length > 220 ? '...' : ''}&rdquo;
       </blockquote>
       {date && (
         <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const }}>
@@ -128,6 +134,9 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
+  // Check for empty states
+  const emptyStates = results ? getActiveEmptyStates(results) : [];
+
   const findings = [
     results?.findings?.personalInfo?.names?.length > 0 && {
       label: 'People identified',
@@ -160,6 +169,28 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
       page: 'profile' as DashPage,
     },
   ].filter(Boolean) as any[];
+
+  // If no findings, show relevant empty states
+  if (findings.length === 0) {
+    return (
+      <div ref={ref}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1rem' }}>
+          Key findings
+        </p>
+        {emptyStates.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
+            {emptyStates.slice(0, 3).map(state => (
+              <EmptyStateNotice key={state.key} state={state} />
+            ))}
+          </div>
+        ) : (
+          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, lineHeight: 1.7 }}>
+            Insufficient data to generate findings. This does not indicate the absence of exploitable information.
+          </p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div ref={ref}>
@@ -307,7 +338,7 @@ export default function OverviewPage({ results, sources, setPage }: {
         </div>
       </div>
 
-      {/* Row 3: Emotional timeline — only with deep data */}
+      {/* Row 3: Emotional timeline */}
       {hasDeepData && results.emotionalTimeline?.weeks?.length > 2 && (
         <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderTop: 'none', padding: '2rem', marginBottom: '1px' }}>
           <EmotionalTimelineChart
@@ -317,12 +348,45 @@ export default function OverviewPage({ results, sources, setPage }: {
         </div>
       )}
 
-      {/* Row 4: Data product summary (AI) — only with deep data */}
+      {/* NEW — Personalised Summary */}
+      {hasDeepData && (
+        <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderTop: 'none', padding: '2rem', marginBottom: '1px' }}>
+          <PersonalisedSummary analysis={results} />
+        </div>
+      )}
+
+      {/* Row 4: Data product summary (AI) */}
       {hasDeepData && (
         <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderTop: 'none', padding: '2rem', marginBottom: '1px' }}>
           <DataProductSummary analysis={results} />
         </div>
       )}
+
+      {/* NEW — Score Breakdown */}
+      {hasDeepData && (
+        <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderTop: 'none', padding: '2rem', marginBottom: '1px' }}>
+          <ScoreBreakdown analysis={results} />
+        </div>
+      )}
+
+      {/* NEW — Exposure Toggle (interactive) */}
+      {hasDeepData && (
+        <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderTop: 'none', padding: '2rem', marginBottom: '1px' }}>
+          <ExposureToggle analysis={results} />
+        </div>
+      )}
+
+      {/* NEW — Reduce Exposure */}
+      {hasDeepData && (
+        <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderTop: 'none', padding: '2rem', marginBottom: '1px' }}>
+          <ReduceExposure analysis={results} />
+        </div>
+      )}
+
+      {/* NEW — Confidence & Limitations */}
+      <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderTop: 'none', padding: '2rem', marginBottom: '1px' }}>
+        <ConfidenceLimitations />
+      </div>
 
       {/* Row 5: Nav strip */}
       <motion.div
@@ -348,6 +412,11 @@ export default function OverviewPage({ results, sources, setPage }: {
           </button>
         ))}
       </motion.div>
+
+      {/* NEW — Closure (final beat) */}
+      {hasDeepData && (
+        <ClosureSection analysis={results} />
+      )}
 
     </div>
   );

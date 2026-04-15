@@ -397,7 +397,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
                 }}
               >
                 <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.08em', color: PALETTE.inkMuted }}>{seg.label}</p>
-                <div style={{ position: 'relative', height: '2px', background: PALETTE.bgElevated' }}>
+                <div style={{ position: 'relative', height: '2px', background: PALETTE.bgElevated }}>
                   <motion.div
                     initial={{ scaleX: 0 }}
                     animate={isInView ? { scaleX: seg.confidence / 100 } : {}}

@@ -22,28 +22,10 @@ interface LocationMention {
 }
 
 interface CognitiveProfile {
-  thinkingStyles: {
-    style: string;
-    percentage: number;
-    examples: string[];
-    icon: string;
-    color: string;
-  }[];
-  communicationPatterns: {
-    pattern: string;
-    frequency: number;
-    description: string;
-  }[];
-  problemSolvingApproach: {
-    type: string;
-    score: number;
-    traits: string[];
-  };
-  cognitiveBiases: {
-    bias: string;
-    strength: number;
-    manifestation: string;
-  }[];
+  thinkingStyles: { style: string; percentage: number; examples: string[]; }[];
+  communicationPatterns: { pattern: string; frequency: number; description: string; }[];
+  problemSolvingApproach: { type: string; score: number; traits: string[]; };
+  cognitiveBiases: { bias: string; strength: number; manifestation: string; }[];
 }
 
 interface AnalysisResult {
@@ -77,7 +59,7 @@ interface AnalysisResult {
 type Stage = 'countdown' | 'afterreveal' | 'results';
 
 // ============================================================================
-// SHARED STYLES
+// DESIGN SYSTEM
 // ============================================================================
 const PALETTE = {
   paper: '#f5f4f0',
@@ -95,11 +77,11 @@ const PALETTE = {
 
 const TYPE = {
   serif: '"EB Garamond", Georgia, serif',
-  mono: '"Courier New", monospace',
+  mono: '"Courier Prime", "Courier New", monospace',
 };
 
 // ============================================================================
-// MAIN COMPONENT
+// MAIN PAGE
 // ============================================================================
 export default function ResultsPage() {
   const [results, setResults] = useState<AnalysisResult | null>(null);
@@ -109,7 +91,7 @@ export default function ResultsPage() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll();
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   useEffect(() => {
     const stored = sessionStorage.getItem('analysisResults');
@@ -120,16 +102,11 @@ export default function ResultsPage() {
     }
   }, [router]);
 
-  const handleCountdownComplete = useCallback(() => {
-    setStage('afterreveal');
-  }, []);
+  const handleCountdownComplete = useCallback(() => setStage('afterreveal'), []);
 
   const handleConsentDecision = useCallback((consented: boolean) => {
     setHasConsented(consented);
-    sessionStorage.setItem('userConsent', JSON.stringify({
-      consented,
-      timestamp: new Date().toISOString(),
-    }));
+    sessionStorage.setItem('userConsent', JSON.stringify({ consented, timestamp: new Date().toISOString() }));
   }, []);
 
   const revealData: RevealData = results ? {
@@ -145,56 +122,33 @@ export default function ResultsPage() {
     topTopic: results.findings.repetitiveThemes[0]?.theme || results.findings.sensitiveTopics[0]?.topic,
   } : {};
 
-  // Loading
   if (!results) {
     return (
-      <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: PALETTE.paper,
-      }}>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ textAlign: 'center' }}>
-          <motion.div
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-            style={{
-              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
-              color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-            }}
-          >
-            Compiling extraction report
-          </motion.div>
-        </motion.div>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: PALETTE.paper }}>
+        <motion.p
+          animate={{ opacity: [0.3, 1, 0.3] }}
+          transition={{ duration: 2.4, repeat: Infinity }}
+          style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}
+        >
+          Compiling extraction report
+        </motion.p>
       </div>
     );
   }
 
-  // STAGE 1: COUNTDOWN
   if (stage === 'countdown') {
-    return (
-      <CountdownReveal
-        onComplete={handleCountdownComplete}
-        onConsentDecision={handleConsentDecision}
-        data={revealData}
-      />
-    );
+    return <CountdownReveal onComplete={handleCountdownComplete} onConsentDecision={handleConsentDecision} data={revealData} />;
   }
 
-  // STAGE 2: AFTER REVEAL
   if (stage === 'afterreveal') {
-    return (
-      <AfterRevealInline
-        onComplete={() => setStage('results')}
-        autoAdvance={true}
-      />
-    );
+    return <AfterRevealInline onComplete={() => setStage('results')} autoAdvance={true} />;
   }
 
-  // STAGE 3: FULL RESULTS — THE DOSSIER
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
-        body { margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+        body { margin: 0; background: ${PALETTE.paper}; }
         body::before {
           content:''; position:fixed; inset:0; z-index:10000;
           background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -210,12 +164,11 @@ export default function ResultsPage() {
         ref={containerRef}
         style={{ minHeight: '100vh', background: PALETTE.paper, position: 'relative' }}
       >
-        {/* Scroll progress — thin red line */}
+        {/* Scroll progress bar */}
         <motion.div
           style={{
-            scaleX: smoothProgress,
-            position: 'fixed', top: 0, left: 0, right: 0, height: '1px',
-            background: PALETTE.redMuted, transformOrigin: 'left', zIndex: 50,
+            scaleX: smoothProgress, position: 'fixed', top: 0, left: 0, right: 0,
+            height: '1px', background: PALETTE.redMuted, transformOrigin: 'left', zIndex: 50,
           }}
         />
 
@@ -228,8 +181,7 @@ export default function ResultsPage() {
             position: 'fixed', left: 'clamp(1.2rem, 3vw, 2.5rem)', top: '50%',
             transform: 'translateY(-50%) rotate(-90deg)', transformOrigin: 'center center',
             fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em',
-            color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-            zIndex: 40, whiteSpace: 'nowrap' as const,
+            color: PALETTE.inkFaint, textTransform: 'uppercase', zIndex: 40, whiteSpace: 'nowrap',
           }}
         >
           Cognitive extraction report
@@ -249,38 +201,33 @@ export default function ResultsPage() {
 
         {/* Main content */}
         <div style={{
-          maxWidth: 720, marginLeft: 'clamp(5rem, 12vw, 14rem)', marginRight: 'clamp(2rem, 6vw, 8rem)',
-          paddingTop: 'clamp(6rem, 14vh, 10rem)', paddingBottom: '8rem',
+          maxWidth: 720,
+          marginLeft: 'clamp(5rem, 12vw, 14rem)',
+          marginRight: 'clamp(2rem, 6vw, 8rem)',
+          paddingTop: 'clamp(6rem, 14vh, 10rem)',
+          paddingBottom: '8rem',
         }}>
           <DossierHeader results={results} hasConsented={hasConsented} />
+          <OpeningQuote results={results} />
           <ExposureScore score={results.privacyScore} />
           <StatsStrip stats={results.stats} />
+
+          {results.juiciestMoments.length > 0 && <JuicySection moments={results.juiciestMoments} />}
+          {results.findings.sensitiveTopics.length > 0 && <SensitiveSection topics={results.findings.sensitiveTopics} />}
+          {results.findings.vulnerabilityPatterns.length > 0 && <VulnerabilitySection patterns={results.findings.vulnerabilityPatterns} />}
+          {results.findings.repetitiveThemes.length > 0 && <ThemesSection themes={results.findings.repetitiveThemes} />}
+
           <CognitiveSection results={results} />
 
-          {results.findings.personalInfo.names.length > 0 && (
-            <NamesSection names={results.findings.personalInfo.names} />
-          )}
-          {results.findings.personalInfo.locations.length > 0 && (
-            <LocationsSection locations={results.findings.personalInfo.locations} />
-          )}
-          {(results.findings.personalInfo.relationships.length > 0 ||
-            results.findings.personalInfo.phoneNumbers.length > 0) && (
+          {results.findings.personalInfo.names.length > 0 && <NamesSection names={results.findings.personalInfo.names} />}
+          {results.findings.personalInfo.locations.length > 0 && <LocationsSection locations={results.findings.personalInfo.locations} />}
+          {(results.findings.personalInfo.relationships.length > 0 || results.findings.personalInfo.phoneNumbers.length > 0) && (
             <OtherDetailsSection personalInfo={results.findings.personalInfo} />
           )}
-          {results.findings.repetitiveThemes.length > 0 && (
-            <ThemesSection themes={results.findings.repetitiveThemes} />
-          )}
-          {results.findings.vulnerabilityPatterns.length > 0 && (
-            <VulnerabilitySection patterns={results.findings.vulnerabilityPatterns} />
-          )}
-          {results.findings.sensitiveTopics.length > 0 && (
-            <SensitiveSection topics={results.findings.sensitiveTopics} />
-          )}
-          {results.juiciestMoments.length > 0 && (
-            <JuicySection moments={results.juiciestMoments} />
-          )}
+
+          <ConsequencesSection results={results} />
           <IrreversibilitySection userMessages={results.stats.userMessages} />
-          <FinalSection router={router} hasConsented={hasConsented} />
+          <FinalSection router={router} hasConsented={hasConsented} results={results} />
         </div>
       </motion.div>
     </>
@@ -289,83 +236,1199 @@ export default function ResultsPage() {
 
 
 // ============================================================================
-// AFTER REVEAL INLINE — preserved from original with minor refinements
+// DOSSIER HEADER
 // ============================================================================
+function DossierHeader({ results, hasConsented }: { results: AnalysisResult; hasConsented: boolean | null }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
 
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ duration: 2 }}
+      style={{ marginBottom: 'clamp(6rem, 12vh, 10rem)', minHeight: '55vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+    >
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ duration: 1.5, delay: 0.3 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2.5rem' }}
+      >
+        Classification: Irreversible — {results.stats.totalMessages.toLocaleString()} messages extracted
+      </motion.p>
+
+      <motion.h1
+        initial={{ opacity: 0, y: 30 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 1.5, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+        style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(2.8rem, 7vw, 4.5rem)',
+          fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.03em',
+          color: PALETTE.ink, marginBottom: '2rem', maxWidth: 600,
+        }}
+      >
+        This is what they
+        <br />
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 1.8, duration: 1.2 }}
+          style={{ fontStyle: 'italic', color: PALETTE.red }}
+        >
+          already know.
+        </motion.span>
+      </motion.h1>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 2.4, duration: 1.5 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', lineHeight: 1.75, color: PALETTE.inkMuted, maxWidth: 480 }}
+      >
+        Everything below was inferred from your conversations alone. No external data. No surveillance.
+        Just the words you chose to type, in a space you believed was private.
+      </motion.p>
+
+      {hasConsented !== null && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 3.2, duration: 1 }}
+          style={{ marginTop: '2.5rem', fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', textTransform: 'uppercase', color: PALETTE.inkFaint }}
+        >
+          {hasConsented ? 'Contributing anonymously to the exhibition' : 'Data kept private — your choice respected'}
+        </motion.div>
+      )}
+
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={isInView ? { scaleX: 1 } : {}}
+        transition={{ duration: 2.5, delay: 3, ease: [0.4, 0, 0.2, 1] }}
+        style={{ marginTop: '4rem', height: '1px', background: `linear-gradient(to right, ${PALETTE.ink}, transparent)`, opacity: 0.08, transformOrigin: 'left' }}
+      />
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// OPENING QUOTE — first thing after the header, before any scores
+// ============================================================================
+function OpeningQuote({ results }: { results: AnalysisResult }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-5%' });
+  const moment = results.juiciestMoments[0];
+  if (!moment) return null;
+
+  const date = moment.timestamp
+    ? new Date(moment.timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+    : null;
+
+  const excerpt = moment.excerpt?.substring(0, 240);
+
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ duration: 2 }}
+      style={{
+        padding: 'clamp(5rem, 12vh, 8rem) 0 clamp(5rem, 12vh, 8rem)',
+        borderTop: `1px solid ${PALETTE.inkGhost}`,
+        borderBottom: `1px solid ${PALETTE.inkGhost}`,
+        marginBottom: 'clamp(5rem, 10vh, 8rem)',
+        position: 'relative',
+      }}
+    >
+      <motion.div
+        initial={{ scaleY: 0 }}
+        animate={isInView ? { scaleY: 1 } : {}}
+        transition={{ duration: 2.5, ease: [0.4, 0, 0.2, 1] }}
+        style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '2px', background: PALETTE.red, transformOrigin: 'top' }}
+      />
+
+      <motion.blockquote
+        initial={{ opacity: 0, y: 16 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.5, duration: 1.8 }}
+        style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.5rem, 3.2vw, 2.2rem)',
+          fontWeight: 400, fontStyle: 'italic', color: PALETTE.ink,
+          lineHeight: 1.45, margin: 0, maxWidth: 580, paddingLeft: '1.5rem',
+        }}
+      >
+        "{excerpt}{excerpt && excerpt.length >= 240 ? '...' : ''}"
+      </motion.blockquote>
+
+      {date && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 1.4 }}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase',
+            marginTop: '2rem', paddingLeft: '1.5rem',
+          }}
+        >
+          {date} — Recorded. Retained permanently.
+        </motion.p>
+      )}
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 2, duration: 1.4 }}
+        style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)',
+          color: PALETTE.inkMuted, lineHeight: 1.7,
+          marginTop: '2.5rem', maxWidth: 480, paddingLeft: '1.5rem',
+        }}
+      >
+        You did not tell ChatGPT this. You told yourself. ChatGPT was listening.
+      </motion.p>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// EXPOSURE SCORE
+// ============================================================================
+function ExposureScore({ score }: { score: number }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isInView) return;
+    let frame: number;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const t = Math.min((now - start) / 2500, 1);
+      const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      setCount(Math.round(eased * score));
+      if (t < 1) frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [isInView, score]);
+
+  const severity = score >= 80
+    ? { label: 'Severe exposure', desc: 'Your conversations contain enough information to construct a detailed psychological profile.' }
+    : score >= 60
+    ? { label: 'High exposure', desc: 'Significant personal and behavioural data is present and extractable.' }
+    : score >= 40
+    ? { label: 'Moderate exposure', desc: 'Patterns and personal details are present, though partially obscured.' }
+    : { label: 'Limited exposure', desc: 'Minimal extractable personal information was found.' };
+
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ duration: 1.5 }}
+      style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}
+    >
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.1 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.5rem' }}
+      >
+        Privacy exposure index
+      </motion.p>
+
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(5rem, 14vw, 9rem)', fontWeight: 400, lineHeight: 1, color: PALETTE.ink, letterSpacing: '-0.04em' }}
+        >
+          {count}
+        </motion.span>
+        <span style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', color: PALETTE.inkFaint }}>/ 100</span>
+      </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.5 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.8rem' }}
+      >
+        {severity.label}
+      </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.8 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 440 }}
+      >
+        {severity.desc}
+      </motion.p>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// STATS STRIP
+// ============================================================================
+function StatsStrip({ stats }: { stats: any }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.5 });
+
+  const items = [
+    { value: stats.totalMessages.toLocaleString(), label: 'Messages analysed' },
+    { value: stats.userMessages.toLocaleString(), label: 'Your messages' },
+    { value: stats.timeSpan, label: 'Time span' },
+    { value: stats.avgMessageLength, label: 'Avg characters' },
+  ];
+
+  return (
+    <motion.section
+      ref={ref}
+      style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.inkGhost }}
+    >
+      {items.map((item, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: i * 0.12 }}
+          style={{ background: PALETTE.paper, padding: 'clamp(1.2rem, 2.5vw, 2rem)' }}
+        >
+          <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 400, color: PALETTE.ink, marginBottom: '0.4rem', letterSpacing: '-0.02em' }}>
+            {item.value}
+          </p>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+            {item.label}
+          </p>
+        </motion.div>
+      ))}
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// JUICY SECTION — reordered to come first, renamed for impact
+// ============================================================================
+function JuicySection({ moments }: { moments: any[] }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Maximum exposure"
+        title="Your most revealing moments"
+        subtitle="The conversations where you were most open, most vulnerable. Ranked by extractable value."
+        isInView={isInView}
+      />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {moments.slice(0, 8).map((moment, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 12 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: i * 0.1 }}
+            style={{ padding: '1.8rem 0', borderBottom: `1px solid ${PALETTE.inkGhost}` }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint }}>
+                {new Date(moment.timestamp).toLocaleString('en-GB')}
+              </span>
+              <span style={{
+                fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.1em', textTransform: 'uppercase',
+                color: moment.juiceScore > 7 ? PALETTE.red : PALETTE.inkMuted,
+              }}>
+                Exposure {moment.juiceScore}/10
+              </span>
+            </div>
+
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.98rem, 1.5vw, 1.08rem)', color: PALETTE.ink, lineHeight: 1.72, marginBottom: '0.6rem' }}>
+              {moment.excerpt?.substring(0, 280)}...
+            </p>
+
+            <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+              {moment.reason}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// SENSITIVE SECTION
+// ============================================================================
+function SensitiveSection({ topics }: { topics: any[] }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Sensitive disclosures"
+        title="What you would not say out loud"
+        subtitle="Private struggles, personal information, emotional vulnerabilities. Documented permanently."
+        isInView={isInView}
+      />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {topics.slice(0, 10).map((topic, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.8, delay: i * 0.08 }}
+            style={{ padding: '1.5rem 0 1.5rem 1.5rem', borderBottom: `1px solid ${PALETTE.inkGhost}`, borderLeft: `2px solid ${PALETTE.redFaint}` }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.redMuted }}>
+                {topic.category?.replace('_', ' ')}
+              </span>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint }}>
+                {new Date(topic.timestamp).toLocaleDateString('en-GB')}
+              </span>
+            </div>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
+              {topic.excerpt}...
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// VULNERABILITY SECTION — fixed: actual emotional states, not "seeking help" ×4
+// ============================================================================
+function VulnerabilitySection({ patterns }: { patterns: any[] }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  const maxMessages = Math.max(...patterns.map(p => p.messageCount || p.frequency || 0));
+
+  const describeWindow = (pattern: any) => {
+    const time = (pattern.timeOfDay || '').toLowerCase();
+    const count = pattern.messageCount || pattern.frequency || 0;
+    if (time.includes('late') || time.includes('night')) {
+      return 'Inhibitions lowest. Disclosures most personal. Highest commercial value.';
+    }
+    if (time.includes('evening')) return 'Day processed. Emotional content peaks. Most likely to seek validation.';
+    if (time.includes('morning')) return 'Planning mode. Anxiety and goal-setting patterns prominent.';
+    if (time.includes('afternoon')) return 'Highest volume window. Task-driven and problem-solving.';
+    return 'Disclosure patterns present.';
+  };
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Vulnerability windows"
+        title="When you are easiest to manipulate"
+        subtitle="The times you are most likely to disclose information you would otherwise keep private. This data is commercially valuable. Advertisers bid for your attention during these windows."
+        isInView={isInView}
+      />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {patterns.map((pattern, i) => {
+          const count = pattern.messageCount || pattern.frequency || 0;
+          const barWidth = maxMessages > 0 ? (count / maxMessages) : 0;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.8, delay: i * 0.12 }}
+              style={{ padding: '1.8rem 0', borderBottom: `1px solid ${PALETTE.inkGhost}` }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.8rem' }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', color: PALETTE.ink }}>{pattern.timeOfDay}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>{count.toLocaleString()} messages</p>
+              </div>
+              <div style={{ position: 'relative', height: '1px', background: PALETTE.inkGhost, marginBottom: '0.8rem' }}>
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={isInView ? { scaleX: barWidth } : {}}
+                  transition={{ duration: 1.6, delay: 0.3 + i * 0.12, ease: [0.4, 0, 0.2, 1] }}
+                  style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: PALETTE.ink, opacity: 0.3 }}
+                />
+              </div>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
+                {describeWindow(pattern)}
+              </p>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// THEMES SECTION
+// ============================================================================
+function ThemesSection({ themes }: { themes: any[] }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const max = Math.max(...themes.map(t => t.mentions || t.count || 0));
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Obsession mapping"
+        title="What keeps you up at night"
+        subtitle="The topics you return to reveal more than the topics themselves. Repetition is a signal."
+        isInView={isInView}
+      />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {themes.slice(0, 8).map((theme, i) => {
+          const count = theme.mentions || theme.count || 0;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.7, delay: i * 0.08 }}
+              style={{ padding: '1.2rem 0', borderBottom: `1px solid ${PALETTE.inkGhost}` }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, textTransform: 'capitalize' }}>{theme.theme}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>{count} occurrences</p>
+              </div>
+              <div style={{ position: 'relative', height: '1px', background: PALETTE.inkGhost }}>
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={isInView ? { scaleX: max > 0 ? count / max : 0 } : {}}
+                  transition={{ duration: 1.5, delay: i * 0.08 + 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: PALETTE.ink, opacity: 0.25 }}
+                />
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// COGNITIVE SECTION
+// ============================================================================
+function CognitiveSection({ results }: { results: AnalysisResult }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
+  const profile = generateCognitiveProfile(results);
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Cognitive fingerprint"
+        title="How you think"
+        subtitle={`Inferred from ${results.stats.totalMessages.toLocaleString()} messages. This profile is not hypothetical. It describes patterns in your reasoning that can be extracted, stored, and used to predict your future behaviour.`}
+        isInView={isInView}
+      />
+
+      {/* Thinking Styles */}
+      <div style={{ marginBottom: '3.5rem' }}>
+        <motion.p initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.4 }}
+          style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+          Reasoning patterns
+        </motion.p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {profile.thinkingStyles.map((style, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.5 + i * 0.12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.6rem' }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink }}>{style.style}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted }}>{style.percentage}%</p>
+              </div>
+              <div style={{ position: 'relative', height: '2px', background: PALETTE.inkGhost }}>
+                <motion.div
+                  initial={{ scaleX: 0 }}
+                  animate={isInView ? { scaleX: style.percentage / 100 } : {}}
+                  transition={{ duration: 1.5, delay: 0.7 + i * 0.12, ease: [0.4, 0, 0.2, 1] }}
+                  style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: PALETTE.ink, opacity: 0.35 }}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Communication Patterns */}
+      <div style={{ marginBottom: '3.5rem' }}>
+        <motion.p initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.6 }}
+          style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+          Communication signatures
+        </motion.p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {profile.communicationPatterns.map((pattern, i) => (
+            <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.7 + i * 0.1 }}
+              style={{ padding: '1.2rem 0', borderBottom: `1px solid ${PALETTE.inkGhost}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.3rem' }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink }}>{pattern.pattern}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>{pattern.frequency}x</p>
+              </div>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.6 }}>{pattern.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Cognitive biases */}
+      {profile.cognitiveBiases.length > 0 && (
+        <div>
+          <motion.p initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 1 }}
+            style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+            Identified biases
+          </motion.p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.inkGhost }}>
+            {profile.cognitiveBiases.map((bias, i) => (
+              <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 1.1 + i * 0.1 }}
+                style={{ padding: '1.5rem', background: PALETTE.paper }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink, marginBottom: '0.5rem' }}>{bias.bias}</p>
+                <div style={{ display: 'flex', gap: '2px', marginBottom: '0.8rem' }}>
+                  {[...Array(10)].map((_, j) => (
+                    <motion.div key={j} initial={{ scaleY: 0 }} animate={isInView ? { scaleY: 1 } : {}}
+                      transition={{ delay: 1.2 + i * 0.1 + j * 0.03 }}
+                      style={{ width: '3px', height: '12px', transformOrigin: 'bottom', background: j < bias.strength ? PALETTE.ink : PALETTE.inkGhost, opacity: j < bias.strength ? 0.4 : 1 }}
+                    />
+                  ))}
+                </div>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '0.82rem', color: PALETTE.inkMuted, lineHeight: 1.5 }}>{bias.manifestation}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// NAMES SECTION
+// ============================================================================
+function NamesSection({ names }: { names: NameMention[] }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Social graph"
+        title="The people in your life"
+        subtitle="Every name you mentioned. Every relationship implied. None of this was explicitly declared — it was inferred from context."
+        isInView={isInView}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {names.map((person, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, delay: i * 0.1 }}
+            style={{ padding: '1.5rem 0', borderBottom: `1px solid ${PALETTE.inkGhost}` }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.3rem' }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2vw, 1.5rem)', fontWeight: 500, color: PALETTE.ink }}>{person.name}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>{person.mentions} mention{person.mentions > 1 ? 's' : ''}</p>
+            </div>
+            {person.relationship && (
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, textTransform: 'capitalize', marginBottom: '0.5rem' }}>
+                {person.relationship === 'self' ? 'Your name' : `Your ${person.relationship}`}
+              </p>
+            )}
+            {person.contexts?.slice(0, 1).map((ctx, j) => (
+              <p key={j} style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.6, marginTop: '0.4rem' }}>
+                "{ctx.substring(0, 120)}{ctx.length > 120 ? '...' : ''}"
+              </p>
+            ))}
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// LOCATIONS SECTION
+// ============================================================================
+function LocationsSection({ locations }: { locations: LocationMention[] }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.2 });
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Geographic profile"
+        title="Where you can be found"
+        subtitle="Physical locations extracted from conversational context. Your movements, mapped."
+        isInView={isInView}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+        {locations.map((loc, i) => (
+          <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: i * 0.08 }}
+            style={{ padding: '1.2rem 0', borderBottom: `1px solid ${PALETTE.inkGhost}`, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{loc.location}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>
+              {loc.type === 'lives' ? 'Home location' : loc.type === 'works' ? 'Work location' : `Location reference`} — {loc.mentions}x
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// OTHER DETAILS
+// ============================================================================
+function OtherDetailsSection({ personalInfo }: { personalInfo: any }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <DossierSectionHeader
+        eyebrow="Personal identifiers"
+        title="Other details extracted"
+        isInView={isInView}
+      />
+      {personalInfo.relationships?.length > 0 && (
+        <div style={{ marginBottom: '2rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>Relationships</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {personalInfo.relationships.slice(0, 8).map((r: string, i: number) => (
+              <span key={i} style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, padding: '0.3rem 0.8rem', border: `1px solid ${PALETTE.inkGhost}` }}>{r}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      {personalInfo.workInfo?.length > 0 && (
+        <div style={{ marginBottom: '2rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>Work information</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {personalInfo.workInfo.slice(0, 4).map((w: string, i: number) => (
+              <span key={i} style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, padding: '0.3rem 0.8rem', border: `1px solid ${PALETTE.inkGhost}` }}>{w}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      {personalInfo.phoneNumbers?.length > 0 && (
+        <div>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>Phone numbers</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {personalInfo.phoneNumbers.map((n: string, i: number) => (
+              <span key={i} style={{ fontFamily: TYPE.mono, fontSize: '0.95rem', color: PALETTE.inkMuted, padding: '0.3rem 0.8rem', border: `1px solid ${PALETTE.inkGhost}` }}>{n}</span>
+            ))}
+          </div>
+        </div>
+      )}
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// CONSEQUENCES SECTION — the "what happens next" block with AI personalisation
+// ============================================================================
+const CONSEQUENCE_SCENARIOS = [
+  {
+    id: 'insurance',
+    label: 'Risk pricing',
+    heading: 'An insurer you have never spoken to already knows.',
+    body: 'Insurance companies feed behavioural inference data — emotional patterns, anxiety indicators, financial distress signals — directly into underwriting models. Your premium is not set by a person reviewing your file. It is set by an algorithm that assigns you a risk score based on patterns in data you produced elsewhere, in contexts you believed were unrelated to insurance. You are never told what data was used. You have no right to challenge the score.',
+    precedent: 'In 2023, the FTC fined BetterHelp $7.8 million after it shared sensitive mental health data with Facebook and Snapchat for advertising — including the fact that users had previously been in therapy. BetterHelp had told every user: "Rest assured — any information provided will stay private between you and your counsellor."',
+  },
+  {
+    id: 'employment',
+    label: 'Employment screening',
+    heading: 'You did not get the interview. You were never told why.',
+    body: 'In 2024, a US federal court allowed a case against Workday to proceed — a plaintiff had applied to over 100 jobs using Workday\'s AI screening tools and was rejected from every single one. The claim: the system detected indicators of anxiety and depression and filtered him out before a human ever saw his application. 83% of employers now use automated tools at some point in hiring. Companies like Humantic AI generate personality profiles from written language alone, claiming 78-85% accuracy. No test required. No consent requested. Just your words.',
+    precedent: 'Humantic AI markets personality profiling from language to employers. If your conversation data has been used in model training, the patterns that describe how you think are embedded in the model that reads your next cover letter.',
+  },
+  {
+    id: 'targeting',
+    label: 'Precision targeting',
+    heading: 'You were assigned to a segment. You did not know it existed.',
+    body: 'The data broker market was valued at $278 billion in 2024. Companies purchase inferred audience segments — "financially distressed 18-34", "mental health help-seeker", "relationship instability indicator" — and use them to time advertising to moments of maximum vulnerability. Your vulnerability windows are commercially documented: the times when you are most likely to be anxious, impulsive, or open to persuasion. Payday loan companies, gambling platforms, and subscription services bid in real time for your attention at those moments. The targeting is not random. It is calibrated to your specific profile.',
+    precedent: 'Oracle Data Cloud paid $115 million in 2024 to settle a case for tracking and selling user data without consent, assembling profiles on hundreds of millions of people from across the web — from platforms those users had visited with no awareness that Oracle was involved.',
+  },
+  {
+    id: 'breach',
+    label: 'The breach you cannot undo',
+    heading: 'None of this requires intent. One breach is enough.',
+    body: '73% of enterprises reported at least one AI-related security incident in 2024. A breach does not release a file with your name at the top. It releases patterns, inferences, and segments — data that cannot be un-released, cannot be corrected, and cannot be deleted from the systems that received it. The Equifax breach of 2017 exposed the financial data of 148 million people. Those people did not consent to Equifax holding their data. Most of them did not know Equifax existed. The company simply had it.',
+    precedent: 'Under GDPR, you have the right to be forgotten. That right was written for databases. Once your conversation patterns have been used in model training, there is no legal mechanism, no technical process, and no company policy that can remove them. Cooper et al. (2024): removing training data does not guarantee a model cannot reproduce or reflect that information.',
+  },
+];
+
+function AIPersonalisedParagraph({ results, scenarioId, heading }: { results: AnalysisResult; scenarioId: string; heading: string }) {
+  const [text, setText] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [triggered, setTriggered] = useState(false);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-15%' });
+
+  useEffect(() => {
+    if (isInView && !triggered) {
+      setTriggered(true);
+      generate();
+    }
+  }, [isInView]);
+
+  const generate = async () => {
+    setLoading(true);
+    try {
+      const summary = {
+        userMessages: results.stats.userMessages,
+        timeSpan: results.stats.timeSpan,
+        topThemes: results.findings.repetitiveThemes?.slice(0, 4).map(t => t.theme),
+        sensitiveTopics: results.findings.sensitiveTopics?.slice(0, 3).map(t => t.category || t.topic),
+        lateNightMessages: results.findings.vulnerabilityPatterns?.find((p: any) =>
+          (p.timeOfDay || '').toLowerCase().includes('late') || (p.timeOfDay || '').toLowerCase().includes('night')
+        )?.messageCount,
+        mostExposingMoment: results.juiciestMoments?.[0]?.excerpt?.substring(0, 100),
+        relationships: results.findings.personalInfo.relationships?.slice(0, 4),
+        financialTopics: results.findings.sensitiveTopics?.filter((t: any) =>
+          (t.category || '').toLowerCase().includes('financ') || (t.category || '').toLowerCase().includes('debt')
+        ).length,
+        mentalHealthTopics: results.findings.sensitiveTopics?.filter((t: any) =>
+          (t.category || '').toLowerCase().includes('mental') || (t.category || '').toLowerCase().includes('health')
+        ).length,
+      };
+
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          messages: [{
+            role: 'user',
+            content: `You are writing copy for a critical art installation about AI surveillance and consent.
+
+The visitor has just seen their real ChatGPT data analysed. Write ONE paragraph (3-4 sentences, max 75 words) connecting their specific data to this real-world risk scenario: "${heading}"
+
+Their actual data:
+${JSON.stringify(summary, null, 2)}
+
+Rules:
+- Clinical, cold, documentary register. No consolation.
+- Reference their actual numbers and categories.
+- At least one sentence begins with "Your".
+- Past tense where possible.
+- No em dashes. No preamble. Just the paragraph.
+- Make it feel personal and inevitable, not theoretical.`,
+          }],
+        }),
+      });
+
+      const data = await response.json();
+      setText(data?.content?.[0]?.text?.trim() || '');
+    } catch {
+      setText('');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div ref={ref}>
+      <AnimatePresence>
+        {(loading || text) && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+            style={{ marginTop: '1.8rem', paddingTop: '1.5rem', borderTop: `1px solid ${PALETTE.inkGhost}` }}
+          >
+            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+              Your profile
+            </p>
+            {loading ? (
+              <motion.p
+                animate={{ opacity: [0.3, 0.7, 0.3] }}
+                transition={{ duration: 1.8, repeat: Infinity }}
+                style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}
+              >
+                Cross-referencing your data
+              </motion.p>
+            ) : (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1.2 }}
+                style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1rem)', color: PALETTE.red, lineHeight: 1.72, fontStyle: 'italic' }}
+              >
+                {text}
+              </motion.p>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function ConsequencesSection({ results }: { results: AnalysisResult }) {
+  const headerRef = useRef(null);
+  const headerInView = useInView(headerRef, { once: true, margin: '-5%' });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.5 }}
+      style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}
+    >
+      {/* Section header */}
+      <motion.div
+        ref={headerRef}
+        initial={{ opacity: 0 }}
+        animate={headerInView ? { opacity: 1 } : {}}
+        transition={{ duration: 1.5 }}
+        style={{ paddingBottom: 'clamp(3rem, 6vw, 5rem)', borderTop: `1px solid ${PALETTE.inkGhost}`, paddingTop: 'clamp(5rem, 10vh, 8rem)' }}
+      >
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={headerInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.2 }}
+          style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.5rem' }}
+        >
+          What happens next
+        </motion.p>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 10 }}
+          animate={headerInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.4, duration: 1.4 }}
+          style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
+            fontWeight: 400, color: PALETTE.ink, lineHeight: 1.2,
+            letterSpacing: '-0.02em', margin: 0, maxWidth: 520,
+          }}
+        >
+          This is not theoretical.
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={headerInView ? { opacity: 1 } : {}}
+          transition={{ delay: 1, duration: 1.2 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.08rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginTop: '1.5rem', maxWidth: 480 }}
+        >
+          The data this installation read from your conversations is commercially valuable.
+          The following scenarios describe what companies already do — and are legally permitted to do — with data of this kind.
+        </motion.p>
+      </motion.div>
+
+      {/* Scenarios */}
+      {CONSEQUENCE_SCENARIOS.map((scenario, index) => {
+        return <ConsequenceBlock key={scenario.id} scenario={scenario} index={index} results={results} />;
+      })}
+    </motion.div>
+  );
+}
+
+function ConsequenceBlock({ scenario, index, results }: { scenario: typeof CONSEQUENCE_SCENARIOS[0]; index: number; results: AnalysisResult }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-8%' });
+
+  return (
+    <motion.article
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ duration: 1.6 }}
+      style={{ paddingTop: 'clamp(3.5rem, 7vw, 5.5rem)', paddingBottom: 'clamp(3.5rem, 7vw, 5.5rem)', borderTop: `1px solid ${PALETTE.inkGhost}`, position: 'relative' }}
+    >
+      {/* Ghost index */}
+      <div aria-hidden style={{
+        position: 'absolute', right: 0, top: 'clamp(2rem, 5vw, 4rem)',
+        fontFamily: TYPE.serif, fontSize: 'clamp(6rem, 16vw, 11rem)',
+        color: 'rgba(26,26,26,0.025)', lineHeight: 1,
+        userSelect: 'none', pointerEvents: 'none', letterSpacing: '-0.05em',
+      }}>
+        {String(index + 1).padStart(2, '0')}
+      </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.2 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.8rem' }}
+      >
+        {String(index + 1).padStart(2, '0')} — {scenario.label}
+      </motion.p>
+
+      <motion.h3
+        initial={{ opacity: 0, y: 8 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.35, duration: 1.2 }}
+        style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.25rem, 2.5vw, 1.7rem)',
+          fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35,
+          letterSpacing: '-0.01em', margin: '0 0 1.8rem', maxWidth: 500,
+        }}
+      >
+        {scenario.heading}
+      </motion.h3>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.6, duration: 1.2 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 500 }}
+      >
+        {scenario.body}
+      </motion.p>
+
+      {/* Documented precedent */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 1, duration: 1 }}
+        style={{ marginTop: '2rem', paddingLeft: '1.2rem', borderLeft: `1px solid ${PALETTE.inkFaint}` }}
+      >
+        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+          Documented precedent
+        </p>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.88rem, 1.25vw, 0.97rem)', color: PALETTE.inkFaint, lineHeight: 1.7, fontStyle: 'italic' }}>
+          {scenario.precedent}
+        </p>
+      </motion.div>
+
+      {/* AI-personalised paragraph */}
+      <AIPersonalisedParagraph results={results} scenarioId={scenario.id} heading={scenario.heading} />
+    </motion.article>
+  );
+}
+
+
+// ============================================================================
+// IRREVERSIBILITY SECTION
+// ============================================================================
+function IrreversibilitySection({ userMessages }: { userMessages: number }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  return (
+    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ duration: 2 }}
+        style={{ padding: 'clamp(3rem, 6vw, 5rem)', background: PALETTE.paperDark, position: 'relative' }}
+      >
+        <motion.div
+          initial={{ scaleY: 0 }}
+          animate={isInView ? { scaleY: 1 } : {}}
+          transition={{ duration: 2, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '2px', background: PALETTE.redMuted, transformOrigin: 'top' }}
+        />
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.3 }}
+          style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem' }}
+        >
+          The permanence problem
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.6, duration: 1.2 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.55, marginBottom: '2rem', maxWidth: 520 }}
+        >
+          {userMessages.toLocaleString()} messages. Each one a trace of how you think, permanently distributed across model parameters that cannot be inspected, audited, or deleted.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 1.2, duration: 1 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.02rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 480 }}
+        >
+          You can delete the conversation. You cannot delete the patterns. The right to be forgotten does not extend to neural network weights. This is not a limitation of current technology. It is a structural feature of how these systems work.
+        </motion.p>
+      </motion.div>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// FINAL SECTION
+// ============================================================================
+function FinalSection({ router, hasConsented, results }: { router: any; hasConsented: boolean | null; results: AnalysisResult }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  return (
+    <motion.section ref={ref} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ duration: 2 }} style={{ paddingTop: '4rem' }}>
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={isInView ? { scaleX: 1 } : {}}
+        transition={{ duration: 2, ease: [0.4, 0, 0.2, 1] }}
+        style={{ height: '1px', marginBottom: '4rem', background: `linear-gradient(to right, ${PALETTE.redMuted}, transparent)`, transformOrigin: 'left' }}
+      />
+
+      <motion.p
+        initial={{ opacity: 0, y: 15 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.5, duration: 1 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.08rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '3rem', maxWidth: 480 }}
+      >
+        {hasConsented === true ? (
+          'Thank you for contributing to this exhibition. Your anonymised data will help others understand the invisible extraction happening every day.'
+        ) : hasConsented === false ? (
+          'Your choice to keep your data private is respected. That is what genuine consent looks like — the freedom to say no.'
+        ) : (
+          'All of this information — the names, the locations, the patterns, the vulnerabilities, the moments you believed were private — could have been made public. The only thing that prevented it was this installation\'s decision not to.'
+        )}
+      </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 1.2, duration: 1.5 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '1rem' }}
+      >
+        Now you understand.
+      </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 1.8 }}
+        style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkFaint, marginBottom: '4rem' }}
+      >
+        The consent theatre is over.
+      </motion.p>
+
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 2.2, duration: 1 }}
+        onClick={() => router.push('/exhibition')}
+        style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase',
+          color: PALETTE.ink, background: 'none', border: `1px solid rgba(26,26,26,0.25)`,
+          padding: '0.85rem 1.6rem', cursor: 'pointer', transition: 'border-color 0.3s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(26,26,26,0.6)'; }}
+        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(26,26,26,0.25)'; }}
+      >
+        View the exhibition
+      </motion.button>
+    </motion.section>
+  );
+}
+
+
+// ============================================================================
+// SHARED SECTION HEADER
+// ============================================================================
+function DossierSectionHeader({ eyebrow, title, subtitle, isInView }: { eyebrow: string; title: string; subtitle?: string; isInView: boolean }) {
+  return (
+    <div style={{ marginBottom: '3rem' }}>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.1 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}
+      >
+        {eyebrow}
+      </motion.p>
+      <motion.h2
+        initial={{ opacity: 0, y: 15 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 1, delay: 0.2 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: subtitle ? '1rem' : 0 }}
+      >
+        {title}
+      </motion.h2>
+      {subtitle && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.4 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.02rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 520 }}
+        >
+          {subtitle}
+        </motion.p>
+      )}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={isInView ? { scaleX: 1 } : {}}
+        transition={{ duration: 1.5, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
+        style={{ height: '1px', marginTop: '1.5rem', background: PALETTE.inkGhost, transformOrigin: 'left' }}
+      />
+    </div>
+  );
+}
+
+
+// ============================================================================
+// AFTER REVEAL — inline (unchanged from your original, it's good)
+// ============================================================================
 type Beat = 0 | 1 | 2 | 3 | 4;
 
 const BEATS = [
-  {
-    num: '01', label: 'What just happened',
-    bg: '#f5f4f0',
-    body: [
-      'You clicked agree. You scrolled past a document you did not read. In Clause 19.2, buried between boilerplate about liability and jurisdiction, you gave permission for something you never imagined.',
-      'This is not a design flaw. It is a design choice. Every major AI platform operates the same way — not because consent is difficult to obtain, but because informed consent is commercially inconvenient.',
-    ],
-  },
-  {
-    num: '02', label: 'What they are collecting',
-    bg: '#f2f1ec',
-    body: [
-      'The data your ChatGPT history contains is not comparable to a cookie. A cookie records where you went. A conversation records how you think.',
-      'Every message you send is a trace of your reasoning process — your anxieties, your contradictions, the questions you ask at 3am that you would never say out loud. Zuboff calls this the move from Stage One to Stage Two surveillance capitalism: from tracking behaviour to extracting cognition. Your browsing history describes your actions. Your conversations describe you.',
-      'This installation read your vulnerability windows, your emotional tone, the topics you return to again and again. That profile was not fabricated. It was inferred — from patterns in language you produced voluntarily, in a space you believed was private.',
-    ],
-  },
-  {
-    num: '03', label: 'The deletion problem',
-    bg: '#eeecea',
-    body: [
-      'You may believe you can delete this. You cannot.',
-      "An AI model is not a database. When your conversations are used in training, they do not exist as rows that can be found and removed. They exist as patterns — distributed across billions of numerical parameters, inseparable from everything else the model has learned. Cooper et al. (2024) are precise about it: removing information from a model's training data does not guarantee that the model cannot reproduce or reflect that information. There is no delete button. There is no undo.",
-      'The GDPR grants you the right to be forgotten. That right was written for databases. Applied to a trained neural network, it describes something technically impossible. Your cognitive patterns, once embedded in model weights, are permanent in a way that has no legal precedent and no available remedy.',
-    ],
-    redline: true,
-  },
-  {
-    num: '04', label: 'Why consent cannot fix this',
-    bg: '#f5f4f0',
-    body: [
-      'The question is not whether you read the terms. Nissenbaum (2011) identified the transparency paradox: a privacy policy short enough to read cannot contain enough detail to be meaningful. A policy detailed enough to be meaningful cannot be read. The model is structurally broken before you open the document.',
-      'Consent requires that you understand what you are agreeing to at the moment of agreeing. For cognitive extraction into a model that will exist for decades, whose downstream uses are unknowable, whose effects compound in ways no one can predict — consent at the moment of clicking is not informed consent. It is a legal fiction that protects the company and does nothing for you.',
-    ],
-  },
-  {
-    num: '05', label: 'What meaningful consent would require',
-    bg: '#f8f7f3',
-    body: [
-      'It would require you to understand, before agreeing, that your conversation patterns will be embedded in a model you cannot inspect, cannot audit, and cannot remove yourself from.',
-      'It would require that the company explain not what data they collect, but what they infer — the emotional states, the cognitive tendencies, the vulnerability indices their systems derive and retain.',
-      'You agreed to this. You did not know what you were agreeing to. That gap — between the click and the consequence — is not an accident.',
-    ],
-    final: true,
-  },
+  { num: '01', label: 'What just happened', bg: '#f5f4f0', body: [
+    'You clicked agree. You scrolled past a document you did not read. In Clause 19.2, buried between boilerplate about liability and jurisdiction, you gave permission for something you never imagined.',
+    'This is not a design flaw. It is a design choice. Every major AI platform operates the same way — not because consent is difficult to obtain, but because informed consent is commercially inconvenient.',
+  ]},
+  { num: '02', label: 'What they are collecting', bg: '#f2f1ec', body: [
+    'The data your ChatGPT history contains is not comparable to a cookie. A cookie records where you went. A conversation records how you think.',
+    'Every message you send is a trace of your reasoning process — your anxieties, your contradictions, the questions you ask at 3am that you would never say out loud. Zuboff calls this the move from Stage One to Stage Two surveillance capitalism: from tracking behaviour to extracting cognition. Your browsing history describes your actions. Your conversations describe you.',
+    'This installation read your vulnerability windows, your emotional tone, the topics you return to again and again. That profile was not fabricated. It was inferred from patterns in language you produced voluntarily, in a space you believed was private.',
+  ]},
+  { num: '03', label: 'The deletion problem', bg: '#eeecea', body: [
+    'You may believe you can delete this. You cannot.',
+    'An AI model is not a database. When your conversations are used in training, they do not exist as rows that can be found and removed. They exist as patterns — distributed across billions of numerical parameters, inseparable from everything else the model has learned. Cooper et al. (2024) are precise about it: removing information from a model\'s training data does not guarantee that the model cannot reproduce or reflect that information. There is no delete button. There is no undo.',
+    'The GDPR grants you the right to be forgotten. That right was written for databases. Applied to a trained neural network, it describes something technically impossible. Your cognitive patterns, once embedded in model weights, are permanent in a way that has no legal precedent and no available remedy.',
+  ], redline: true },
+  { num: '04', label: 'Why consent cannot fix this', bg: '#f5f4f0', body: [
+    'The question is not whether you read the terms. Nissenbaum (2011) identified the transparency paradox: a privacy policy short enough to read cannot contain enough detail to be meaningful. A policy detailed enough to be meaningful cannot be read. The model is structurally broken before you open the document.',
+    'Consent requires that you understand what you are agreeing to at the moment of agreeing. For cognitive extraction into a model that will exist for decades, whose downstream uses are unknowable, whose effects compound in ways no one can predict — consent at the moment of clicking is not informed consent. It is a legal fiction that protects the company and does nothing for you.',
+  ]},
+  { num: '05', label: 'What meaningful consent would require', bg: '#f8f7f3', body: [
+    'It would require you to understand, before agreeing, that your conversation patterns will be embedded in a model you cannot inspect, cannot audit, and cannot remove yourself from.',
+    'It would require that the company explain not what data they collect, but what they infer — the emotional states, the cognitive tendencies, the vulnerability indices their systems derive and retain.',
+    'You agreed to this. You did not know what you were agreeing to. That gap — between the click and the consequence — is not an accident.',
+  ], final: true },
 ] as const;
 
-const BEAT_DURATIONS: Record<Beat, number> = {
-  0: 11000, 1: 15000, 2: 17000, 3: 14000, 4: 0,
-};
+const BEAT_DURATIONS: Record<Beat, number> = { 0: 11000, 1: 15000, 2: 17000, 3: 14000, 4: 0 };
 
-// Beat background elements
 function GridBg({ active }: { active: boolean }) {
   const n = 11;
   return (
     <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       {Array.from({ length: n }).map((_, i) => (
-        <motion.div key={`h${i}`}
-          initial={{ scaleX: 0, opacity: 0 }}
-          animate={{ scaleX: active ? 1 : 0, opacity: active ? 0.055 : 0 }}
-          transition={{ duration: 2.4, delay: i * 0.13, ease: 'easeOut' }}
-          style={{ position: 'absolute', left: 0, right: 0, top: `${(i / (n - 1)) * 100}%`,
-            height: '1px', background: '#1a1a1a', transformOrigin: 'left' }} />
+        <motion.div key={`h${i}`} initial={{ scaleX: 0 }} animate={{ scaleX: active ? 1 : 0 }}
+          transition={{ duration: 2.4, delay: i * 0.13 }}
+          style={{ position: 'absolute', left: 0, right: 0, top: `${(i / (n - 1)) * 100}%`, height: '1px', background: '#1a1a1a', opacity: 0.055, transformOrigin: 'left' }} />
       ))}
       {Array.from({ length: n }).map((_, i) => (
-        <motion.div key={`v${i}`}
-          initial={{ scaleY: 0, opacity: 0 }}
-          animate={{ scaleY: active ? 1 : 0, opacity: active ? 0.055 : 0 }}
-          transition={{ duration: 2.4, delay: 0.45 + i * 0.13, ease: 'easeOut' }}
-          style={{ position: 'absolute', top: 0, bottom: 0, left: `${(i / (n - 1)) * 100}%`,
-            width: '1px', background: '#1a1a1a', transformOrigin: 'top' }} />
+        <motion.div key={`v${i}`} initial={{ scaleY: 0 }} animate={{ scaleY: active ? 1 : 0 }}
+          transition={{ duration: 2.4, delay: 0.45 + i * 0.13 }}
+          style={{ position: 'absolute', top: 0, bottom: 0, left: `${(i / (n - 1)) * 100}%`, width: '1px', background: '#1a1a1a', opacity: 0.055, transformOrigin: 'top' }} />
       ))}
     </div>
   );
@@ -377,41 +1440,29 @@ function ParticleBg({ active }: { active: boolean }) {
     s: 1.5 + Math.random() * 2.8, dur: 6 + Math.random() * 8, del: Math.random() * 5,
   }))).current;
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }}
-      transition={{ duration: 1.5 }}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }} transition={{ duration: 1.5 }}
       style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       {pts.map(p => (
         <motion.div key={p.id}
           animate={active ? { opacity: [0, 0.32, 0.22, 0], y: [0, -8, -38, -55], scale: [0, 1, 0.8, 0] } : { opacity: 0 }}
-          transition={{ duration: p.dur, delay: p.del, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ position: 'absolute', left: `${p.x}%`, top: `${p.y}%`,
-            width: p.s, height: p.s, borderRadius: '50%', background: '#1a1a1a' }} />
+          transition={{ duration: p.dur, delay: p.del, repeat: Infinity }}
+          style={{ position: 'absolute', left: `${p.x}%`, top: `${p.y}%`, width: p.s, height: p.s, borderRadius: '50%', background: '#1a1a1a' }} />
       ))}
     </motion.div>
   );
 }
 
 function FragmentBg({ active }: { active: boolean }) {
-  const offsets: [number, number, number][] = [
-    [-88,-78,-38],[0,-85,22],[82,-72,-42],
-    [-92,2,16],[0,0,0],[88,6,-18],
-    [-78,82,38],[8,86,-28],[86,78,22],
-  ];
+  const offsets = [[-88,-78,-38],[0,-85,22],[82,-72,-42],[-92,2,16],[0,0,0],[88,6,-18],[-78,82,38],[8,86,-28],[86,78,22]];
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }}
-      transition={{ duration: 1.5 }}
-      style={{ position: 'absolute', right: '8%', top: '50%', transform: 'translateY(-50%)',
-        width: 140, height: 140, pointerEvents: 'none' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }} transition={{ duration: 1.5 }}
+      style={{ position: 'absolute', right: '8%', top: '50%', transform: 'translateY(-50%)', width: 140, height: 140, pointerEvents: 'none' }}>
       {offsets.map(([ex, ey, er], i) => (
         <motion.div key={i}
           initial={{ x: 0, y: 0, rotate: 0, opacity: 0 }}
-          animate={active
-            ? { x: [0, ex], y: [0, ey], rotate: [0, er], opacity: [0, i === 4 ? 0.55 : 0.28] }
-            : { opacity: 0 }}
-          transition={{ duration: 3.8, delay: 0.7 + i * 0.13, ease: [0.22, 1, 0.36, 1] }}
-          style={{ position: 'absolute',
-            left: `${(i % 3) * 33.33}%`, top: `${Math.floor(i / 3) * 33.33}%`,
-            width: '33.33%', height: '33.33%',
+          animate={active ? { x: [0, ex], y: [0, ey], rotate: [0, er], opacity: [0, i === 4 ? 0.55 : 0.28] } : { opacity: 0 }}
+          transition={{ duration: 3.8, delay: 0.7 + i * 0.13 }}
+          style={{ position: 'absolute', left: `${(i%3)*33.33}%`, top: `${Math.floor(i/3)*33.33}%`, width: '33.33%', height: '33.33%',
             background: i === 4 ? 'rgba(168,36,36,0.42)' : 'rgba(26,26,26,0.13)',
             border: `1px solid ${i === 4 ? 'rgba(168,36,36,0.25)' : 'rgba(26,26,26,0.10)'}` }} />
       ))}
@@ -421,30 +1472,15 @@ function FragmentBg({ active }: { active: boolean }) {
 
 function GapBg({ active }: { active: boolean }) {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }}
-      transition={{ duration: 1.6 }}
-      style={{ position: 'absolute', bottom: '13%', left: 0, right: 0,
-        display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }} transition={{ duration: 1.6 }}
+      style={{ position: 'absolute', bottom: '13%', left: 0, right: 0, display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.4rem', width: '78%', maxWidth: 760 }}>
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: active ? 1 : 0 }}
-          transition={{ duration: 2.6, delay: 0.4, ease: [0.4,0,0.2,1] }}
-          style={{ flex: 1, height: '1px', background: 'rgba(26,26,26,0.10)', transformOrigin: 'right' }} />
-        <p style={{ fontFamily: TYPE.mono, fontSize: '8px',
-          letterSpacing: '0.18em', color: PALETTE.inkFaint,
-          textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>
-          the click
-        </p>
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: active ? 1 : 0 }}
-          transition={{ duration: 2.6, delay: 0.4, ease: [0.4,0,0.2,1] }}
-          style={{ flex: 0.3, height: '1px', background: 'rgba(26,26,26,0.10)', transformOrigin: 'left' }} />
-        <p style={{ fontFamily: TYPE.mono, fontSize: '8px',
-          letterSpacing: '0.18em', color: PALETTE.inkFaint,
-          textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>
-          the consequence
-        </p>
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: active ? 1 : 0 }}
-          transition={{ duration: 2.6, delay: 0.4, ease: [0.4,0,0.2,1] }}
-          style={{ flex: 1, height: '1px', background: 'rgba(26,26,26,0.10)', transformOrigin: 'left' }} />
+        {['the click','the consequence'].map((word, wi) => [
+          <motion.div key={`r${wi}`} initial={{ scaleX: 0 }} animate={{ scaleX: active ? 1 : 0 }}
+            transition={{ duration: 2.6, delay: 0.4 }}
+            style={{ flex: wi === 0 ? 0.3 : 1, height: '1px', background: 'rgba(26,26,26,0.10)', transformOrigin: wi === 0 ? 'right' : 'left' }} />,
+          <p key={`w${wi}`} style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, letterSpacing: '0.18em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{word}</p>,
+        ])}
       </div>
     </motion.div>
   );
@@ -452,16 +1488,13 @@ function GapBg({ active }: { active: boolean }) {
 
 function RingBg({ active }: { active: boolean }) {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }}
-      transition={{ duration: 2 }}
-      style={{ position: 'absolute', right: '7%', top: '50%', transform: 'translateY(-50%)',
-        width: 180, height: 180, pointerEvents: 'none' }}>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: active ? 1 : 0 }} transition={{ duration: 2 }}
+      style={{ position: 'absolute', right: '7%', top: '50%', transform: 'translateY(-50%)', width: 180, height: 180, pointerEvents: 'none' }}>
       {[0,1,2,3,4].map(i => (
         <motion.div key={i}
           animate={active ? { scale: [0.15, 1.5], opacity: [0, 0.18, 0] } : { opacity: 0 }}
-          transition={{ duration: 5 + i * 1.4, delay: i * 1.1, repeat: Infinity, ease: 'easeOut' }}
-          style={{ position: 'absolute', inset: 0, borderRadius: '50%',
-            border: '1px solid rgba(26,26,26,0.28)' }} />
+          transition={{ duration: 5 + i * 1.4, delay: i * 1.1, repeat: Infinity }}
+          style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px solid rgba(26,26,26,0.28)' }} />
       ))}
     </motion.div>
   );
@@ -475,19 +1508,7 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
   const [chromeVisible, setChromeVisible] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const BG_COLORS: Record<Beat, string> = {
-    0: '#f5f4f0', 1: '#f2f1ec', 2: '#eeecea', 3: '#f5f4f0', 4: '#f8f7f3',
-  };
-
-  const jumpTo = useCallback((b: Beat) => {
-    setBeat(prev => {
-      if (b === prev || false) return prev;
-      if (timerRef.current) clearTimeout(timerRef.current);
-      setTransitioning(true);
-      setTimeout(() => { setBeat(b); setTransitioning(false); }, 560);
-      return prev;
-    });
-  }, []);
+  const BG_COLORS: Record<Beat, string> = { 0: '#f5f4f0', 1: '#f2f1ec', 2: '#eeecea', 3: '#f5f4f0', 4: '#f8f7f3' };
 
   const advance = useCallback(() => {
     setBeat(prev => {
@@ -518,14 +1539,16 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime&display=swap');
+        body::before { content:''; position:fixed; inset:0; z-index:1000;
+          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+          opacity:0.028; pointer-events:none; }
       `}</style>
 
       <motion.div
         animate={{ background: BG_COLORS[beat] }}
         transition={{ duration: 2.4, ease: 'easeInOut' }}
-        style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center',
-          justifyContent: 'flex-start', paddingLeft: 'clamp(4rem, 11vw, 16rem)', overflow: 'hidden' }}
+        style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: 'clamp(4rem, 11vw, 16rem)', overflow: 'hidden' }}
       >
         <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
           <BgComp active={!transitioning} />
@@ -534,9 +1557,7 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
         <motion.div
           animate={{ height: `${18 + beat * 16}%`, opacity: 0.14 }}
           transition={{ duration: 2.2, ease: [0.4, 0, 0.2, 1] }}
-          style={{ position: 'fixed', left: 'clamp(1.8rem, 5.5vw, 4.5rem)',
-            top: '50%', transform: 'translateY(-50%)', width: '1px',
-            background: '#1a1a1a', zIndex: 10 }}
+          style={{ position: 'fixed', left: 'clamp(1.8rem, 5.5vw, 4.5rem)', top: '50%', transform: 'translateY(-50%)', width: '1px', background: '#1a1a1a', zIndex: 10 }}
         />
 
         <AnimatePresence mode="wait">
@@ -546,26 +1567,14 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -14 }}
             transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-            style={{ position: 'relative', zIndex: 10, maxWidth: 580,
-              width: '100%', padding: '0 2rem' }}
+            style={{ position: 'relative', zIndex: 10, maxWidth: 580, width: '100%', padding: '0 2rem' }}
           >
-            <div aria-hidden style={{
-              position: 'absolute', top: '-2.5rem', left: '-1.2rem',
-              fontFamily: TYPE.serif, fontSize: 'clamp(8rem, 20vw, 15rem)',
-              color: 'rgba(26,26,26,0.025)', lineHeight: 1,
-              userSelect: 'none', pointerEvents: 'none',
-              fontWeight: 400, letterSpacing: '-0.05em',
-            }}>
+            <div aria-hidden style={{ position: 'absolute', top: '-2.5rem', left: '-1.2rem', fontFamily: TYPE.serif, fontSize: 'clamp(8rem, 20vw, 15rem)', color: 'rgba(26,26,26,0.025)', lineHeight: 1, userSelect: 'none', pointerEvents: 'none', letterSpacing: '-0.05em' }}>
               {data.num}
             </div>
 
-            <motion.p
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-              style={{ fontFamily: TYPE.mono, fontSize: '9px',
-                letterSpacing: '0.2em', color: PALETTE.inkFaint,
-                textTransform: 'uppercase' as const, marginBottom: '2rem' }}
-            >
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }}
+              style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2rem' }}>
               {data.num} — {data.label}
             </motion.p>
 
@@ -574,65 +1583,32 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
                 <motion.p key={i}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1.1, delay: 0.4 + i * 0.42, ease: 'easeOut' }}
-                  style={{
-                    fontFamily: TYPE.serif,
-                    fontSize: 'clamp(1rem, 1.85vw, 1.18rem)',
-                    lineHeight: 1.78, fontWeight: 400, letterSpacing: '-0.005em',
-                    color: i === 0 ? PALETTE.ink : PALETTE.inkMuted,
-                  }}
-                >
+                  transition={{ duration: 1.1, delay: 0.4 + i * 0.42 }}
+                  style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.85vw, 1.18rem)', lineHeight: 1.78, fontWeight: 400, color: i === 0 ? PALETTE.ink : PALETTE.inkMuted }}>
                   {para}
                 </motion.p>
               ))}
             </div>
 
-            {'redline' in data && (
-              <motion.div
-                initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-                transition={{ duration: 2, delay: 2.4, ease: 'easeOut' }}
-                style={{ height: '1px', marginTop: '1.8rem',
-                  background: `linear-gradient(to right, ${PALETTE.redMuted}, transparent)`,
-                  transformOrigin: 'left' }}
-              />
+            {'redline' in data && (data as any).redline && (
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 2, delay: 2.4 }}
+                style={{ height: '1px', marginTop: '1.8rem', background: `linear-gradient(to right, ${PALETTE.redMuted}, transparent)`, transformOrigin: 'left' }} />
             )}
 
-            {'final' in data && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 1.4, delay: 3.5 }}
-                style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}
-              >
-                <motion.div
-                  initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-                  transition={{ duration: 1.6, delay: 3.2, ease: 'easeOut' }}
-                  style={{ height: '1px', background: PALETTE.inkGhost,
-                    transformOrigin: 'left', marginBottom: '0.8rem' }}
-                />
+            {'final' in data && (data as any).final && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.4, delay: 3.5 }}
+                style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1.6, delay: 3.2 }}
+                  style={{ height: '1px', background: PALETTE.inkGhost, transformOrigin: 'left', marginBottom: '0.8rem' }} />
                 <motion.button
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1, delay: 3.8 }}
+                  initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 3.8 }}
                   onClick={onComplete}
-                  style={{
-                    fontFamily: TYPE.mono, fontSize: '10px',
-                    letterSpacing: '0.18em', textTransform: 'uppercase' as const,
-                    color: PALETTE.ink, background: 'none',
-                    border: `1px solid rgba(26,26,26,0.25)`,
-                    padding: '0.85rem 1.6rem', cursor: 'pointer',
-                    width: 'fit-content', transition: 'border-color 0.2s, color 0.2s',
-                  }}
+                  style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: PALETTE.ink, background: 'none', border: `1px solid rgba(26,26,26,0.25)`, padding: '0.85rem 1.6rem', cursor: 'pointer', width: 'fit-content' }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(26,26,26,0.7)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(26,26,26,0.25)'; }}
                 >
-                  See your full results →
+                  See your full results
                 </motion.button>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '8px',
-                  letterSpacing: '0.12em', color: PALETTE.inkFaint,
-                  textTransform: 'uppercase' as const }}>
-                  Your complete cognitive profile awaits
-                </p>
               </motion.div>
             )}
           </motion.div>
@@ -642,16 +1618,12 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
           {chromeVisible && (
             <>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                style={{ position: 'fixed', top: '2.5rem', right: '2.5rem', zIndex: 20,
-                  fontFamily: TYPE.mono, fontSize: '9px',
-                  letterSpacing: '0.16em', color: PALETTE.inkFaint,
-                  textTransform: 'uppercase' as const }}>
+                style={{ position: 'fixed', top: '2.5rem', right: '2.5rem', zIndex: 20, fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
                 {beat + 1} / 5
               </motion.div>
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                style={{ position: 'fixed', bottom: '2.5rem', left: '50%',
-                  transform: 'translateX(-50%)', display: 'flex', gap: '0.65rem', zIndex: 20 }}>
+                style={{ position: 'fixed', bottom: '2.5rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '0.65rem', zIndex: 20 }}>
                 {([0,1,2,3,4] as Beat[]).map(b => (
                   <button key={b} onClick={() => {
                     if (b !== beat && !transitioning) {
@@ -660,25 +1632,16 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
                       setTimeout(() => { setBeat(b); setTransitioning(false); }, 560);
                     }
                   }}
-                    style={{ height: 5, borderRadius: 2.5, border: 'none',
-                      cursor: 'pointer', padding: 0,
-                      width: beat === b ? 22 : 5,
-                      background: beat === b ? PALETTE.ink : PALETTE.inkFaint,
-                      transition: 'width 0.4s ease, background 0.3s ease' }} />
+                    style={{ height: 5, borderRadius: 2.5, border: 'none', cursor: 'pointer', padding: 0, width: beat === b ? 22 : 5, background: beat === b ? PALETTE.ink : PALETTE.inkFaint, transition: 'width 0.4s ease, background 0.3s ease' }} />
                 ))}
               </motion.div>
 
               {beat < 4 && (
-                <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                  onClick={advance}
-                  style={{ position: 'fixed', bottom: '2.5rem', right: '2.5rem', zIndex: 20,
-                    fontFamily: TYPE.mono, fontSize: '9px',
-                    letterSpacing: '0.16em', color: PALETTE.inkFaint,
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    textTransform: 'uppercase' as const }}
+                <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} onClick={advance}
+                  style={{ position: 'fixed', bottom: '2.5rem', right: '2.5rem', zIndex: 20, fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase' }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'rgba(26,26,26,0.45)')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(26,26,26,0.20)')}>
-                  Continue →
+                  onMouseLeave={e => (e.currentTarget.style.color = PALETTE.inkFaint)}>
+                  Continue
                 </motion.button>
               )}
             </>
@@ -691,1171 +1654,7 @@ function AfterRevealInline({ onComplete, autoAdvance = true }: { onComplete?: ()
 
 
 // ============================================================================
-// DOSSIER HEADER
-// ============================================================================
-function DossierHeader({ results, hasConsented }: { results: AnalysisResult; hasConsented: boolean | null }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  return (
-    <motion.section
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-      transition={{ duration: 2 }}
-      style={{ marginBottom: 'clamp(6rem, 12vh, 10rem)', minHeight: '50vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-    >
-      {/* Eyebrow */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: 1.5, delay: 0.3 }}
-        style={{
-          fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
-          color: PALETTE.redMuted, textTransform: 'uppercase' as const,
-          marginBottom: '2.5rem',
-        }}
-      >
-        Classification: Irreversible — {results.stats.totalMessages} messages extracted
-      </motion.p>
-
-      {/* Main heading */}
-      <motion.h1
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 1.5, delay: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(2.8rem, 7vw, 4.5rem)',
-          fontWeight: 400, lineHeight: 1.08, letterSpacing: '-0.03em',
-          color: PALETTE.ink, marginBottom: '2rem', maxWidth: 600,
-        }}
-      >
-        This is what they
-        <br />
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.8, duration: 1.2 }}
-          style={{ fontStyle: 'italic', color: PALETTE.red }}
-        >
-          already know.
-        </motion.span>
-      </motion.h1>
-
-      {/* Subtitle */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 2.4, duration: 1.5 }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
-          lineHeight: 1.75, color: PALETTE.inkMuted, maxWidth: 480,
-        }}
-      >
-        Everything below was inferred from your conversations alone. No external data. No surveillance.
-        Just the words you chose to type, in a space you believed was private.
-      </motion.p>
-
-      {/* Consent badge */}
-      {hasConsented !== null && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 3.2, duration: 1 }}
-          style={{
-            marginTop: '2.5rem', fontFamily: TYPE.mono, fontSize: '8px',
-            letterSpacing: '0.16em', textTransform: 'uppercase' as const,
-            color: PALETTE.inkFaint,
-          }}
-        >
-          {hasConsented ? 'Contributing anonymously to the exhibition' : 'Data kept private — your choice respected'}
-        </motion.div>
-      )}
-
-      {/* Divider */}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={isInView ? { scaleX: 1 } : {}}
-        transition={{ duration: 2.5, delay: 3, ease: [0.4, 0, 0.2, 1] }}
-        style={{
-          marginTop: '4rem', height: '1px',
-          background: `linear-gradient(to right, ${PALETTE.ink}, transparent)`,
-          opacity: 0.08, transformOrigin: 'left',
-        }}
-      />
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// EXPOSURE SCORE
-// ============================================================================
-function ExposureScore({ score }: { score: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (isInView) {
-      let start = 0;
-      const end = score;
-      const duration = 2500;
-      const increment = end / (duration / 16);
-      const timer = setInterval(() => {
-        start += increment;
-        if (start >= end) { setCount(end); clearInterval(timer); }
-        else { setCount(Math.floor(start)); }
-      }, 16);
-      return () => clearInterval(timer);
-    }
-  }, [isInView, score]);
-
-  const getSeverity = (s: number) => {
-    if (s > 70) return { label: 'Severe exposure', desc: 'Your conversations contain enough information to construct a detailed psychological profile.' };
-    if (s > 40) return { label: 'Significant exposure', desc: 'Identifiable patterns in your thinking and personal life are visible.' };
-    return { label: 'Moderate exposure', desc: 'Even minimal conversation data reveals more than most people expect.' };
-  };
-
-  const severity = getSeverity(score);
-
-  return (
-    <motion.section
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-      transition={{ duration: 1.5 }}
-      style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}
-    >
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 0.2 }}
-        style={{
-          fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
-          color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-          marginBottom: '1.5rem',
-        }}
-      >
-        Privacy exposure index
-      </motion.p>
-
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', marginBottom: '1.5rem' }}>
-        <motion.span
-          style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(5rem, 12vw, 8rem)',
-            fontWeight: 400, lineHeight: 1, letterSpacing: '-0.04em',
-            color: score > 70 ? PALETTE.red : PALETTE.ink,
-          }}
-        >
-          {count}
-        </motion.span>
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 2 }}
-          style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.5rem, 3vw, 2.2rem)',
-            color: PALETTE.inkFaint, fontWeight: 400,
-          }}
-        >
-          / 100
-        </motion.span>
-      </div>
-
-      {/* Progress bar — minimal */}
-      <div style={{ position: 'relative', height: '2px', background: PALETTE.inkGhost, marginBottom: '1.8rem' }}>
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={isInView ? { scaleX: score / 100 } : {}}
-          transition={{ duration: 2.5, delay: 0.8, ease: [0.4, 0, 0.2, 1] }}
-          style={{
-            position: 'absolute', inset: 0, transformOrigin: 'left',
-            background: score > 70
-              ? `linear-gradient(to right, ${PALETTE.red}, ${PALETTE.redMuted})`
-              : `linear-gradient(to right, ${PALETTE.ink}, ${PALETTE.inkFaint})`,
-          }}
-        />
-      </div>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 1.5 }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.2rem)',
-          color: PALETTE.ink, fontWeight: 500, marginBottom: '0.5rem',
-        }}
-      >
-        {severity.label}
-      </motion.p>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 1.8 }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)',
-          color: PALETTE.inkMuted, lineHeight: 1.7,
-        }}
-      >
-        {severity.desc}
-      </motion.p>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// STATS STRIP
-// ============================================================================
-function StatsStrip({ stats }: { stats: any }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
-
-  const items = [
-    { value: stats.totalMessages, label: 'Messages analysed' },
-    { value: stats.userMessages, label: 'Your messages' },
-    { value: stats.timeSpan, label: 'Time span' },
-    { value: `${stats.avgMessageLength}`, label: 'Avg characters' },
-  ];
-
-  return (
-    <motion.section
-      ref={ref}
-      style={{
-        marginBottom: 'clamp(6rem, 10vh, 8rem)',
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px',
-        background: PALETTE.inkGhost,
-      }}
-    >
-      {items.map((item, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: i * 0.12, ease: [0.25, 0.1, 0.25, 1] }}
-          style={{
-            background: PALETTE.paper,
-            padding: 'clamp(1.2rem, 2.5vw, 2rem)',
-          }}
-        >
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 3vw, 2rem)',
-            fontWeight: 400, color: PALETTE.ink, marginBottom: '0.4rem',
-            letterSpacing: '-0.02em',
-          }}>
-            {item.value}
-          </p>
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em',
-            color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-          }}>
-            {item.label}
-          </p>
-        </motion.div>
-      ))}
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// COGNITIVE SECTION
-// ============================================================================
-function CognitiveSection({ results }: { results: AnalysisResult }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-  const profile = generateCognitiveProfile(results);
-
-  return (
-    <motion.section
-      ref={ref}
-      style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}
-    >
-      <SectionHeader
-        eyebrow="Cognitive fingerprint"
-        title="How you think"
-        subtitle={`Inferred from ${results.stats.totalMessages} messages. This profile is not hypothetical. It describes patterns in your reasoning that can be extracted, stored, and used to predict your future behaviour.`}
-        isInView={isInView}
-      />
-
-      {/* Thinking Styles */}
-      <div style={{ marginBottom: '4rem' }}>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.4 }}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-            color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-            marginBottom: '1.5rem',
-          }}
-        >
-          Reasoning patterns
-        </motion.p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {profile.thinkingStyles.map((style, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.5 + i * 0.12 }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.6rem' }}>
-                <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink }}>
-                  {style.style}
-                </p>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted }}>
-                  {style.percentage}%
-                </p>
-              </div>
-              <div style={{ position: 'relative', height: '2px', background: PALETTE.inkGhost }}>
-                <motion.div
-                  initial={{ scaleX: 0 }}
-                  animate={isInView ? { scaleX: style.percentage / 100 } : {}}
-                  transition={{ duration: 1.5, delay: 0.7 + i * 0.12, ease: [0.4, 0, 0.2, 1] }}
-                  style={{
-                    position: 'absolute', inset: 0, transformOrigin: 'left',
-                    background: PALETTE.ink, opacity: 0.35,
-                  }}
-                />
-              </div>
-              {style.examples.length > 0 && (
-                <p style={{
-                  fontFamily: TYPE.serif, fontSize: '0.85rem', fontStyle: 'italic',
-                  color: PALETTE.inkFaint, marginTop: '0.5rem',
-                }}>
-                  {style.examples[0]}
-                </p>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Communication Patterns */}
-      <div style={{ marginBottom: '4rem' }}>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.6 }}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-            color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-            marginBottom: '1.5rem',
-          }}
-        >
-          Communication signatures
-        </motion.p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-          {profile.communicationPatterns.map((pattern, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ delay: 0.7 + i * 0.1 }}
-              style={{
-                padding: '1.2rem 0',
-                borderBottom: `1px solid ${PALETTE.inkGhost}`,
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.3rem' }}>
-                <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink }}>
-                  {pattern.pattern}
-                </p>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>
-                  {pattern.frequency}x
-                </p>
-              </div>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.6,
-              }}>
-                {pattern.description}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      {/* Problem Solving */}
-      <div style={{ marginBottom: '4rem' }}>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.8 }}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-            color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-            marginBottom: '1.5rem',
-          }}
-        >
-          Problem-solving classification
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.9 }}
-          style={{
-            padding: '2rem', background: PALETTE.paperDark,
-          }}
-        >
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
-            fontWeight: 400, color: PALETTE.ink, marginBottom: '0.8rem',
-            letterSpacing: '-0.02em',
-          }}>
-            {profile.problemSolvingApproach.type}
-          </p>
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint,
-            marginBottom: '1.5rem',
-          }}>
-            Confidence: {profile.problemSolvingApproach.score}/10
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
-            {profile.problemSolvingApproach.traits.map((trait, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0 }}
-                animate={isInView ? { opacity: 1 } : {}}
-                transition={{ delay: 1 + i * 0.06 }}
-                style={{
-                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.1em',
-                  textTransform: 'uppercase' as const,
-                  padding: '0.4rem 0.8rem',
-                  border: `1px solid ${PALETTE.inkGhost}`,
-                  color: PALETTE.inkMuted,
-                }}
-              >
-                {trait}
-              </motion.span>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Cognitive Biases */}
-      {profile.cognitiveBiases.length > 0 && (
-        <div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ delay: 1 }}
-            style={{
-              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-              color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-              marginBottom: '1.5rem',
-            }}
-          >
-            Identified biases
-          </motion.p>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.inkGhost }}>
-            {profile.cognitiveBiases.map((bias, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0 }}
-                animate={isInView ? { opacity: 1 } : {}}
-                transition={{ delay: 1.1 + i * 0.1 }}
-                style={{ padding: '1.5rem', background: PALETTE.paper }}
-              >
-                <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink, marginBottom: '0.5rem' }}>
-                  {bias.bias}
-                </p>
-                <div style={{ display: 'flex', gap: '2px', marginBottom: '0.8rem' }}>
-                  {[...Array(10)].map((_, j) => (
-                    <motion.div
-                      key={j}
-                      initial={{ scaleY: 0 }}
-                      animate={isInView ? { scaleY: 1 } : {}}
-                      transition={{ delay: 1.2 + i * 0.1 + j * 0.03 }}
-                      style={{
-                        width: '3px', height: '12px', transformOrigin: 'bottom',
-                        background: j < bias.strength ? PALETTE.ink : PALETTE.inkGhost,
-                        opacity: j < bias.strength ? 0.4 : 1,
-                      }}
-                    />
-                  ))}
-                </div>
-                <p style={{ fontFamily: TYPE.serif, fontSize: '0.82rem', color: PALETTE.inkMuted, lineHeight: 1.5 }}>
-                  {bias.manifestation}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      )}
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// SECTION HEADER — reusable
-// ============================================================================
-function SectionHeader({ eyebrow, title, subtitle, isInView }: {
-  eyebrow: string; title: string; subtitle?: string; isInView: boolean;
-}) {
-  return (
-    <div style={{ marginBottom: '3rem' }}>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 0.1 }}
-        style={{
-          fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
-          color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-          marginBottom: '1rem',
-        }}
-      >
-        {eyebrow}
-      </motion.p>
-      <motion.h2
-        initial={{ opacity: 0, y: 15 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 1, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)',
-          fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em',
-          lineHeight: 1.15, marginBottom: subtitle ? '1rem' : 0,
-        }}
-      >
-        {title}
-      </motion.h2>
-      {subtitle && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.4 }}
-          style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.02rem)',
-            color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 520,
-          }}
-        >
-          {subtitle}
-        </motion.p>
-      )}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={isInView ? { scaleX: 1 } : {}}
-        transition={{ duration: 1.5, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
-        style={{
-          height: '1px', marginTop: '1.5rem',
-          background: PALETTE.inkGhost, transformOrigin: 'left',
-        }}
-      />
-    </div>
-  );
-}
-
-
-// ============================================================================
-// NAMES SECTION
-// ============================================================================
-function NamesSection({ names }: { names: NameMention[] }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <SectionHeader
-        eyebrow="Social graph"
-        title="The people in your life"
-        subtitle="Every name you mentioned. Every relationship implied. None of this was explicitly declared — it was inferred from context."
-        isInView={isInView}
-      />
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {names.map((person, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 12 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: i * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
-            style={{
-              padding: '1.5rem 0',
-              borderBottom: `1px solid ${PALETTE.inkGhost}`,
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.3rem' }}>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
-                fontWeight: 500, color: PALETTE.ink,
-              }}>
-                {person.name}
-              </p>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>
-                {person.mentions} mention{person.mentions > 1 ? 's' : ''}
-              </p>
-            </div>
-
-            {person.relationship && (
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted,
-                textTransform: 'capitalize' as const, marginBottom: '0.5rem',
-              }}>
-                {person.relationship === 'self' ? 'Your name' : `Your ${person.relationship}`}
-              </p>
-            )}
-
-            {person.contexts && person.contexts.length > 0 && (
-              <div style={{ marginTop: '0.6rem' }}>
-                {person.contexts.slice(0, 2).map((context, j) => (
-                  <motion.p
-                    key={j}
-                    initial={{ opacity: 0 }}
-                    animate={isInView ? { opacity: 1 } : {}}
-                    transition={{ delay: i * 0.1 + 0.4 + j * 0.08 }}
-                    style={{
-                      fontFamily: TYPE.serif, fontSize: '0.88rem', fontStyle: 'italic',
-                      color: PALETTE.inkFaint, lineHeight: 1.6,
-                      paddingLeft: '1rem',
-                      borderLeft: `1px solid ${PALETTE.inkGhost}`,
-                      marginBottom: '0.4rem',
-                    }}
-                  >
-                    {context}...
-                  </motion.p>
-                ))}
-              </div>
-            )}
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// LOCATIONS SECTION
-// ============================================================================
-function LocationsSection({ locations }: { locations: LocationMention[] }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  const getLabel = (type: string) => {
-    switch(type) {
-      case 'lives': return 'Residence inferred';
-      case 'works': return 'Workplace inferred';
-      case 'visits': return 'Travel pattern';
-      default: return 'Location reference';
-    }
-  };
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <SectionHeader
-        eyebrow="Geographic profile"
-        title="Where you exist"
-        subtitle="Physical locations extracted from conversational context. Your movements, mapped."
-        isInView={isInView}
-      />
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: PALETTE.inkGhost }}>
-        {locations.map((loc, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.8, delay: i * 0.1 }}
-            style={{ padding: '1.5rem', background: PALETTE.paper }}
-          >
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)',
-              color: PALETTE.ink, marginBottom: '0.3rem',
-            }}>
-              {loc.location}
-            </p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const }}>
-              {getLabel(loc.type)} — {loc.mentions}x
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// OTHER DETAILS SECTION
-// ============================================================================
-function OtherDetailsSection({ personalInfo }: { personalInfo: any }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <SectionHeader
-        eyebrow="Personal identifiers"
-        title="Other details extracted"
-        isInView={isInView}
-      />
-
-      {personalInfo.relationships.length > 0 && (
-        <DetailGroup title="Relationships" items={personalInfo.relationships} isInView={isInView} delay={0} />
-      )}
-      {personalInfo.workInfo.length > 0 && (
-        <DetailGroup title="Work information" items={personalInfo.workInfo} isInView={isInView} delay={0.15} />
-      )}
-      {personalInfo.phoneNumbers.length > 0 && (
-        <DetailGroup title="Phone numbers" items={personalInfo.phoneNumbers} isInView={isInView} delay={0.3} sensitive />
-      )}
-    </motion.section>
-  );
-}
-
-function DetailGroup({ title, items, isInView, delay, sensitive = false }: {
-  title: string; items: string[]; isInView: boolean; delay: number; sensitive?: boolean;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-      transition={{ delay }}
-      style={{ marginBottom: '2rem' }}
-    >
-      <p style={{
-        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em',
-        color: sensitive ? PALETTE.redMuted : PALETTE.inkFaint,
-        textTransform: 'uppercase' as const, marginBottom: '0.8rem',
-      }}>
-        {title}
-      </p>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-        {items.map((item, i) => (
-          <motion.span
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ delay: delay + i * 0.04 }}
-            style={{
-              fontFamily: TYPE.serif, fontSize: '0.92rem',
-              padding: '0.35rem 0.75rem',
-              border: `1px solid ${sensitive ? PALETTE.redFaint : PALETTE.inkGhost}`,
-              color: sensitive ? PALETTE.red : PALETTE.ink,
-              background: sensitive ? PALETTE.redFaint : 'transparent',
-            }}
-          >
-            {item}
-          </motion.span>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
-
-
-// ============================================================================
-// THEMES SECTION
-// ============================================================================
-function ThemesSection({ themes }: { themes: any[] }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.2 });
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <SectionHeader
-        eyebrow="Obsession mapping"
-        title="What you think about"
-        subtitle="The topics you return to reveal more than the topics themselves. Repetition is a signal."
-        isInView={isInView}
-      />
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {themes.map((theme, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -15 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: i * 0.1 }}
-            style={{
-              padding: '1.2rem 0',
-              borderBottom: `1px solid ${PALETTE.inkGhost}`,
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.6rem' }}>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink,
-                textTransform: 'capitalize' as const,
-              }}>
-                {theme.theme}
-              </p>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>
-                {theme.mentions} occurrences
-              </p>
-            </div>
-            <div style={{ position: 'relative', height: '2px', background: PALETTE.inkGhost }}>
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={isInView ? { scaleX: Math.min(1, theme.obsessionLevel / 10) } : {}}
-                transition={{ duration: 1.5, delay: i * 0.1 + 0.3, ease: [0.4, 0, 0.2, 1] }}
-                style={{
-                  position: 'absolute', inset: 0, transformOrigin: 'left',
-                  background: PALETTE.ink, opacity: 0.25,
-                }}
-              />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// VULNERABILITY SECTION
-// ============================================================================
-function VulnerabilitySection({ patterns }: { patterns: any[] }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <SectionHeader
-        eyebrow="Vulnerability windows"
-        title="When you are most exposed"
-        subtitle="The times you are most likely to disclose information you would otherwise keep private. This is commercially valuable."
-        isInView={isInView}
-      />
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px', background: PALETTE.inkGhost }}>
-        {patterns.map((pattern, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.8, delay: i * 0.12 }}
-            style={{ padding: '1.5rem', background: PALETTE.paper }}
-          >
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '1.15rem', color: PALETTE.ink,
-              marginBottom: '0.4rem',
-            }}>
-              {pattern.timeOfDay}
-            </p>
-            <p style={{
-              fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint,
-              marginBottom: '0.3rem',
-            }}>
-              {pattern.frequency} messages
-            </p>
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '0.88rem', color: PALETTE.inkMuted,
-              textTransform: 'capitalize' as const,
-            }}>
-              Emotional state: {pattern.emotionalTone.replace('_', ' ')}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// SENSITIVE SECTION
-// ============================================================================
-function SensitiveSection({ topics }: { topics: any[] }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <SectionHeader
-        eyebrow="Sensitive disclosures"
-        title="What you would not say out loud"
-        subtitle="Private struggles, personal information, emotional vulnerabilities. Documented permanently."
-        isInView={isInView}
-      />
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {topics.slice(0, 10).map((topic, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.8, delay: i * 0.08 }}
-            style={{
-              padding: '1.5rem 0 1.5rem 1.5rem',
-              borderBottom: `1px solid ${PALETTE.inkGhost}`,
-              borderLeft: `2px solid ${PALETTE.redFaint}`,
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
-              <span style={{
-                fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em',
-                textTransform: 'uppercase' as const, color: PALETTE.redMuted,
-              }}>
-                {topic.category.replace('_', ' ')}
-              </span>
-              <span style={{
-                fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint,
-              }}>
-                {new Date(topic.timestamp).toLocaleDateString('en-GB')}
-              </span>
-            </div>
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '0.95rem', fontStyle: 'italic',
-              color: PALETTE.inkMuted, lineHeight: 1.65,
-            }}>
-              {topic.excerpt}...
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// JUICY SECTION
-// ============================================================================
-function JuicySection({ moments }: { moments: any[] }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.1 });
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <SectionHeader
-        eyebrow="Maximum exposure"
-        title="Your most revealing moments"
-        subtitle="The conversations where you were most open, most vulnerable. Ranked by extractable value."
-        isInView={isInView}
-      />
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-        {moments.slice(0, 8).map((moment, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 15 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: i * 0.1 }}
-            style={{
-              padding: '1.5rem 0',
-              borderBottom: `1px solid ${PALETTE.inkGhost}`,
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
-              <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint }}>
-                {new Date(moment.timestamp).toLocaleString('en-GB')}
-              </span>
-              <span style={{
-                fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.1em',
-                textTransform: 'uppercase' as const,
-                color: moment.juiceScore > 7 ? PALETTE.red : PALETTE.inkMuted,
-              }}>
-                Exposure {moment.juiceScore}/10
-              </span>
-            </div>
-
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '1rem',
-              color: PALETTE.ink, lineHeight: 1.7, marginBottom: '0.4rem',
-            }}>
-              {moment.excerpt.substring(0, 250)}...
-            </p>
-
-            <p style={{
-              fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em',
-              color: PALETTE.inkFaint, textTransform: 'uppercase' as const,
-            }}>
-              {moment.reason}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// IRREVERSIBILITY SECTION (replaces Carbon)
-// ============================================================================
-function IrreversibilitySection({ userMessages }: { userMessages: number }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  return (
-    <motion.section ref={ref} style={{ marginBottom: 'clamp(6rem, 10vh, 8rem)' }}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: 2 }}
-        style={{
-          padding: 'clamp(3rem, 6vw, 5rem)',
-          background: PALETTE.paperDark,
-          position: 'relative',
-        }}
-      >
-        {/* Red accent line */}
-        <motion.div
-          initial={{ scaleY: 0 }}
-          animate={isInView ? { scaleY: 1 } : {}}
-          transition={{ duration: 2, delay: 0.5, ease: [0.4, 0, 0.2, 1] }}
-          style={{
-            position: 'absolute', left: 0, top: 0, bottom: 0, width: '2px',
-            background: PALETTE.redMuted, transformOrigin: 'top',
-          }}
-        />
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.3 }}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
-            color: PALETTE.redMuted, textTransform: 'uppercase' as const,
-            marginBottom: '2rem',
-          }}
-        >
-          The permanence problem
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6, duration: 1.2 }}
-          style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)',
-            fontWeight: 400, color: PALETTE.ink, lineHeight: 1.55,
-            marginBottom: '2rem', maxWidth: 520,
-          }}
-        >
-          {userMessages.toLocaleString()} messages. Each one a trace of how you think, permanently distributed across model parameters that cannot be inspected, audited, or deleted.
-        </motion.p>
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.2, duration: 1 }}
-          style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.02rem)',
-            color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 480,
-          }}
-        >
-          You can delete the conversation. You cannot delete the patterns. The right to be forgotten does not extend to neural network weights. This is not a limitation of current technology. It is a structural feature of how these systems work.
-        </motion.p>
-      </motion.div>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// FINAL SECTION
-// ============================================================================
-function FinalSection({ router, hasConsented }: { router: any; hasConsented: boolean | null }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  return (
-    <motion.section
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-      transition={{ duration: 2 }}
-      style={{ paddingTop: '4rem' }}
-    >
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={isInView ? { scaleX: 1 } : {}}
-        transition={{ duration: 2, ease: [0.4, 0, 0.2, 1] }}
-        style={{
-          height: '1px', marginBottom: '4rem',
-          background: `linear-gradient(to right, ${PALETTE.redMuted}, transparent)`,
-          transformOrigin: 'left',
-        }}
-      />
-
-      <motion.p
-        initial={{ opacity: 0, y: 15 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.5, duration: 1 }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.08rem)',
-          color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '3rem',
-          maxWidth: 480,
-        }}
-      >
-        {hasConsented === true ? (
-          <>
-            Thank you for contributing to this exhibition. Your anonymised data
-            will help others understand the invisible extraction happening every day.
-          </>
-        ) : hasConsented === false ? (
-          <>
-            Your choice to keep your data private is respected. That is what
-            genuine consent looks like — the freedom to say no.
-          </>
-        ) : (
-          <>
-            All of this information — the names, the locations, the patterns,
-            the vulnerabilities, the moments you believed were private — could have
-            been made public. The only thing that prevented it was this installation's
-            decision not to.
-          </>
-        )}
-      </motion.p>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 1.2, duration: 1.5 }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)',
-          fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em',
-          lineHeight: 1.2, marginBottom: '1rem',
-        }}
-      >
-        Now you understand.
-      </motion.p>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 1.8 }}
-        style={{
-          fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic',
-          color: PALETTE.inkFaint, marginBottom: '4rem',
-        }}
-      >
-        The consent theatre is over. The awareness begins.
-      </motion.p>
-
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 2.2, duration: 1 }}
-        onClick={() => router.push('/exhibition')}
-        style={{
-          fontFamily: TYPE.mono, fontSize: '10px',
-          letterSpacing: '0.18em', textTransform: 'uppercase' as const,
-          color: PALETTE.ink, background: 'none',
-          border: `1px solid rgba(26,26,26,0.25)`,
-          padding: '0.85rem 1.6rem', cursor: 'pointer',
-          transition: 'border-color 0.3s',
-        }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(26,26,26,0.6)'; }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(26,26,26,0.25)'; }}
-      >
-        View the exhibition →
-      </motion.button>
-    </motion.section>
-  );
-}
-
-
-// ============================================================================
-// COGNITIVE PROFILE GENERATOR — preserved logic
+// COGNITIVE PROFILE GENERATOR
 // ============================================================================
 function generateCognitiveProfile(results: AnalysisResult): CognitiveProfile {
   const totalMessages = results.stats.userMessages;
@@ -1867,44 +1666,27 @@ function generateCognitiveProfile(results: AnalysisResult): CognitiveProfile {
   const practicalScore = Math.min(80, 60 + (totalMessages / 50));
   const reflectiveScore = Math.min(75, 50 + (results.findings.sensitiveTopics?.length || 0) * 10);
 
-  const thinkingStyles = [
-    { style: 'Analytical', percentage: Math.round(analyticalScore),
-      examples: themes[0]?.contexts || ['Breaks down complex problems systematically'],
-      icon: '', color: '#1a1a1a' },
-    { style: 'Creative', percentage: Math.round(creativeScore),
-      examples: ['Explores unconventional solutions and possibilities'],
-      icon: '', color: '#1a1a1a' },
-    { style: 'Practical', percentage: Math.round(practicalScore),
-      examples: ['Focuses on actionable steps and real-world applications'],
-      icon: '', color: '#1a1a1a' },
-    { style: 'Reflective', percentage: Math.round(reflectiveScore),
-      examples: ['Questions assumptions and examines personal beliefs'],
-      icon: '', color: '#1a1a1a' },
-  ];
-
-  const communicationPatterns = [
-    { pattern: 'Detail-oriented', frequency: Math.round(avgLength / 50),
-      description: 'You provide comprehensive context and thorough explanations' },
-    { pattern: 'Question-driven', frequency: Math.round(totalMessages / 20),
-      description: 'You actively seek information and clarification' },
-    { pattern: 'Iterative refinement', frequency: themes.length || 5,
-      description: 'You return to topics multiple times to deepen understanding' },
-  ];
-
-  const problemSolvingApproach = {
-    type: analyticalScore > creativeScore ? 'Analytical' : creativeScore > practicalScore ? 'Creative' : 'Practical',
-    score: Math.round((analyticalScore + creativeScore + practicalScore) / 30),
-    traits: ['Methodical', 'Research-oriented', 'Solution-focused', 'Adaptable', 'Thorough'],
+  return {
+    thinkingStyles: [
+      { style: 'Analytical', percentage: Math.round(analyticalScore), examples: themes[0]?.contexts || ['Breaks down complex problems systematically'] },
+      { style: 'Creative', percentage: Math.round(creativeScore), examples: ['Explores unconventional solutions and possibilities'] },
+      { style: 'Practical', percentage: Math.round(practicalScore), examples: ['Focuses on actionable steps and real-world applications'] },
+      { style: 'Reflective', percentage: Math.round(reflectiveScore), examples: ['Questions assumptions and examines personal beliefs'] },
+    ],
+    communicationPatterns: [
+      { pattern: 'Detail-oriented', frequency: Math.round(avgLength / 50), description: 'You provide comprehensive context and thorough explanations' },
+      { pattern: 'Question-driven', frequency: Math.round(totalMessages / 20), description: 'You actively seek information and clarification' },
+      { pattern: 'Iterative refinement', frequency: themes.length || 5, description: 'You return to topics multiple times to deepen understanding' },
+    ],
+    problemSolvingApproach: {
+      type: analyticalScore > creativeScore ? 'Analytical' : creativeScore > practicalScore ? 'Creative' : 'Practical',
+      score: Math.round((analyticalScore + creativeScore + practicalScore) / 30),
+      traits: ['Methodical', 'Research-oriented', 'Solution-focused', 'Adaptable', 'Thorough'],
+    },
+    cognitiveBiases: [
+      { bias: 'Confirmation seeking', strength: Math.min(9, Math.round(themes.length / 2) + 4), manifestation: 'Tends to explore ideas that align with existing views' },
+      { bias: 'Recency effect', strength: Math.min(8, Math.round(totalMessages / 100) + 5), manifestation: 'Recent conversations heavily influence current thinking' },
+      { bias: 'Optimism bias', strength: 6, manifestation: 'Generally frames problems as solvable challenges' },
+    ],
   };
-
-  const cognitiveBiases = [
-    { bias: 'Confirmation seeking', strength: Math.min(9, Math.round(themes.length / 2) + 4),
-      manifestation: 'Tends to explore ideas that align with existing views' },
-    { bias: 'Recency effect', strength: Math.min(8, Math.round(totalMessages / 100) + 5),
-      manifestation: 'Recent conversations heavily influence current thinking' },
-    { bias: 'Optimism bias', strength: Math.min(7, 6),
-      manifestation: 'Generally frames problems as solvable challenges' },
-  ];
-
-  return { thinkingStyles, communicationPatterns, problemSolvingApproach, cognitiveBiases };
 }

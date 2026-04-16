@@ -1,318 +1,443 @@
 'use client';
-import { useState, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { analyzeExport, type AnalyzeProgress } from '@/app/results/analyzeExport';
+import CountdownReveal, { RevealData } from './CountdownReveal';
+import DashboardLayout, { PALETTE, TYPE, type DashPage } from './DashboardLayout';
+import OverviewPage from './OverviewPage';
+import SourcesPage from './SourcesPage';
+import UnderstandPage from './UnderstandPage';
 
-// CSS Keyframes injected once - much more performant than JS animations
-const GlobalStyles = () => (
-  <style jsx global>{`
-    @keyframes gradient-rotate {
-      0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
-      50% { transform: translate(-50%, -50%) rotate(180deg) scale(1.15); }
-      100% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
-    }
-    @keyframes gradient-rotate-reverse {
-      0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
-      50% { transform: translate(-50%, -50%) rotate(-180deg) scale(1.2); }
-      100% { transform: translate(-50%, -50%) rotate(-360deg) scale(1); }
-    }
-    @keyframes light-sweep {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
-    }
-    @keyframes spin-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    .gradient-orb-1 { animation: gradient-rotate 30s ease-in-out infinite; will-change: transform; contain: strict; }
-    .gradient-orb-2 { animation: gradient-rotate-reverse 35s ease-in-out infinite; animation-delay: -5s; will-change: transform; contain: strict; }
-    .light-sweep { animation: light-sweep 60s linear infinite; will-change: transform; contain: strict; }
-    .spin-slow { animation: spin-slow 3s linear infinite; will-change: transform; }
-    .glass-subtle { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .gpu-accelerated { transform: translateZ(0); backface-visibility: hidden; }
-  `}</style>
-);
+// ============================================================================
+// TYPES — extended to include deep parser fields
+// ============================================================================
+interface AnalysisResult {
+  privacyScore: number;
+  findings: {
+    personalInfo: {
+      names: any[];
+      locations: any[];
+      ages: string[];
+      emails: string[];
+      phoneNumbers: string[];
+      relationships: string[];
+      workInfo: string[];
+    };
+    sensitiveTopics: any[];
+    vulnerabilityPatterns: any[];
+    temporalInsights: any[];
+    repetitiveThemes: any[];
+  };
+  juiciestMoments: any[];
+  stats?: {
+    totalMessages: number;
+    userMessages: number;
+    assistantMessages: number;
+    timeSpan: string;
+    avgMessageLength: number;
+  };
+  rawStats?: {
+    totalMessages: number;
+    userMessages: number;
+    timeSpan: string;
+    avgMessageLength: number;
+  };
+  totalUserMessages?: number;
+  timespan?: { first: string; last: string; days: number };
+  emotionalTimeline?: any;
+  commercialProfile?: any;
+  dependency?: any;
+  lifeEvents?: any[];
+  topicsByPeriod?: { early: string[]; mid: string[]; recent: string[] };
+  hourDistribution?: number[];
+  dayDistribution?: number[];
+  nighttimeRatio?: number;
+  avgIntimacy?: number;
+  avgAnxiety?: number;
+  mostVulnerablePeriod?: string;
+  typeBreakdown?: Record<string, number>;
+  aiEnriched?: boolean;
+}
 
-const BackgroundEffects = () => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    <div className="gradient-orb-1 absolute top-1/2 left-1/4" style={{ width: '1000px', height: '1000px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(36, 121, 223, 0.35) 0%, transparent 70%)', filter: 'blur(80px)', contain: 'strict' }} />
-    <div className="gradient-orb-2 absolute top-1/4 right-0" style={{ width: '1200px', height: '1200px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(176, 195, 253, 0.3) 0%, transparent 70%)', filter: 'blur(100px)', contain: 'strict' }} />
-    <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(rgba(59, 155, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 155, 255, 0.03) 1px, transparent 1px)`, backgroundSize: '64px 64px', maskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)', WebkitMaskImage: 'radial-gradient(ellipse at center, black 40%, transparent 80%)' }} />
-    <div className="light-sweep absolute top-1/2 left-1/2 opacity-20" style={{ width: '800px', height: '800px', background: 'conic-gradient(from 0deg, transparent 0deg, rgba(59, 155, 255, 0.15) 45deg, transparent 90deg)', contain: 'strict' }} />
-  </div>
-);
+type Stage = 'countdown' | 'dashboard';
 
-const FeatureCard = ({ feature, index }: { feature: typeof FEATURES[0]; index: number }) => (
-  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 + index * 0.1, duration: 0.5 }} whileHover={{ y: -8 }} className="relative group gpu-accelerated">
-    <div className="relative p-8 rounded-3xl h-full glass-subtle transition-all duration-300 group-hover:border-white/20" style={{ boxShadow: `0 10px 40px ${feature.glowColor}` }}>
-      <div className="relative z-10">
-        <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-4xl mb-6 transition-transform duration-300 group-hover:scale-110" style={{ background: `linear-gradient(135deg, ${feature.colors[0]}20, ${feature.colors[1]}20)`, boxShadow: `0 10px 30px ${feature.glowColor}` }}>{feature.emoji}</div>
-        <h3 className="text-2xl font-bold text-white mb-3">{feature.title}</h3>
-        <p className="text-white/70 leading-relaxed">{feature.description}</p>
+const DEFAULT_SOURCES = [
+  { id: 'chatgpt', label: 'ChatGPT', connected: false },
+  { id: 'google', label: 'Google', connected: false },
+  { id: 'instagram', label: 'Instagram', connected: false },
+  { id: 'spotify', label: 'Spotify', connected: false },
+  { id: 'linkedin', label: 'LinkedIn', connected: false },
+  { id: 'twitter', label: 'X', connected: false },
+];
+
+// ============================================================================
+// PROFILE PAGE
+// ============================================================================
+function ProfilePage({ results }: { results: AnalysisResult }) {
+  return (
+    <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)', maxWidth: 1280, margin: '0 auto' }}>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>02 — My profile</p>
+        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+          Your cognitive fingerprint.
+        </h1>
+      </motion.div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1px', background: PALETTE.border }}>
+        <div style={{ gridColumn: 'span 5', background: PALETTE.bgPanel, padding: '2rem' }}>
+          <ProfileSection eyebrow="Reasoning patterns" results={results} type="thinking" />
+        </div>
+        <div style={{ gridColumn: 'span 4', background: PALETTE.bgPanel, padding: '2rem' }}>
+          <ProfileSection eyebrow="What keeps you up at night" results={results} type="themes" />
+        </div>
+        <div style={{ gridColumn: 'span 3', background: PALETTE.bgPanel, padding: '2rem' }}>
+          <ProfileSection eyebrow="People in your life" results={results} type="names" />
+        </div>
+        <div style={{ gridColumn: 'span 8', background: PALETTE.bgPanel, padding: '2rem' }}>
+          <ProfileSection eyebrow="Sensitive disclosures" results={results} type="sensitive" />
+        </div>
+        <div style={{ gridColumn: 'span 4', background: PALETTE.bgPanel, padding: '2rem' }}>
+          <ProfileSection eyebrow="Where you can be found" results={results} type="locations" />
+        </div>
+        <div style={{ gridColumn: 'span 12', background: PALETTE.bgPanel, padding: '2rem' }}>
+          <ProfileSection eyebrow="When you are easiest to manipulate" results={results} type="vulnerability" />
+        </div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-1 rounded-b-3xl transition-transform duration-500 origin-left scale-x-0 group-hover:scale-x-100" style={{ background: `linear-gradient(90deg, ${feature.colors[0]}, ${feature.colors[1]})` }} />
     </div>
-  </motion.div>
-);
+  );
+}
 
-const FEATURES = [
-  { emoji: '🔐', title: 'Privacy analysis', description: 'A detailed breakdown of the personal data present in your conversations, with context on how it could be used.', colors: ['#2479df', '#5eb3ff'], glowColor: 'rgba(36, 121, 223, 0.25)' },
-  { emoji: '📊', title: 'Behavioural patterns', description: 'See how your interaction habits, topics, and communication style create a profile over time.', colors: ['#3b9bff', '#b0c3fd'], glowColor: 'rgba(59, 155, 255, 0.25)' },
-  { emoji: '🌍', title: 'Environmental cost', description: 'Estimate the energy and carbon footprint of your AI usage, compared to everyday activities.', colors: ['#b0c3fd', '#ffccee'], glowColor: 'rgba(176, 195, 253, 0.25)' },
+function ProfileSection({ eyebrow, results, type }: { eyebrow: string; results: AnalysisResult; type: string }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const profile = generateCognitiveProfile(results);
+
+  return (
+    <div ref={ref}>
+      <motion.p initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.1 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+        {eyebrow}
+      </motion.p>
+
+      {type === 'thinking' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          {profile.thinkingStyles.map((s, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.1 + i * 0.1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{s.style}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkMuted }}>{s.percentage}%</p>
+              </div>
+              <div style={{ height: '2px', background: PALETTE.bgElevated, position: 'relative' }}>
+                <motion.div initial={{ scaleX: 0 }} animate={isInView ? { scaleX: s.percentage / 100 } : {}}
+                  transition={{ duration: 1.4, delay: 0.3 + i * 0.1, ease: [0.4, 0, 0.2, 1] }}
+                  style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: PALETTE.inkMuted, opacity: 0.6 }} />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {type === 'themes' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {results.findings.repetitiveThemes.slice(0, 8).map((theme: any, i: number) => (
+            <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: i * 0.07 }}
+              style={{ padding: '0.8rem 0', borderBottom: `1px solid ${PALETTE.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.ink, textTransform: 'capitalize' }}>{theme.theme}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint }}>{theme.mentions || theme.count}x</p>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {type === 'names' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {results.findings.personalInfo.names.slice(0, 6).map((n: any, i: number) => (
+            <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: i * 0.08 }}
+              style={{ padding: '0.8rem 0', borderBottom: `1px solid ${PALETTE.border}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.ink }}>{n.name}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint }}>{n.mentions}x</p>
+              </div>
+              {n.relationship && <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, textTransform: 'capitalize', marginTop: '2px' }}>{n.relationship}</p>}
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {type === 'sensitive' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {results.findings.sensitiveTopics.slice(0, 8).map((t: any, i: number) => (
+            <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: i * 0.07 }}
+              style={{ padding: '1rem 0 1rem 1rem', borderBottom: `1px solid ${PALETTE.border}`, borderLeft: `2px solid ${PALETTE.redFaint}`, marginBottom: '1px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.12em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>{t.category?.replace('_', ' ')}</span>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint }}>{new Date(t.timestamp).toLocaleDateString('en-GB')}</span>
+              </div>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.6 }}>{t.excerpt?.substring(0, 160)}...</p>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {type === 'locations' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          {results.findings.personalInfo.locations.map((l: any, i: number) => (
+            <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: i * 0.08 }}
+              style={{ padding: '0.8rem 0', borderBottom: `1px solid ${PALETTE.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.ink }}>{l.location}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{l.type === 'lives' ? 'Home' : l.type === 'works' ? 'Work' : 'Mentioned'} — {l.mentions}x</p>
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {type === 'vulnerability' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.border }}>
+          {results.findings.vulnerabilityPatterns.map((p: any, i: number) => {
+            const count = p.messageCount || p.frequency || 0;
+            const isNight = (p.timeOfDay || '').toLowerCase().includes('late') || (p.timeOfDay || '').toLowerCase().includes('night');
+            return (
+              <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: i * 0.1 }}
+                style={{ background: PALETTE.bgElevated, padding: '1.5rem', borderTop: isNight ? `2px solid ${PALETTE.red}` : `2px solid transparent` }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink, marginBottom: '0.4rem' }}>{p.timeOfDay}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '1.2rem', color: isNight ? PALETTE.red : PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.4rem' }}>{count.toLocaleString()}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>messages</p>
+                {isNight && <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.redMuted, marginTop: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Highest value</p>}
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// RISK PAGE
+// ============================================================================
+function RiskPage({ results }: { results: AnalysisResult }) {
+  return (
+    <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)', maxWidth: 1100, margin: '0 auto' }}>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>04 — Risk assessment</p>
+        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>
+          This is not theoretical.
+        </h1>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 600 }}>
+          The data in your profile is commercially valuable. The following scenarios describe what companies already do — and are legally permitted to do — with data of this kind.
+        </p>
+      </motion.div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
+        {RISK_SCENARIOS.map((scenario, i) => (
+          <RiskBlock key={scenario.id} scenario={scenario} index={i} results={results} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const RISK_SCENARIOS = [
+  {
+    id: 'insurance',
+    label: 'Insurance pricing',
+    severity: 'critical',
+    heading: 'An insurer you have never spoken to already knows.',
+    body: 'Insurance companies feed behavioural inference data — emotional patterns, anxiety indicators, financial distress signals — directly into underwriting models. Your premium is not set by a person reviewing your file. It is set by an algorithm that assigns you a risk score based on patterns in data you produced elsewhere.',
+    precedent: 'In 2023, the FTC fined BetterHelp $7.8 million after it shared sensitive mental health data — including the fact users had previously been in therapy — with Facebook and Snapchat for advertising. BetterHelp had told every user: "Rest assured — any information provided will stay private between you and your counsellor."',
+    check: (r: AnalysisResult) => (r.findings.sensitiveTopics?.length || 0) > 0,
+  },
+  {
+    id: 'employment',
+    label: 'Employment screening',
+    severity: 'critical',
+    heading: 'You did not get the interview. You were never told why.',
+    body: 'In 2024, a US federal court allowed a case against Workday to proceed — a plaintiff had applied to over 100 jobs using Workday\'s AI screening tools and was rejected from every single one. The claim: the system detected indicators of anxiety and depression. 83% of employers now use automated tools at some point in hiring.',
+    precedent: 'Humantic AI generates personality profiles from written language alone, claiming 78-85% accuracy. No test required. No consent requested. If your conversation data has been used in model training, the patterns are embedded in the model that reads your next cover letter.',
+    check: (r: AnalysisResult) => (r.totalUserMessages || r.stats?.userMessages || 0) > 200,
+  },
+  {
+    id: 'targeting',
+    label: 'Precision targeting',
+    severity: 'high',
+    heading: 'You were assigned to a segment. You did not know it existed.',
+    body: 'The data broker market was valued at $278 billion in 2024. Companies purchase inferred audience segments — "financially distressed 18-34", "mental health help-seeker" — and use them to time advertising to moments of maximum vulnerability. Your vulnerability windows are commercially documented.',
+    precedent: 'Oracle Data Cloud paid $115 million in 2024 to settle a case for tracking and selling user data without consent, assembling profiles on hundreds of millions of people from platforms those users visited with no awareness Oracle was involved.',
+    check: (r: AnalysisResult) => (r.findings.vulnerabilityPatterns?.length || 0) > 0,
+  },
+  {
+    id: 'breach',
+    label: 'Breach exposure',
+    severity: 'high',
+    heading: 'None of this requires intent. One breach is enough.',
+    body: '73% of enterprises reported at least one AI-related security incident in 2024. A breach does not release a file with your name at the top. It releases patterns and inferences that cannot be un-released, corrected, or deleted from the systems that received them.',
+    precedent: 'The Equifax breach of 2017 exposed the financial data of 148 million people. Those people did not consent to Equifax holding their data. Most did not know Equifax existed. The company simply had it.',
+    check: (r: AnalysisResult) => (r.privacyScore || 0) > 40,
+  },
 ];
 
-const STATS = [
-  { number: '2M+', label: 'Conversations analysed', colors: ['#2479df', '#3b9bff'] },
-  { number: '<30s', label: 'Average processing time', colors: ['#3b9bff', '#b0c3fd'] },
-  { number: '100%', label: 'Server-side processing', colors: ['#b0c3fd', '#d4b8ff'] },
-];
+const SEVERITY_COLOR: Record<string, string> = {
+  critical: PALETTE.red,
+  high: PALETTE.amber,
+  medium: 'rgba(120,180,255,0.85)',
+};
 
-export default function UploadPage() {
-  const [isDragging, setIsDragging] = useState(false);
-  const [isAnalysing, setIsAnalysing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [stage, setStage] = useState<string>('');
-  const [detail, setDetail] = useState<string>('');
+function RiskBlock({ scenario, index, results }: { scenario: typeof RISK_SCENARIOS[0]; index: number; results: AnalysisResult }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-5%' });
+  const active = scenario.check(results);
+
+  return (
+    <motion.article
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ duration: 1 }}
+      style={{ background: PALETTE.bgPanel, padding: '2rem 2.5rem', borderLeft: `3px solid ${active ? SEVERITY_COLOR[scenario.severity] : PALETTE.border}` }}
+    >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.2rem' }}>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: active ? SEVERITY_COLOR[scenario.severity] : PALETTE.inkFaint, textTransform: 'uppercase', padding: '3px 8px', border: `1px solid ${active ? SEVERITY_COLOR[scenario.severity] + '40' : PALETTE.border}` }}>
+              {active ? 'Active risk' : 'Low risk'}
+            </span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+              {scenario.label}
+            </span>
+          </div>
+
+          <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.45rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35, marginBottom: '1.2rem' }}>
+            {scenario.heading}
+          </h3>
+
+          <p style={{ fontFamily: TYPE.serif, fontSize: '0.97rem', color: PALETTE.inkMuted, lineHeight: 1.75 }}>
+            {scenario.body}
+          </p>
+        </div>
+
+        <div>
+          <div style={{ padding: '1.2rem', background: PALETTE.bgElevated, borderRadius: '2px' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>Documented precedent</p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.65 }}>{scenario.precedent}</p>
+          </div>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+// ============================================================================
+// COGNITIVE PROFILE GENERATOR
+// ============================================================================
+function generateCognitiveProfile(results: AnalysisResult) {
+  const stats = results.stats || results.rawStats;
+  const totalMessages = stats?.userMessages || results.totalUserMessages || 0;
+  const avgLength = stats?.avgMessageLength || 0;
+  const themes = results.findings.repetitiveThemes || [];
+  const analyticalScore = Math.min(95, (avgLength / 300) * 100 + 20);
+  const creativeScore = Math.min(85, themes.length * 8 + 25);
+  const practicalScore = Math.min(80, 60 + (totalMessages / 50));
+  const reflectiveScore = Math.min(75, 50 + (results.findings.sensitiveTopics?.length || 0) * 10);
+  return {
+    thinkingStyles: [
+      { style: 'Analytical', percentage: Math.round(analyticalScore) },
+      { style: 'Creative', percentage: Math.round(creativeScore) },
+      { style: 'Practical', percentage: Math.round(practicalScore) },
+      { style: 'Reflective', percentage: Math.round(reflectiveScore) },
+    ],
+  };
+}
+
+// ============================================================================
+// MAIN PAGE — CountdownReveal then Dashboard
+// ============================================================================
+export default function ResultsPage() {
+  const [results, setResults] = useState<AnalysisResult | null>(null);
+  const [stage, setStage] = useState<Stage>('countdown');
+  const [page, setPage] = useState<DashPage>('overview');
+  const [sources, setSources] = useState(DEFAULT_SOURCES);
   const router = useRouter();
-  const prefersReducedMotion = useReducedMotion();
 
-  const containerVariants = useMemo(() => ({
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: prefersReducedMotion ? 0 : 0.5 } },
-    exit: { opacity: 0, transition: { duration: prefersReducedMotion ? 0 : 0.3 } }
-  }), [prefersReducedMotion]);
-
-  const handleFile = useCallback(async (file: File) => {
-    setError(null);
-    setIsAnalysing(true);
-    setProgress(5);
-    setStage('Reading file...');
-    setDetail('');
-
-    try {
-      const text = await file.text();
-      setProgress(10);
-      setStage('Parsing conversations...');
-
-      let jsonData;
-      try {
-        jsonData = JSON.parse(text);
-      } catch {
-        throw new Error('Invalid JSON file. Please upload conversations.json from your ChatGPT export.');
-      }
-
-      if (!Array.isArray(jsonData)) {
-        throw new Error('This does not look like a ChatGPT conversations.json file.');
-      }
-
-      // Run analysis with progress callbacks
-      await analyzeExport(jsonData, (p: AnalyzeProgress) => {
-        if (p.phase === 'parsing') {
-          setProgress(20);
-          setStage('Extracting patterns...');
-          setDetail('');
-        } else if (p.phase === 'ai_enriching') {
-          if (p.aiProgress) {
-            if (p.aiProgress.stage === 'selecting') {
-              setProgress(25);
-              setStage('Selecting high-signal messages...');
-              setDetail('');
-            } else if (p.aiProgress.stage === 'enriching') {
-              const pct = p.aiProgress.batchesTotal > 0
-                ? 30 + (p.aiProgress.batchesDone / p.aiProgress.batchesTotal) * 60
-                : 30;
-              setProgress(Math.round(pct));
-              setStage('Analysing message content with AI...');
-              setDetail(`Batch ${p.aiProgress.batchesDone} of ${p.aiProgress.batchesTotal}`);
-            } else if (p.aiProgress.stage === 'merging') {
-              setProgress(92);
-              setStage('Building your profile...');
-              setDetail(`${p.aiProgress.messagesEnriched} messages analysed`);
-            } else if (p.aiProgress.stage === 'failed') {
-              // AI failed — we keep the regex analysis, so just continue
-              setStage('Finalising results...');
-              setDetail('');
-            }
-          }
-        } else if (p.phase === 'storing') {
-          setProgress(96);
-          setStage('Finalising results...');
-          setDetail('');
-        } else if (p.phase === 'done') {
-          setProgress(100);
-          setStage('Complete');
-          setDetail('');
-        }
-      });
-
-      setTimeout(() => {
-        router.push('/results');
-      }, 600);
-
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to analyse file';
-      setError(message);
-      setIsAnalysing(false);
-      setProgress(0);
-      setStage('');
-      setDetail('');
+  useEffect(() => {
+    const stored = sessionStorage.getItem('analysisResults');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setResults(parsed);
+      setSources(prev => prev.map(s => s.id === 'chatgpt' ? { ...s, connected: true } : s));
+    } else {
+      router.push('/upload');
     }
   }, [router]);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      if (file.type === 'application/json' || file.name.endsWith('.json')) handleFile(file);
-      else setError('Please upload a JSON file');
-    }
-  }, [handleFile]);
+  // Re-poll sessionStorage during countdown — AI enrichment may update it mid-flight
+  useEffect(() => {
+    if (stage !== 'countdown') return;
+    const interval = setInterval(() => {
+      const stored = sessionStorage.getItem('analysisResults');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        setResults(parsed);
+      }
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [stage]);
 
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleFile(file);
-  }, [handleFile]);
+  const handleUpload = useCallback((sourceId: string, file: File) => {
+    setSources(prev => prev.map(s => s.id === sourceId ? { ...s, connected: true } : s));
+  }, []);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); }, []);
-  const handleDragLeave = useCallback(() => setIsDragging(false), []);
+  if (!results) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0e0e0d' }}>
+        <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2.4, repeat: Infinity }}
+          style={{ fontFamily: '"Courier Prime", monospace', fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(240,237,232,0.2)', textTransform: 'uppercase' }}>
+          Loading
+        </motion.p>
+      </div>
+    );
+  }
+
+  if (stage === 'countdown') {
+    const stats = results.stats || results.rawStats;
+    const revealData: RevealData = {
+      name: results.findings.personalInfo.names[0]?.name,
+      location: results.findings.personalInfo.locations[0]?.location,
+      vulnerabilityWindow: results.findings.vulnerabilityPatterns[0]?.timeOfDay,
+      revealingMoment: results.juiciestMoments[0] ? {
+        timestamp: new Date(results.juiciestMoments[0].timestamp).toLocaleString('en-GB'),
+        content: results.juiciestMoments[0].excerpt?.substring(0, 180) || '',
+      } : undefined,
+      messageCount: results.totalUserMessages || stats?.totalMessages,
+      topTopic: results.findings.repetitiveThemes[0]?.theme,
+      lateNightCount: results.hourDistribution
+        ? results.hourDistribution.slice(0, 5).reduce((a: number, b: number) => a + b, 0)
+        : undefined,
+      lifeEventCount: results.lifeEvents?.length,
+      crisisPeriods: results.emotionalTimeline?.crisisPeriods?.length,
+      dependencyScore: results.dependency?.dependencyScore,
+      topSegment: results.commercialProfile?.segments?.[0]?.label,
+      firstMessageDate: results.timespan?.first
+        ? new Date(results.timespan.first).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
+        : undefined,
+      confessionalCount: results.typeBreakdown?.confessional,
+    };
+
+    return (
+      <CountdownReveal
+        onComplete={() => setStage('dashboard')}
+        data={revealData}
+      />
+    );
+  }
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #0a0a14 0%, #1a0a28 50%, #0a1428 100%)' }}>
-      <GlobalStyles />
-      <BackgroundEffects />
-
-      <div className="relative z-10">
-        <AnimatePresence mode="wait">
-          {!isAnalysing ? (
-            <motion.div key="content" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="max-w-[1400px] mx-auto px-6 py-16">
-              <div className="text-center mb-16">
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }} className="inline-flex items-center gap-2 px-6 py-3 rounded-full mb-8" style={{ background: 'linear-gradient(135deg, rgba(36, 121, 223, 0.2), rgba(176, 195, 253, 0.2))', border: '1px solid rgba(59, 155, 255, 0.3)', boxShadow: '0 0 40px rgba(59, 155, 255, 0.15)' }}>
-                  <div className="w-2 h-2 rounded-full spin-slow" style={{ background: 'linear-gradient(135deg, #3b9bff, #b0c3fd)', boxShadow: '0 0 10px rgba(59, 155, 255, 0.5)' }} />
-                  <span className="text-white/80 font-medium text-sm tracking-wide">You Agreed — AI Privacy Audit Tool</span>
-                </motion.div>
-
-                <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }} className="text-6xl md:text-7xl font-black mb-6 tracking-tight leading-none" style={{ background: 'linear-gradient(135deg, #ffffff 20%, #3b9bff 50%, #b0c3fd 80%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                  See what your<br />AI knows about you
-                </motion.h1>
-
-                <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="text-xl text-white/60 max-w-2xl mx-auto mb-10 leading-relaxed">
-                  Upload your ChatGPT export. Get a complete privacy analysis of everything you've disclosed — names, locations, patterns, vulnerabilities.
-                </motion.p>
-              </div>
-
-              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="max-w-5xl mx-auto mb-20">
-                <input type="file" accept=".json" onChange={handleFileInput} className="hidden" id="file-upload" />
-                <label htmlFor="file-upload" className="cursor-pointer block">
-                  <div onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} className={`relative p-16 rounded-[32px] overflow-hidden group transition-all duration-300 ease-out ${isDragging ? 'scale-[1.02]' : 'hover:scale-[1.01]'}`} style={{ background: isDragging ? 'linear-gradient(135deg, rgba(36, 121, 223, 0.15), rgba(59, 155, 255, 0.15))' : 'linear-gradient(135deg, rgba(36, 121, 223, 0.08), rgba(176, 195, 253, 0.08))', boxShadow: isDragging ? '0 30px 90px rgba(59, 155, 255, 0.35), 0 0 0 2px rgba(59, 155, 255, 0.4)' : '0 20px 60px rgba(36, 121, 223, 0.25), 0 0 0 1px rgba(59, 155, 255, 0.2)' }}>
-                    <div className="relative z-10 text-center">
-                      <div className={`mb-10 inline-block transition-transform duration-300 ${isDragging ? '-translate-y-4' : ''}`}>
-                        <div className="relative w-24 h-24 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-105" style={{ background: 'linear-gradient(135deg, #2479df 0%, #3b9bff 50%, #b0c3fd 100%)', boxShadow: '0 20px 60px rgba(36, 121, 223, 0.4), inset 0 2px 20px rgba(255, 255, 255, 0.2)' }}>
-                          <div className={`transition-transform duration-300 ${isDragging ? 'rotate-180' : ''}`}>
-                            <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                          </div>
-                        </div>
-                      </div>
-
-                      <h3 className="text-3xl font-bold mb-3" style={{ background: 'linear-gradient(135deg, #ffffff, #b0c3fd)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Upload conversations.json</h3>
-                      <p className="text-white/50 text-lg mb-10">Drag and drop or click to browse</p>
-
-                      <div className="inline-flex items-center gap-4 px-6 py-4 rounded-2xl glass-subtle">
-                        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #3b9bff, #b0c3fd)', boxShadow: '0 4px 16px rgba(59, 155, 255, 0.3)' }}>
-                          <span className="text-white/70 text-sm font-medium">?</span>
-                        </div>
-                        <div className="text-left">
-                          <div className="text-white/90 font-medium">Export from ChatGPT</div>
-                          <div className="text-white/50 text-sm">Settings → Data Controls → Export Data</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </label>
-              </motion.div>
-
-              <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto mb-20">
-                {FEATURES.map((feature, i) => <FeatureCard key={i} feature={feature} index={i} />)}
-              </div>
-
-              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.5 }} className="max-w-5xl mx-auto mb-16">
-                <div className="grid grid-cols-3 gap-6">
-                  {STATS.map((stat, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1 + i * 0.1, type: "spring", stiffness: 200 }} whileHover={{ scale: 1.05 }} className="relative p-6 rounded-2xl glass-subtle text-center gpu-accelerated">
-                      <div className="text-5xl font-black mb-2" style={{ background: `linear-gradient(135deg, ${stat.colors[0]}, ${stat.colors[1]})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{stat.number}</div>
-                      <div className="text-white/70 font-medium">{stat.label}</div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.1, duration: 0.5 }} className="max-w-3xl mx-auto">
-                <div className="relative p-8 rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(36, 121, 223, 0.12), rgba(176, 195, 253, 0.12))', border: '1px solid rgba(59, 155, 255, 0.3)', boxShadow: '0 20px 60px rgba(36, 121, 223, 0.15)' }}>
-                  <div className="relative z-10 flex items-start gap-5">
-                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #2479df, #3b9bff)', boxShadow: '0 8px 24px rgba(36, 121, 223, 0.4)' }}>
-                      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                    </div>
-                    <div>
-                      <h4 className="text-white text-lg font-semibold mb-2">Processing &amp; data handling</h4>
-                      <p className="text-white/60 leading-relaxed text-sm">
-                        By using this tool, you agree to our <span className="text-white/80 underline underline-offset-2 decoration-white/30 cursor-pointer">Terms of Service</span>, including provisions regarding anonymised data use for research and exhibition purposes (see Section 19).
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              <AnimatePresence>
-                {error && (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="max-w-2xl mx-auto mt-8">
-                    <div className="p-6 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(245, 108, 92, 0.15), rgba(245, 108, 92, 0.1))', border: '1px solid rgba(245, 108, 92, 0.3)', boxShadow: '0 10px 40px rgba(245, 108, 92, 0.2)' }}>
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(245, 108, 92, 0.2)' }}>
-                          <span className="text-[#f56c5c] text-lg font-bold">!</span>
-                        </div>
-                        <div>
-                          <h4 className="text-[#f56c5c] font-bold mb-1 text-lg">Upload failed</h4>
-                          <p className="text-[#f56c5c]/90">{error}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ) : (
-            <motion.div key="analysing" variants={containerVariants} initial="hidden" animate="visible" exit="exit" className="flex items-center justify-center min-h-screen px-6">
-              <div className="max-w-lg w-full text-center">
-                <div className="relative inline-block mb-10">
-                  <div className="w-20 h-20 rounded-2xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #2479df 0%, #3b9bff 100%)', boxShadow: '0 20px 60px rgba(36, 121, 223, 0.4)' }}>
-                    <div className="spin-slow">
-                      <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    </div>
-                  </div>
-                </div>
-
-                <h2 className="text-3xl font-bold mb-2 text-white">Analysing</h2>
-                <p className="text-white/40 text-sm mb-2">{stage}</p>
-                {detail && <p className="text-white/25 text-xs mb-10 font-mono tracking-wide">{detail}</p>}
-                {!detail && <div className="mb-10" />}
-
-                <div className="mb-6">
-                  <div className="h-1.5 rounded-full overflow-hidden mb-3" style={{ background: 'rgba(255, 255, 255, 0.08)' }}>
-                    <div className="h-full rounded-full transition-[width] duration-500 ease-out" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #2479df, #3b9bff)' }} />
-                  </div>
-                  <div className="text-white/30 text-xs font-medium">{progress}%</div>
-                </div>
-
-                <p className="text-white/30 text-xs mt-8 max-w-sm mx-auto leading-relaxed">
-                  Your data is processed privately. AI analysis takes 20–40 seconds.
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
+    <DashboardLayout results={results} page={page} setPage={setPage}>
+      {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={setPage} />}
+      {page === 'profile' && <ProfilePage results={results} />}
+      {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} />}
+      {page === 'risk' && <RiskPage results={results} />}
+      {page === 'understand' && <UnderstandPage />}
+    </DashboardLayout>
   );
 }

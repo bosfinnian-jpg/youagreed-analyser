@@ -39,6 +39,16 @@ export default function Home() {
           background: ${COLOR.accent};
           color: ${COLOR.bg};
         }
+        @media (max-width: 640px) {
+          .ya-header, .ya-footer {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+            font-size: 10px !important;
+          }
+          .ya-hero {
+            padding: 48px 24px !important;
+          }
+        }
       `}</style>
 
       <main
@@ -55,6 +65,7 @@ export default function Home() {
       >
         {/* Top meta bar — catalogue-card aesthetic */}
         <motion.header
+          className="ya-header"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.4, ease: EASE }}
@@ -79,6 +90,7 @@ export default function Home() {
 
         {/* Main content — title and statement */}
         <section
+          className="ya-hero"
           style={{
             flex: 1,
             display: 'flex',
@@ -207,6 +219,7 @@ export default function Home() {
 
         {/* Footer — academic credit, quiet */}
         <motion.footer
+          className="ya-footer"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, delay: 2.6, ease: EASE }}
@@ -228,20 +241,6 @@ export default function Home() {
           <span>University of Leeds &mdash; IDEA3000</span>
           <span>MMXXVI</span>
         </motion.footer>
-
-        {/* Responsive — collapse padding on mobile */}
-        <style jsx>{`
-          @media (max-width: 640px) {
-            header, footer {
-              padding-left: 24px !important;
-              padding-right: 24px !important;
-              font-size: 10px !important;
-            }
-            section {
-              padding: 48px 24px !important;
-            }
-          }
-        `}</style>
       </main>
     </>
   );

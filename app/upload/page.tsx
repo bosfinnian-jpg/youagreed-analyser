@@ -306,8 +306,7 @@ export default function UploadPage() {
       setProgress(85);
       setStage(STAGES[5]);
       await new Promise(resolve => setTimeout(resolve, 250));
-
-      sessionStorage.setItem('analysisResults', JSON.stringify(results));
+      
       setProgress(100);
 
       setTimeout(() => {

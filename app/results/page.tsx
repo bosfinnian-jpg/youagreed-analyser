@@ -1,16 +1,15 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import CountdownReveal, { RevealData } from './CountdownReveal';
 import DashboardLayout, { PALETTE, TYPE, type DashPage } from './DashboardLayout';
 import OverviewPage from './OverviewPage';
 import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
 
 // ============================================================================
-// TYPES — extended to include deep parser fields
+// TYPES
 // ============================================================================
 interface AnalysisResult {
   privacyScore: number;
@@ -59,8 +58,6 @@ interface AnalysisResult {
   typeBreakdown?: Record<string, number>;
   aiEnriched?: boolean;
 }
-
-type Stage = 'countdown' | 'dashboard';
 
 const DEFAULT_SOURCES = [
   { id: 'chatgpt', label: 'ChatGPT', connected: false },
@@ -350,11 +347,10 @@ function generateCognitiveProfile(results: AnalysisResult) {
 }
 
 // ============================================================================
-// MAIN PAGE — CountdownReveal then Dashboard
+// MAIN PAGE
 // ============================================================================
 export default function ResultsPage() {
   const [results, setResults] = useState<AnalysisResult | null>(null);
-  const [stage, setStage] = useState<Stage>('countdown');
   const [page, setPage] = useState<DashPage>('overview');
   const [sources, setSources] = useState(DEFAULT_SOURCES);
   const router = useRouter();
@@ -370,19 +366,6 @@ export default function ResultsPage() {
     }
   }, [router]);
 
-  // Re-poll sessionStorage during countdown — AI enrichment may update it mid-flight
-  useEffect(() => {
-    if (stage !== 'countdown') return;
-    const interval = setInterval(() => {
-      const stored = sessionStorage.getItem('analysisResults');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setResults(parsed);
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [stage]);
-
   const handleUpload = useCallback((sourceId: string, file: File) => {
     setSources(prev => prev.map(s => s.id === sourceId ? { ...s, connected: true } : s));
   }, []);
@@ -395,39 +378,6 @@ export default function ResultsPage() {
           Loading
         </motion.p>
       </div>
-    );
-  }
-
-  if (stage === 'countdown') {
-    const stats = results.stats || results.rawStats;
-    const revealData: RevealData = {
-      name: results.findings.personalInfo.names[0]?.name,
-      location: results.findings.personalInfo.locations[0]?.location,
-      vulnerabilityWindow: results.findings.vulnerabilityPatterns[0]?.timeOfDay,
-      revealingMoment: results.juiciestMoments[0] ? {
-        timestamp: new Date(results.juiciestMoments[0].timestamp).toLocaleString('en-GB'),
-        content: results.juiciestMoments[0].excerpt?.substring(0, 180) || '',
-      } : undefined,
-      messageCount: results.totalUserMessages || stats?.totalMessages,
-      topTopic: results.findings.repetitiveThemes[0]?.theme,
-      lateNightCount: results.hourDistribution
-        ? results.hourDistribution.slice(0, 5).reduce((a: number, b: number) => a + b, 0)
-        : undefined,
-      lifeEventCount: results.lifeEvents?.length,
-      crisisPeriods: results.emotionalTimeline?.crisisPeriods?.length,
-      dependencyScore: results.dependency?.dependencyScore,
-      topSegment: results.commercialProfile?.segments?.[0]?.label,
-      firstMessageDate: results.timespan?.first
-        ? new Date(results.timespan.first).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
-        : undefined,
-      confessionalCount: results.typeBreakdown?.confessional,
-    };
-
-    return (
-      <CountdownReveal
-        onComplete={() => setStage('dashboard')}
-        data={revealData}
-      />
     );
   }
 

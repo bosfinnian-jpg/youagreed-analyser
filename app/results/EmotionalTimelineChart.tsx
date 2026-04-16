@@ -5,6 +5,9 @@ import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE } from './DashboardLayout';
 import type { EmotionalTimeline, WeekStats } from './deepParser';
 
+// Dates lose their type through sessionStorage — reconvert
+const toDate = (d: any): Date => d instanceof Date ? d : new Date(d);
+
 interface EmotionalTimelineChartProps {
   timeline: EmotionalTimeline;
   totalMessages: number;
@@ -46,7 +49,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
 
   // Format date label
   const formatWeekLabel = (w: WeekStats) => {
-    return w.startDate.toLocaleDateString('en-GB', { month: 'short', year: '2-digit' });
+    return toDate(w.startDate).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' });
   };
 
   // Only show ~6 date labels
@@ -260,7 +263,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
             }}
           >
             <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, letterSpacing: '0.12em', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
-              {tooltip.week.startDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+              {toDate(tooltip.week.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.ink, marginBottom: '2px' }}>
               {tooltip.week.messageCount} messages
@@ -303,7 +306,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
           {
             label: 'Peak anxiety week',
             value: timeline.peakAnxietyWeek
-              ? timeline.peakAnxietyWeek.startDate.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
+              ? toDate(timeline.peakAnxietyWeek.startDate).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
               : 'N/A',
             color: PALETTE.inkMuted,
           },
@@ -349,7 +352,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
               return (
                 <div key={i}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.ink }}>
-                    {new Date(period.start.replace('W', '')).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                    {peakWeek ? toDate(peakWeek.startDate).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : period.start}
                   </p>
                   {peakWeek && (
                     <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint }}>

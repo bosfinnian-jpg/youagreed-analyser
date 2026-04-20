@@ -374,7 +374,7 @@ function MarketplaceSection({ results }: { results: AnalysisResult }) {
         ))}
       </div>
       <motion.p initial={{ opacity: 0 }} animate={isInView ? { opacity: 0.4 } : {}} transition={{ delay: 1.2 }}
-        style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1.2rem', maxWidth: 500 }}>CPM rates are indicative, based on 2024 IAB programmatic benchmarks. The data broker market was valued at $278 billion in 2024.</p>
+        style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1.2rem', maxWidth: 500 }}>CPM rates are indicative, based on 2024 IAB programmatic benchmarks.</p>
     </motion.section>
   );
 }

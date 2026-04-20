@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { useEffect, useState, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import DashboardLayout, { PALETTE, TYPE, type DashPage } from './DashboardLayout';
 import OverviewPage from './OverviewPage';
 import ProfilePage from './ProfilePage';
+import RiskPage from './RiskPage';
 import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
 
@@ -47,64 +48,6 @@ const DEFAULT_SOURCES = [
   { id: 'twitter', label: 'X', connected: false },
 ];
 
-// ============================================================================
-// RISK PAGE
-// ============================================================================
-function RiskPage({ results }: { results: AnalysisResult }) {
-  return (
-    <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)', maxWidth: 1100, margin: '0 auto' }}>
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>04 — Risk assessment</p>
-        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>This is not theoretical.</h1>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 600 }}>The data in your profile is commercially valuable. The following scenarios describe what companies already do — and are legally permitted to do — with data of this kind.</p>
-      </motion.div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
-        {RISK_SCENARIOS.map((scenario, i) => (<RiskBlock key={scenario.id} scenario={scenario} index={i} results={results} />))}
-      </div>
-    </div>
-  );
-}
-
-const RISK_SCENARIOS = [
-  { id: 'insurance', label: 'Insurance pricing', severity: 'critical', heading: 'An insurer you have never spoken to already knows.', body: 'Insurance companies feed behavioural inference data — emotional patterns, anxiety indicators, financial distress signals — directly into underwriting models. Your premium is not set by a person reviewing your file. It is set by an algorithm that assigns you a risk score based on patterns in data you produced elsewhere.', precedent: 'In 2023, the FTC fined BetterHelp $7.8 million after it shared sensitive mental health data — including the fact users had previously been in therapy — with Facebook and Snapchat for advertising.', check: (r: AnalysisResult) => (r.findings.sensitiveTopics?.length || 0) > 0 },
-  { id: 'employment', label: 'Employment screening', severity: 'critical', heading: 'You did not get the interview. You were never told why.', body: "In 2024, a US federal court allowed a case against Workday to proceed — a plaintiff had applied to over 100 jobs using Workday's AI screening tools and was rejected from every single one. 83% of employers now use automated tools at some point in hiring.", precedent: 'Humantic AI generates personality profiles from written language alone, claiming 78-85% accuracy. No test required. No consent requested.', check: (r: AnalysisResult) => (r.totalUserMessages || r.stats?.userMessages || 0) > 200 },
-  { id: 'targeting', label: 'Precision targeting', severity: 'high', heading: 'You were assigned to a segment. You did not know it existed.', body: 'The data broker market was valued at $278 billion in 2024. Companies purchase inferred audience segments — "financially distressed 18-34", "mental health help-seeker" — and use them to time advertising to moments of maximum vulnerability.', precedent: 'Oracle Data Cloud paid $115 million in 2024 to settle a case for tracking and selling user data without consent.', check: (r: AnalysisResult) => (r.findings.vulnerabilityPatterns?.length || 0) > 0 },
-  { id: 'breach', label: 'Breach exposure', severity: 'high', heading: 'None of this requires intent. One breach is enough.', body: '73% of enterprises reported at least one AI-related security incident in 2024. A breach does not release a file with your name at the top. It releases patterns that cannot be un-released.', precedent: 'The Equifax breach of 2017 exposed the financial data of 148 million people. Most did not know Equifax existed.', check: (r: AnalysisResult) => (r.privacyScore || 0) > 40 },
-];
-
-const SEV_COLOR: Record<string, string> = { critical: PALETTE.red, high: PALETTE.amber || 'rgba(255,179,0,0.8)', medium: 'rgba(120,180,255,0.85)' };
-
-function RiskBlock({ scenario, index, results }: { scenario: typeof RISK_SCENARIOS[0]; index: number; results: AnalysisResult }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-5%' });
-  const active = scenario.check(results);
-  const sc = SEV_COLOR[scenario.severity] || PALETTE.inkFaint;
-  return (
-    <motion.article ref={ref} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ duration: 1 }}
-      style={{ background: PALETTE.bgPanel, padding: '2rem 2.5rem', borderLeft: '3px solid ' + (active ? sc : PALETTE.border) }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.2rem' }}>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: active ? sc : PALETTE.inkFaint, textTransform: 'uppercase', padding: '3px 8px', border: '1px solid ' + (active ? sc + '40' : PALETTE.border) }}>{active ? 'Active risk' : 'Low risk'}</span>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{scenario.label}</span>
-          </div>
-          <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.45rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35, marginBottom: '1.2rem' }}>{scenario.heading}</h3>
-          <p style={{ fontFamily: TYPE.serif, fontSize: '0.97rem', color: PALETTE.inkMuted, lineHeight: 1.75 }}>{scenario.body}</p>
-        </div>
-        <div>
-          <div style={{ padding: '1.2rem', background: PALETTE.bgElevated, borderRadius: '2px' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>Documented precedent</p>
-            <p style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.65 }}>{scenario.precedent}</p>
-          </div>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
-
-// ============================================================================
-// MAIN PAGE
-// ============================================================================
 export default function ResultsPage() {
   const [results, setResults] = useState<AnalysisResult | null>(null);
   const [page, setPage] = useState<DashPage>('overview');
@@ -130,7 +73,9 @@ export default function ResultsPage() {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0e0e0d' }}>
         <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2.4, repeat: Infinity }}
-          style={{ fontFamily: '"Courier Prime", monospace', fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(240,237,232,0.2)', textTransform: 'uppercase' }}>Loading</motion.p>
+          style={{ fontFamily: '"Courier Prime", monospace', fontSize: '9px', letterSpacing: '0.2em', color: 'rgba(240,237,232,0.2)', textTransform: 'uppercase' }}>
+          {"Loading"}
+        </motion.p>
       </div>
     );
   }

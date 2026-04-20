@@ -7,6 +7,7 @@ import DashboardLayout, { PALETTE, TYPE, type DashPage } from './DashboardLayout
 import OverviewPage from './OverviewPage';
 import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
+import ProfilePage from './ProfilePage';
 
 // ============================================================================
 // TYPES

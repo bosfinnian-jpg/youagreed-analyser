@@ -85,7 +85,7 @@ export default function Home() {
           }}
         >
           <span>trace.ai</span>
-          <span>A critical design installation</span>
+          <span>A critical web tool</span>
         </motion.header>
 
         {/* Main content — title and statement */}
@@ -155,7 +155,7 @@ export default function Home() {
               }}
             >
               <p style={{ margin: '0 0 24px 0' }}>
-                This is a critical design installation. It takes your exported
+                This is a critical web tool. It takes your exported
                 ChatGPT history and produces the dossier a data broker would
                 build from it.
               </p>

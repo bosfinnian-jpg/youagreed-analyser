@@ -1951,7 +1951,7 @@ function Module5({
                               lineHeight: 1.7,
                             }}
                           >
-                            Clause 19.2 does not exist in OpenAI's real Terms of Service. It was written by the artist and placed in this installation. Every other clause in this document is real — copied from the OpenAI Transparency Hub archive. The point is that it reads like the rest. That is the point.
+                            Clause 19.2 does not exist in OpenAI's real Terms of Service. It was written by the artist and placed in this tool. Every other clause in this document is real — copied from the OpenAI Transparency Hub archive. The point is that it reads like the rest. That is the point.
                           </p>
                         </motion.div>
                       )}

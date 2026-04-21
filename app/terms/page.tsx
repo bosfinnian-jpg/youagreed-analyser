@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // ============================================================================
 // TRACE.AI — Terms of Service
@@ -391,6 +391,21 @@ Version: 1.0`,
 
 export default function TermsPage() {
   const [agreed, setAgreed] = useState(false);
+  const [readProgress, setReadProgress] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const el = contentRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const total = el.offsetHeight - window.innerHeight;
+      const scrolled = Math.max(0, -rect.top);
+      setReadProgress(Math.min(100, Math.round((scrolled / total) * 100)));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <>
@@ -410,6 +425,7 @@ export default function TermsPage() {
       `}</style>
 
       <div
+        ref={contentRef}
         style={{
           minHeight: '100vh',
           background: '#0e0e0d',
@@ -466,6 +482,15 @@ export default function TermsPage() {
               Terms of Service
             </span>
           </div>
+          {/* Reading progress bar */}
+          <div style={{ height: '1px', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
+            <div style={{
+              position: 'absolute', left: 0, top: 0, height: '100%',
+              width: `${readProgress}%`,
+              background: readProgress === 100 ? 'rgba(220,60,50,0.6)' : 'rgba(240,237,232,0.2)',
+              transition: 'width 0.1s linear, background 0.3s',
+            }} />
+          </div>
         </header>
 
         {/* Title block */}
@@ -475,8 +500,26 @@ export default function TermsPage() {
             margin: '0 auto',
             padding: '56px 32px 40px',
             borderBottom: '1px solid rgba(255,255,255,0.06)',
+            position: 'relative',
           }}
         >
+          {/* Document stamp — top right */}
+          <div style={{
+            position: 'absolute', top: '40px', right: '32px',
+            fontFamily: "'Courier Prime', monospace",
+            fontSize: '9px', letterSpacing: '0.2em',
+            color: 'rgba(240,237,232,0.08)', textTransform: 'uppercase',
+            textAlign: 'right', lineHeight: 1.6,
+          }}>
+            <div>REF: TOS-2026-01</div>
+            <div>TRACE.AI PLATFORM</div>
+            <div>BINDING AGREEMENT</div>
+          </div>
+          {/* Vertical rule — left margin, document feel */}
+          <div style={{
+            position: 'absolute', left: '16px', top: '56px', bottom: '40px',
+            width: '1px', background: 'rgba(255,255,255,0.04)',
+          }} />
           <p style={{
             fontFamily: "'Courier Prime', monospace",
             fontSize: '11px',

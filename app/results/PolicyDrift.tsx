@@ -138,8 +138,10 @@ function ColumnHeader({ year, clauseCount }: { year: string; clauseCount: number
       borderBottom: `1px solid ${PALETTE.border}`,
       background: isLatest ? PALETTE.bgElevated : PALETTE.bgPanel,
       position: 'sticky',
-      top: 52, // below nav
+      top: 52,
       zIndex: 10,
+      borderTop: isLatest ? `2px solid rgba(220,60,50,0.4)` : `2px solid transparent`,
+      boxShadow: isLatest ? `0 -1px 0 rgba(220,60,50,0.15), inset 0 1px 0 rgba(220,60,50,0.05)` : 'none',
     }}>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
         <span style={{

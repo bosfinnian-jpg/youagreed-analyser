@@ -212,26 +212,41 @@ function SectionHeader({ index, label, title, subtitle }: {
   subtitle: string;
 }) {
   return (
-    <div style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '0.8rem' }}>
-        <span style={{
-          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.25em',
-          color: PALETTE.redMuted, textTransform: 'uppercase',
-        }}>{index}</span>
-        <span style={{
-          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-          color: PALETTE.inkFaint, textTransform: 'uppercase',
-        }}>{label}</span>
+    <div style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)', position: 'relative' }}>
+      {/* Ghost number — large, behind */}
+      <span style={{
+        position: 'absolute', top: '-1.5rem', left: '-0.5rem',
+        fontFamily: TYPE.serif,
+        fontSize: 'clamp(5rem, 12vw, 9rem)',
+        fontWeight: 400,
+        color: 'rgba(240,237,232,0.025)',
+        letterSpacing: '-0.04em',
+        lineHeight: 1,
+        pointerEvents: 'none',
+        userSelect: 'none',
+        zIndex: 0,
+      }}>{index.replace('0', '')}</span>
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '0.8rem' }}>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.25em',
+            color: PALETTE.redMuted, textTransform: 'uppercase',
+          }}>{index}</span>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase',
+          }}>{label}</span>
+        </div>
+        <h2 style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)',
+          fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em',
+          lineHeight: 1.2, marginBottom: '0.8rem',
+        }}>{title}</h2>
+        <p style={{
+          fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted,
+          lineHeight: 1.6, fontStyle: 'italic', maxWidth: 560,
+        }}>{subtitle}</p>
       </div>
-      <h2 style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)',
-        fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em',
-        lineHeight: 1.2, marginBottom: '0.8rem',
-      }}>{title}</h2>
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted,
-        lineHeight: 1.6, fontStyle: 'italic', maxWidth: 560,
-      }}>{subtitle}</p>
     </div>
   );
 }
@@ -257,6 +272,17 @@ function CoverageBar({ coverage, label }: { coverage: number; label?: string }) 
           animate={isInView ? { width: `${coverage}%` } : {}}
           transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1], delay: 0.2 }}
           style={{ height: '100%', background: gapColor, position: 'absolute', left: 0, top: 0 }}
+        />
+        {/* Shimmer — sweeps once after fill */}
+        <motion.div
+          initial={{ left: '-20%', opacity: 0 }}
+          animate={isInView ? { left: '110%', opacity: [0, 0.6, 0] } : {}}
+          transition={{ duration: 0.6, ease: 'easeOut', delay: 1.5 }}
+          style={{
+            position: 'absolute', top: 0, width: '20%', height: '100%',
+            background: `linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)`,
+            pointerEvents: 'none',
+          }}
         />
       </div>
     </div>

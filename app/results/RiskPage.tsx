@@ -500,7 +500,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
             style={{ overflow: 'hidden' }}
           >
             {/* Data points grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.border, margin: '1.2rem 0' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: PALETTE.border, margin: '1.2rem 0' }}>
               {scenario.dataPoints.map(dp => (
                 <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '0.8rem' }}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{dp.label}</p>
@@ -515,7 +515,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
             </p>
 
             {/* Precedent */}
-            <div style={{ padding: '1rem', background: PALETTE.bgElevated, borderRadius: '2px' }}>
+            <div style={{ padding: '1rem', background: PALETTE.bgElevated }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                 {scenario.precedent.source}
               </p>
@@ -542,7 +542,11 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-      {/* Header */}
+      <style>{`
+        @media (max-width: 640px) {
+          .risk-auction-lot { grid-template-columns: 1fr 1fr !important; }
+        }
+      `}</style>
       <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 2.5rem)', borderBottom: '1px solid ' + PALETTE.border }}>
         <motion.p
           initial={{ opacity: 0 }}

@@ -99,7 +99,7 @@ function Nav({ page, setPage, results, exposureScore }: {
             onClick={() => setPage(item.id)}
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              padding: '0 1rem', height: '52px',
+              padding: '0 0.8rem', height: '52px',
               fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: page === item.id ? PALETTE.ink : PALETTE.inkFaint,
@@ -110,7 +110,8 @@ function Nav({ page, setPage, results, exposureScore }: {
             onMouseEnter={e => { if (page !== item.id) e.currentTarget.style.color = PALETTE.inkMuted; }}
             onMouseLeave={e => { if (page !== item.id) e.currentTarget.style.color = PALETTE.inkFaint; }}
           >
-            {item.label}
+            <span className="nav-label-full">{item.label}</span>
+            <span className="nav-label-short">{item.short}</span>
           </button>
         ))}
       </div>
@@ -131,10 +132,9 @@ function Nav({ page, setPage, results, exposureScore }: {
         </div>
 
         {userName && (
-          <div style={{
+          <div className="nav-username" style={{
             padding: '0.3rem 0.8rem',
             border: `1px solid ${PALETTE.border}`,
-            borderRadius: '2px',
           }}>
             <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>
               {userName}
@@ -173,6 +173,14 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        @media (max-width: 640px) {
+          .nav-label-full { display: none !important; }
+          .nav-label-short { display: inline !important; }
+          .nav-username { display: none !important; }
+        }
+        @media (min-width: 641px) {
+          .nav-label-short { display: none !important; }
+        }
       `}</style>
 
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />

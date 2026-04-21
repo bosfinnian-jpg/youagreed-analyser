@@ -379,16 +379,16 @@ function ProgressBar({
     <div
       style={{
         position: 'fixed',
-        top: 0,
+        top: '52px',
         left: 0,
         right: 0,
-        padding: '1.2rem 2rem',
-        background: `linear-gradient(180deg, ${C.bg} 60%, transparent 100%)`,
-        zIndex: 100,
+        padding: '0.8rem 2rem',
+        background: `linear-gradient(180deg, ${C.bg} 70%, transparent 100%)`,
+        zIndex: 50,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '0.6rem',
+        gap: '0.5rem',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
@@ -578,7 +578,7 @@ function ModuleFrame({
       transition={{ duration: 0.5 }}
       style={{
         minHeight: '100vh',
-        padding: 'clamp(6rem, 12vh, 8rem) clamp(1.5rem, 4vw, 4rem) clamp(3rem, 8vh, 5rem)',
+        padding: 'clamp(8rem, 14vh, 10rem) clamp(1.5rem, 4vw, 4rem) clamp(3rem, 8vh, 5rem)',
         maxWidth: 1100,
         margin: '0 auto',
         display: 'flex',
@@ -1166,7 +1166,7 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '0.78rem',
+                fontSize: '1rem',
                 color: C.textMuted,
                 fontStyle: 'italic',
                 lineHeight: 1.5,

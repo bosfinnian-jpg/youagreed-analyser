@@ -479,7 +479,7 @@ export default function TermsPage() {
         >
           <p style={{
             fontFamily: "'Courier Prime', monospace",
-            fontSize: '9px',
+            fontSize: '11px',
             letterSpacing: '0.22em',
             textTransform: 'uppercase',
             color: 'rgba(240,237,232,0.22)',
@@ -682,7 +682,7 @@ export default function TermsPage() {
               style={{
                 marginTop: '1.2rem',
                 fontFamily: "'Courier Prime', monospace",
-                fontSize: '9px',
+                fontSize: '11px',
                 letterSpacing: '0.12em',
                 color: 'rgba(240,237,232,0.20)',
               }}

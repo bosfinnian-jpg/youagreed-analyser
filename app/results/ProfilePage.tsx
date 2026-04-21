@@ -470,7 +470,7 @@ function ProductListingCard({ results }: { results: AnalysisResult }) {
 
         <div style={{ height: '1px', background: PALETTE.border, margin: '1rem 0' }} />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1.2rem' }}>
           {metaItems.map((item, i) => (
             <motion.div key={item.l} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.7 + i * 0.08 }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{item.l}</p>
@@ -514,7 +514,7 @@ function PredictedAttributesSection({ results }: { results: AnalysisResult }) {
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
         {"What the system believes about you."}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: 520 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '2rem', maxWidth: 520 }}>
         {"None of these were stated. All were inferred from the patterns in your writing. Click any attribute to see the evidence chain."}
       </p>
 
@@ -593,7 +593,7 @@ function MarketplaceSection({ results }: { results: AnalysisResult }) {
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
         {"What you are worth."}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: 520 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '2rem', maxWidth: 520 }}>
         {"These are the advertising segments your profile would be sold into via real-time bidding, with estimated CPM rates based on IAB industry categories."}
       </p>
 
@@ -653,7 +653,7 @@ function SocialGraphSection({ results }: { results: AnalysisResult }) {
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
         {"Your network, reconstructed."}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: 520 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '2rem', maxWidth: 520 }}>
         {"Every name you mentioned created a link. Your record is now cross-referenced with theirs. Hover to see connection strength."}
       </p>
 
@@ -690,7 +690,7 @@ function FingerprintSection({ results }: { results: AnalysisResult }) {
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
         {"Your fingerprint."}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2.5rem', maxWidth: 520 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '2.5rem', maxWidth: 520 }}>
         {"This is a composite of when you write, how you write, and what you write about. No two users produce the same shape. It can be used to identify you across platforms without a name."}
       </p>
 
@@ -748,6 +748,13 @@ function ProfileClosing() {
 export default function ProfilePage({ results }: { results: AnalysisResult }) {
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .profile-meta-grid { grid-template-columns: 1fr 1fr !important; }
+          .profile-marketplace { grid-template-columns: 1fr !important; }
+          .fingerprint-wrap { flex-direction: column !important; }
+        }
+      `}</style>
       <ProductListingCard results={results} />
       <PredictedAttributesSection results={results} />
       <MarketplaceSection results={results} />

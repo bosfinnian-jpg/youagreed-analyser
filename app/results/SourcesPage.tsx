@@ -98,7 +98,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
         background: PALETTE.bgPanel,
         border: `1px solid ${connected ? 'rgba(52,199,89,0.25)' : PALETTE.border}`,
         borderTop: `2px solid ${connected ? PALETTE.green : (SEVERITY_COLORS as any)[source.severity]}`,
-        borderRadius: '2px',
+        ,
         overflow: 'hidden',
         transition: 'border-color 0.3s',
       }}
@@ -107,7 +107,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
       <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
         {/* Icon */}
         <div style={{
-          width: 40, height: 40, borderRadius: '2px', flexShrink: 0,
+          width: 40, height: 40, , flexShrink: 0,
           background: connected ? PALETTE.greenFaint : PALETTE.bgElevated,
           border: `1px solid ${connected ? 'rgba(52,199,89,0.2)' : PALETTE.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -153,7 +153,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
             <span key={i} style={{
               fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase',
               color: PALETTE.inkMuted, padding: '3px 8px',
-              border: `1px solid ${PALETTE.border}`, borderRadius: '2px',
+              border: `1px solid ${PALETTE.border}`, ,
             }}>
               {r}
             </span>
@@ -172,7 +172,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
             How to export
           </p>
-          <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '1.5rem' }}>
+          <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '1.5rem' }}>
             {source.howToExport}
           </p>
 
@@ -185,7 +185,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
               onClick={() => inputRef.current?.click()}
               style={{
                 border: `1px dashed ${dragging ? PALETTE.ink : PALETTE.border}`,
-                borderRadius: '2px',
+                ,
                 padding: '2rem',
                 textAlign: 'center',
                 cursor: 'pointer',
@@ -207,7 +207,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           )}
 
           {connected && (
-            <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(52,199,89,0.2)`, borderRadius: '2px' }}>
+            <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(52,199,89,0.2)`,  }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.green, textTransform: 'uppercase' }}>
                 Source connected — data included in your profile
               </p>
@@ -240,7 +240,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
           How much do they know?
         </h1>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 600 }}>
-          Each source you add unlocks a deeper layer of your profile. The picture compounds. Upload your exports to see exactly what the data reveals about you.
+          Each source you add expands the profile. A single export is enough to demonstrate the problem. More makes the argument harder to ignore.
         </p>
       </motion.div>
 
@@ -249,21 +249,21 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
-        style={{ padding: '1.2rem 1.5rem', background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderRadius: '2px', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}
+        style={{ padding: '1.2rem 1.5rem', background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}
       >
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
           {connectedCount} of {SOURCE_DEFINITIONS.length} sources connected
         </p>
-        <div style={{ flex: 1, height: '2px', background: PALETTE.bgElevated, borderRadius: '1px', overflow: 'hidden' }}>
+        <div style={{ flex: 1, height: '2px', background: PALETTE.bgElevated, overflow: 'hidden' }}>
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: connectedCount / SOURCE_DEFINITIONS.length }}
             transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
-            style={{ height: '100%', background: PALETTE.green, transformOrigin: 'left', borderRadius: '1px' }}
+            style={{ height: '100%', background: PALETTE.green, transformOrigin: 'left' }}
           />
         </div>
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint }}>
-          {connectedCount === 0 ? 'Start with ChatGPT' : connectedCount < 3 ? 'Add more for a complete picture' : 'Good coverage'}
+          {connectedCount === 0 ? 'ChatGPT connected' : connectedCount < 3 ? 'Each addition compounds the exposure' : 'Significant exposure surface'}
         </p>
       </motion.div>
 
@@ -285,13 +285,13 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        style={{ marginTop: '2rem', padding: '1.2rem 1.5rem', border: `1px solid ${PALETTE.border}`, borderRadius: '2px' }}
+        style={{ marginTop: '2rem', padding: '1.2rem 1.5rem', border: `1px solid ${PALETTE.border}`,  }}
       >
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
           About your data
         </p>
-        <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
-          All analysis happens locally in your browser. Your exports are never uploaded to any server. This tool exists to show you what the data reveals — not to collect it.
+        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
+          All analysis happens locally in your browser. Your exports are never uploaded to any server. All processing is local. This tool was built to show you what exists — not to replicate it.
         </p>
       </motion.div>
     </div>

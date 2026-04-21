@@ -32,7 +32,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'sources-detail';
+export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'resist' | 'sources-detail';
 
 // ============================================================================
 // NAV
@@ -43,6 +43,7 @@ const NAV_ITEMS: { id: DashPage; label: string; short: string }[] = [
   { id: 'sources',   label: 'Data Sources',   short: '03' },
   { id: 'risk',      label: 'Risk Assessment',short: '04' },
   { id: 'understand',label: 'Understand This',short: '05' },
+  { id: 'resist',    label: 'Resist',         short: '06' },
 ];
 
 function Nav({ page, setPage, results, exposureScore }: {

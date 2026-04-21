@@ -9,6 +9,7 @@ import ProfilePage from './ProfilePage';
 import RiskPage from './RiskPage';
 import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
+import ResistPage from './ResistPage';
 
 interface AnalysisResult {
   privacyScore: number;
@@ -92,6 +93,7 @@ export default function ResultsPage() {
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} />}
       {page === 'risk' && <RiskPage results={results} />}
       {page === 'understand' && <UnderstandPage />}
+      {page === 'resist' && <ResistPage analysis={results as any} />}
     </DashboardLayout>
   );
 }

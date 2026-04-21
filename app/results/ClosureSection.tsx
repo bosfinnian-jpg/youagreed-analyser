@@ -92,6 +92,25 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}
       >
         <button
+          onClick={() => setPage('resist')}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
+            color: PALETTE.ink, textTransform: 'uppercase',
+            background: 'none', border: `1px solid ${PALETTE.border}`,
+            padding: '0.7rem 1.2rem', cursor: 'pointer',
+            transition: 'color 0.15s, border-color 0.15s',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = PALETTE.inkMuted;
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = PALETTE.border;
+          }}
+        >
+          What you can do →
+        </button>
+
+        <button
           onClick={() => setPage('sources')}
           style={{
             fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',

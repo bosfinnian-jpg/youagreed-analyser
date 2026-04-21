@@ -363,7 +363,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '55ch' }}
         >
           Every attribute below was inferred, not declared. None required your permission. 
-          Together they constitute a commercial profile that is bought and sold without your knowledge.
+          Together they constitute the kind of profile that circulates across the data broker ecosystem — built from writing patterns, not from a form you filled in.
         </motion.p>
       </div>
 
@@ -455,9 +455,9 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           <div style={{ flex: 1, minWidth: 240 }}>
             <SectionHeader
               label="Commercial value"
-              heading="What you are worth."
+              heading="What a profile like yours is worth."
               headingSize="clamp(1.4rem, 3vw, 2rem)"
-              body="These are the advertising segments your profile is sold into via real-time bidding. The CPM rate is what advertisers pay per thousand impressions to reach you."
+              body="These are the IAB advertising segments your inferred profile maps onto. OpenAI does not sell your data — but these are the categories your conversations would fall into if they entered the data broker ecosystem. The CPM rate is what advertisers pay per thousand impressions to reach someone with your profile."
             />
           </div>
           {/* Product card — moved here, no longer the page opener */}
@@ -486,7 +486,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
             </div>
             <div style={{ height: '1px', background: PALETTE.border, margin: '1rem 0' }} />
             <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
-              Available via real-time bidding. No consent required.
+              This is the profile that would be available if this data entered the broker ecosystem.
             </p>
           </motion.div>
         </div>
@@ -585,7 +585,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           transition={{ delay: 0.4, duration: 1 }}
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: '52ch', marginBottom: '1rem' }}
         >
-          This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge and sold without your consent.
+          This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model.
         </motion.p>
         <motion.p
           initial={{ opacity: 0 }}

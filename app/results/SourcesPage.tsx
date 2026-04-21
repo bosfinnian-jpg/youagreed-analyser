@@ -59,7 +59,7 @@ const SOURCE_DEFINITIONS = [
     id: 'twitter',
     label: 'X / Twitter',
     company: 'X Corp',
-    description: 'Tweets, DMs, likes, search history. Political views, interests, and social behaviour are all inferred and sold.',
+    description: 'Tweets, DMs, likes, search history. Political views, interests, and social behaviour are inferred and made available to data brokers and advertisers.',
     reveals: ['Political signals', 'Interest graph', 'Social behaviour', 'Opinion patterns', 'Network map'],
     howToExport: 'X Settings → Your Account → Download an archive of your data.',
     severity: 'medium',

@@ -64,7 +64,7 @@ function generateRecommendations(analysis: DeepAnalysis): Recommendation[] {
     recs.push({
       id: 'validation',
       title: 'Recognise when you are seeking reassurance',
-      body: `${validationCount} of your messages sought validation or approval. This pattern trains the system to identify you as susceptible to social-proof marketing and influencer advertising.`,
+      body: `${validationCount} of your messages sought validation or approval. This pattern is detectable from writing alone and would classify you as susceptible to social-proof marketing — a high-value segment for subscription products and influencer campaigns.`,
       severity: 'medium',
     });
   }

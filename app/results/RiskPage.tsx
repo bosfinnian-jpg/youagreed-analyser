@@ -91,13 +91,13 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     id: 'insurance',
     severity: insuranceRelevance > 25 ? 'critical' : insuranceRelevance > 10 ? 'high' : 'medium',
     relevance: insuranceRelevance,
-    title: 'An insurer you have never contacted already has your risk profile.',
+    title: 'An insurer could reconstruct your risk profile from data like this.',
     subtitle: sensitiveCount > 0
       ? `You made ${sensitiveCount} sensitive disclosure${sensitiveCount > 1 ? 's' : ''}${topCats.length > 0 ? '. Categories include: ' + topCats.join(', ') : ''}.`
       : 'Your behavioural patterns alone are sufficient for risk modelling.',
     body: anxietyScore > 3
       ? `Your average anxiety score across all messages is ${anxietyScore.toFixed(1)}/10. Underwriting algorithms treat sustained anxiety indicators as a predictor of future claims. Combined with ${nightPct > 5 ? nightPct + '% late-night usage (a secondary stress marker)' : 'your disclosure frequency'}, your profile would trigger elevated risk classification in automated systems.`
-      : `Even without direct mental health disclosures, your usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. Insurers do not require a diagnosis. They require a probability.`,
+      : `Even without direct mental health disclosures, your usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers — but data brokers compile similar profiles from dozens of sources. If this data were ever exposed, it would fit directly into those systems. Insurers do not require a diagnosis. They require a probability.`,
     dataPoints: [
       { label: 'Sensitive disclosures', value: String(sensitiveCount), alarming: sensitiveCount > 5 },
       { label: 'Anxiety indicator', value: anxietyScore > 0 ? anxietyScore.toFixed(1) + '/10' : 'Not scored', alarming: anxietyScore > 4 },
@@ -114,11 +114,11 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     id: 'employment',
     severity: employRelevance > 25 ? 'critical' : employRelevance > 10 ? 'high' : 'medium',
     relevance: employRelevance,
-    title: 'You did not get the interview. You were never told why.',
+    title: 'An employer could screen you out based on data like this.',
     subtitle: careerEvents.length > 0
       ? `${careerEvents.length} career-related life event${careerEvents.length > 1 ? 's' : ''} detected. AI screening tools flag this as instability.`
       : 'Your writing patterns are sufficient for personality inference. No interview required.',
-    body: `You submitted ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution '}form a personality signature. Humantic AI claims 78–85% accuracy in personality profiling from text alone. ${anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.'}${depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage — a flag for productivity screening.' : ''}`,
+    body: `You submitted ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution '}form a personality signature. Companies like Humantic AI claim 78–85% accuracy in personality profiling from text alone — and they build these profiles from publicly available and purchased data. ${anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.'}${depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage — a flag for productivity screening.' : ''}`,
     dataPoints: [
       { label: 'Messages analysed', value: totalMsgs.toLocaleString('en-GB'), alarming: totalMsgs > 2000 },
       { label: 'Career events', value: String(careerEvents.length), alarming: careerEvents.length > 0 },
@@ -134,11 +134,11 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     id: 'targeting',
     severity: targetRelevance > 25 ? 'critical' : targetRelevance > 10 ? 'high' : 'medium',
     relevance: targetRelevance,
-    title: `You were assigned to ${segments.length || 'multiple'} advertising segment${segments.length === 1 ? '' : 's'}. You did not know ${segments.length === 1 ? 'it' : 'they'} existed.`,
+    title: `Your data matches ${segments.length || 'multiple'} advertising segment${segments.length === 1 ? '' : 's'} used across the digital economy. You did not consent to this classification.`,
     subtitle: segments.length > 0
       ? `Segments: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
       : 'Behavioural patterns are sufficient for segment assignment without explicit disclosures.',
-    body: `${nightPct > 5 ? 'You are most vulnerable between midnight and 5am (' + nightPct + '% of your messages). Advertisers purchase these windows specifically because emotional defences are lowest. ' : ''}${segments.length > 0 ? 'Your profile matches ' + segments.length + ' IAB real-time bidding categories. Each time you load a webpage, your segment data enters an auction that completes in under 100 milliseconds. ' : ''}The buyer receives your behavioural profile${homeLoc ? ', your approximate location (' + homeLoc.location + ')' : ''}, and a vulnerability score. You receive a targeted advertisement.`,
+    body: `${nightPct > 5 ? 'You are most vulnerable between midnight and 5am (' + nightPct + '% of your messages). Data generated during these windows shows the highest concentration of sensitive disclosure. ' : ''}The patterns in your messages map onto ${segments.length > 0 ? segments.length + ' standard IAB advertising categories' : 'standard advertising categories'} used in real-time bidding across the web. OpenAI does not sell this data — but a breach, a legal order, or a future policy change could expose it to systems that do. The profile exists. That is the risk.`,
     dataPoints: [
       { label: 'Assigned segments', value: String(segments.length), alarming: segments.length > 3 },
       { label: 'Vulnerability window', value: nightPct > 5 ? `00:00–05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
@@ -385,10 +385,10 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         The mechanism
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.6rem', lineHeight: 1.2 }}>
-        This is how all four scenarios become possible.
+        This is how data like yours gets used once it leaves a system.
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '2rem', maxWidth: '58ch' }}>
-        Every time you load a webpage, your behavioural profile enters a real-time auction. Advertisers bid in under 100 milliseconds. The winner receives your data. You are not notified. This is the commercial infrastructure that connects the scenarios above.
+        Every time you load a webpage elsewhere on the internet, your behavioural profile enters a real-time auction. The data fuelling that auction is built from platforms like this one. Advertisers bid in under 100 milliseconds. The winner targets you. You are not notified.
       </p>
 
       {/* Lot card */}
@@ -485,7 +485,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                 </div>
                 <div style={{ height: '1px', background: PALETTE.border, marginBottom: '0.8rem' }} />
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
-                  The buyer now receives: your behavioural profile, your segment classifications, your vulnerability window{homeLoc ? `, your approximate location (${homeLoc.location})` : ''}, and your emotional pattern data. You were not consulted. This transaction is legal.
+                  In a real auction, the winner receives: a behavioural profile, segment classifications, a vulnerability window{homeLoc ? `, your approximate location (${homeLoc.location})` : ''}, and your emotional pattern data. You were not consulted. This transaction is legal.
                 </p>
               </motion.div>
             )}

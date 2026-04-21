@@ -169,37 +169,37 @@ const INFERENCE_MAP: { pattern: string; label: string; segment: string; explanat
     pattern: 'financial distress signals',
     label: 'Financially distressed consumer',
     segment: 'PAYDAY LOANS / DEBT CONSOLIDATION',
-    explanation: 'Messages about money, debt, or affordability are read as commercial intent signals. The segment is bid on by lenders.',
+    explanation: 'Messages about money, debt, or affordability are read as commercial intent signals. In the data broker ecosystem, this segment is bid on by lenders.',
   },
   {
     pattern: 'relationship processing',
     label: 'Relationship instability signal',
     segment: 'DATING APPS / RELATIONSHIP COACHING',
-    explanation: 'Emotional language about partners, exes, or conflicts triggers classification. The segment is bid on by relationship products.',
+    explanation: 'Emotional language about partners, exes, or conflicts triggers classification. In the data broker ecosystem, this segment is bid on by relationship products.',
   },
   {
     pattern: 'mental-health disclosure',
     label: 'Mental health help-seeker',
     segment: 'ONLINE THERAPY / PHARMACEUTICAL',
-    explanation: 'Expressions of distress, anxiety, or depression are classified as intent. The segment is bid on by wellness and pharma companies.',
+    explanation: 'Expressions of distress, anxiety, or depression are classified as intent. In the data broker ecosystem, this segment is bid on by wellness and pharma companies.',
   },
   {
     pattern: 'late-night activity',
     label: 'Late-night high-engagement user',
     segment: 'IMPULSE PURCHASE / GAMBLING',
-    explanation: 'Volume of activity between midnight and 5am correlates with reduced self-censorship. The segment is bid on by subscription and gambling products.',
+    explanation: 'Volume of activity between midnight and 5am correlates with reduced self-censorship. In the data broker ecosystem, this segment is bid on by subscription and gambling products.',
   },
   {
     pattern: 'validation-seeking',
     label: 'Validation-dependent personality',
     segment: 'INFLUENCER / SOCIAL PROOF MARKETING',
-    explanation: 'Repeated requests for reassurance are classified as susceptibility. The segment is bid on by status and fashion brands.',
+    explanation: 'Repeated requests for reassurance are classified as susceptibility. In the data broker ecosystem, this segment is bid on by status and fashion brands.',
   },
   {
     pattern: 'career transition',
     label: 'Career transition / job seeker',
     segment: 'LINKEDIN PREMIUM / CAREER COACHING',
-    explanation: 'Job applications, rejections, and CV work trigger classification. The segment is bid on by recruitment products.',
+    explanation: 'Job applications, rejections, and CV work trigger classification. In the data broker ecosystem, this segment is bid on by recruitment products.',
   },
 ];
 
@@ -1504,7 +1504,7 @@ function Module4({
               fontStyle: 'italic',
             }}
           >
-            When you uploaded your ChatGPT export, you agreed to terms in roughly twelve seconds.
+            When you created your ChatGPT account, you agreed to terms that permit OpenAI to use your conversations to train its models — in roughly twelve seconds.
             The actual policy is below. It is approximately 2,800 words. Start the clock and try to read it properly.
           </p>
           <button

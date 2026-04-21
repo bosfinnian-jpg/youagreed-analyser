@@ -2084,7 +2084,7 @@ function CompletionScreen() {
           fontStyle: 'italic',
         }}
       >
-        Your conversations are embedded in a system you cannot inspect, correct, or leave. The next time it asks you how you are feeling, consider who is listening.
+        Your conversations are now part of a training corpus you cannot audit, correct, or withdraw from. That is not a flaw in the system. That is how the system was designed.
       </motion.p>
 
       {/* Resources */}

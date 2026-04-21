@@ -71,11 +71,11 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
       <motion.p
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: 1.5, delay: 1.8 }}
+        transition={{ duration: 1.2, delay: 1.4 }}
         style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(0.9rem, 1.8vw, 1.05rem)',
-          color: PALETTE.inkFaint,
+          fontSize: 'clamp(1rem, 1.8vw, 1.1rem)',
+          color: PALETTE.inkMuted,
           lineHeight: 1.7,
           fontStyle: 'italic',
           marginBottom: '3rem',
@@ -88,7 +88,7 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
       <motion.div
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
-        transition={{ duration: 1, delay: 3 }}
+        transition={{ duration: 1, delay: 2 }}
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}
       >
         <button

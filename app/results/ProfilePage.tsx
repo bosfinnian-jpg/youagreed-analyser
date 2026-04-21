@@ -503,7 +503,7 @@ function PredictedAttributesSection({ results }: { results: AnalysisResult }) {
       <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.7 }}>
         {"Inferred attributes"}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', marginBottom: '0.5rem', lineHeight: 1.1 }}>
         {"What the system believes about you."}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '2rem', maxWidth: 520 }}>
@@ -637,12 +637,12 @@ function SocialGraphSection({ results }: { results: AnalysisResult }) {
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : {}}
       transition={{ duration: 0.8 }}
-      style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
+      style={{ padding: 'clamp(2rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
       <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
         {"Social graph"}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.3rem)', fontWeight: 400, color: PALETTE.inkMuted, letterSpacing: '-0.01em', marginBottom: '0.5rem', lineHeight: 1.2, fontStyle: 'italic' }}>
         {"Your network, reconstructed."}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '2rem', maxWidth: 520 }}>
@@ -679,7 +679,7 @@ function FingerprintSection({ results }: { results: AnalysisResult }) {
       <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
         {"Behavioural signature"}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.1 }}>
         {"Your fingerprint."}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '2.5rem', maxWidth: 520 }}>
@@ -715,15 +715,15 @@ function ProfileClosing() {
       />
       <motion.p
         initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 0.85 } : {}}
+        animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 0.6, duration: 1 }}
-        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 520 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.4vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 520 }}
       >
         {"This is not your identity. This is a commercial reconstruction of your identity, assembled without your knowledge and sold without your consent. The difference between the two is what makes it valuable."}
       </motion.p>
       <motion.p
         initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 0.45 } : {}}
+        animate={isInView ? { opacity: 0.7 } : {}}
         transition={{ delay: 1.4, duration: 1.2 }}
         style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2rem' }}
       >

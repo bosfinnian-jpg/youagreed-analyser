@@ -35,7 +35,7 @@ export default function ScoreBreakdown({ analysis }: { analysis: DeepAnalysis })
     <div ref={ref}>
       <div style={{ marginBottom: '1.5rem' }}>
         <p style={{
-          fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em',
+          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
           color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem',
         }}>
           Score composition
@@ -62,7 +62,7 @@ export default function ScoreBreakdown({ analysis }: { analysis: DeepAnalysis })
             borderBottom: `1px solid ${PALETTE.border}`,
           }}>
             <p style={{
-              fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em',
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
               color: PALETTE.inkFaint, textTransform: 'uppercase',
             }}>
               {group.label}
@@ -88,13 +88,13 @@ export default function ScoreBreakdown({ analysis }: { analysis: DeepAnalysis })
             >
               <div>
                 <p style={{
-                  fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.ink,
+                  fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink,
                   marginBottom: '0.2rem',
                 }}>
                   {factor.label}
                 </p>
                 <p style={{
-                  fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint,
+                  fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint,
                   letterSpacing: '0.04em', lineHeight: 1.5,
                 }}>
                   {factor.explanation}
@@ -125,7 +125,7 @@ export default function ScoreBreakdown({ analysis }: { analysis: DeepAnalysis })
         }}
       >
         <p style={{
-          fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
+          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
           color: PALETTE.inkFaint, textTransform: 'uppercase',
         }}>
           Computed exposure index

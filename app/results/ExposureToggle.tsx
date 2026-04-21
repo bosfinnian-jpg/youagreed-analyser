@@ -129,7 +129,7 @@ export default function ExposureToggle({ analysis }: { analysis: DeepAnalysis })
       }}>
         <div>
           <p style={{
-            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em',
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
             color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem',
           }}>
             Simulation
@@ -167,7 +167,7 @@ export default function ExposureToggle({ analysis }: { analysis: DeepAnalysis })
             />
           </div>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em',
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
             color: redacted ? PALETTE.red : PALETTE.inkFaint,
             textTransform: 'uppercase',
           }}>
@@ -198,7 +198,7 @@ export default function ExposureToggle({ analysis }: { analysis: DeepAnalysis })
               }}
             >
               <p style={{
-                fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em',
+                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
                 color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '2px',
               }}>
                 {field.label}
@@ -212,7 +212,7 @@ export default function ExposureToggle({ analysis }: { analysis: DeepAnalysis })
                   exit={{ opacity: 0, y: -2 }}
                   transition={{ duration: 0.2 }}
                   style={{
-                    fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.04em',
+                    fontFamily: TYPE.serif, fontSize: '1rem', lineHeight: 1.5,
                     color: isRedactedNow ? PALETTE.inkFaint
                       : (field.isHighSeverity && !redacted) ? PALETTE.red
                       : (!isRedactable && redacted) ? PALETTE.inkMuted
@@ -243,7 +243,7 @@ export default function ExposureToggle({ analysis }: { analysis: DeepAnalysis })
             }}
           >
             <p style={{
-              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em',
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
               color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem',
             }}>
               Simulation result

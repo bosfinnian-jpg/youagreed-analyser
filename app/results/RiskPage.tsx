@@ -286,13 +286,13 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: '1px solid ' + PALETTE.border, position: 'relative' }}
     >
       {/* Header */}
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em', color: sevColor, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.7 }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: sevColor, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.7 }}>
         {"Real-time bidding simulation"}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
         {"Your profile, at auction."}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: 560 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: 560 }}>
         {"Every time you load a webpage, a process like this runs. Your behavioural profile enters an auction. Advertisers bid. The winner gets to target you. The entire transaction takes less than 100 milliseconds. You are not notified."}
       </p>
 
@@ -300,19 +300,19 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       <div style={{ background: PALETTE.bgElevated, border: '1px solid ' + PALETTE.border, padding: '1.5rem 2rem', marginBottom: '1.5rem', maxWidth: 600 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
           <div>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Lot item"}</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '0.95rem', color: PALETTE.ink }}>{"USR-" + String(results.privacyScore).padStart(3, '0') + "-" + String(totalMsgs % 10000).padStart(4, '0')}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Lot item"}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.ink }}>{"USR-" + String(results.privacyScore).padStart(3, '0') + "-" + String(totalMsgs % 10000).padStart(4, '0')}</p>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Quality"}</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '0.95rem', color: results.privacyScore >= 70 ? sevColor : PALETTE.ink }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Quality"}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: results.privacyScore >= 70 ? sevColor : PALETTE.ink }}>
               {results.privacyScore >= 70 ? 'PREMIUM' : results.privacyScore >= 40 ? 'STANDARD' : 'SPARSE'}
             </p>
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
           {segmentLabels.map(seg => (
-            <span key={seg} style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em', color: sevColor, padding: '3px 8px', border: '1px solid ' + sevColor + '30', textTransform: 'capitalize' }}>{seg}</span>
+            <span key={seg} style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: sevColor, padding: '3px 8px', border: '1px solid ' + sevColor + '30', textTransform: 'capitalize' }}>{seg}</span>
           ))}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
@@ -322,8 +322,8 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
             { l: 'Vulnerability', v: nightPct > 5 ? nightPct + '% nocturnal' : 'Standard' },
           ].map(item => (
             <div key={item.l}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2px' }}>{item.l}</p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '0.85rem', color: PALETTE.ink }}>{item.v}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2px' }}>{item.l}</p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{item.v}</p>
             </div>
           ))}
         </div>
@@ -345,7 +345,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         <div style={{ maxWidth: 600 }}>
           {/* Timer bar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
               {phase === 'running' ? 'Bidding in progress' : 'Auction complete'}
             </p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: phase === 'sold' ? sevColor : PALETTE.inkMuted }}>
@@ -374,12 +374,12 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                   style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0', borderBottom: '1px solid ' + PALETTE.border }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '7px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp + 'ms'}</span>
-                    <span style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', color: PALETTE.ink }}>{bid.buyer}</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp + 'ms'}</span>
+                    <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{bid.buyer}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '7px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '0.9rem', color: sevColor, letterSpacing: '0.04em', width: '4.5rem', textAlign: 'right' }}>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: sevColor, letterSpacing: '0.04em', width: '4.5rem', textAlign: 'right' }}>
                       {'\u00a3' + bid.amount.toFixed(4)}
                     </span>
                   </div>
@@ -399,9 +399,9 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                   <div>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.18em', color: sevColor, textTransform: 'uppercase', marginBottom: '0.4rem' }}>{"SOLD"}</p>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: sevColor, textTransform: 'uppercase', marginBottom: '0.4rem' }}>{"SOLD"}</p>
                     <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{winner.buyer}</p>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, marginTop: '0.3rem', textTransform: 'capitalize' }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.3rem', textTransform: 'capitalize' }}>
                       {"Segment: " + winner.segment}
                     </p>
                   </div>
@@ -409,13 +409,13 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                     <p style={{ fontFamily: TYPE.mono, fontSize: '1.3rem', color: sevColor, letterSpacing: '0.04em' }}>
                       {'\u00a3' + winner.amount.toFixed(4)}
                     </p>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '7px', color: PALETTE.inkFaint, marginTop: '0.2rem' }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.2rem' }}>
                       {elapsed + 'ms elapsed'}
                     </p>
                   </div>
                 </div>
                 <div style={{ height: '1px', background: PALETTE.border, margin: '1rem 0' }} />
-                <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
                   {"The buyer now receives: your behavioural profile, your segment classifications, your vulnerability window" + (homeLoc ? ", your approximate location (" + homeLoc.location + ")" : "") + ", and your emotional pattern data. You were not consulted. This transaction is legal."}
                 </p>
               </motion.div>
@@ -429,7 +429,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
               onClick={() => { setPhase('idle'); setBids([]); setElapsed(0); setWinner(null); }}
-              style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.inkFaint, background: 'none', border: '1px solid ' + PALETTE.border, padding: '0.5rem 1rem', cursor: 'pointer', marginTop: '1rem' }}
+              style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.inkFaint, background: 'none', border: '1px solid ' + PALETTE.border, padding: '0.5rem 1rem', cursor: 'pointer', marginTop: '1rem' }}
             >
               {"Run again"}
             </motion.button>
@@ -468,13 +468,13 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
     >
       {/* Top line */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.16em', color: sc, textTransform: 'uppercase', padding: '2px 6px', border: '1px solid ' + sc + '40' }}>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: sc, textTransform: 'uppercase', padding: '2px 6px', border: '1px solid ' + sc + '40' }}>
           {scenario.severity}
         </span>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
           {scenario.id.replace(/_/g, ' ')}
         </span>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint, marginLeft: 'auto' }}>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginLeft: 'auto' }}>
           {expanded ? '\u2212' : '+'}
         </span>
       </div>
@@ -485,7 +485,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
       </h3>
 
       {/* Subtitle — always visible, personalised */}
-      <p style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', color: PALETTE.inkMuted, lineHeight: 1.6 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.6 }}>
         {scenario.subtitle}
       </p>
 
@@ -503,23 +503,23 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.border, margin: '1.2rem 0' }}>
               {scenario.dataPoints.map(dp => (
                 <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '0.8rem' }}>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{dp.label}</p>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '0.9rem', color: dp.alarming ? PALETTE.red : PALETTE.ink }}>{dp.value}</p>
+                  <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{dp.label}</p>
+                  <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: dp.alarming ? PALETTE.red : PALETTE.ink }}>{dp.value}</p>
                 </div>
               ))}
             </div>
 
             {/* Body */}
-            <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '1.2rem' }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '1.2rem' }}>
               {scenario.body}
             </p>
 
             {/* Precedent */}
             <div style={{ padding: '1rem', background: PALETTE.bgElevated, borderRadius: '2px' }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                 {scenario.precedent.source}
               </p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '0.85rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
                 {scenario.precedent.detail}
               </p>
             </div>
@@ -547,7 +547,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.4 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}
+          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}
         >
           {"04 \u2014 Risk assessment"}
         </motion.p>
@@ -588,10 +588,10 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2rem', opacity: 0.15 }}
         />
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 520, opacity: 0.55 }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 520, opacity: 0.85 }}>
           {"These scenarios are not speculative. They describe systems that are operational, legal, and commercially incentivised. The data that powers them was generated by you, collected without meaningful consent, and cannot be recalled."}
         </p>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2rem', opacity: 0.25 }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2rem', opacity: 0.45 }}>
           {"End of risk assessment."}
         </p>
       </div>

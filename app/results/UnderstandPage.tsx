@@ -430,7 +430,7 @@ function ProgressBar({
       <p
         style={{
           fontFamily: TYPE.mono,
-          fontSize: '9px',
+          fontSize: '11px',
           letterSpacing: '0.18em',
           color: C.textFaint,
           textTransform: 'uppercase',
@@ -743,7 +743,7 @@ function Module1({
           <p
             style={{
               fontFamily: TYPE.mono,
-              fontSize: '9px',
+              fontSize: '11px',
               letterSpacing: '0.22em',
               color: C.textFaint,
               textTransform: 'uppercase',
@@ -765,13 +765,13 @@ function Module1({
                   background: C.panel,
                   border: `1px solid ${C.border}`,
                   fontFamily: TYPE.serif,
-                  fontSize: '0.92rem',
+                  fontSize: '1rem',
                   color: C.textMuted,
                   lineHeight: 1.6,
                   fontStyle: 'italic',
                 }}
               >
-                <span style={{ color: C.textFaint, fontFamily: TYPE.mono, fontSize: '9px' }}>
+                <span style={{ color: C.textFaint, fontFamily: TYPE.mono, fontSize: '11px' }}>
                   [pattern detected: {inf.pattern}]
                 </span>
               </motion.div>
@@ -836,7 +836,7 @@ function Module1({
           <p
             style={{
               fontFamily: TYPE.mono,
-              fontSize: '9px',
+              fontSize: '11px',
               letterSpacing: '0.22em',
               color: C.textFaint,
               textTransform: 'uppercase',
@@ -862,7 +862,7 @@ function Module1({
                 <p
                   style={{
                     fontFamily: TYPE.serif,
-                    fontSize: '0.98rem',
+                    fontSize: '1rem',
                     color: C.text,
                     marginBottom: '0.3rem',
                   }}
@@ -872,7 +872,7 @@ function Module1({
                 <p
                   style={{
                     fontFamily: TYPE.mono,
-                    fontSize: '8px',
+                    fontSize: '11px',
                     letterSpacing: '0.16em',
                     color: C.accent,
                     textTransform: 'uppercase',
@@ -1089,7 +1089,7 @@ function PrecedentCard({
           <p
             style={{
               fontFamily: TYPE.mono,
-              fontSize: '9px',
+              fontSize: '11px',
               letterSpacing: '0.2em',
               color: C.textFaint,
               textTransform: 'uppercase',
@@ -1111,7 +1111,7 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.mono,
-                fontSize: '9px',
+                fontSize: '11px',
                 letterSpacing: '0.14em',
                 color: C.textFaint,
                 textTransform: 'uppercase',
@@ -1143,7 +1143,7 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.mono,
-                fontSize: '8px',
+                fontSize: '11px',
                 letterSpacing: '0.18em',
                 color: C.accent,
                 textTransform: 'uppercase',
@@ -1155,7 +1155,7 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '0.88rem',
+                fontSize: '1rem',
                 color: C.text,
                 lineHeight: 1.5,
                 marginBottom: '0.6rem',
@@ -1178,7 +1178,7 @@ function PrecedentCard({
           <p
             style={{
               fontFamily: TYPE.mono,
-              fontSize: '9px',
+              fontSize: '11px',
               letterSpacing: '0.14em',
               color: C.accent,
               textTransform: 'uppercase',
@@ -1313,7 +1313,7 @@ function Module3({
           <p
             style={{
               fontFamily: TYPE.mono,
-              fontSize: '9px',
+              fontSize: '11px',
               letterSpacing: '0.2em',
               color: C.textFaint,
               textTransform: 'uppercase',
@@ -1324,7 +1324,7 @@ function Module3({
           <p
             style={{
               fontFamily: TYPE.mono,
-              fontSize: '9px',
+              fontSize: '11px',
               letterSpacing: '0.14em',
               color: attempts > 0 ? C.accent : C.textFaint,
               textTransform: 'uppercase',
@@ -1345,7 +1345,7 @@ function Module3({
             border: `1px solid ${C.border}`,
             padding: '1rem',
             fontFamily: TYPE.serif,
-            fontSize: '0.98rem',
+            fontSize: '1rem',
             fontStyle: 'italic',
             color: C.text,
             lineHeight: 1.7,
@@ -1396,7 +1396,7 @@ function Module3({
             <p
               style={{
                 fontFamily: TYPE.mono,
-                fontSize: '9px',
+                fontSize: '11px',
                 letterSpacing: '0.2em',
                 color: C.accent,
                 textTransform: 'uppercase',
@@ -1554,7 +1554,7 @@ function Module4({
               <p
                 style={{
                   fontFamily: TYPE.mono,
-                  fontSize: '9px',
+                  fontSize: '11px',
                   letterSpacing: '0.2em',
                   color: C.textFaint,
                   textTransform: 'uppercase',
@@ -1589,7 +1589,7 @@ function Module4({
               <p
                 style={{
                   fontFamily: TYPE.mono,
-                  fontSize: '8px',
+                  fontSize: '11px',
                   letterSpacing: '0.16em',
                   color: C.textFaint,
                   textTransform: 'uppercase',
@@ -1603,7 +1603,7 @@ function Module4({
               onClick={handleGiveUp}
               style={{
                 fontFamily: TYPE.mono,
-                fontSize: '9px',
+                fontSize: '11px',
                 letterSpacing: '0.18em',
                 textTransform: 'uppercase',
                 background: 'transparent',
@@ -1626,13 +1626,13 @@ function Module4({
               background: C.panel,
               border: `1px solid ${C.border}`,
               fontFamily: TYPE.serif,
-              fontSize: '0.88rem',
+              fontSize: '1rem',
               color: C.textMuted,
               lineHeight: 1.7,
               marginBottom: finished ? '2rem' : 0,
             }}
           >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
               OpenAI US Privacy Policy — April 2026 — Excerpt
             </p>
             <p style={{ marginBottom: '1rem' }}>
@@ -1674,7 +1674,7 @@ function Module4({
                 <p
                   style={{
                     fontFamily: TYPE.mono,
-                    fontSize: '9px',
+                    fontSize: '11px',
                     letterSpacing: '0.2em',
                     color: C.accent,
                     textTransform: 'uppercase',
@@ -1786,7 +1786,7 @@ function Module5({
       <p
         style={{
           fontFamily: TYPE.serif,
-          fontSize: '0.95rem',
+          fontSize: '1rem',
           fontStyle: 'italic',
           color: C.textMuted,
           lineHeight: 1.65,
@@ -1877,7 +1877,7 @@ function Module5({
                       <p
                         style={{
                           fontFamily: TYPE.serif,
-                          fontSize: '0.92rem',
+                          fontSize: '1rem',
                           color: C.textMuted,
                           lineHeight: 1.75,
                           marginBottom: '1rem',
@@ -1890,7 +1890,7 @@ function Module5({
                           onClick={() => handleFlagClause(clause.number, clause.severity)}
                           style={{
                             fontFamily: TYPE.mono,
-                            fontSize: '9px',
+                            fontSize: '11px',
                             letterSpacing: '0.2em',
                             textTransform: 'uppercase',
                             background: 'transparent',
@@ -1916,7 +1916,7 @@ function Module5({
                         <p
                           style={{
                             fontFamily: TYPE.mono,
-                            fontSize: '9px',
+                            fontSize: '11px',
                             letterSpacing: '0.16em',
                             color: C.textFaint,
                             textTransform: 'uppercase',
@@ -1934,7 +1934,7 @@ function Module5({
                           <p
                             style={{
                               fontFamily: TYPE.mono,
-                              fontSize: '9px',
+                              fontSize: '11px',
                               letterSpacing: '0.2em',
                               color: C.accent,
                               textTransform: 'uppercase',
@@ -1946,7 +1946,7 @@ function Module5({
                           <p
                             style={{
                               fontFamily: TYPE.serif,
-                              fontSize: '0.95rem',
+                              fontSize: '1rem',
                               color: C.text,
                               lineHeight: 1.7,
                             }}
@@ -1968,7 +1968,7 @@ function Module5({
         <p
           style={{
             fontFamily: TYPE.mono,
-            fontSize: '9px',
+            fontSize: '11px',
             letterSpacing: '0.18em',
             color: C.textFaint,
             textTransform: 'uppercase',
@@ -2101,7 +2101,7 @@ function CompletionScreen() {
         <p
           style={{
             fontFamily: TYPE.mono,
-            fontSize: '9px',
+            fontSize: '11px',
             letterSpacing: '0.2em',
             color: C.textFaint,
             textTransform: 'uppercase',
@@ -2167,7 +2167,7 @@ function CompletionScreen() {
               <p
                 style={{
                   fontFamily: TYPE.mono,
-                  fontSize: '9px',
+                  fontSize: '11px',
                   color: C.textFaint,
                   letterSpacing: '0.04em',
                   lineHeight: 1.5,
@@ -2215,7 +2215,7 @@ function CompletionScreen() {
         transition={{ delay: 3.5, duration: 1 }}
         style={{
           fontFamily: TYPE.mono,
-          fontSize: '8px',
+          fontSize: '11px',
           letterSpacing: '0.2em',
           color: C.textGhost,
           textTransform: 'uppercase',

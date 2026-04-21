@@ -124,7 +124,7 @@ export default function ReduceExposure({ analysis }: { analysis: DeepAnalysis })
     <div ref={ref}>
       <div style={{ marginBottom: '1.5rem' }}>
         <p style={{
-          fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em',
+          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
           color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem',
         }}>
           Countermeasures
@@ -183,7 +183,7 @@ export default function ReduceExposure({ analysis }: { analysis: DeepAnalysis })
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: recs.length * 0.08 + 0.3 }}
         style={{
-          fontFamily: TYPE.serif, fontSize: '0.88rem', fontStyle: 'italic',
+          fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic',
           color: PALETTE.inkFaint, lineHeight: 1.6, marginTop: '1.5rem',
         }}
       >

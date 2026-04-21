@@ -94,7 +94,7 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
         <button
           onClick={() => setPage('sources')}
           style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
             color: PALETTE.inkFaint, textTransform: 'uppercase',
             background: 'none', border: 'none', borderBottom: `1px solid ${PALETTE.border}`,
             paddingBottom: '2px', cursor: 'pointer',
@@ -113,7 +113,7 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
         </button>
 
         <p style={{
-          fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em',
+          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
           color: 'rgba(240,237,232,0.12)', textTransform: 'uppercase',
           marginTop: '2rem',
         }}>

@@ -53,10 +53,10 @@ function ExposureRing({ score }: { score: number }) {
         </svg>
         <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontFamily: TYPE.serif, fontSize: '2.4rem', color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1 }}>{count}</span>
-          <span style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, letterSpacing: '0.16em', textTransform: 'uppercase' as const, marginTop: '2px' }}>/100</span>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.16em', textTransform: 'uppercase' as const, marginTop: '2px' }}>/100</span>
         </div>
       </div>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color, textTransform: 'uppercase' as const, textAlign: 'center' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color, textTransform: 'uppercase' as const, textAlign: 'center' }}>
         {score >= 70 ? 'Severe exposure' : score >= 40 ? 'Moderate exposure' : 'Limited exposure'}
       </p>
     </div>
@@ -77,14 +77,14 @@ function OpeningQuoteCard({ results }: { results: any }) {
       transition={{ delay: 0.5, duration: 0.9 }}
       style={{ padding: '2rem', background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderLeft: `2px solid ${PALETTE.red}`, height: '100%', boxSizing: 'border-box' as const }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase' as const, marginBottom: '1.2rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase' as const, marginBottom: '1.2rem' }}>
         Most exposing moment
       </p>
       <blockquote style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.2rem)', fontStyle: 'italic', color: PALETTE.ink, lineHeight: 1.6, marginBottom: '1.2rem' }}>
         "{moment.excerpt?.substring(0, 220)}{moment.excerpt?.length > 220 ? '...' : ''}"
       </blockquote>
       {date && (
-        <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const }}>
           {date} — Retained permanently
         </p>
       )}
@@ -102,14 +102,14 @@ function SourcesBar({ sources, setPage }: { sources: any[]; setPage: (p: DashPag
       style={{ padding: '1rem 1.5rem', background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', flex: 1, flexWrap: 'wrap' as const }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, whiteSpace: 'nowrap' as const }}>
           Data sources
         </p>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' as const }}>
           {sources.map(source => (
             <div key={source.id} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.2rem 0.6rem', background: source.connected ? PALETTE.greenFaint : PALETTE.bgElevated, border: `1px solid ${source.connected ? 'rgba(52,199,89,0.25)' : PALETTE.border}` }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: source.connected ? PALETTE.green : PALETTE.inkFaint }} />
-              <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em', color: source.connected ? PALETTE.ink : PALETTE.inkFaint, textTransform: 'uppercase' as const }}>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: source.connected ? PALETTE.ink : PALETTE.inkFaint, textTransform: 'uppercase' as const }}>
                 {source.label}
               </span>
             </div>
@@ -119,7 +119,7 @@ function SourcesBar({ sources, setPage }: { sources: any[]; setPage: (p: DashPag
       {connected < sources.length && (
         <button
           onClick={() => setPage('sources')}
-          style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: PALETTE.inkMuted, background: 'none', border: `1px solid ${PALETTE.border}`, padding: '0.4rem 0.8rem', cursor: 'pointer', whiteSpace: 'nowrap' as const }}
+          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: PALETTE.inkMuted, background: 'none', border: `1px solid ${PALETTE.border}`, padding: '0.4rem 0.8rem', cursor: 'pointer', whiteSpace: 'nowrap' as const }}
           onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.borderHover; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = PALETTE.border; }}
         >
@@ -174,7 +174,7 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
   if (findings.length === 0) {
     return (
       <div ref={ref}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1rem' }}>
           Key findings
         </p>
         {emptyStates.length > 0 ? (
@@ -194,7 +194,7 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
 
   return (
     <div ref={ref}>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1rem' }}>
         Key findings
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -210,9 +210,9 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
             onMouseLeave={e => { e.currentTarget.style.paddingLeft = '0'; }}
           >
             <div>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.2rem' }}>{finding.label}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.2rem' }}>{finding.label}</p>
               <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{finding.value}</p>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, marginTop: '0.15rem', textTransform: 'capitalize' as const }}>{finding.detail}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.15rem', textTransform: 'capitalize' as const }}>{finding.detail}</p>
             </div>
             <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, flexShrink: 0 }}>→</span>
           </motion.button>
@@ -246,7 +246,7 @@ export default function OverviewPage({ results, sources, setPage }: {
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.4rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.4rem' }}>
           trace.ai
         </p>
         <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
@@ -264,7 +264,7 @@ export default function OverviewPage({ results, sources, setPage }: {
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
           style={{ background: PALETTE.bgPanel, padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1.5rem', alignSelf: 'flex-start' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1.5rem', alignSelf: 'flex-start' }}>
             Exposure index
           </p>
           <ExposureRing score={score} />
@@ -279,7 +279,7 @@ export default function OverviewPage({ results, sources, setPage }: {
             { label: 'Avg message length', value: stats?.avgMessageLength ? `${stats.avgMessageLength} chars` : '—' },
           ].map((item, i) => (
             <div key={i} style={{ background: PALETTE.bgPanel, padding: '1.4rem 1.6rem' }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.5rem' }}>{item.label}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.5rem' }}>{item.label}</p>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.2vw, 1.6rem)', color: PALETTE.ink, letterSpacing: '-0.02em' }}>{item.value}</p>
             </div>
           ))}
@@ -287,24 +287,24 @@ export default function OverviewPage({ results, sources, setPage }: {
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
           style={{ background: PALETTE.bgPanel, padding: '2rem' }}>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1.5rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '1.5rem' }}>
             Active risk categories
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem' }}>
             {activeRisks.map((risk, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
                 <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: risk.active ? PALETTE.red : PALETTE.inkGhost, boxShadow: risk.active ? `0 0 8px ${PALETTE.red}` : 'none' }} />
-                <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.1em', color: risk.active ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase' as const, flex: 1 }}>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: risk.active ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase' as const, flex: 1 }}>
                   {risk.label}
                 </span>
-                <button onClick={() => setPage('risk')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: PALETTE.inkFaint, fontFamily: TYPE.mono, fontSize: '8px' }}>→</button>
+                <button onClick={() => setPage('risk')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: PALETTE.inkFaint, fontFamily: TYPE.mono, fontSize: '11px' }}>→</button>
               </div>
             ))}
           </div>
 
           {hasDeepData && results.dependency && (
             <div style={{ marginTop: '1.5rem', paddingTop: '1.2rem', borderTop: `1px solid ${PALETTE.border}` }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.5rem' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.5rem' }}>
                 Dependency score
               </p>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
@@ -316,11 +316,11 @@ export default function OverviewPage({ results, sources, setPage }: {
                     style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: results.dependency.dependencyScore > 60 ? PALETTE.red : PALETTE.amber }}
                   />
                 </div>
-                <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: results.dependency.dependencyScore > 60 ? PALETTE.red : PALETTE.inkMuted }}>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: results.dependency.dependencyScore > 60 ? PALETTE.red : PALETTE.inkMuted }}>
                   {results.dependency.dependencyScore}/100
                 </span>
               </div>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '7px', color: PALETTE.inkFaint, marginTop: '0.3rem', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.3rem', letterSpacing: '0.1em', textTransform: 'uppercase' as const }}>
                 {results.dependency.trajectory === 'increasing' ? 'Usage accelerating' : results.dependency.trajectory === 'stable' ? 'Stable pattern' : 'Usage declining'}
               </p>
             </div>
@@ -407,8 +407,8 @@ export default function OverviewPage({ results, sources, setPage }: {
             onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgHover; }}
             onMouseLeave={e => { e.currentTarget.style.background = PALETTE.bgPanel; }}
           >
-            <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink, marginBottom: '0.35rem' }}>{item.label} →</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const }}>{item.sub}</p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, marginBottom: '0.4rem' }}>{item.label} →</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.10em', color: PALETTE.inkMuted, textTransform: 'uppercase' as const }}>{item.sub}</p>
           </button>
         ))}
       </motion.div>

@@ -223,7 +223,7 @@ function SocialGraphSVG({ names }: { names: AnalysisResult['findings']['personal
         />
         <motion.text
           x={CX} y={CY + 24} textAnchor="middle" fill={PALETTE.inkFaint}
-          style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.18em' }}
+          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em' }}
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 0.6 } : {}}
           transition={{ delay: 0.6 }}
@@ -256,7 +256,7 @@ function SocialGraphSVG({ names }: { names: AnalysisResult['findings']['personal
             {n.rel && hovered === n.id && (
               <text
                 x={n.x} y={n.y + n.r + 26} textAnchor="middle" fill={PALETTE.inkFaint}
-                style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.12em' }}
+                style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em' }}
               >
                 {n.rel}
               </text>
@@ -264,7 +264,7 @@ function SocialGraphSVG({ names }: { names: AnalysisResult['findings']['personal
             {hovered === n.id && (
               <text
                 x={n.x} y={n.y - n.r - 6} textAnchor="middle" fill={PALETTE.red}
-                style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em' }}
+                style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em' }}
               >
                 {n.mentions + 'x'}
               </text>
@@ -308,7 +308,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
     <div ref={ref} style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
       {/* Radial activity chart */}
       <div>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
           {"24-hour activity signature"}
         </p>
         <svg viewBox={`0 0 ${W} ${H}`} style={{ width: W, height: H }}>
@@ -326,7 +326,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
                   x2={CX + Math.cos(angle) * (outerR + 8)} y2={CY + Math.sin(angle) * (outerR + 8)}
                   stroke={PALETTE.border} strokeWidth={0.5} opacity={0.4}
                 />
-                <text x={lx} y={ly + 3} textAnchor="middle" fill={PALETTE.inkFaint} style={{ fontFamily: TYPE.mono, fontSize: '7px' }}>
+                <text x={lx} y={ly + 3} textAnchor="middle" fill={PALETTE.inkFaint} style={{ fontFamily: TYPE.mono, fontSize: '10px' }}>
                   {String(h).padStart(2, '0')}
                 </text>
               </g>
@@ -338,7 +338,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
             animate={isInView ? { opacity: 0.8 } : {}}
             transition={{ delay: 0.4, duration: 1.2 }}
           />
-          <text x={CX} y={CY + 3} textAnchor="middle" fill={PALETTE.inkFaint} style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em' }}>
+          <text x={CX} y={CY + 3} textAnchor="middle" fill={PALETTE.inkFaint} style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em' }}>
             {"24H"}
           </text>
         </svg>
@@ -346,7 +346,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
 
       {/* Message type vector */}
       <div style={{ flex: 1, minWidth: 200 }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
           {"Message classification vector"}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
@@ -360,8 +360,8 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
                 transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
-                  <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkMuted, textTransform: 'capitalize' }}>{type.replace(/_/g, ' ')}</span>
-                  <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint }}>{pct.toFixed(1) + '%'}</span>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted, textTransform: 'capitalize' }}>{type.replace(/_/g, ' ')}</span>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint }}>{pct.toFixed(1) + '%'}</span>
                 </div>
                 <div style={{ height: '2px', background: PALETTE.ink + '08', position: 'relative', overflow: 'hidden' }}>
                   <motion.div
@@ -375,7 +375,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
             );
           })}
         </div>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '7px', color: PALETTE.inkFaint, marginTop: '1rem', letterSpacing: '0.1em', opacity: 0.5 }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '1rem', letterSpacing: '0.1em'}}>
           {"This vector is your behavioural signature. It is unique to you and persists across sessions."}
         </p>
       </div>
@@ -434,7 +434,7 @@ function ProductListingCard({ results }: { results: AnalysisResult }) {
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 0.4 } : {}}
         transition={{ delay: 0.15 }}
-        style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}
+        style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}
       >
         {"02 \u2014 My profile / Data product listing"}
       </motion.p>
@@ -457,11 +457,11 @@ function ProductListingCard({ results }: { results: AnalysisResult }) {
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
           <div>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Segment ID"}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Segment ID"}</p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '1.1rem', color: PALETTE.ink, letterSpacing: '0.08em' }}>{segmentId}</p>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Data quality"}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Data quality"}</p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '1.1rem', color: results.privacyScore >= 70 ? PALETTE.red : PALETTE.ink }}>
               {results.privacyScore >= 70 ? 'PREMIUM' : results.privacyScore >= 40 ? 'STANDARD' : 'SPARSE'}
             </p>
@@ -473,15 +473,15 @@ function ProductListingCard({ results }: { results: AnalysisResult }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.2rem' }}>
           {metaItems.map((item, i) => (
             <motion.div key={item.l} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.7 + i * 0.08 }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{item.l}</p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.ink, textTransform: 'capitalize' }}>{item.v}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{item.l}</p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink, textTransform: 'capitalize' }}>{item.v}</p>
             </motion.div>
           ))}
         </div>
 
         <div style={{ height: '1px', background: PALETTE.border, margin: '1.2rem 0' }} />
 
-        <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', color: PALETTE.inkFaint, opacity: 0.5 }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint}}>
           {"This record is available for purchase via real-time bidding. No consent is required from the data subject."}
         </p>
       </motion.div>
@@ -508,7 +508,7 @@ function PredictedAttributesSection({ results }: { results: AnalysisResult }) {
       transition={{ duration: 0.8 }}
       style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.7 }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.7 }}>
         {"Inferred attributes"}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
@@ -534,7 +534,7 @@ function PredictedAttributesSection({ results }: { results: AnalysisResult }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', color: cc, textTransform: 'uppercase', padding: '2px 6px', border: `1px solid ${cc}30` }}>{attr.category}</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: cc, textTransform: 'uppercase', padding: '2px 6px', border: `1px solid ${cc}30` }}>{attr.category}</span>
                   </div>
                   <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{attr.label}</p>
                 </div>
@@ -547,7 +547,7 @@ function PredictedAttributesSection({ results }: { results: AnalysisResult }) {
                       style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: attr.confidence > 70 ? PALETTE.red : PALETTE.inkMuted }}
                     />
                   </div>
-                  <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: attr.confidence > 70 ? PALETTE.red : PALETTE.inkFaint, width: '2.5rem', textAlign: 'right' }}>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: attr.confidence > 70 ? PALETTE.red : PALETTE.inkFaint, width: '2.5rem', textAlign: 'right' }}>
                     {attr.confidence + '%'}
                   </span>
                 </div>
@@ -555,8 +555,8 @@ function PredictedAttributesSection({ results }: { results: AnalysisResult }) {
               <AnimatePresence>
                 {isExp && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.25 }} style={{ overflow: 'hidden' }}>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '0.8rem', marginBottom: '0.3rem' }}>{"Evidence chain"}</p>
-                    <p style={{ fontFamily: TYPE.serif, fontSize: '0.85rem', color: PALETTE.inkMuted, lineHeight: 1.6, fontStyle: 'italic' }}>{attr.evidence}</p>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '0.8rem', marginBottom: '0.3rem' }}>{"Evidence chain"}</p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.6, fontStyle: 'italic' }}>{attr.evidence}</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -587,7 +587,7 @@ function MarketplaceSection({ results }: { results: AnalysisResult }) {
       transition={{ duration: 0.8 }}
       style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
         {"Marketplace valuation"}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
@@ -610,7 +610,7 @@ function MarketplaceSection({ results }: { results: AnalysisResult }) {
               <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink, textTransform: 'capitalize' }}>{seg.label.replace(/_/g, ' ')}</p>
               <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, letterSpacing: '0.04em', flexShrink: 0 }}>{seg.cpm}</p>
             </div>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginBottom: '0.6rem' }}>{seg.category}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginBottom: '0.6rem' }}>{seg.category}</p>
             <div style={{ height: '2px', background: PALETTE.ink + '08', position: 'relative', overflow: 'hidden' }}>
               <motion.div
                 initial={{ scaleX: 0 }}
@@ -619,12 +619,12 @@ function MarketplaceSection({ results }: { results: AnalysisResult }) {
                 style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: PALETTE.red + '70' }}
               />
             </div>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, marginTop: '0.4rem' }}>{seg.confidence + '% confidence'}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.4rem' }}>{seg.confidence + '% confidence'}</p>
           </motion.div>
         ))}
       </div>
 
-      <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1.2rem', maxWidth: 500, opacity: 0.4 }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1.2rem', maxWidth: 500}}>
         {"CPM rates are indicative, based on 2024 IAB programmatic benchmarks."}
       </p>
     </motion.section>
@@ -647,7 +647,7 @@ function SocialGraphSection({ results }: { results: AnalysisResult }) {
       transition={{ duration: 0.8 }}
       style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
         {"Social graph"}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
@@ -659,7 +659,7 @@ function SocialGraphSection({ results }: { results: AnalysisResult }) {
 
       <SocialGraphSVG names={results.findings.personalInfo.names} />
 
-      <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1.5rem', opacity: 0.4 }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1.5rem'}}>
         {"Neither you nor the people in this graph consented to this association."}
       </p>
     </motion.section>
@@ -684,7 +684,7 @@ function FingerprintSection({ results }: { results: AnalysisResult }) {
       transition={{ duration: 0.8 }}
       style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
         {"Behavioural signature"}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
@@ -723,7 +723,7 @@ function ProfileClosing() {
       />
       <motion.p
         initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 0.55 } : {}}
+        animate={isInView ? { opacity: 0.85 } : {}}
         transition={{ delay: 0.6, duration: 1 }}
         style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.92rem, 1.3vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 520 }}
       >
@@ -731,9 +731,9 @@ function ProfileClosing() {
       </motion.p>
       <motion.p
         initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 0.25 } : {}}
+        animate={isInView ? { opacity: 0.45 } : {}}
         transition={{ delay: 1.4, duration: 1.2 }}
-        style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2rem' }}
+        style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2rem' }}
       >
         {"End of product listing."}
       </motion.p>

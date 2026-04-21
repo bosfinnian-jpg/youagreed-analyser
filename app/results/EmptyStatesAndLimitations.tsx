@@ -67,7 +67,7 @@ export function EmptyStateNotice({ state }: { state: EmptyStateConfig }) {
       }}
     >
       <p style={{
-        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em',
+        fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
         color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem',
       }}>
         {state.label}
@@ -117,7 +117,7 @@ export function ConfidenceLimitations() {
       transition={{ duration: 0.5 }}
     >
       <p style={{
-        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em',
+        fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
         color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem',
       }}>
         Methodological note
@@ -142,7 +142,7 @@ export function ConfidenceLimitations() {
             }}
           >
             <span style={{
-              fontFamily: TYPE.mono, fontSize: '9px', marginTop: '2px',
+              fontFamily: TYPE.mono, fontSize: '11px', marginTop: '2px',
               color: item.can ? PALETTE.green : PALETTE.inkFaint,
               fontWeight: 600,
             }}>
@@ -160,7 +160,7 @@ export function ConfidenceLimitations() {
       </div>
 
       <p style={{
-        fontFamily: TYPE.serif, fontSize: '0.88rem', fontStyle: 'italic',
+        fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic',
         color: PALETTE.inkFaint, lineHeight: 1.6, marginTop: '1.2rem',
         paddingTop: '1rem', borderTop: `1px solid ${PALETTE.border}`,
       }}>

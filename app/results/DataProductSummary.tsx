@@ -33,10 +33,10 @@ function ProfileRow({ label, value, redValue, delay }: { label: string; value: s
         borderBottom: `1px solid ${PALETTE.border}`,
       }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '2px' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '2px' }}>
         {label}
       </p>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: redValue ? PALETTE.red : PALETTE.ink, letterSpacing: '0.04em' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: redValue ? PALETTE.red : PALETTE.ink, lineHeight: 1.5 }}>
         {value}
       </p>
     </motion.div>
@@ -59,7 +59,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
         <div>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
             Data broker profile
           </p>
           <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.01em' }}>
@@ -67,8 +67,8 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           </h2>
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, letterSpacing: '0.12em' }}>REF: {refId}</p>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, letterSpacing: '0.12em', marginTop: '2px' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.12em' }}>REF: {refId}</p>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.12em', marginTop: '2px' }}>
             CLASSIFICATION: {commercialProfile.overallValue.toUpperCase()}
           </p>
         </div>
@@ -144,10 +144,10 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
             marginBottom: '1.5rem',
           }}
         >
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
             Segment evidence
           </p>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkMuted, letterSpacing: '0.04em' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted, letterSpacing: '0.04em' }}>
             {topSegment.evidence}
           </p>
         </motion.div>
@@ -161,7 +161,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           transition={{ delay: 1.2 }}
           style={{ marginTop: '1.5rem' }}
         >
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.8rem' }}>
             All assigned segments
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -177,7 +177,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
                   borderBottom: `1px solid ${PALETTE.border}`,
                 }}
               >
-                <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.08em', color: PALETTE.inkMuted }}>{seg.label}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkMuted }}>{seg.label}</p>
                 <div style={{ position: 'relative', height: '2px', background: PALETTE.bgElevated }}>
                   <motion.div
                     initial={{ scaleX: 0 }}
@@ -189,7 +189,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
                     }}
                   />
                 </div>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: seg.confidence > 70 ? PALETTE.red : PALETTE.inkFaint }}>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: seg.confidence > 70 ? PALETTE.red : PALETTE.inkFaint }}>
                   {seg.confidence}% confidence
                 </p>
               </div>

@@ -76,7 +76,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
         <div>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>
             Emotional timeline
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink }}>
@@ -86,15 +86,15 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
         <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <div style={{ width: 20, height: 2, background: 'rgba(240,237,232,0.2)' }} />
-            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Volume</span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Volume</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <div style={{ width: 20, height: 2, background: PALETTE.red }} />
-            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Anxiety</span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Anxiety</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: PALETTE.red }} />
-            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Crisis</span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Crisis</span>
           </div>
         </div>
       </div>
@@ -229,7 +229,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
                 x={x}
                 y={PADDING.top + chartHeight + 16}
                 textAnchor="middle"
-                style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: 'rgba(240,237,232,0.22)', letterSpacing: '0.08em' }}
+                style={{ fontFamily: TYPE.mono, fontSize: '11px', fill: 'rgba(240,237,232,0.45)', letterSpacing: '0.08em' }}
               >
                 {formatWeekLabel(week)}
               </text>
@@ -262,27 +262,27 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
               minWidth: 160,
             }}
           >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, letterSpacing: '0.12em', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.12em', marginBottom: '0.4rem', textTransform: 'uppercase' }}>
               {toDate(tooltip.week.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.ink, marginBottom: '2px' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.ink, marginBottom: '2px' }}>
               {tooltip.week.messageCount} messages
             </p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: tooltip.week.avgAnxiety > 3 ? PALETTE.red : PALETTE.inkMuted }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: tooltip.week.avgAnxiety > 3 ? PALETTE.red : PALETTE.inkMuted }}>
               Anxiety: {tooltip.week.avgAnxiety.toFixed(1)}/10
             </p>
             {tooltip.week.lateNightCount > 0 && (
-              <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint, marginTop: '2px' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '2px' }}>
                 {tooltip.week.lateNightCount} late-night
               </p>
             )}
             {tooltip.week.crisisFlag && (
-              <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.red, marginTop: '4px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.red, marginTop: '4px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 Crisis period
               </p>
             )}
             {tooltip.week.dominantTopic && (
-              <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, marginTop: '2px', textTransform: 'capitalize' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '2px', textTransform: 'capitalize' }}>
                 {tooltip.week.dominantTopic}
               </p>
             )}
@@ -325,7 +325,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
             transition={{ delay: 1 + i * 0.1 }}
             style={{ background: PALETTE.bgPanel, padding: '0.8rem 1rem' }}
           >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>
               {stat.label}
             </p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: stat.color, letterSpacing: '0.04em' }}>
@@ -343,7 +343,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
           transition={{ delay: 1.4 }}
           style={{ marginTop: '1px', padding: '1rem', background: PALETTE.bgPanel, borderLeft: `2px solid ${PALETTE.red}` }}
         >
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
             Crisis periods detected
           </p>
           <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
@@ -351,11 +351,11 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
               const peakWeek = timeline.weeks.find(w => w.weekKey === period.peakWeek);
               return (
                 <div key={i}>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.ink }}>
+                  <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.ink }}>
                     {peakWeek ? toDate(peakWeek.startDate).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }) : period.start}
                   </p>
                   {peakWeek && (
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint }}>
                       Peak: {peakWeek.messageCount} messages/week
                     </p>
                   )}
@@ -363,7 +363,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
               );
             })}
           </div>
-          <p style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', fontStyle: 'italic', color: PALETTE.inkFaint, marginTop: '0.6rem', lineHeight: 1.6 }}>
+          <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkFaint, marginTop: '0.6rem', lineHeight: 1.6 }}>
             These are the weeks when you needed help most. They are also the weeks that produced the most valuable data.
           </p>
         </motion.div>

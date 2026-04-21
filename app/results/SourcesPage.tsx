@@ -112,7 +112,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           border: `1px solid ${connected ? 'rgba(52,199,89,0.2)' : PALETTE.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em', color: connected ? PALETTE.green : PALETTE.inkFaint }}>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: connected ? PALETTE.green : PALETTE.inkFaint }}>
             {source.icon}
           </span>
         </div>
@@ -120,16 +120,16 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.3rem' }}>
             <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{source.label}</p>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', textTransform: 'uppercase', color: (SEVERITY_COLORS as any)[source.severity], padding: '2px 6px', border: `1px solid ${(SEVERITY_COLORS as any)[source.severity]}30` }}>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: (SEVERITY_COLORS as any)[source.severity], padding: '2px 6px', border: `1px solid ${(SEVERITY_COLORS as any)[source.severity]}30` }}>
               {source.severity}
             </span>
             {connected && (
-              <span style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.green, padding: '2px 6px', border: `1px solid ${PALETTE.green}30` }}>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.green, padding: '2px 6px', border: `1px solid ${PALETTE.green}30` }}>
                 Connected
               </span>
             )}
           </div>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
             {source.company}
           </p>
         </div>
@@ -143,7 +143,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
       </div>
 
       <div style={{ padding: '0 1.5rem', paddingBottom: expanded ? 0 : '1.5rem' }}>
-        <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '1rem' }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '1rem' }}>
           {source.description}
         </p>
 
@@ -151,8 +151,8 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.2rem' }}>
           {source.reveals.map((r, i) => (
             <span key={i} style={{
-              fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: PALETTE.inkFaint, padding: '3px 8px',
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase',
+              color: PALETTE.inkMuted, padding: '3px 8px',
               border: `1px solid ${PALETTE.border}`, borderRadius: '2px',
             }}>
               {r}
@@ -169,7 +169,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           exit={{ opacity: 0, height: 0 }}
           style={{ padding: '0 1.5rem 1.5rem', borderTop: `1px solid ${PALETTE.border}`, paddingTop: '1.5rem', marginTop: '0' }}
         >
-          <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
             How to export
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '1.5rem' }}>
@@ -193,7 +193,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
                 transition: 'all 0.2s',
               }}
             >
-              <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                 Drop {source.fileType} here or click to upload
               </p>
               <input
@@ -208,7 +208,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
 
           {connected && (
             <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(52,199,89,0.2)`, borderRadius: '2px' }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em', color: PALETTE.green, textTransform: 'uppercase' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.green, textTransform: 'uppercase' }}>
                 Source connected — data included in your profile
               </p>
             </div>
@@ -233,7 +233,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
           03 — Data sources
         </p>
         <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>
@@ -251,7 +251,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         transition={{ delay: 0.3 }}
         style={{ padding: '1.2rem 1.5rem', background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderRadius: '2px', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}
       >
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
           {connectedCount} of {SOURCE_DEFINITIONS.length} sources connected
         </p>
         <div style={{ flex: 1, height: '2px', background: PALETTE.bgElevated, borderRadius: '1px', overflow: 'hidden' }}>
@@ -262,7 +262,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
             style={{ height: '100%', background: PALETTE.green, transformOrigin: 'left', borderRadius: '1px' }}
           />
         </div>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint }}>
           {connectedCount === 0 ? 'Start with ChatGPT' : connectedCount < 3 ? 'Add more for a complete picture' : 'Good coverage'}
         </p>
       </motion.div>
@@ -287,7 +287,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         transition={{ delay: 0.8 }}
         style={{ marginTop: '2rem', padding: '1.2rem 1.5rem', border: `1px solid ${PALETTE.border}`, borderRadius: '2px' }}
       >
-        <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
           About your data
         </p>
         <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkFaint, lineHeight: 1.65 }}>

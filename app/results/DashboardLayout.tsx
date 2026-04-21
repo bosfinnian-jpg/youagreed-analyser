@@ -15,7 +15,7 @@ export const PALETTE = {
   borderHover: 'rgba(255,255,255,0.12)',
   ink: '#f0ede8',
   inkMuted: 'rgba(240,237,232,0.55)',
-  inkFaint: 'rgba(240,237,232,0.22)',
+  inkFaint: 'rgba(240,237,232,0.38)',
   inkGhost: 'rgba(240,237,232,0.08)',
   red: 'rgba(220,60,50,0.90)',
   redMuted: 'rgba(220,60,50,0.45)',
@@ -118,11 +118,11 @@ function Nav({ page, setPage, results, exposureScore }: {
       {/* Right: user + score */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>
             Exposure
           </span>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em',
+            fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.08em',
             color: exposureScore >= 70 ? PALETTE.red : exposureScore >= 40 ? PALETTE.amber : PALETTE.green,
             fontWeight: 700,
           }}>
@@ -136,7 +136,7 @@ function Nav({ page, setPage, results, exposureScore }: {
             border: `1px solid ${PALETTE.border}`,
             borderRadius: '2px',
           }}>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.12em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>
               {userName}
             </span>
           </div>

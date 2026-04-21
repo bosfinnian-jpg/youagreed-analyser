@@ -19,7 +19,7 @@ export default function PersonalisedSummary({ analysis }: { analysis: DeepAnalys
       transition={{ duration: 0.8, delay: 0.2 }}
     >
       <p style={{
-        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em',
+        fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
         color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem',
       }}>
         Assessment summary
@@ -36,7 +36,7 @@ export default function PersonalisedSummary({ analysis }: { analysis: DeepAnalys
       </p>
 
       <p style={{
-        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em',
+        fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
         color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '1.2rem',
         paddingTop: '0.8rem', borderTop: `1px solid ${PALETTE.border}`,
       }}>

@@ -5,11 +5,9 @@ import { useState } from 'react';
 
 // ============================================================================
 // TRACE.AI — Terms of Service
-// Deliberately plain. Looks like every ToS the visitor has ever skimmed.
-// The realism is the point: §19.2 hides in plain sight.
+// Dark background, EB Garamond body, Courier metadata.
+// Dense and document-like — §19.2 hides in plain sight.
 // ============================================================================
-
-const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 
 const termsContent: Array<{ title: string; content: string }> = [
   {
@@ -397,33 +395,39 @@ export default function TermsPage() {
   return (
     <>
       <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
         html, body {
-          background: #fafaf7;
+          background: #0e0e0d;
           margin: 0;
           padding: 0;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
+        ::selection { background: rgba(220,60,50,0.20); }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
       `}</style>
 
       <div
         style={{
           minHeight: '100vh',
-          background: '#fafaf7',
-          color: '#1a1a1a',
-          fontFamily: SANS,
-          fontSize: '14px',
-          lineHeight: 1.55,
+          background: '#0e0e0d',
+          color: 'rgba(240,237,232,0.88)',
+          fontFamily: "'EB Garamond', Georgia, serif",
+          fontSize: '15px',
+          lineHeight: 1.7,
         }}
       >
-        {/* Plain header — no animation, no decoration */}
+        {/* Header — matches site header pattern */}
         <header
           style={{
-            borderBottom: '1px solid #e5e5e0',
-            background: '#fafaf7',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            background: 'rgba(14,14,13,0.96)',
             position: 'sticky',
             top: 0,
             zIndex: 10,
+            backdropFilter: 'blur(12px)',
           }}
         >
           <div
@@ -434,20 +438,33 @@ export default function TermsPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              fontSize: '13px',
             }}
           >
             <Link
               href="/"
               style={{
-                color: '#1a1a1a',
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: '11px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: 'rgba(240,237,232,0.30)',
                 textDecoration: 'none',
-                fontWeight: 500,
+                transition: 'color 0.2s',
               }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.88)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.30)'; }}
             >
               trace.ai
             </Link>
-            <span style={{ color: '#666' }}>Terms of Service</span>
+            <span style={{
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: '10px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'rgba(240,237,232,0.22)',
+            }}>
+              Terms of Service
+            </span>
           </div>
         </header>
 
@@ -456,36 +473,49 @@ export default function TermsPage() {
           style={{
             maxWidth: '760px',
             margin: '0 auto',
-            padding: '48px 32px 32px',
+            padding: '56px 32px 40px',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}
         >
+          <p style={{
+            fontFamily: "'Courier Prime', monospace",
+            fontSize: '9px',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'rgba(240,237,232,0.22)',
+            marginBottom: '0.8rem',
+          }}>
+            trace.ai / Legal
+          </p>
           <h1
             style={{
-              fontSize: '28px',
-              fontWeight: 600,
-              margin: '0 0 8px 0',
-              color: '#1a1a1a',
-              letterSpacing: '-0.01em',
+              fontFamily: "'EB Garamond', Georgia, serif",
+              fontSize: 'clamp(1.8rem, 4vw, 2.4rem)',
+              fontWeight: 400,
+              letterSpacing: '-0.02em',
+              margin: '0 0 1rem 0',
+              color: 'rgba(240,237,232,0.92)',
+              lineHeight: 1.15,
             }}
           >
             Terms of Service
           </h1>
-          <p
-            style={{
-              margin: '0 0 4px 0',
-              color: '#666',
-              fontSize: '13px',
-            }}
-          >
+          <p style={{
+            fontFamily: "'Courier Prime', monospace",
+            fontSize: '10px',
+            letterSpacing: '0.12em',
+            color: 'rgba(240,237,232,0.28)',
+            margin: '0 0 4px 0',
+          }}>
             Effective: 1 January 2026
           </p>
-          <p
-            style={{
-              margin: 0,
-              color: '#666',
-              fontSize: '13px',
-            }}
-          >
+          <p style={{
+            fontFamily: "'EB Garamond', Georgia, serif",
+            fontSize: '15px',
+            fontStyle: 'italic',
+            color: 'rgba(240,237,232,0.40)',
+            margin: 0,
+          }}>
             Please read these terms carefully before using the Service.
           </p>
         </div>
@@ -495,32 +525,37 @@ export default function TermsPage() {
           style={{
             maxWidth: '760px',
             margin: '0 auto',
-            padding: '0 32px 48px',
+            padding: '0 32px 64px',
           }}
         >
           {termsContent.map((section, index) => (
             <section
               key={index}
               style={{
-                marginBottom: '40px',
+                marginBottom: '0',
+                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                padding: '2rem 0',
               }}
             >
               <h2
                 style={{
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  margin: '0 0 12px 0',
-                  color: '#1a1a1a',
-                  letterSpacing: '-0.005em',
+                  fontFamily: "'Courier Prime', monospace",
+                  fontSize: '10px',
+                  fontWeight: 400,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(240,237,232,0.30)',
+                  margin: '0 0 1rem 0',
                 }}
               >
                 {section.title}
               </h2>
               <div
                 style={{
-                  color: '#333',
-                  fontSize: '13.5px',
-                  lineHeight: 1.7,
+                  fontFamily: "'EB Garamond', Georgia, serif",
+                  color: 'rgba(240,237,232,0.65)',
+                  fontSize: '15px',
+                  lineHeight: 1.75,
                   whiteSpace: 'pre-wrap',
                 }}
               >
@@ -529,12 +564,11 @@ export default function TermsPage() {
             </section>
           ))}
 
-          {/* Consent checkbox — plain, no styling tricks */}
+          {/* Consent block */}
           <div
             style={{
-              borderTop: '1px solid #e5e5e0',
-              paddingTop: '32px',
-              marginTop: '48px',
+              paddingTop: '3rem',
+              marginTop: '1rem',
             }}
           >
             <label
@@ -542,10 +576,11 @@ export default function TermsPage() {
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '12px',
-                fontSize: '13.5px',
-                color: '#333',
+                fontFamily: "'EB Garamond', Georgia, serif",
+                fontSize: '15px',
+                color: 'rgba(240,237,232,0.65)',
                 cursor: 'pointer',
-                lineHeight: 1.55,
+                lineHeight: 1.6,
               }}
             >
               <input
@@ -553,9 +588,10 @@ export default function TermsPage() {
                 checked={agreed}
                 onChange={(e) => setAgreed(e.target.checked)}
                 style={{
-                  marginTop: '3px',
+                  marginTop: '4px',
                   cursor: 'pointer',
-                  accentColor: '#1a1a1a',
+                  accentColor: 'rgba(220,60,50,0.85)',
+                  flexShrink: 0,
                 }}
               />
               <span>
@@ -563,28 +599,37 @@ export default function TermsPage() {
               </span>
             </label>
 
-            {/* Action buttons — deliberately plain, like a government form */}
             <div
               style={{
-                marginTop: '28px',
+                marginTop: '2rem',
                 display: 'flex',
-                gap: '12px',
+                gap: '1rem',
                 alignItems: 'center',
               }}
             >
               <Link
                 href="/"
                 style={{
-                  padding: '10px 24px',
-                  fontSize: '13.5px',
-                  fontFamily: SANS,
-                  color: '#1a1a1a',
-                  background: '#ffffff',
-                  border: '1px solid #c5c5c0',
-                  borderRadius: '4px',
+                  padding: '0.6rem 1.4rem',
+                  fontFamily: "'Courier Prime', monospace",
+                  fontSize: '10px',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(240,237,232,0.40)',
+                  background: 'none',
+                  border: '1px solid rgba(255,255,255,0.10)',
                   cursor: 'pointer',
                   textDecoration: 'none',
                   display: 'inline-block',
+                  transition: 'border-color 0.2s, color 0.2s',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.25)';
+                  (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.70)';
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.10)';
+                  (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.40)';
                 }}
               >
                 Decline
@@ -594,18 +639,21 @@ export default function TermsPage() {
                 <Link
                   href="/upload"
                   style={{
-                    padding: '10px 24px',
-                    fontSize: '13.5px',
-                    fontFamily: SANS,
-                    color: '#ffffff',
-                    background: '#1a1a1a',
-                    border: '1px solid #1a1a1a',
-                    borderRadius: '4px',
+                    padding: '0.6rem 1.4rem',
+                    fontFamily: "'Courier Prime', monospace",
+                    fontSize: '10px',
+                    letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(240,237,232,0.92)',
+                    background: 'none',
+                    border: '1px solid rgba(240,237,232,0.30)',
                     cursor: 'pointer',
                     textDecoration: 'none',
                     display: 'inline-block',
-                    fontWeight: 500,
+                    transition: 'border-color 0.2s',
                   }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(240,237,232,0.60)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(240,237,232,0.30)'; }}
                 >
                   I Agree
                 </Link>
@@ -614,15 +662,15 @@ export default function TermsPage() {
                   type="button"
                   disabled
                   style={{
-                    padding: '10px 24px',
-                    fontSize: '13.5px',
-                    fontFamily: SANS,
-                    color: '#999',
-                    background: '#eeeee8',
-                    border: '1px solid #d5d5d0',
-                    borderRadius: '4px',
+                    padding: '0.6rem 1.4rem',
+                    fontFamily: "'Courier Prime', monospace",
+                    fontSize: '10px',
+                    letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    color: 'rgba(240,237,232,0.18)',
+                    background: 'none',
+                    border: '1px solid rgba(255,255,255,0.06)',
                     cursor: 'not-allowed',
-                    fontWeight: 500,
                   }}
                 >
                   I Agree
@@ -632,29 +680,36 @@ export default function TermsPage() {
 
             <p
               style={{
-                marginTop: '16px',
-                fontSize: '12px',
-                color: '#777',
+                marginTop: '1.2rem',
+                fontFamily: "'Courier Prime', monospace",
+                fontSize: '9px',
+                letterSpacing: '0.12em',
+                color: 'rgba(240,237,232,0.20)',
               }}
             >
-              By clicking "I Agree", you acknowledge that you have
-              read and understood the terms above.
+              By clicking "I Agree", you acknowledge that you have read and understood the terms above.
             </p>
           </div>
         </main>
 
-        {/* Plain footer */}
+        {/* Footer */}
         <footer
           style={{
-            borderTop: '1px solid #e5e5e0',
+            borderTop: '1px solid rgba(255,255,255,0.06)',
             padding: '24px 32px',
-            fontSize: '12px',
-            color: '#777',
             textAlign: 'center',
           }}
         >
           <div style={{ maxWidth: '760px', margin: '0 auto' }}>
-            trace.ai / 2026
+            <span style={{
+              fontFamily: "'Courier Prime', monospace",
+              fontSize: '10px',
+              letterSpacing: '0.15em',
+              textTransform: 'uppercase',
+              color: 'rgba(240,237,232,0.18)',
+            }}>
+              trace.ai / 2026
+            </span>
           </div>
         </footer>
       </div>

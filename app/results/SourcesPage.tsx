@@ -14,8 +14,7 @@ const SOURCE_DEFINITIONS = [
     howToExport: 'ChatGPT Settings → Data Controls → Export Data. You will receive a ZIP file. Upload conversations.json from inside it.',
     severity: 'critical',
     fileType: '.json',
-    icon: 'GPT',
-  },
+    icon: 'GPT' },
   {
     id: 'google',
     label: 'Google Takeout',
@@ -25,8 +24,7 @@ const SOURCE_DEFINITIONS = [
     howToExport: 'takeout.google.com → select Search History, Location History, YouTube. Download as JSON.',
     severity: 'high',
     fileType: '.json / .zip',
-    icon: 'GGL',
-  },
+    icon: 'GGL' },
   {
     id: 'instagram',
     label: 'Instagram',
@@ -36,8 +34,7 @@ const SOURCE_DEFINITIONS = [
     howToExport: 'Instagram Settings → Your Activity → Download Your Information. Select JSON format.',
     severity: 'high',
     fileType: '.json / .zip',
-    icon: 'INS',
-  },
+    icon: 'INS' },
   {
     id: 'spotify',
     label: 'Spotify',
@@ -47,8 +44,7 @@ const SOURCE_DEFINITIONS = [
     howToExport: 'Spotify Account → Privacy Settings → Download Your Data. Takes up to 30 days.',
     severity: 'medium',
     fileType: '.json',
-    icon: 'SPT',
-  },
+    icon: 'SPT' },
   {
     id: 'linkedin',
     label: 'LinkedIn',
@@ -58,8 +54,7 @@ const SOURCE_DEFINITIONS = [
     howToExport: 'LinkedIn Settings → Data Privacy → Get a copy of your data. Select all options.',
     severity: 'medium',
     fileType: '.zip',
-    icon: 'LIN',
-  },
+    icon: 'LIN' },
   {
     id: 'twitter',
     label: 'X / Twitter',
@@ -69,15 +64,13 @@ const SOURCE_DEFINITIONS = [
     howToExport: 'X Settings → Your Account → Download an archive of your data.',
     severity: 'medium',
     fileType: '.zip',
-    icon: 'X',
-  },
+    icon: 'X' },
 ];
 
 const SEVERITY_COLORS = {
   critical: PALETTE.red,
   high: PALETTE.amber,
-  medium: 'rgba(120,180,255,0.85)',
-};
+  medium: 'rgba(120,180,255,0.85)' };
 
 function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEFINITIONS[0]; connected: boolean; onUpload: (id: string, file: File) => void }) {
   const [expanded, setExpanded] = useState(false);
@@ -98,20 +91,17 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
         background: PALETTE.bgPanel,
         border: `1px solid ${connected ? 'rgba(52,199,89,0.25)' : PALETTE.border}`,
         borderTop: `2px solid ${connected ? PALETTE.green : (SEVERITY_COLORS as any)[source.severity]}`,
-        ,
         overflow: 'hidden',
-        transition: 'border-color 0.3s',
-      }}
+        transition: 'border-color 0.3s' }}
     >
       {/* Header */}
       <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
         {/* Icon */}
         <div style={{
-          width: 40, height: 40, , flexShrink: 0,
+          width: 40, height: 40, flexShrink: 0,
           background: connected ? PALETTE.greenFaint : PALETTE.bgElevated,
           border: `1px solid ${connected ? 'rgba(52,199,89,0.2)' : PALETTE.border}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
+          display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: connected ? PALETTE.green : PALETTE.inkFaint }}>
             {source.icon}
           </span>
@@ -153,8 +143,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
             <span key={i} style={{
               fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase',
               color: PALETTE.inkMuted, padding: '3px 8px',
-              border: `1px solid ${PALETTE.border}`, ,
-            }}>
+              border: `1px solid ${PALETTE.border}` }}>
               {r}
             </span>
           ))}
@@ -185,13 +174,11 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
               onClick={() => inputRef.current?.click()}
               style={{
                 border: `1px dashed ${dragging ? PALETTE.ink : PALETTE.border}`,
-                ,
                 padding: '2rem',
                 textAlign: 'center',
                 cursor: 'pointer',
                 background: dragging ? PALETTE.bgElevated : 'transparent',
-                transition: 'all 0.2s',
-              }}
+                transition: 'all 0.2s' }}
             >
               <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                 Drop {source.fileType} here or click to upload
@@ -207,7 +194,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           )}
 
           {connected && (
-            <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(52,199,89,0.2)`,  }}>
+            <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(52,199,89,0.2)` }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.green, textTransform: 'uppercase' }}>
                 Source connected — data included in your profile
               </p>
@@ -259,7 +246,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
             initial={{ scaleX: 0 }}
             animate={{ scaleX: connectedCount / SOURCE_DEFINITIONS.length }}
             transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
-            style={{ height: '100%', background: PALETTE.green, transformOrigin: 'left' }}
+            style={{ height: '100%', background: PALETTE.red, transformOrigin: 'left' }}
           />
         </div>
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint }}>
@@ -285,7 +272,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8 }}
-        style={{ marginTop: '2rem', padding: '1.2rem 1.5rem', border: `1px solid ${PALETTE.border}`,  }}
+        style={{ marginTop: '2rem', padding: '1.2rem 1.5rem', border: `1px solid ${PALETTE.border}` }}
       >
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
           About your data

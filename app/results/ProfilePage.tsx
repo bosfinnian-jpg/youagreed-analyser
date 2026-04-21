@@ -412,19 +412,11 @@ function ProductListingCard({ results }: { results: AnalysisResult }) {
       transition={{ duration: 1 }}
       style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative', overflow: 'hidden' }}
     >
-      {/* Scan line */}
-      <motion.div
-        initial={{ top: 0 }}
-        animate={{ top: '100%' }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-        style={{ position: 'absolute', left: 0, right: 0, height: '1px', background: `linear-gradient(90deg, transparent 0%, ${PALETTE.red}20 30%, ${PALETTE.red}40 50%, ${PALETTE.red}20 70%, transparent 100%)`, pointerEvents: 'none', zIndex: 2 }}
-      />
-
       {/* Product stamp */}
       <motion.div
-        initial={{ opacity: 0, scale: 1.6, rotate: -8 }}
-        animate={isInView ? { opacity: 0.08, scale: 1, rotate: -4 } : {}}
-        transition={{ delay: 0.6, duration: 0.15 }}
+        initial={{ opacity: 0, rotate: -8 }}
+        animate={isInView ? { opacity: 0.06, rotate: -4 } : {}}
+        transition={{ delay: 0.6, duration: 0.8 }}
         style={{ position: 'absolute', right: '3rem', top: '2rem', fontFamily: TYPE.mono, fontSize: 'clamp(1.5rem, 4vw, 2.8rem)', fontWeight: 700, color: PALETTE.red, letterSpacing: '0.15em', textTransform: 'uppercase', border: `3px solid ${PALETTE.red}`, padding: '0.3em 0.6em', pointerEvents: 'none', userSelect: 'none' }}
       >
         {"PRODUCT"}

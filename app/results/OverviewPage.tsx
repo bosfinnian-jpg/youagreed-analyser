@@ -27,18 +27,18 @@ function ExposureRing({ score }: { score: number }) {
     return () => cancelAnimationFrame(frame);
   }, [isInView, score]);
 
-  const r = 54;
+  const r = 62;
   const circ = 2 * Math.PI * r;
   const dash = (score / 100) * circ;
   const color = score >= 70 ? PALETTE.red : score >= 40 ? PALETTE.amber : PALETTE.green;
 
   return (
     <div ref={ref} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
-      <div style={{ position: 'relative', width: 140, height: 140 }}>
-        <svg width="140" height="140" viewBox="0 0 140 140" style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx="70" cy="70" r={r} fill="none" stroke={PALETTE.bgElevated} strokeWidth="3" />
+      <div style={{ position: 'relative', width: 160, height: 160 }}>
+        <svg width="160" height="160" viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)' }}>
+          <circle cx="80" cy="80" r={r} fill="none" stroke={PALETTE.bgElevated} strokeWidth="3" />
           <motion.circle
-            cx="70" cy="70" r={r} fill="none"
+            cx="80" cy="80" r={r} fill="none"
             stroke={color} strokeWidth="3"
             strokeDasharray={`${circ}`}
             initial={{ strokeDashoffset: circ }}
@@ -48,7 +48,7 @@ function ExposureRing({ score }: { score: number }) {
           />
         </svg>
         <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontFamily: TYPE.serif, fontSize: '2.4rem', color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1 }}>{count}</span>
+          <span style={{ fontFamily: TYPE.serif, fontSize: '3rem', color: PALETTE.ink, letterSpacing: '-0.04em', lineHeight: 1 }}>{count}</span>
           <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '2px' }}>/100</span>
         </div>
       </div>
@@ -216,12 +216,12 @@ export default function OverviewPage({ results, sources, setPage }: {
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem' }}>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-            trace.ai
-          </p>
-          <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
-            Your AI Exposure Report
+          <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+            This is what your data reveals.
           </h1>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '0.6rem' }}>
+            AI exposure report — generated from your ChatGPT export
+          </p>
         </motion.div>
 
         {/* Sources nudge — only if sources not all connected */}
@@ -245,10 +245,10 @@ export default function OverviewPage({ results, sources, setPage }: {
         )}
 
         {/* Row 1: Score + Stats + Risks */}
-        <div className="ov-row1" style={{ display: 'grid', gridTemplateColumns: '200px 1fr 280px', gap: '1px', background: PALETTE.border, marginBottom: '1px' }}>
+        <div className="ov-row1" style={{ display: 'grid', gridTemplateColumns: '240px 1fr 280px', gap: '1px', background: PALETTE.border, marginBottom: '1px' }}>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            style={{ background: PALETTE.bgPanel, padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.5rem', alignSelf: 'flex-start' }}>
+            style={{ background: PALETTE.bgPanel, padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem', alignSelf: 'flex-start' }}>
               Exposure index
             </p>
             <ExposureRing score={score} />

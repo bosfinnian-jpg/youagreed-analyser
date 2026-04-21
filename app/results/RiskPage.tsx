@@ -464,7 +464,13 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ delay: index * 0.1, duration: 0.6 }}
       onClick={() => setExpanded(!expanded)}
-      style={{ background: PALETTE.bgPanel, padding: '1.5rem 2rem', borderLeft: '3px solid ' + sc, cursor: 'pointer', transition: 'border-color 0.2s' }}
+      style={{
+        background: scenario.severity === 'critical' ? `${PALETTE.red}06` : PALETTE.bgPanel,
+        padding: '1.5rem 2rem',
+        borderLeft: '3px solid ' + sc,
+        cursor: 'pointer',
+        transition: 'background 0.2s',
+      }}
     >
       {/* Top line */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
@@ -475,16 +481,23 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
           {scenario.id.replace(/_/g, ' ')}
         </span>
         <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginLeft: 'auto' }}>
-          {expanded ? '\u2212' : '+'}
+          {expanded ? '−' : '+'}
         </span>
       </div>
 
-      {/* Title */}
-      <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.25rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35, marginBottom: '0.5rem' }}>
+      {/* Title — size reflects severity */}
+      <h3 style={{
+        fontFamily: TYPE.serif,
+        fontSize: scenario.severity === 'critical' ? 'clamp(1.1rem, 2vw, 1.4rem)' : 'clamp(1rem, 1.8vw, 1.2rem)',
+        fontWeight: 400,
+        color: PALETTE.ink,
+        lineHeight: 1.35,
+        marginBottom: '0.5rem',
+      }}>
         {scenario.title}
       </h3>
 
-      {/* Subtitle — always visible, personalised */}
+      {/* Subtitle */}
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.6 }}>
         {scenario.subtitle}
       </p>

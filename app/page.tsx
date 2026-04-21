@@ -169,7 +169,7 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: 2.2, ease: EASE }}
+              transition={{ duration: 1.2, delay: 1.6, ease: EASE }}
               style={{
                 marginTop: '80px',
                 textAlign: 'center',
@@ -198,14 +198,14 @@ export default function Home() {
                   (e.currentTarget as HTMLAnchorElement).style.borderColor = COLOR.rule;
                 }}
               >
-                Begin
+                Upload your data →
               </Link>
 
               <div
                 style={{
                   marginTop: '20px',
                   fontFamily: MONO,
-                  fontSize: '10px',
+                  fontSize: '11px',
                   letterSpacing: '0.15em',
                   textTransform: 'uppercase',
                   color: COLOR.inkFaint,

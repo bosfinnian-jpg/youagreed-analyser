@@ -43,24 +43,10 @@ interface AnalysisResult {
 
 function getTopCategories(topics: { category: string }[]): string[] {
   const counts: Record<string, number> = {};
-  topics.forEach(t => {
-    const cat = (t.category || 'unknown').replace(/_/g, ' ');
-    counts[cat] = (counts[cat] || 0) + 1;
-  });
+  topics.forEach(t => { const cat = (t.category || 'unknown').replace(/_/g, ' '); counts[cat] = (counts[cat] || 0) + 1; });
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => e[0]);
 }
 
-function getPeakHour(dist: number[]): number {
-  if (!dist || dist.length === 0) return -1;
-  return dist.indexOf(Math.max(...dist));
-}
-
-function formatHour(h: number): string {
-  if (h < 0) return 'unknown';
-  return String(h).padStart(2, '0') + ':00';
-}
-
-// Fictional but plausible buyer names for the auction
 const BUYER_POOL = [
   'PharmaTarget Ltd', 'InsureMetrics Inc', 'TalentScope AI', 'AdVantage DSP',
   'BehaviourGraph plc', 'SegmentIQ', 'ProfileSync Corp', 'DataNexus Group',
@@ -68,7 +54,7 @@ const BUYER_POOL = [
 ];
 
 // ============================================================================
-// SCENARIO GENERATION — fully personalised
+// SCENARIO GENERATION
 // ============================================================================
 
 interface RiskScenario {
@@ -96,7 +82,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
   const lifeEvents = r.lifeEvents || [];
   const highSevEvents = lifeEvents.filter(e => e.severity === 'high');
   const homeLoc = r.findings.personalInfo.locations.find(l => l.type === 'lives');
-
+  const segments = r.commercialProfile?.segments || [];
   const scenarios: RiskScenario[] = [];
 
   // INSURANCE
@@ -107,69 +93,59 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     relevance: insuranceRelevance,
     title: 'An insurer you have never contacted already has your risk profile.',
     subtitle: sensitiveCount > 0
-      ? 'You made ' + sensitiveCount + ' sensitive disclosure' + (sensitiveCount > 1 ? 's' : '') + '. ' + (topCats.length > 0 ? 'Categories include: ' + topCats.join(', ') + '.' : '')
+      ? `You made ${sensitiveCount} sensitive disclosure${sensitiveCount > 1 ? 's' : ''}${topCats.length > 0 ? '. Categories include: ' + topCats.join(', ') : ''}.`
       : 'Your behavioural patterns alone are sufficient for risk modelling.',
     body: anxietyScore > 3
-      ? 'Your average anxiety score across all messages is ' + anxietyScore.toFixed(1) + '/10. Underwriting algorithms treat sustained anxiety indicators as a predictor of future claims. Combined with ' + (nightPct > 5 ? nightPct + '% late-night usage (a secondary stress marker)' : 'your disclosure frequency') + ', your profile would trigger elevated risk classification in automated systems.'
-      : 'Even without direct mental health disclosures, your usage patterns ' + (depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : '') + 'and topic distribution provide sufficient signal for actuarial modelling. Insurers do not require a diagnosis. They require a probability.',
+      ? `Your average anxiety score across all messages is ${anxietyScore.toFixed(1)}/10. Underwriting algorithms treat sustained anxiety indicators as a predictor of future claims. Combined with ${nightPct > 5 ? nightPct + '% late-night usage (a secondary stress marker)' : 'your disclosure frequency'}, your profile would trigger elevated risk classification in automated systems.`
+      : `Even without direct mental health disclosures, your usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. Insurers do not require a diagnosis. They require a probability.`,
     dataPoints: [
       { label: 'Sensitive disclosures', value: String(sensitiveCount), alarming: sensitiveCount > 5 },
       { label: 'Anxiety indicator', value: anxietyScore > 0 ? anxietyScore.toFixed(1) + '/10' : 'Not scored', alarming: anxietyScore > 4 },
       { label: 'Late-night ratio', value: nightPct + '%', alarming: nightPct > 10 },
       { label: 'High-severity events', value: String(highSevEvents.length), alarming: highSevEvents.length > 0 },
     ],
-    precedent: {
-      source: 'FTC v. BetterHelp, 2023',
-      detail: 'BetterHelp shared therapy status data with Facebook and Snapchat for ad targeting. Fine: $7.8 million. Users had been told their data was private.',
-    },
+    precedent: { source: 'FTC v. BetterHelp, 2023', detail: 'BetterHelp shared therapy status data with Facebook and Snapchat for ad targeting. Fine: $7.8 million. Users had been told their data was private.' },
   });
 
   // EMPLOYMENT
-  const employRelevance = (totalMsgs > 2000 ? 15 : totalMsgs > 500 ? 8 : 0) + themes.length * 5 + (depScore > 50 ? 12 : 0) + (anxietyScore > 3 ? 10 : 0);
   const careerEvents = lifeEvents.filter(e => ['job_loss', 'job_search'].includes(e.type));
+  const employRelevance = (totalMsgs > 2000 ? 15 : totalMsgs > 500 ? 8 : 0) + themes.length * 5 + (depScore > 50 ? 12 : 0) + (anxietyScore > 3 ? 10 : 0);
   scenarios.push({
     id: 'employment',
     severity: employRelevance > 25 ? 'critical' : employRelevance > 10 ? 'high' : 'medium',
     relevance: employRelevance,
     title: 'You did not get the interview. You were never told why.',
     subtitle: careerEvents.length > 0
-      ? careerEvents.length + ' career-related life event' + (careerEvents.length > 1 ? 's' : '') + ' detected. AI screening tools flag this as instability.'
+      ? `${careerEvents.length} career-related life event${careerEvents.length > 1 ? 's' : ''} detected. AI screening tools flag this as instability.`
       : 'Your writing patterns are sufficient for personality inference. No interview required.',
-    body: 'You submitted ' + totalMsgs.toLocaleString('en-GB') + ' messages over ' + (r.timespan?.days || '?') + ' days. ' + (themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution ') + 'form a personality signature. Humantic AI claims 78\u201385% accuracy in personality profiling from text alone. ' + (anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.') + (depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage \u2014 a flag for productivity screening.' : ''),
+    body: `You submitted ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution '}form a personality signature. Humantic AI claims 78–85% accuracy in personality profiling from text alone. ${anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.'}${depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage — a flag for productivity screening.' : ''}`,
     dataPoints: [
       { label: 'Messages analysed', value: totalMsgs.toLocaleString('en-GB'), alarming: totalMsgs > 2000 },
       { label: 'Career events', value: String(careerEvents.length), alarming: careerEvents.length > 0 },
       { label: 'Dependency score', value: depScore + '/100', alarming: depScore > 50 },
       { label: 'Top themes', value: themes.slice(0, 2).join(', ') || 'None flagged', alarming: false },
     ],
-    precedent: {
-      source: 'Mobley v. Workday, 2024',
-      detail: 'A US federal court allowed a discrimination case to proceed against Workday after a plaintiff was rejected from 100+ jobs by its AI screening tools.',
-    },
+    precedent: { source: 'Mobley v. Workday, 2024', detail: 'A US federal court allowed a discrimination case to proceed against Workday after a plaintiff was rejected from 100+ jobs by its AI screening tools.' },
   });
 
   // TARGETING
-  const segments = r.commercialProfile?.segments || [];
   const targetRelevance = segments.length * 8 + (nightPct > 5 ? 10 : 0) + sensitiveCount * 2;
   scenarios.push({
     id: 'targeting',
     severity: targetRelevance > 25 ? 'critical' : targetRelevance > 10 ? 'high' : 'medium',
     relevance: targetRelevance,
-    title: 'You were assigned to ' + (segments.length || 'multiple') + ' advertising segment' + (segments.length === 1 ? '' : 's') + '. You did not know ' + (segments.length === 1 ? 'it' : 'they') + ' existed.',
+    title: `You were assigned to ${segments.length || 'multiple'} advertising segment${segments.length === 1 ? '' : 's'}. You did not know ${segments.length === 1 ? 'it' : 'they'} existed.`,
     subtitle: segments.length > 0
-      ? 'Segments: ' + segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ') + (segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : '') + '.'
+      ? `Segments: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
       : 'Behavioural patterns are sufficient for segment assignment without explicit disclosures.',
-    body: (nightPct > 5 ? 'You are most vulnerable between midnight and 5am (' + nightPct + '% of your messages). Advertisers purchase these windows specifically because emotional defences are lowest. ' : '') + (segments.length > 0 ? 'Your profile matches ' + segments.length + ' IAB real-time bidding categories. Each time you load a webpage, your segment data enters an auction that completes in under 100 milliseconds. ' : '') + 'The buyer receives your behavioural profile' + (homeLoc ? ', your approximate location (' + homeLoc.location + ')' : '') + ', and a vulnerability score. You receive a targeted advertisement.',
+    body: `${nightPct > 5 ? 'You are most vulnerable between midnight and 5am (' + nightPct + '% of your messages). Advertisers purchase these windows specifically because emotional defences are lowest. ' : ''}${segments.length > 0 ? 'Your profile matches ' + segments.length + ' IAB real-time bidding categories. Each time you load a webpage, your segment data enters an auction that completes in under 100 milliseconds. ' : ''}The buyer receives your behavioural profile${homeLoc ? ', your approximate location (' + homeLoc.location + ')' : ''}, and a vulnerability score. You receive a targeted advertisement.`,
     dataPoints: [
       { label: 'Assigned segments', value: String(segments.length), alarming: segments.length > 3 },
-      { label: 'Vulnerability window', value: nightPct > 5 ? '00:00\u201305:00 (' + nightPct + '%)' : 'Not detected', alarming: nightPct > 10 },
+      { label: 'Vulnerability window', value: nightPct > 5 ? `00:00–05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
       { label: 'Location exposed', value: homeLoc ? homeLoc.location : 'Not detected', alarming: !!homeLoc },
       { label: 'Named contacts', value: String(nameCount), alarming: nameCount > 3 },
     ],
-    precedent: {
-      source: 'FTC v. Oracle (now Raimondo v. Oracle), 2024',
-      detail: 'Oracle settled for $115 million over tracking and selling user data from platforms users never interacted with directly.',
-    },
+    precedent: { source: 'FTC v. Oracle, 2024', detail: 'Oracle settled for $115 million over tracking and selling user data from platforms users never interacted with directly.' },
   });
 
   // BREACH
@@ -179,269 +155,97 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     severity: breachRelevance > 30 ? 'critical' : breachRelevance > 15 ? 'high' : 'medium',
     relevance: breachRelevance,
     title: 'None of this requires intent. One breach is enough.',
-    subtitle: 'Your profile contains ' + nameCount + ' named individual' + (nameCount === 1 ? '' : 's') + ', ' + locCount + ' location' + (locCount === 1 ? '' : 's') + ', and ' + sensitiveCount + ' sensitive disclosure' + (sensitiveCount === 1 ? '' : 's') + '. All would be exposed.',
-    body: 'A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure \u2014 none of which can be changed after exposure. ' + (nameCount > 0 ? 'The ' + nameCount + ' people you named are also exposed. Their records are now linked to yours. ' : '') + (r.privacyScore >= 60 ? 'Your exposure index (' + r.privacyScore + '/100) places you in the highest-risk category for identity reconstruction from leaked behavioural data.' : 'Even partial exposure of your behavioural patterns is sufficient for re-identification.'),
+    subtitle: `Your profile contains ${nameCount} named individual${nameCount === 1 ? '' : 's'}, ${locCount} location${locCount === 1 ? '' : 's'}, and ${sensitiveCount} sensitive disclosure${sensitiveCount === 1 ? '' : 's'}. All would be exposed.`,
+    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure — none of which can be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named are also exposed. Their records are now linked to yours. ' : ''}${r.privacyScore >= 60 ? 'Your exposure index (' + r.privacyScore + '/100) places you in the highest-risk category for identity reconstruction from leaked behavioural data.' : 'Even partial exposure of your behavioural patterns is sufficient for re-identification.'}`,
     dataPoints: [
       { label: 'Exposure index', value: r.privacyScore + '/100', alarming: r.privacyScore >= 60 },
       { label: 'People exposed', value: String(nameCount), alarming: nameCount > 0 },
       { label: 'Locations exposed', value: String(locCount), alarming: locCount > 0 },
       { label: 'Sensitive records', value: String(sensitiveCount), alarming: sensitiveCount > 0 },
     ],
-    precedent: {
-      source: 'Equifax breach, 2017',
-      detail: '148 million people exposed. Most did not know Equifax held their data. The company simply had it.',
-    },
+    precedent: { source: 'Equifax breach, 2017', detail: '148 million people exposed. Most did not know Equifax held their data. The company simply had it.' },
   });
 
   return scenarios.sort((a, b) => b.relevance - a.relevance);
 }
 
 // ============================================================================
-// RTB AUCTION SIMULATION
+// HERO SCENARIO — the most relevant one, expanded by default
 // ============================================================================
 
-interface AuctionBid {
-  buyer: string;
-  amount: number;
-  segment: string;
-  timestamp: number;
-}
-
-function RTBAuction({ results }: { results: AnalysisResult }) {
+function HeroScenario({ scenario }: { scenario: RiskScenario }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-10%' });
-  const [phase, setPhase] = useState<'idle' | 'running' | 'sold'>('idle');
-  const [bids, setBids] = useState<AuctionBid[]>([]);
-  const [elapsed, setElapsed] = useState(0);
-  const [winner, setWinner] = useState<AuctionBid | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isInView = useInView(ref, { once: true });
 
-  const segments = results.commercialProfile?.segments || [];
-  const homeLoc = results.findings.personalInfo.locations.find(l => l.type === 'lives');
-  const nightPct = Math.round((results.nighttimeRatio || 0) * 100);
-  const totalMsgs = results.totalUserMessages || results.stats?.userMessages || 0;
-
-  const segmentLabels = useMemo(() => {
-    if (segments.length > 0) return segments.slice(0, 4).map(s => s.label.replace(/_/g, ' '));
-    return ['behavioural-profile', 'general-audience'];
-  }, [segments]);
-
-  const runAuction = useCallback(() => {
-    setPhase('running');
-    setBids([]);
-    setElapsed(0);
-    setWinner(null);
-
-    const allBids: AuctionBid[] = [];
-    const usedBuyers = new Set<string>();
-    const totalBids = 6 + Math.floor(Math.random() * 4);
-
-    let bidIndex = 0;
-    intervalRef.current = setInterval(() => {
-      if (bidIndex >= totalBids) {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-        // Pick winner
-        const sorted = [...allBids].sort((a, b) => b.amount - a.amount);
-        const w = sorted[0] || null;
-        setWinner(w);
-        setPhase('sold');
-        return;
-      }
-
-      // Generate a bid
-      let buyer = BUYER_POOL[Math.floor(Math.random() * BUYER_POOL.length)];
-      while (usedBuyers.has(buyer) && usedBuyers.size < BUYER_POOL.length) {
-        buyer = BUYER_POOL[Math.floor(Math.random() * BUYER_POOL.length)];
-      }
-      usedBuyers.add(buyer);
-
-      const seg = segmentLabels[Math.floor(Math.random() * segmentLabels.length)];
-      const baseAmount = 0.002 + Math.random() * 0.012;
-      const bid: AuctionBid = {
-        buyer,
-        amount: parseFloat(baseAmount.toFixed(4)),
-        segment: seg,
-        timestamp: bidIndex * 120 + Math.floor(Math.random() * 80),
-      };
-
-      allBids.push(bid);
-      setBids(prev => [...prev, bid]);
-      setElapsed(bid.timestamp);
-      bidIndex++;
-    }, 700);
-  }, [segmentLabels]);
-
-  useEffect(() => {
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, []);
-
-  const sevColor = PALETTE.red;
+  const sevColors: Record<string, string> = {
+    critical: PALETTE.red, high: PALETTE.amber, medium: PALETTE.inkMuted, low: PALETTE.inkFaint,
+  };
+  const sc = sevColors[scenario.severity] || PALETTE.inkFaint;
 
   return (
-    <motion.section
+    <motion.div
       ref={ref}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.8 }}
-      style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: '1px solid ' + PALETTE.border, position: 'relative' }}
+      initial={{ opacity: 0, y: 16 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7, delay: 0.2 }}
+      style={{
+        padding: 'clamp(2rem, 5vw, 3.5rem) clamp(2rem, 5vw, 4rem)',
+        borderBottom: `1px solid ${PALETTE.border}`,
+        borderLeft: `4px solid ${sc}`,
+        background: scenario.severity === 'critical' ? `${PALETTE.red}05` : 'transparent',
+      }}
     >
-      {/* Header */}
-      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: sevColor, textTransform: 'uppercase', marginBottom: '0.5rem', opacity: 0.7 }}>
-        {"Real-time bidding simulation"}
-      </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 3vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.5rem', lineHeight: 1.2 }}>
-        {"Your profile, at auction."}
-      </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: 560 }}>
-        {"Every time you load a webpage, a process like this runs. Your behavioural profile enters an auction. Advertisers bid. The winner gets to target you. The entire transaction takes less than 100 milliseconds. You are not notified."}
-      </p>
-
-      {/* Auction lot card */}
-      <div style={{ background: PALETTE.bgElevated, border: '1px solid ' + PALETTE.border, padding: '1.5rem 2rem', marginBottom: '1.5rem', maxWidth: 600 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-          <div>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Lot item"}</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.ink }}>{"USR-" + String(results.privacyScore).padStart(3, '0') + "-" + String(totalMsgs % 10000).padStart(4, '0')}</p>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{"Quality"}</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: results.privacyScore >= 70 ? sevColor : PALETTE.ink }}>
-              {results.privacyScore >= 70 ? 'PREMIUM' : results.privacyScore >= 40 ? 'STANDARD' : 'SPARSE'}
-            </p>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
-          {segmentLabels.map(seg => (
-            <span key={seg} style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: sevColor, padding: '3px 8px', border: '1px solid ' + sevColor + '30', textTransform: 'capitalize' }}>{seg}</span>
-          ))}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
-          {[
-            { l: 'Data points', v: totalMsgs.toLocaleString('en-GB') },
-            { l: 'Location', v: homeLoc ? homeLoc.location : 'Inferred' },
-            { l: 'Vulnerability', v: nightPct > 5 ? nightPct + '% nocturnal' : 'Standard' },
-          ].map(item => (
-            <div key={item.l}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2px' }}>{item.l}</p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{item.v}</p>
-            </div>
-          ))}
-        </div>
+      {/* Severity + category */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: sc, textTransform: 'uppercase', padding: '3px 8px', border: `1px solid ${sc}40` }}>
+          {scenario.severity}
+        </span>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+          {scenario.id.replace(/_/g, ' ')}
+        </span>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginLeft: 'auto' }}>
+          Highest risk
+        </span>
       </div>
 
-      {/* Auction trigger / display */}
-      {phase === 'idle' && (
-        <motion.button
-          onClick={runAuction}
-          style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', color: PALETTE.bg, background: sevColor, border: 'none', padding: '0.8rem 2rem', cursor: 'pointer', display: 'block', transition: 'opacity 0.15s' }}
-          onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
-          onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-        >
-          {"Run auction"}
-        </motion.button>
-      )}
+      {/* Title — larger, more weight */}
+      <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.25, marginBottom: '0.8rem', maxWidth: '36ch' }}>
+        {scenario.title}
+      </h2>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: '55ch' }}>
+        {scenario.subtitle}
+      </p>
 
-      {(phase === 'running' || phase === 'sold') && (
-        <div style={{ maxWidth: 600 }}>
-          {/* Timer bar */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-              {phase === 'running' ? 'Bidding in progress' : 'Auction complete'}
-            </p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: phase === 'sold' ? sevColor : PALETTE.inkMuted }}>
-              {elapsed + 'ms'}
-            </p>
+      {/* Data points — 2x2 grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1px', background: PALETTE.border, marginBottom: '2rem' }}>
+        {scenario.dataPoints.map(dp => (
+          <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '1rem 1.2rem' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{dp.label}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '1.1rem', color: dp.alarming ? PALETTE.red : PALETTE.ink, letterSpacing: '-0.01em' }}>{dp.value}</p>
           </div>
+        ))}
+      </div>
 
-          {/* Progress bar */}
-          <div style={{ height: '2px', background: PALETTE.ink + '08', marginBottom: '1.2rem', position: 'relative', overflow: 'hidden' }}>
-            <motion.div
-              animate={{ scaleX: phase === 'sold' ? 1 : 0.7 }}
-              transition={{ duration: 0.5 }}
-              style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: phase === 'sold' ? sevColor : PALETTE.inkMuted }}
-            />
-          </div>
+      {/* Body */}
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.5rem', maxWidth: '65ch' }}>
+        {scenario.body}
+      </p>
 
-          {/* Bid feed */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: '1.5rem' }}>
-            <AnimatePresence>
-              {bids.map((bid, i) => (
-                <motion.div
-                  key={bid.buyer + i}
-                  initial={{ opacity: 0, x: -20, height: 0 }}
-                  animate={{ opacity: 1, x: 0, height: 'auto' }}
-                  transition={{ duration: 0.3 }}
-                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0', borderBottom: '1px solid ' + PALETTE.border }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp + 'ms'}</span>
-                    <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{bid.buyer}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: sevColor, letterSpacing: '0.04em', width: '4.5rem', textAlign: 'right' }}>
-                      {'\u00a3' + bid.amount.toFixed(4)}
-                    </span>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {/* Winner announcement */}
-          <AnimatePresence>
-            {phase === 'sold' && winner && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
-                style={{ background: sevColor + '08', border: '1px solid ' + sevColor + '25', padding: '1.2rem 1.5rem' }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: sevColor, textTransform: 'uppercase', marginBottom: '0.4rem' }}>{"SOLD"}</p>
-                    <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{winner.buyer}</p>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.3rem', textTransform: 'capitalize' }}>
-                      {"Segment: " + winner.segment}
-                    </p>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '1.3rem', color: sevColor, letterSpacing: '0.04em' }}>
-                      {'\u00a3' + winner.amount.toFixed(4)}
-                    </p>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.2rem' }}>
-                      {elapsed + 'ms elapsed'}
-                    </p>
-                  </div>
-                </div>
-                <div style={{ height: '1px', background: PALETTE.border, margin: '1rem 0' }} />
-                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
-                  {"The buyer now receives: your behavioural profile, your segment classifications, your vulnerability window" + (homeLoc ? ", your approximate location (" + homeLoc.location + ")" : "") + ", and your emotional pattern data. You were not consulted. This transaction is legal."}
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Reset */}
-          {phase === 'sold' && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              onClick={() => { setPhase('idle'); setBids([]); setElapsed(0); setWinner(null); }}
-              style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.inkFaint, background: 'none', border: '1px solid ' + PALETTE.border, padding: '0.5rem 1rem', cursor: 'pointer', marginTop: '1rem' }}
-            >
-              {"Run again"}
-            </motion.button>
-          )}
-        </div>
-      )}
-    </motion.section>
+      {/* Precedent */}
+      <div style={{ padding: '1.2rem 1.5rem', background: PALETTE.bgElevated, borderLeft: `2px solid ${PALETTE.border}` }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+          {scenario.precedent.source}
+        </p>
+        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
+          {scenario.precedent.detail}
+        </p>
+      </div>
+    </motion.div>
   );
 }
 
 // ============================================================================
-// SCENARIO CARD
+// SECONDARY SCENARIO CARD — accordion, collapsed by default
 // ============================================================================
 
 function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: number }) {
@@ -450,86 +254,63 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
   const [expanded, setExpanded] = useState(false);
 
   const sevColors: Record<string, string> = {
-    critical: PALETTE.red,
-    high: PALETTE.amber,
-    medium: PALETTE.inkMuted,
-    low: PALETTE.inkFaint,
+    critical: PALETTE.red, high: PALETTE.amber, medium: PALETTE.inkMuted, low: PALETTE.inkFaint,
   };
   const sc = sevColors[scenario.severity] || PALETTE.inkFaint;
 
   return (
     <motion.article
       ref={ref}
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay: index * 0.1, duration: 0.6 }}
+      transition={{ delay: index * 0.08, duration: 0.5 }}
       onClick={() => setExpanded(!expanded)}
-      style={{
-        background: scenario.severity === 'critical' ? `${PALETTE.red}06` : PALETTE.bgPanel,
-        padding: '1.5rem 2rem',
-        borderLeft: '3px solid ' + sc,
-        cursor: 'pointer',
-        transition: 'background 0.2s',
-      }}
+      style={{ background: PALETTE.bgPanel, padding: '1.4rem 2rem', borderLeft: '2px solid ' + (expanded ? sc : sc + '40'), cursor: 'pointer', transition: 'border-color 0.2s' }}
     >
-      {/* Top line */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: sc, textTransform: 'uppercase', padding: '2px 6px', border: '1px solid ' + sc + '40' }}>
-          {scenario.severity}
-        </span>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          {scenario.id.replace(/_/g, ' ')}
-        </span>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginLeft: 'auto' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.5rem' }}>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: sc, textTransform: 'uppercase', padding: '2px 5px', border: `1px solid ${sc}35` }}>
+              {scenario.severity}
+            </span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+              {scenario.id.replace(/_/g, ' ')}
+            </span>
+          </div>
+          <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35, marginBottom: expanded ? '0.6rem' : 0 }}>
+            {scenario.title}
+          </h3>
+        </div>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, flexShrink: 0, marginTop: '0.15rem' }}>
           {expanded ? '−' : '+'}
         </span>
       </div>
 
-      {/* Title — size reflects severity */}
-      <h3 style={{
-        fontFamily: TYPE.serif,
-        fontSize: scenario.severity === 'critical' ? 'clamp(1.1rem, 2vw, 1.4rem)' : 'clamp(1rem, 1.8vw, 1.2rem)',
-        fontWeight: 400,
-        color: PALETTE.ink,
-        lineHeight: 1.35,
-        marginBottom: '0.5rem',
-      }}>
-        {scenario.title}
-      </h3>
-
-      {/* Subtitle */}
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.6 }}>
-        {scenario.subtitle}
-      </p>
-
-      {/* Expandable content */}
       <AnimatePresence>
         {expanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.28 }}
             style={{ overflow: 'hidden' }}
           >
-            {/* Data points grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: PALETTE.border, margin: '1.2rem 0' }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '1.2rem' }}>
+              {scenario.subtitle}
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1px', background: PALETTE.border, marginBottom: '1.2rem' }}>
               {scenario.dataPoints.map(dp => (
-                <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '0.8rem' }}>
+                <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '0.7rem 0.9rem' }}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{dp.label}</p>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: dp.alarming ? PALETTE.red : PALETTE.ink }}>{dp.value}</p>
                 </div>
               ))}
             </div>
-
-            {/* Body */}
-            <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '1.2rem' }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.2rem' }}>
               {scenario.body}
             </p>
-
-            {/* Precedent */}
-            <div style={{ padding: '1rem', background: PALETTE.bgElevated }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+            <div style={{ padding: '1rem 1.2rem', background: PALETTE.bgElevated, borderLeft: `2px solid ${PALETTE.border}` }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
                 {scenario.precedent.source}
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
@@ -544,6 +325,185 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
 }
 
 // ============================================================================
+// RTB AUCTION — moved after scenarios, acts as mechanism explanation
+// ============================================================================
+
+function RTBAuction({ results }: { results: AnalysisResult }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-10%' });
+  const [phase, setPhase] = useState<'idle' | 'running' | 'sold'>('idle');
+  const [bids, setBids] = useState<{ buyer: string; amount: number; segment: string; timestamp: number }[]>([]);
+  const [elapsed, setElapsed] = useState(0);
+  const [winner, setWinner] = useState<{ buyer: string; amount: number; segment: string; timestamp: number } | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const segments = results.commercialProfile?.segments || [];
+  const homeLoc = results.findings.personalInfo.locations.find(l => l.type === 'lives');
+  const nightPct = Math.round((results.nighttimeRatio || 0) * 100);
+  const totalMsgs = results.totalUserMessages || results.stats?.userMessages || 0;
+
+  const segmentLabels = useMemo(() => {
+    if (segments.length > 0) return segments.slice(0, 4).map(s => s.label.replace(/_/g, ' '));
+    return ['behavioural-profile', 'general-audience'];
+  }, [segments]);
+
+  const runAuction = useCallback(() => {
+    setPhase('running'); setBids([]); setElapsed(0); setWinner(null);
+    const allBids: typeof bids = [];
+    const usedBuyers = new Set<string>();
+    const totalBidsCount = 6 + Math.floor(Math.random() * 4);
+    let bidIndex = 0;
+    intervalRef.current = setInterval(() => {
+      if (bidIndex >= totalBidsCount) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        setWinner([...allBids].sort((a, b) => b.amount - a.amount)[0] || null);
+        setPhase('sold');
+        return;
+      }
+      let buyer = BUYER_POOL[Math.floor(Math.random() * BUYER_POOL.length)];
+      while (usedBuyers.has(buyer) && usedBuyers.size < BUYER_POOL.length) buyer = BUYER_POOL[Math.floor(Math.random() * BUYER_POOL.length)];
+      usedBuyers.add(buyer);
+      const bid = { buyer, amount: parseFloat((0.002 + Math.random() * 0.012).toFixed(4)), segment: segmentLabels[Math.floor(Math.random() * segmentLabels.length)], timestamp: bidIndex * 120 + Math.floor(Math.random() * 80) };
+      allBids.push(bid);
+      setBids(prev => [...prev, bid]);
+      setElapsed(bid.timestamp);
+      bidIndex++;
+    }, 700);
+  }, [segmentLabels]);
+
+  useEffect(() => { return () => { if (intervalRef.current) clearInterval(intervalRef.current); }; }, []);
+
+  return (
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0 }}
+      animate={isInView ? { opacity: 1 } : {}}
+      transition={{ duration: 0.8 }}
+      style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: '1px solid ' + PALETTE.border }}
+    >
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.6rem', opacity: 0.8 }}>
+        The mechanism
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.6rem', lineHeight: 1.2 }}>
+        This is how all four scenarios become possible.
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '2rem', maxWidth: '58ch' }}>
+        Every time you load a webpage, your behavioural profile enters a real-time auction. Advertisers bid in under 100 milliseconds. The winner receives your data. You are not notified. This is the commercial infrastructure that connects the scenarios above.
+      </p>
+
+      {/* Lot card */}
+      <div style={{ background: PALETTE.bgElevated, border: '1px solid ' + PALETTE.border, padding: '1.5rem 2rem', marginBottom: '1.5rem', maxWidth: 560 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+          <div>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>Lot</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.ink }}>
+              {'USR-' + String(results.privacyScore).padStart(3, '0') + '-' + String(totalMsgs % 10000).padStart(4, '0')}
+            </p>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>Quality</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: results.privacyScore >= 70 ? PALETTE.red : PALETTE.ink }}>
+              {results.privacyScore >= 70 ? 'PREMIUM' : results.privacyScore >= 40 ? 'STANDARD' : 'SPARSE'}
+            </p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
+          {segmentLabels.map(seg => (
+            <span key={seg} style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.red, padding: '3px 8px', border: '1px solid ' + PALETTE.red + '28', textTransform: 'capitalize' }}>{seg}</span>
+          ))}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+          {[
+            { l: 'Data points', v: totalMsgs.toLocaleString('en-GB') },
+            { l: 'Location', v: homeLoc ? homeLoc.location : 'Inferred' },
+            { l: 'Vulnerability', v: nightPct > 5 ? nightPct + '% nocturnal' : 'Standard' },
+          ].map(item => (
+            <div key={item.l}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2px' }}>{item.l}</p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{item.v}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Auction */}
+      {phase === 'idle' && (
+        <button
+          onClick={runAuction}
+          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: PALETTE.bg, background: PALETTE.red, border: 'none', padding: '0.9rem 2.2rem', cursor: 'pointer', transition: 'opacity 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.opacity = '0.82'; }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
+        >
+          Run auction →
+        </button>
+      )}
+
+      {(phase === 'running' || phase === 'sold') && (
+        <div style={{ maxWidth: 560 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.7rem' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+              {phase === 'running' ? 'Bidding in progress' : 'Auction complete'}
+            </p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: phase === 'sold' ? PALETTE.red : PALETTE.inkMuted }}>{elapsed}ms</p>
+          </div>
+          <div style={{ height: '2px', background: PALETTE.ink + '08', marginBottom: '1.2rem', position: 'relative', overflow: 'hidden' }}>
+            <motion.div animate={{ scaleX: phase === 'sold' ? 1 : 0.7 }} transition={{ duration: 0.5 }}
+              style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: phase === 'sold' ? PALETTE.red : PALETTE.inkMuted }} />
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: '1.5rem' }}>
+            <AnimatePresence>
+              {bids.map((bid, i) => (
+                <motion.div key={bid.buyer + i}
+                  initial={{ opacity: 0, x: -16, height: 0 }} animate={{ opacity: 1, x: 0, height: 'auto' }} transition={{ duration: 0.25 }}
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0', borderBottom: '1px solid ' + PALETTE.border }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp}ms</span>
+                    <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{bid.buyer}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, letterSpacing: '0.04em', width: '4.5rem', textAlign: 'right' }}>£{bid.amount.toFixed(4)}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+          <AnimatePresence>
+            {phase === 'sold' && winner && (
+              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
+                style={{ background: PALETTE.red + '08', border: '1px solid ' + PALETTE.red + '25', padding: '1.2rem 1.5rem', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.8rem' }}>
+                  <div>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.3rem' }}>SOLD</p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{winner.buyer}</p>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.2rem', textTransform: 'capitalize' }}>{winner.segment}</p>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '1.4rem', color: PALETTE.red, letterSpacing: '0.02em' }}>£{winner.amount.toFixed(4)}</p>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.2rem' }}>{elapsed}ms elapsed</p>
+                  </div>
+                </div>
+                <div style={{ height: '1px', background: PALETTE.border, marginBottom: '0.8rem' }} />
+                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
+                  The buyer now receives: your behavioural profile, your segment classifications, your vulnerability window{homeLoc ? `, your approximate location (${homeLoc.location})` : ''}, and your emotional pattern data. You were not consulted. This transaction is legal.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {phase === 'sold' && (
+            <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+              onClick={() => { setPhase('idle'); setBids([]); setElapsed(0); setWinner(null); }}
+              style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.inkFaint, background: 'none', border: '1px solid ' + PALETTE.border, padding: '0.5rem 1rem', cursor: 'pointer' }}>
+              Run again
+            </motion.button>
+          )}
+        </div>
+      )}
+    </motion.section>
+  );
+}
+
+// ============================================================================
 // MAIN RISK PAGE
 // ============================================================================
 
@@ -552,65 +512,75 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
   const stats = results.stats || results.rawStats;
   const totalMsgs = results.totalUserMessages || stats?.userMessages || 0;
   const activeCount = scenarios.filter(s => s.severity === 'critical' || s.severity === 'high').length;
+  const heroScenario = scenarios[0];
+  const secondaryScenarios = scenarios.slice(1);
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-      <style>{`
-        @media (max-width: 640px) {
-          .risk-auction-lot { grid-template-columns: 1fr 1fr !important; }
-        }
-      `}</style>
-      <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 2.5rem)', borderBottom: '1px solid ' + PALETTE.border }}>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.4 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}
-        >
-          {"04 \u2014 Risk assessment"}
+
+      {/* OPENING */}
+      <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border }}>
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
+          04 — Risk assessment
         </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.7 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.1, marginBottom: '1rem', maxWidth: '70%' }}
-        >
-          {"This is not theoretical."}
+        <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.2rem', maxWidth: '20ch' }}>
+          These systems are operational today.
         </motion.h1>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.4vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560 }}
-        >
-          {"Based on " + totalMsgs.toLocaleString('en-GB') + " messages, your profile triggers " + activeCount + " active risk scenario" + (activeCount === 1 ? '' : 's') + ". The following describes systems that are operational today. Each scenario uses your actual data."}
+
+        {/* Active risk count — visual, not just text */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}
+          style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '1.2rem' }}>
+          <span style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', color: activeCount > 2 ? PALETTE.red : PALETTE.amber, letterSpacing: '-0.04em', lineHeight: 1 }}>
+            {activeCount}
+          </span>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+            active risk scenario{activeCount === 1 ? '' : 's'} from your {totalMsgs.toLocaleString('en-GB')} messages
+          </span>
+        </motion.div>
+
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45, duration: 0.8 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '55ch' }}>
+          Each scenario below uses your actual data. None is hypothetical. The systems described are running now.
         </motion.p>
       </div>
 
-      {/* RTB Auction — the centrepiece */}
+      {/* HERO SCENARIO — most relevant, fully expanded */}
+      {heroScenario && <HeroScenario scenario={heroScenario} />}
+
+      {/* SECONDARY SCENARIOS — accordion */}
+      {secondaryScenarios.length > 0 && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
+          {secondaryScenarios.map((scenario, i) => (
+            <ScenarioCard key={scenario.id} scenario={scenario} index={i} />
+          ))}
+        </div>
+      )}
+
+      {/* RTB AUCTION — the mechanism behind all four */}
       <RTBAuction results={results} />
 
-      {/* Scenario cards — ranked by relevance */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
-        {scenarios.map((scenario, i) => (
-          <ScenarioCard key={scenario.id} scenario={scenario} index={i} />
-        ))}
-      </div>
-
-      {/* Closing */}
-      <div style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)' }}>
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
+      {/* CLOSING */}
+      <div style={{ padding: 'clamp(3rem, 7vw, 5rem) clamp(2rem, 5vw, 4rem)' }}>
+        <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2rem', opacity: 0.15 }}
-        />
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.4vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 520 }}>
-          {"These scenarios are not speculative. They describe systems that are operational, legal, and commercially incentivised. The data that powers them was generated by you, collected without meaningful consent, and cannot be recalled."}
-        </p>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2rem', opacity: 0.7 }}>
-          {"End of risk assessment."}
-        </p>
+          style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2.5rem', opacity: 0.12 }} />
+        <motion.p initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.8 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.15rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: '52ch', marginBottom: '0.8rem' }}>
+          These scenarios are not speculative.
+        </motion.p>
+        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '52ch' }}>
+          They describe systems that are operational, legal, and commercially incentivised. The data that powers them was generated by you, collected without meaningful consent, and cannot be recalled.
+        </motion.p>
+        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 0.55 }} viewport={{ once: true }}
+          transition={{ delay: 1, duration: 1 }}
+          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2.5rem' }}>
+          End of risk assessment.
+        </motion.p>
       </div>
     </div>
   );

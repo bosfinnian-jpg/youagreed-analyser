@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import PolicyDrift from './PolicyDrift';
 
 // ============================================================================
 // TYPOGRAPHY — local to this page, uses a dark palette distinct from the
@@ -38,6 +39,7 @@ const MODULES = [
   { id: 3, label: 'You cannot take it back', short: 'Permanence' },
   { id: 4, label: 'You did not really consent', short: 'Consent' },
   { id: 5, label: 'Read the terms', short: 'Terms' },
+  { id: 6, label: 'Policy drift', short: 'Drift' },
 ];
 
 // ============================================================================
@@ -258,7 +260,7 @@ const PRECEDENTS = [
 // MAIN PAGE
 // ============================================================================
 
-export default function UnderstandPage() {
+export default function UnderstandPage({ setPage }: { setPage?: (p: string) => void }) {
   const [currentModule, setCurrentModule] = useState(1);
   const [completed, setCompleted] = useState<Set<number>>(new Set());
   const [hasStarted, setHasStarted] = useState(false);
@@ -308,10 +310,10 @@ export default function UnderstandPage() {
 
   const advance = () => {
     markComplete(currentModule);
-    if (currentModule < 5) {
+    if (currentModule < 6) {
       setCurrentModule(currentModule + 1);
     } else {
-      setCurrentModule(6); // completion screen
+      setCurrentModule(7); // completion screen
     }
   };
 
@@ -353,10 +355,13 @@ export default function UnderstandPage() {
             <Module4 key="m4" onComplete={() => markComplete(4)} onAdvance={advance} completed={isComplete} />
           ) : currentModule === 5 ? (
             <Module5 key="m5" onComplete={() => markComplete(5)} onAdvance={advance} completed={isComplete} />
+          ) : currentModule === 6 ? (
+            <div key="m6" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem)' }}>
+              <PolicyDrift onAdvance={() => { markComplete(6); advance(); }} />
+            </div>
           ) : (
-            <CompletionScreen key="done" />
-          )}
-        </AnimatePresence>
+            <CompletionScreen key="done" setPage={setPage} />
+          )}        </AnimatePresence>
       </div>
     </>
   );
@@ -436,7 +441,7 @@ function ProgressBar({
           textTransform: 'uppercase',
         }}
       >
-        {current <= 5 ? `Module ${current} of 5 / ${MODULES[current - 1].label}` : 'Course complete'}
+        {current <= 6 ? `Module ${current} of 6 / ${MODULES[current - 1].label}` : 'Course complete'}
       </p>
     </div>
   );
@@ -476,7 +481,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           marginBottom: '2rem',
         }}
       >
-        A five-module course
+        A six-module course
       </motion.p>
 
       <motion.h1
@@ -1987,10 +1992,15 @@ function Module5({
 // COMPLETION SCREEN
 // ============================================================================
 
-function CompletionScreen() {
+function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
   const handleReturn = () => {
-    // Navigate back to the overview
-    window.location.href = '/results';
+    if (setPage) setPage('overview');
+    else window.location.href = '/results';
+  };
+
+  const handleResist = () => {
+    if (setPage) setPage('resist');
+    else window.location.href = '/results';
   };
 
   return (
@@ -2180,34 +2190,57 @@ function CompletionScreen() {
         </div>
       </motion.div>
 
-      <motion.button
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 3, duration: 1 }}
-        onClick={handleReturn}
-        style={{
-          fontFamily: TYPE.mono,
-          fontSize: '11px',
-          letterSpacing: '0.22em',
-          textTransform: 'uppercase',
-          background: C.text,
-          color: C.bg,
-          border: `1px solid ${C.text}`,
-          padding: '1rem 2.5rem',
-          cursor: 'pointer',
-          transition: 'all 0.2s',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = 'transparent';
-          e.currentTarget.style.color = C.text;
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = C.text;
-          e.currentTarget.style.color = C.bg;
-        }}
+        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}
       >
-        Return to dashboard →
-      </motion.button>
+        <button
+          onClick={handleResist}
+          style={{
+            fontFamily: TYPE.mono,
+            fontSize: '11px',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            background: C.text,
+            color: C.bg,
+            border: `1px solid ${C.text}`,
+            padding: '1rem 2.5rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = 'transparent';
+            e.currentTarget.style.color = C.text;
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = C.text;
+            e.currentTarget.style.color = C.bg;
+          }}
+        >
+          What you can do about it →
+        </button>
+        <button
+          onClick={handleReturn}
+          style={{
+            fontFamily: TYPE.mono,
+            fontSize: '11px',
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            background: 'none',
+            color: C.textFaint,
+            border: 'none',
+            padding: '0.4rem 0',
+            cursor: 'pointer',
+            transition: 'color 0.15s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = C.textMuted; }}
+          onMouseLeave={e => { e.currentTarget.style.color = C.textFaint; }}
+        >
+          Return to overview
+        </button>
+      </motion.div>
 
       <motion.p
         initial={{ opacity: 0 }}

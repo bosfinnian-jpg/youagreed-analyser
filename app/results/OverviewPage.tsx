@@ -350,12 +350,13 @@ export default function OverviewPage({ results, sources, setPage }: {
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
           className="ov-navstrip"
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.border }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.border }}
         >
           {[
             { label: 'Go deeper: your profile', sub: 'Cognitive fingerprint, social graph, locations', page: 'profile' as DashPage },
             { label: 'Go deeper: your risks', sub: 'Insurance, employment, targeting, breach scenarios', page: 'risk' as DashPage },
             { label: 'Go deeper: understand this', sub: 'What this data means and why it cannot be deleted', page: 'understand' as DashPage },
+            { label: 'What you can do', sub: 'Settings, legal rights, organisations, alternatives', page: 'resist' as DashPage },
           ].map((item, i) => (
             <button
               key={i}

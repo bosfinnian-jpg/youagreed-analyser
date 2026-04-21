@@ -92,7 +92,7 @@ export default function ResultsPage() {
       {page === 'profile' && <ProfilePage results={results} />}
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} />}
       {page === 'risk' && <RiskPage results={results} />}
-      {page === 'understand' && <UnderstandPage />}
+      {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
       {page === 'resist' && <ResistPage analysis={results as any} />}
     </DashboardLayout>
   );

@@ -80,7 +80,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
             Emotional timeline
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink }}>
-            {weeks.length} weeks of your inner life
+            {weeks.length} weeks of recorded activity
           </p>
         </div>
         <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>

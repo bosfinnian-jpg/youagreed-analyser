@@ -196,7 +196,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           {connected && (
             <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(52,199,89,0.2)` }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.green, textTransform: 'uppercase' }}>
-                Source connected — data included in your profile
+                Source connected
               </p>
             </div>
           )}
@@ -221,7 +221,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-          03 — Data sources
+          03 / Data sources
         </p>
         <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>
           How much do they know?
@@ -278,7 +278,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
           About your data
         </p>
         <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
-          All analysis happens locally in your browser. Your exports are never uploaded to any server. All processing is local. This tool was built to show you what exists — not to replicate it.
+          All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists — not to collect it.
         </p>
       </motion.div>
     </div>

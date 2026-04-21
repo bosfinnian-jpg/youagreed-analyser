@@ -109,7 +109,7 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
             e.currentTarget.style.borderColor = PALETTE.border;
           }}
         >
-          Read the source analysis →
+          Add more data sources →
         </button>
 
         <p style={{
@@ -117,7 +117,7 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
           color: 'rgba(240,237,232,0.12)', textTransform: 'uppercase',
           marginTop: '2rem',
         }}>
-          TRACE.AI — 2026
+          TRACE.AI / 2026
         </p>
       </motion.div>
     </motion.div>

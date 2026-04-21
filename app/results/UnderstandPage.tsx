@@ -436,7 +436,7 @@ function ProgressBar({
           textTransform: 'uppercase',
         }}
       >
-        {current <= 5 ? `Module ${current} of 5 — ${MODULES[current - 1].label}` : 'Course complete'}
+        {current <= 5 ? `Module ${current} of 5 / ${MODULES[current - 1].label}` : 'Course complete'}
       </p>
     </div>
   );
@@ -469,8 +469,8 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
         transition={{ delay: 0.3, duration: 0.8 }}
         style={{
           fontFamily: TYPE.mono,
-          fontSize: '10px',
-          letterSpacing: '0.24em',
+          fontSize: '11px',
+          letterSpacing: '0.22em',
           color: C.textFaint,
           textTransform: 'uppercase',
           marginBottom: '2rem',
@@ -542,7 +542,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
             e.currentTarget.style.color = C.text;
           }}
         >
-          Begin ⟶
+          Begin →
         </button>
       </motion.div>
     </motion.div>
@@ -662,7 +662,7 @@ function ModuleFrame({
             transition: 'all 0.2s',
           }}
         >
-          {canAdvance ? advanceLabel || 'Continue ⟶' : 'Complete the module above to continue'}
+          {canAdvance ? advanceLabel || 'Continue →' : 'Complete the module above to continue'}
         </motion.button>
       </div>
     </motion.div>
@@ -915,7 +915,7 @@ function Module1({
               e.currentTarget.style.color = C.text;
             }}
           >
-            Show the leap ⟶
+            Show the leap →
           </motion.button>
         ) : (
           <motion.div
@@ -1530,7 +1530,7 @@ function Module4({
               e.currentTarget.style.color = C.text;
             }}
           >
-            Start reading ⟶
+            Start reading →
           </button>
         </motion.div>
       ) : (
@@ -1633,7 +1633,7 @@ function Module4({
             }}
           >
             <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
-              OpenAI US Privacy Policy — April 2026 — Excerpt
+              OpenAI US Privacy Policy / April 2026 / Excerpt
             </p>
             <p style={{ marginBottom: '1rem' }}>
               <strong>1. Personal Data we collect.</strong> We collect personal data relating to you ("Personal Data") as follows: Account Information (your name, contact information, account credentials, date of birth, payment information, and transaction history). User Content (your prompts and other content you upload, such as files, images, audio and video, Sora characters, and data from connected services). Communication Information (if you communicate with us, such as via email or our pages on social media sites). Contact Data (if you choose to connect your device contacts, we upload information from your device address books and check which of your contacts also use our Services). Other Information You Provide.
@@ -1751,7 +1751,7 @@ function Module5({
       subtitle="One clause below does not exist in the real OpenAI Terms of Service. It was written by the artist. Find it and flag it."
       onAdvance={onAdvance}
       canAdvance={foundArtist}
-      advanceLabel="Finish course ⟶"
+      advanceLabel="Finish course →"
     >
       {/* Version tabs */}
       <div style={{ display: 'flex', gap: 0, marginBottom: '1.2rem' }}>
@@ -2206,7 +2206,7 @@ function CompletionScreen() {
           e.currentTarget.style.color = C.bg;
         }}
       >
-        Return to dashboard ⟶
+        Return to dashboard →
       </motion.button>
 
       <motion.p
@@ -2222,7 +2222,7 @@ function CompletionScreen() {
           marginTop: '4rem',
         }}
       >
-        TRACE.AI — 2026
+        TRACE.AI / 2026
       </motion.p>
     </motion.div>
   );

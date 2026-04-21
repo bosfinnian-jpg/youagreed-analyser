@@ -149,7 +149,7 @@ export default function UploadPage() {
           .ya-header, .ya-footer {
             padding-left: 24px !important;
             padding-right: 24px !important;
-            font-size: 10px !important;
+            font-size: 11px !important;
           }
           .ya-main {
             padding: 48px 24px !important;
@@ -344,7 +344,7 @@ export default function UploadPage() {
                     lineHeight: 1.8,
                   }}
                 >
-                  File is parsed in your browser. AI enrichment takes 20-40 seconds
+                  File is parsed in your browser. AI enrichment takes 20–40 seconds.
                 </motion.div>
 
                 {/* Error state */}
@@ -516,7 +516,6 @@ export default function UploadPage() {
             borderTop: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          <span>trace.ai</span>
           <span>MMXXVI</span>
         </footer>
       </main>

@@ -81,7 +81,7 @@ function OpeningQuoteCard({ results }: { results: any }) {
       </blockquote>
       {date && (
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          {date} — Retained permanently
+          {date} / Retained permanently
         </p>
       )}
     </motion.div>
@@ -220,7 +220,7 @@ export default function OverviewPage({ results, sources, setPage }: {
             This is what your data reveals.
           </h1>
           <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '0.6rem' }}>
-            AI exposure report — generated from your ChatGPT export
+            AI exposure report / generated from your ChatGPT export
           </p>
         </motion.div>
 
@@ -353,9 +353,9 @@ export default function OverviewPage({ results, sources, setPage }: {
           style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.border }}
         >
           {[
-            { label: 'See your full profile', sub: 'Cognitive fingerprint, social graph, locations', page: 'profile' as DashPage },
-            { label: 'Assess your risks', sub: 'Insurance, employment, targeting, breach scenarios', page: 'risk' as DashPage },
-            { label: 'Understand what happened', sub: 'What this data means and why it cannot be deleted', page: 'understand' as DashPage },
+            { label: 'Go deeper: your profile', sub: 'Cognitive fingerprint, social graph, locations', page: 'profile' as DashPage },
+            { label: 'Go deeper: your risks', sub: 'Insurance, employment, targeting, breach scenarios', page: 'risk' as DashPage },
+            { label: 'Go deeper: understand this', sub: 'What this data means and why it cannot be deleted', page: 'understand' as DashPage },
           ].map((item, i) => (
             <button
               key={i}

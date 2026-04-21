@@ -40,7 +40,7 @@ export default function PersonalisedSummary({ analysis }: { analysis: DeepAnalys
         color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '1.2rem',
         paddingTop: '0.8rem', borderTop: `1px solid ${PALETTE.border}`,
       }}>
-        Generated from your exported data — no external inference applied
+        Generated from your exported data. No external inference applied.
       </p>
     </motion.div>
   );

@@ -52,7 +52,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
 
   const { commercialProfile, dependency, lifeEvents, findings, nighttimeRatio, mostVulnerablePeriod } = analysis;
   const topSegment = commercialProfile.segments[0];
-  const refId = useRef(`DS-${new Date().getFullYear()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`).current;
+  const refId = useRef(`DS-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`).current;
 
   return (
     <div ref={ref}>

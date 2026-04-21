@@ -151,7 +151,7 @@ export default function Home() {
                 color: COLOR.inkMuted,
                 maxWidth: '560px',
                 margin: '0 auto',
-                textAlign: 'left',
+                textAlign: 'center',
               }}
             >
               <p style={{ margin: '0 0 24px 0' }}>
@@ -238,7 +238,6 @@ export default function Home() {
             zIndex: 2,
           }}
         >
-          <span>trace.ai</span>
           <span>MMXXVI</span>
         </motion.footer>
       </main>

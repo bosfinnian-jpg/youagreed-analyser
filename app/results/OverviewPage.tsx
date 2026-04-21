@@ -35,6 +35,21 @@ function ExposureRing({ score }: { score: number }) {
   return (
     <div ref={ref} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
       <div style={{ position: 'relative', width: 160, height: 160 }}>
+        {/* Radiating axis lines behind the ring */}
+        <svg width="160" height="160" viewBox="0 0 160 160"
+          style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          {[0, 45, 90, 135].map(deg => {
+            const rad = (deg * Math.PI) / 180;
+            return (
+              <line key={deg}
+                x1={80} y1={80}
+                x2={80 + Math.cos(rad) * 74} y2={80 + Math.sin(rad) * 74}
+                stroke="rgba(240,237,232,0.05)" strokeWidth="1"
+              />
+            );
+          })}
+          <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(240,237,232,0.04)" strokeWidth="1" strokeDasharray="3 8" />
+        </svg>
         <svg width="160" height="160" viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)' }}>
           <circle cx="80" cy="80" r={r} fill="none" stroke={PALETTE.bgElevated} strokeWidth="3" />
           <motion.circle
@@ -215,7 +230,11 @@ export default function OverviewPage({ results, sources, setPage }: {
       <div style={{ padding: 'clamp(1.5rem, 5vw, 4rem)', maxWidth: 1280, margin: '0 auto' }}>
 
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem' }}>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem', position: 'relative' }}>
+          {/* Geometric accent — top-left corner bracket */}
+          <svg style={{ position: 'absolute', top: 0, left: -8, pointerEvents: 'none', overflow: 'visible' }} width="24" height="24">
+            <path d="M 20 2 L 2 2 L 2 20" fill="none" stroke="rgba(220,60,50,0.25)" strokeWidth="1" />
+          </svg>
           <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
             This is what your data reveals.
           </h1>

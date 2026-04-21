@@ -516,7 +516,40 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
   const secondaryScenarios = scenarios.slice(1);
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+
+      {/* Slow diagonal scan geometry — fixed to this page section */}
+      <svg style={{
+        position: 'absolute', top: 0, right: 0, width: '340px', height: '340px',
+        pointerEvents: 'none', overflow: 'visible', opacity: 0.6,
+      }}>
+        {/* Crosshair targeting reticle */}
+        <g transform="translate(240, 120)">
+          <circle cx={0} cy={0} r={60} fill="none" stroke="rgba(220,60,50,0.08)" strokeWidth="1" />
+          <circle cx={0} cy={0} r={40} fill="none" stroke="rgba(220,60,50,0.06)" strokeWidth="1" />
+          <circle cx={0} cy={0} r={4} fill="none" stroke="rgba(220,60,50,0.2)" strokeWidth="1" />
+          <line x1={-80} y1={0} x2={-10} y2={0} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
+          <line x1={10} y1={0} x2={80} y2={0} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
+          <line x1={0} y1={-80} x2={0} y2={-10} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
+          <line x1={0} y1={10} x2={0} y2={80} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
+          {/* Corner ticks on outer ring */}
+          {[0, 90, 180, 270].map(deg => {
+            const rad = (deg * Math.PI) / 180;
+            return (
+              <g key={deg} transform={`rotate(${deg})`}>
+                <line x1={55} y1={0} x2={65} y2={0} stroke="rgba(220,60,50,0.2)" strokeWidth="1.5" />
+              </g>
+            );
+          })}
+        </g>
+        {/* Diagonal grid lines */}
+        {[0, 1, 2, 3].map(i => (
+          <line key={i}
+            x1={i * 60} y1={0} x2={i * 60 + 200} y2={200}
+            stroke="rgba(240,237,232,0.025)" strokeWidth="1"
+          />
+        ))}
+      </svg>
 
       {/* OPENING */}
       <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border }}>

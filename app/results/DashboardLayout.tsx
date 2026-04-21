@@ -170,6 +170,14 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
           opacity:0.018; pointer-events:none;
         }
+        body::after {
+          content:''; position:fixed; inset:0; z-index:0;
+          background-image: radial-gradient(circle, rgba(240,237,232,0.07) 1px, transparent 1px);
+          background-size: 40px 40px;
+          opacity: 1; pointer-events:none;
+          mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+          -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+        }
         ::selection { background: rgba(220,60,50,0.20); }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }

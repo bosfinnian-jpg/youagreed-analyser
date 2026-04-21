@@ -410,12 +410,14 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                   viewport={{ once: true, margin: '-5%' }}
                   transition={{ delay: i * 0.05, duration: 0.5 }}
                   onClick={() => setExpandedAttr(isExp ? null : i)}
+                  whileHover={{ backgroundColor: 'rgba(240,237,232,0.018)' }}
                   style={{
                     padding: '1.1rem 0 1.1rem 1.2rem',
                     borderBottom: `1px solid ${PALETTE.border}`,
                     borderLeft: `2px solid ${isExp ? cc : cc + '28'}`,
                     cursor: 'pointer',
-                    transition: 'border-left-color 0.2s',
+                    transition: 'border-left-color 0.2s, background 0.2s',
+                    position: 'relative',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>

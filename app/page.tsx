@@ -1,109 +1,193 @@
 'use client';
 
-import { motion, useAnimationFrame } from 'framer-motion';
+import { motion, useAnimationFrame, animate } from 'framer-motion';
 import Link from 'next/link';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 const COLOR = {
   bg: '#0e0e0d',
   ink: 'rgba(240,238,232,0.92)',
   inkMuted: 'rgba(240,238,232,0.55)',
   inkFaint: 'rgba(240,238,232,0.30)',
-  inkTrace: 'rgba(240,238,232,0.12)',
+  inkTrace: 'rgba(240,238,232,0.10)',
   inkGhost: 'rgba(240,238,232,0.05)',
-  rule: 'rgba(240,238,232,0.18)',
+  rule: 'rgba(240,238,232,0.15)',
   accent: 'rgba(220,60,50,0.85)',
-  accentFaint: 'rgba(220,60,50,0.12)',
+  accentGlow: 'rgba(220,60,50,0.15)',
 } as const;
 
 const SERIF = "'EB Garamond', 'Times New Roman', Georgia, serif";
 const MONO = "'Courier Prime', 'Courier New', ui-monospace, monospace";
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
-// ── Slowly rotating radar grid ──────────────────────────────────────────────
+// ── Slowly rotating radar ────────────────────────────────────────────────────
 function RadarBg() {
-  const ref = useRef<SVGGElement>(null);
+  const rotRef = useRef<SVGGElement>(null);
+  const sweepRef = useRef<SVGPathElement>(null);
   const angle = useRef(0);
+
   useAnimationFrame((_, delta) => {
-    angle.current += delta * 0.004;
-    if (ref.current) ref.current.style.transform = `rotate(${angle.current}deg)`;
+    angle.current += delta * 0.003;
+    if (rotRef.current) {
+      rotRef.current.style.transform = `rotate(${angle.current}deg)`;
+    }
+    // sweep line follows rotation
+    if (sweepRef.current) {
+      const a = (angle.current * Math.PI) / 180;
+      const x2 = Math.cos(a) * 520;
+      const y2 = Math.sin(a) * 520;
+      sweepRef.current.setAttribute('d', `M 0 0 L ${x2} ${y2}`);
+    }
   });
 
-  const rings = [120, 220, 320, 420, 520];
-  const spokes = 12;
+  const rings = [100, 200, 320, 440, 540];
 
   return (
     <svg
-      style={{
-        position: 'absolute', inset: 0, width: '100%', height: '100%',
-        pointerEvents: 'none', overflow: 'visible',
-      }}
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', overflow: 'visible' }}
       preserveAspectRatio="xMidYMid slice"
     >
       <defs>
-        <radialGradient id="radarFade" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor={COLOR.inkGhost} stopOpacity="1" />
-          <stop offset="100%" stopColor={COLOR.inkGhost} stopOpacity="0" />
+        <radialGradient id="rfade" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="rgba(240,238,232,0.06)" />
+          <stop offset="60%" stopColor="rgba(240,238,232,0.02)" />
+          <stop offset="100%" stopColor="rgba(240,238,232,0)" />
+        </radialGradient>
+        {/* sweep trail gradient */}
+        <radialGradient id="sweepGrad" cx="0%" cy="50%" r="100%">
+          <stop offset="0%" stopColor="rgba(220,60,50,0.12)" />
+          <stop offset="100%" stopColor="rgba(220,60,50,0)" />
         </radialGradient>
       </defs>
-      {/* Static outer rings */}
+
       <g style={{ transform: 'translate(50%, 50%)' }}>
-        {rings.map(r => (
+        {/* Rings */}
+        {rings.map((r, i) => (
           <circle key={r} cx={0} cy={0} r={r}
-            fill="none" stroke="rgba(240,238,232,0.04)" strokeWidth="1" />
+            fill="none"
+            stroke={`rgba(240,238,232,${i === 0 ? 0.07 : 0.03})`}
+            strokeWidth={i === 0 ? 1 : 0.75}
+          />
         ))}
-        {/* Rotating spoke group */}
-        <g ref={ref} style={{ transformOrigin: '0 0' }}>
-          {Array.from({ length: spokes }).map((_, i) => {
-            const a = (i / spokes) * Math.PI * 2;
+
+        {/* Static axis lines */}
+        <line x1={-580} y1={0} x2={580} y2={0} stroke="rgba(240,238,232,0.025)" strokeWidth={0.75} />
+        <line x1={0} y1={-580} x2={0} y2={580} stroke="rgba(240,238,232,0.025)" strokeWidth={0.75} />
+
+        {/* Rotating group */}
+        <g ref={rotRef} style={{ transformOrigin: '0 0' }}>
+          {/* 8 faint spokes */}
+          {Array.from({ length: 8 }).map((_, i) => {
+            const a = (i / 8) * Math.PI * 2;
             return (
-              <line key={i}
-                x1={0} y1={0}
-                x2={Math.cos(a) * 600} y2={Math.sin(a) * 600}
-                stroke="rgba(240,238,232,0.025)" strokeWidth="1"
+              <line key={i} x1={0} y1={0}
+                x2={Math.cos(a) * 540} y2={Math.sin(a) * 540}
+                stroke="rgba(240,238,232,0.018)" strokeWidth={0.75}
               />
             );
           })}
         </g>
-        {/* Crosshair */}
-        <line x1={-600} y1={0} x2={600} y2={0} stroke="rgba(240,238,232,0.03)" strokeWidth="1" />
-        <line x1={0} y1={-600} x2={0} y2={600} stroke="rgba(240,238,232,0.03)" strokeWidth="1" />
-        {/* Red accent arc — top-right quadrant only */}
-        <path
-          d={`M ${Math.cos(-0.3) * 220} ${Math.sin(-0.3) * 220} A 220 220 0 0 1 ${Math.cos(0.8) * 220} ${Math.sin(0.8) * 220}`}
-          fill="none" stroke="rgba(220,60,50,0.18)" strokeWidth="1.5"
+
+        {/* Sweep line */}
+        <path ref={sweepRef} d="M 0 0 L 520 0"
+          stroke="rgba(220,60,50,0.2)" strokeWidth={1}
         />
-        {/* Centre dot */}
-        <circle cx={0} cy={0} r={3} fill="rgba(220,60,50,0.35)" />
-        <circle cx={0} cy={0} r={7} fill="none" stroke="rgba(220,60,50,0.15)" strokeWidth="1" />
+
+        {/* Sweep wedge — trailing glow */}
+        <circle cx={0} cy={0} r={200} fill="none"
+          stroke="rgba(220,60,50,0.03)" strokeWidth={40}
+          strokeDasharray={`${0.15 * 2 * Math.PI * 200} ${2 * Math.PI * 200}`}
+          strokeDashoffset={0}
+          transform="rotate(-8)"
+        />
+
+        {/* Inner ring ticks — compass marks */}
+        {Array.from({ length: 36 }).map((_, i) => {
+          const a = (i / 36) * Math.PI * 2;
+          const inner = i % 9 === 0 ? 93 : 96;
+          return (
+            <line key={i}
+              x1={Math.cos(a) * inner} y1={Math.sin(a) * inner}
+              x2={Math.cos(a) * 100} y2={Math.sin(a) * 100}
+              stroke={`rgba(240,238,232,${i % 9 === 0 ? 0.12 : 0.05})`}
+              strokeWidth={i % 9 === 0 ? 1 : 0.5}
+            />
+          );
+        })}
+
+        {/* Centre pip */}
+        <circle cx={0} cy={0} r={2.5} fill="rgba(220,60,50,0.6)" />
+        <circle cx={0} cy={0} r={6} fill="none" stroke="rgba(220,60,50,0.2)" strokeWidth={1} />
+        <circle cx={0} cy={0} r={14} fill="none" stroke="rgba(220,60,50,0.07)" strokeWidth={0.75} />
       </g>
     </svg>
   );
 }
 
-// ── Corner coordinate marks ──────────────────────────────────────────────────
-function CornerMarks() {
-  const marks = [
-    { x: 32, y: 80, label: '00.000°N' },
-    { x: 'calc(100% - 32px)', y: 80, label: '00.000°E', right: true },
-  ];
+// ── Letter-by-letter title reveal ────────────────────────────────────────────
+function AnimatedTitle() {
+  const word1 = 'trace';
+  const word2 = '.ai';
+
   return (
-    <>
-      {marks.map((m, i) => (
-        <div key={i} style={{
-          position: 'absolute',
-          top: m.y,
-          left: m.right ? undefined : (m.x as number),
-          right: m.right ? 32 : undefined,
-          fontFamily: MONO,
-          fontSize: '9px',
-          letterSpacing: '0.16em',
-          color: 'rgba(240,238,232,0.12)',
-          textTransform: 'uppercase',
-          zIndex: 2,
-        }}>{m.label}</div>
+    <h1 style={{
+      fontFamily: SERIF, fontWeight: 400,
+      fontSize: 'clamp(72px, 13vw, 168px)',
+      lineHeight: 0.95, letterSpacing: '-0.02em',
+      margin: 0, color: COLOR.ink,
+    }}>
+      {word1.split('').map((ch, i) => (
+        <motion.span key={i}
+          initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.7, delay: 0.3 + i * 0.06, ease: EASE }}
+          style={{ display: 'inline-block' }}
+        >{ch}</motion.span>
       ))}
-    </>
+      {word2.split('').map((ch, i) => (
+        <motion.span key={i}
+          initial={{ opacity: 0, y: 12, filter: 'blur(4px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          transition={{ duration: 0.7, delay: 0.6 + i * 0.07, ease: EASE }}
+          style={{ display: 'inline-block', color: COLOR.accent }}
+        >{ch}</motion.span>
+      ))}
+    </h1>
+  );
+}
+
+// ── Sweep-fill CTA button ────────────────────────────────────────────────────
+function CTAButton() {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <Link
+      href="/terms"
+      style={{
+        display: 'inline-block', fontFamily: MONO, fontSize: '12px',
+        letterSpacing: '0.2em', textTransform: 'uppercase',
+        color: hovered ? COLOR.bg : COLOR.ink,
+        textDecoration: 'none', padding: '14px 32px',
+        border: `1px solid ${hovered ? 'rgba(240,238,232,0.6)' : COLOR.rule}`,
+        position: 'relative', overflow: 'hidden',
+        transition: 'color 0.4s ease, border-color 0.4s ease',
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Sweep fill */}
+      <motion.span
+        animate={{ x: hovered ? '0%' : '-105%' }}
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        style={{
+          position: 'absolute', inset: 0,
+          background: COLOR.ink,
+          display: 'block',
+        }}
+      />
+      <span style={{ position: 'relative', zIndex: 1 }}>
+        Upload your data →
+      </span>
+    </Link>
   );
 }
 
@@ -112,8 +196,7 @@ export default function Home() {
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
-        html, body { background: ${COLOR.bg}; margin: 0; padding: 0;
-          -webkit-font-smoothing: antialiased; }
+        html, body { background: ${COLOR.bg}; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
         ::selection { background: ${COLOR.accent}; color: ${COLOR.bg}; }
         @media (max-width: 640px) {
           .ya-header, .ya-footer { padding-left: 24px !important; padding-right: 24px !important; font-size: 10px !important; }
@@ -127,25 +210,42 @@ export default function Home() {
         position: 'relative', overflow: 'hidden',
       }}>
 
-        {/* Radar background */}
+        {/* Radar */}
         <div style={{ position: 'absolute', inset: 0, zIndex: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <RadarBg />
         </div>
 
-        {/* Corner coordinate labels */}
-        <CornerMarks />
-
-        {/* Scan line — horizontal sweep, one pass */}
+        {/* Radial light bloom behind title — pulses once */}
         <motion.div
-          initial={{ top: '-2px', opacity: 0.6 }}
-          animate={{ top: '100vh', opacity: 0 }}
-          transition={{ duration: 3.5, delay: 0.5, ease: 'linear' }}
+          initial={{ opacity: 0, scale: 0.6 }}
+          animate={{ opacity: [0, 0.6, 0] }}
+          transition={{ duration: 3.5, delay: 0.8, times: [0, 0.3, 1] }}
           style={{
-            position: 'absolute', left: 0, right: 0, height: '1px',
-            background: `linear-gradient(90deg, transparent, rgba(220,60,50,0.4), transparent)`,
-            zIndex: 1, pointerEvents: 'none',
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 600, height: 300,
+            background: 'radial-gradient(ellipse, rgba(220,60,50,0.06) 0%, transparent 70%)',
+            pointerEvents: 'none', zIndex: 1,
           }}
         />
+
+        {/* Corner meta labels */}
+        {[
+          { style: { top: 80, left: 40 }, text: '51.5074°N' },
+          { style: { top: 80, right: 40 }, text: '0.1278°W' },
+          { style: { bottom: 60, left: 40 }, text: 'INITIATED' },
+          { style: { bottom: 60, right: 40 }, text: 'TRACE.AI / 2026' },
+        ].map((m, i) => (
+          <motion.div key={i}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ delay: 2.2 + i * 0.1, duration: 1 }}
+            style={{
+              position: 'absolute', ...m.style,
+              fontFamily: MONO, fontSize: '9px', letterSpacing: '0.18em',
+              color: 'rgba(240,238,232,0.1)', textTransform: 'uppercase', zIndex: 2,
+            }}
+          >{m.text}</motion.div>
+        ))}
 
         {/* Header */}
         <motion.header className="ya-header"
@@ -168,27 +268,16 @@ export default function Home() {
           justifyContent: 'center', alignItems: 'center',
           padding: '80px 48px', position: 'relative', zIndex: 2,
         }}>
-          <div style={{ maxWidth: '720px', width: '100%' }}>
+          <div style={{ maxWidth: '720px', width: '100%', textAlign: 'center' }}>
 
-            {/* Title */}
-            <motion.div
-              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.6, delay: 0.3, ease: EASE }}
-              style={{ textAlign: 'center', marginBottom: '64px' }}
-            >
-              <h1 style={{
-                fontFamily: SERIF, fontWeight: 400,
-                fontSize: 'clamp(72px, 13vw, 168px)',
-                lineHeight: 0.95, letterSpacing: '-0.02em', margin: 0, color: COLOR.ink,
-              }}>
-                trace<span style={{ color: COLOR.accent }}>.ai</span>
-              </h1>
-            </motion.div>
+            <div style={{ marginBottom: '64px' }}>
+              <AnimatedTitle />
+            </div>
 
-            {/* Rule with endpoint marks */}
+            {/* Rule */}
             <motion.div
               initial={{ scaleX: 0, opacity: 0 }} animate={{ scaleX: 1, opacity: 1 }}
-              transition={{ duration: 1.2, delay: 1.1, ease: EASE }}
+              transition={{ duration: 1.4, delay: 1.0, ease: EASE }}
               style={{ position: 'relative', width: '80px', margin: '0 auto 56px', transformOrigin: 'center' }}
             >
               <div style={{ height: '1px', background: COLOR.rule }} />
@@ -198,15 +287,15 @@ export default function Home() {
 
             {/* Statement */}
             <motion.div
-              initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.4, delay: 1.4, ease: EASE }}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.4, delay: 1.3, ease: EASE }}
               style={{
                 fontFamily: SERIF, fontSize: 'clamp(17px, 1.6vw, 20px)',
-                lineHeight: 1.65, color: COLOR.inkMuted,
-                maxWidth: '560px', margin: '0 auto', textAlign: 'center',
+                lineHeight: 1.7, color: COLOR.inkMuted,
+                maxWidth: '540px', margin: '0 auto',
               }}
             >
-              <p style={{ margin: '0 0 24px 0' }}>
+              <p style={{ margin: '0 0 24px' }}>
                 This is a critical web tool. It takes your exported
                 ChatGPT history and produces the dossier a data broker would build from it.
               </p>
@@ -219,35 +308,20 @@ export default function Home() {
             {/* CTA */}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-              transition={{ duration: 1.2, delay: 1.6, ease: EASE }}
-              style={{ marginTop: '80px', textAlign: 'center' }}
+              transition={{ duration: 1.2, delay: 1.7, ease: EASE }}
+              style={{ marginTop: '72px' }}
             >
-              <Link
-                href="/terms"
+              <CTAButton />
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                transition={{ delay: 2.1, duration: 0.8 }}
                 style={{
-                  display: 'inline-block', fontFamily: MONO, fontSize: '12px',
-                  letterSpacing: '0.2em', textTransform: 'uppercase', color: COLOR.ink,
-                  textDecoration: 'none', padding: '14px 28px',
-                  border: `1px solid ${COLOR.rule}`,
-                  transition: 'background 400ms ease, border-color 400ms ease',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(240,238,232,0.04)';
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(240,238,232,0.40)';
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = COLOR.rule;
+                  marginTop: '20px', fontFamily: MONO, fontSize: '11px',
+                  letterSpacing: '0.15em', textTransform: 'uppercase', color: COLOR.inkFaint,
                 }}
               >
-                Upload your data →
-              </Link>
-              <div style={{
-                marginTop: '20px', fontFamily: MONO, fontSize: '11px',
-                letterSpacing: '0.15em', textTransform: 'uppercase', color: COLOR.inkFaint,
-              }}>
                 You will first review the terms of service.
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </section>

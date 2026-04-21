@@ -93,7 +93,7 @@ function Nav({ page, setPage, results, exposureScore }: {
       </button>
 
       {/* Nav items */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0', flex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0', flex: 1, position: 'relative' }}>
         {NAV_ITEMS.map(item => (
           <button
             key={item.id}
@@ -104,8 +104,8 @@ function Nav({ page, setPage, results, exposureScore }: {
               fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: page === item.id ? PALETTE.ink : PALETTE.inkFaint,
-              borderBottom: page === item.id ? `1px solid ${PALETTE.ink}` : '1px solid transparent',
-              transition: 'color 0.2s, border-color 0.2s',
+              borderBottom: 'none',
+              transition: 'color 0.2s',
               position: 'relative', top: '1px',
             }}
             onMouseEnter={e => { if (page !== item.id) e.currentTarget.style.color = PALETTE.inkMuted; }}
@@ -113,6 +113,18 @@ function Nav({ page, setPage, results, exposureScore }: {
           >
             <span className="nav-label-full">{item.label}</span>
             <span className="nav-label-short">{item.short}</span>
+            {/* Sliding indicator — only on active */}
+            {page === item.id && (
+              <motion.div
+                layoutId="nav-active"
+                style={{
+                  position: 'absolute', bottom: -1, left: 0, right: 0,
+                  height: '1px', background: PALETTE.ink,
+                  boxShadow: `0 0 8px rgba(240,237,232,0.3)`,
+                }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            )}
           </button>
         ))}
       </div>
@@ -127,6 +139,7 @@ function Nav({ page, setPage, results, exposureScore }: {
             fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.08em',
             color: exposureScore >= 70 ? PALETTE.red : exposureScore >= 40 ? PALETTE.amber : PALETTE.green,
             fontWeight: 700,
+            textShadow: exposureScore >= 70 ? `0 0 12px ${PALETTE.red}` : exposureScore >= 40 ? `0 0 12px ${PALETTE.amber}` : 'none',
           }}>
             {exposureScore}/100
           </span>

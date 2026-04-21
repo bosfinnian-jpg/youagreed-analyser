@@ -282,7 +282,24 @@ export default function OverviewPage({ results, sources, setPage }: {
               { label: 'Time span', value: stats?.timeSpan || (results?.timespan?.days ? `${results.timespan.days} days` : '—') },
               { label: 'Avg message length', value: stats?.avgMessageLength ? `${stats.avgMessageLength} chars` : '—' },
             ].map((item, i) => (
-              <div key={i} style={{ background: PALETTE.bgPanel, padding: '1.4rem 1.6rem' }}>
+              <div key={i}
+                style={{ background: PALETTE.bgPanel, padding: '1.4rem 1.6rem', position: 'relative', overflow: 'hidden', transition: 'background 0.25s' }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = PALETTE.bgElevated;
+                  const accent = e.currentTarget.querySelector('.stat-top-accent') as HTMLElement;
+                  if (accent) accent.style.opacity = '1';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = PALETTE.bgPanel;
+                  const accent = e.currentTarget.querySelector('.stat-top-accent') as HTMLElement;
+                  if (accent) accent.style.opacity = '0';
+                }}
+              >
+                <div className="stat-top-accent" style={{
+                  position: 'absolute', top: 0, left: '20%', right: '20%', height: '1px',
+                  background: `linear-gradient(90deg, transparent, rgba(240,237,232,0.25), transparent)`,
+                  opacity: 0, transition: 'opacity 0.3s',
+                }} />
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{item.label}</p>
                 <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.2vw, 1.6rem)', color: PALETTE.ink, letterSpacing: '-0.02em' }}>{item.value}</p>
               </div>

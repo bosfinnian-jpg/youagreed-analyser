@@ -192,7 +192,13 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         padding: 'clamp(2rem, 5vw, 3.5rem) clamp(2rem, 5vw, 4rem)',
         borderBottom: `1px solid ${PALETTE.border}`,
         borderLeft: `4px solid ${sc}`,
-        background: scenario.severity === 'critical' ? `${PALETTE.red}05` : 'transparent',
+        background: scenario.severity === 'critical'
+          ? `${PALETTE.red}05`
+          : scenario.severity === 'high' ? `rgba(255,179,0,0.02)` : 'transparent',
+        boxShadow: scenario.severity === 'critical'
+          ? `inset 4px 0 24px rgba(220,60,50,0.04)`
+          : 'none',
+        position: 'relative',
       }}
     >
       {/* Severity + category */}

@@ -333,9 +333,9 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       {phase === 'idle' && (
         <motion.button
           onClick={runAuction}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', color: PALETTE.bg, background: sevColor, border: 'none', padding: '0.8rem 2rem', cursor: 'pointer', display: 'block' }}
+          style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', textTransform: 'uppercase', color: PALETTE.bg, background: sevColor, border: 'none', padding: '0.8rem 2rem', cursor: 'pointer', display: 'block', transition: 'opacity 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
         >
           {"Run auction"}
         </motion.button>
@@ -451,7 +451,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
 
   const sevColors: Record<string, string> = {
     critical: PALETTE.red,
-    high: PALETTE.amber || 'rgba(255,179,0,0.8)',
+    high: PALETTE.amber,
     medium: PALETTE.inkMuted,
     low: PALETTE.inkFaint,
   };

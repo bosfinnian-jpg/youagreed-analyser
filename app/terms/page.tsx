@@ -380,17 +380,9 @@ const termsContent: Array<{ title: string; content: string }> = [
   },
   {
     title: '21. Contact',
-    content: `21.1 If you have any questions about these Terms, please contact us at:
+    content: `21.1 If you have any questions about these Terms, please contact us via the Platform.
 
-trace.ai
-School of Media and Communication
-
-Leeds, LS2 9JT
-United Kingdom
-
-
-
-21.2 For data protection enquiries or to exercise your rights under applicable data protection law, please contact our Data Protection Contact at the address above or via email.
+21.2 For data protection enquiries or to exercise your rights under applicable data protection law, please contact our Data Protection Contact via the Platform.
 
 21.3 We will endeavour to respond to all enquiries within a reasonable timeframe, typically within thirty (30) days of receipt.
 

@@ -2222,7 +2222,7 @@ function CompletionScreen() {
           marginTop: '4rem',
         }}
       >
-        YOU AGREED — 2026
+        TRACE.AI — 2026
       </motion.p>
     </motion.div>
   );

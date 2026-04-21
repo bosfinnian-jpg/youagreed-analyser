@@ -81,7 +81,7 @@ function OpeningQuoteCard({ results }: { results: any }) {
         Most exposing moment
       </p>
       <blockquote style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.2rem)', fontStyle: 'italic', color: PALETTE.ink, lineHeight: 1.6, marginBottom: '1.2rem' }}>
-        &ldquo;{moment.excerpt?.substring(0, 220)}{moment.excerpt?.length > 220 ? '...' : ''}&rdquo;
+        "{moment.excerpt?.substring(0, 220)}{moment.excerpt?.length > 220 ? '...' : ''}"
       </blockquote>
       {date && (
         <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const }}>
@@ -247,7 +247,7 @@ export default function OverviewPage({ results, sources, setPage }: {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase' as const, marginBottom: '0.4rem' }}>
-          DataSync Analytics Platform
+          trace.ai
         </p>
         <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15 }}>
           Your AI Exposure Report
@@ -415,7 +415,7 @@ export default function OverviewPage({ results, sources, setPage }: {
 
       {/* NEW — Closure (final beat) */}
       {hasDeepData && (
-        <ClosureSection analysis={results} />
+        <ClosureSection analysis={results} setPage={setPage} />
       )}
 
     </div>

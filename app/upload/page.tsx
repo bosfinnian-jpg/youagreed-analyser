@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { analyzeExport, type AnalyzeProgress } from '@/app/results/analyzeExport';
 
 // ============================================================================
-// YOU AGREED — Upload
+// TRACE.AI — Upload
 // The procedural beat between consent and reveal.
 // One job: take the file, show honest progress, move on.
 // ============================================================================
@@ -196,7 +196,7 @@ export default function UploadPage() {
             onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = COLOR.ink; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = COLOR.inkFaint; }}
           >
-            You Agreed
+            trace.ai
           </Link>
           <span>
             {isAnalysing ? 'Analysing' : 'Upload'}
@@ -344,7 +344,7 @@ export default function UploadPage() {
                     lineHeight: 1.8,
                   }}
                 >
-                  File is parsed in your browser &middot; AI enrichment takes 20&ndash;40 seconds
+                  File is parsed in your browser. AI enrichment takes 20-40 seconds
                 </motion.div>
 
                 {/* Error state */}
@@ -516,7 +516,7 @@ export default function UploadPage() {
             borderTop: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          <span>University of Leeds &mdash; IDEA3000</span>
+          <span>trace.ai</span>
           <span>MMXXVI</span>
         </footer>
       </main>

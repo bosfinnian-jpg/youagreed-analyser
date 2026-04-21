@@ -84,7 +84,7 @@ function Nav({ page, setPage, results, exposureScore }: {
         style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginRight: '2.5rem', flexShrink: 0 }}
       >
         <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.ink, textTransform: 'uppercase' }}>
-          DataSync
+          trace
         </span>
         <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
           .ai

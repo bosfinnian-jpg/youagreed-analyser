@@ -54,6 +54,11 @@ export default function ResultsPage() {
   const [sources, setSources] = useState(DEFAULT_SOURCES);
   const router = useRouter();
 
+  const handleSetPage = useCallback((p: DashPage) => {
+    setPage(p);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
   useEffect(() => {
     const stored = sessionStorage.getItem('analysisResults');
     if (stored) {
@@ -81,8 +86,8 @@ export default function ResultsPage() {
   }
 
   return (
-    <DashboardLayout results={results} page={page} setPage={setPage}>
-      {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={setPage} />}
+    <DashboardLayout results={results} page={page} setPage={handleSetPage}>
+      {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={handleSetPage} />}
       {page === 'profile' && <ProfilePage results={results} />}
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} />}
       {page === 'risk' && <RiskPage results={results} />}

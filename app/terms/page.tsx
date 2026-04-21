@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 // ============================================================================
-// YOU AGREED — Terms of Service
+// TRACE.AI — Terms of Service
 // Deliberately plain. Looks like every ToS the visitor has ever skimmed.
 // The realism is the point: §19.2 hides in plain sight.
 // ============================================================================
@@ -28,7 +28,7 @@ const termsContent: Array<{ title: string; content: string }> = [
 
 "Personal Data" has the meaning given to it under the UK General Data Protection Regulation (UK GDPR) and the Data Protection Act 2018.
 
-"Platform" means the You Agreed web application, including all associated interfaces, APIs, databases, algorithms, and supporting infrastructure.
+"Platform" means the trace.ai web application, including all associated interfaces, APIs, databases, algorithms, and supporting infrastructure.
 
 "Processing" has the meaning given to it under the UK General Data Protection Regulation (UK GDPR) and includes any operation or set of operations performed on Personal Data or sets of Personal Data, whether or not by automated means.
 
@@ -36,7 +36,7 @@ const termsContent: Array<{ title: string; content: string }> = [
 
 "User", "you", or "your" refers to any individual or entity accessing or using the Service.
 
-"We", "us", "our", or "Provider" refers to the operators of the You Agreed Platform.
+"We", "us", "our", or "Provider" refers to the operators of the trace.ai Platform.
 
 1.2 In these Terms, words in the singular include the plural and vice versa; a reference to a statute is a reference to it as amended from time to time; references to clauses are to the clauses of these Terms.`,
   },
@@ -382,13 +382,13 @@ const termsContent: Array<{ title: string; content: string }> = [
     title: '21. Contact',
     content: `21.1 If you have any questions about these Terms, please contact us at:
 
-You Agreed Project
+trace.ai
 School of Media and Communication
-University of Leeds
+
 Leeds, LS2 9JT
 United Kingdom
 
-Email: contact@youagreed.co.uk
+
 
 21.2 For data protection enquiries or to exercise your rights under applicable data protection law, please contact our Data Protection Contact at the address above or via email.
 
@@ -453,7 +453,7 @@ export default function TermsPage() {
                 fontWeight: 500,
               }}
             >
-              You Agreed
+              trace.ai
             </Link>
             <span style={{ color: '#666' }}>Terms of Service</span>
           </div>
@@ -645,7 +645,7 @@ export default function TermsPage() {
                 color: '#777',
               }}
             >
-              By clicking &ldquo;I Agree&rdquo;, you acknowledge that you have
+              By clicking "I Agree", you acknowledge that you have
               read and understood the terms above.
             </p>
           </div>
@@ -662,7 +662,7 @@ export default function TermsPage() {
           }}
         >
           <div style={{ maxWidth: '760px', margin: '0 auto' }}>
-            You Agreed &middot; University of Leeds &middot; contact@youagreed.co.uk
+            trace.ai / 2026
           </div>
         </footer>
       </div>

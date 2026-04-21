@@ -4,8 +4,9 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
+import type { DashPage } from './DashboardLayout';
 
-export default function ClosureSection({ analysis }: { analysis: DeepAnalysis }) {
+export default function ClosureSection({ analysis, setPage }: { analysis: DeepAnalysis; setPage: (p: DashPage) => void }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-10%' });
   const messageCount = analysis.totalUserMessages || 0;
@@ -90,13 +91,13 @@ export default function ClosureSection({ analysis }: { analysis: DeepAnalysis })
         transition={{ duration: 1, delay: 3 }}
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}
       >
-        <a
-          href="/sources"
+        <button
+          onClick={() => setPage('sources')}
           style={{
             fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
             color: PALETTE.inkFaint, textTransform: 'uppercase',
-            textDecoration: 'none', borderBottom: `1px solid ${PALETTE.border}`,
-            paddingBottom: '2px',
+            background: 'none', border: 'none', borderBottom: `1px solid ${PALETTE.border}`,
+            paddingBottom: '2px', cursor: 'pointer',
             transition: 'color 0.15s, border-color 0.15s',
           }}
           onMouseEnter={e => {
@@ -109,14 +110,14 @@ export default function ClosureSection({ analysis }: { analysis: DeepAnalysis })
           }}
         >
           Read the source analysis →
-        </a>
+        </button>
 
         <p style={{
           fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.14em',
           color: 'rgba(240,237,232,0.12)', textTransform: 'uppercase',
           marginTop: '2rem',
         }}>
-          YOU AGREED — 2026
+          TRACE.AI — 2026
         </p>
       </motion.div>
     </motion.div>

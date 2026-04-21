@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 
 // ============================================================================
-// YOU AGREED — Landing
+// TRACE.AI — Landing
 // A title card, not a sales page. Austerity is the argument.
 // ============================================================================
 
@@ -84,7 +84,7 @@ export default function Home() {
             zIndex: 2,
           }}
         >
-          <span>You Agreed</span>
+          <span>trace.ai</span>
           <span>A critical design installation</span>
         </motion.header>
 
@@ -121,7 +121,7 @@ export default function Home() {
                   color: COLOR.ink,
                 }}
               >
-                You Agreed<span style={{ color: COLOR.accent }}>.</span>
+                trace<span style={{ color: COLOR.accent }}>.ai</span>
               </h1>
             </motion.div>
 
@@ -238,7 +238,7 @@ export default function Home() {
             zIndex: 2,
           }}
         >
-          <span>University of Leeds &mdash; IDEA3000</span>
+          <span>trace.ai</span>
           <span>MMXXVI</span>
         </motion.footer>
       </main>

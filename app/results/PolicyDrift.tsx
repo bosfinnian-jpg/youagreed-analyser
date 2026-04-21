@@ -437,8 +437,28 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
         initial={{ opacity: 0, y: 10 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.7 }}
-        style={{ marginBottom: 'clamp(2rem, 4vw, 3.5rem)' }}
+        style={{ marginBottom: 'clamp(2rem, 4vw, 3.5rem)', position: 'relative' }}
       >
+        {/* Timeline marker — three points connected, growing rightward */}
+        <svg style={{
+          position: 'absolute', right: 0, top: '50%',
+          transform: 'translateY(-50%)',
+          width: '200px', height: '60px', pointerEvents: 'none', overflow: 'visible',
+          opacity: 0.7,
+        }}>
+          {/* Connecting line */}
+          <line x1={20} y1={30} x2={180} y2={30} stroke="rgba(240,237,232,0.08)" strokeWidth="1" />
+          {/* 2023 — smallest dot */}
+          <circle cx={20} cy={30} r={4} fill="none" stroke="rgba(240,237,232,0.2)" strokeWidth="1" />
+          <text x={20} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(240,237,232,0.25)" letterSpacing="1">2023</text>
+          {/* 2025 — medium */}
+          <circle cx={100} cy={30} r={6} fill="none" stroke="rgba(255,179,0,0.25)" strokeWidth="1" />
+          <text x={100} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(255,179,0,0.3)" letterSpacing="1">2025</text>
+          {/* 2026 — largest, red */}
+          <circle cx={180} cy={30} r={9} fill="rgba(220,60,50,0.06)" stroke="rgba(220,60,50,0.35)" strokeWidth="1" />
+          <circle cx={180} cy={30} r={3} fill="rgba(220,60,50,0.4)" />
+          <text x={180} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(220,60,50,0.5)" letterSpacing="1">2026</text>
+        </svg>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '0.8rem' }}>
           <span style={{
             fontFamily: TYPE.mono,

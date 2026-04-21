@@ -216,7 +216,32 @@ export default function SourcesPage({ connectedSources, onUpload }: {
   const connectedCount = Object.values(connectedSources).filter(Boolean).length;
 
   return (
-    <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)', maxWidth: 1280, margin: '0 auto' }}>
+    <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)', maxWidth: 1280, margin: '0 auto', position: 'relative' }}>
+
+      {/* Network node geometry — data sources connecting */}
+      <svg style={{
+        position: 'absolute', top: '1rem', right: '1rem',
+        width: '220px', height: '160px', pointerEvents: 'none', overflow: 'visible',
+      }}>
+        {/* Central node */}
+        <circle cx={110} cy={80} r={5} fill="none" stroke="rgba(220,60,50,0.3)" strokeWidth="1.5" />
+        <circle cx={110} cy={80} r={12} fill="none" stroke="rgba(220,60,50,0.08)" strokeWidth="1" />
+        {/* Satellite nodes with connecting lines */}
+        {[
+          { x: 60, y: 30 }, { x: 170, y: 25 }, { x: 185, y: 90 },
+          { x: 155, y: 138 }, { x: 65, y: 130 }, { x: 32, y: 78 },
+        ].map((pt, i) => (
+          <g key={i}>
+            <line x1={110} y1={80} x2={pt.x} y2={pt.y}
+              stroke="rgba(240,237,232,0.06)" strokeWidth="1"
+              strokeDasharray={i % 2 === 0 ? 'none' : '3 4'} />
+            <circle cx={pt.x} cy={pt.y} r={3}
+              fill="none"
+              stroke={i < 2 ? 'rgba(220,60,50,0.2)' : 'rgba(240,237,232,0.1)'}
+              strokeWidth="1" />
+          </g>
+        ))}
+      </svg>
 
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem' }}>

@@ -25,6 +25,31 @@ export default function ClosureSection({ analysis, setPage }: { analysis: DeepAn
         margin: '0 auto',
       }}
     >
+      {/* Waveform — data being recorded, permanently */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ duration: 1.5, delay: 0.3 }}
+        style={{ marginBottom: '2rem' }}
+      >
+        <svg width="240" height="32" viewBox="0 0 240 32" style={{ display: 'block', margin: '0 auto' }}>
+          {/* Flat EKG-style waveform — active data collection signal */}
+          <polyline
+            points={[
+              '0,16', '30,16', '38,6', '44,26', '50,10', '56,22', '60,16',
+              '90,16', '98,4', '104,28', '110,8', '116,24', '120,16',
+              '150,16', '158,8', '164,26', '170,10', '176,22', '180,16',
+              '210,16', '218,6', '224,26', '230,12', '234,20', '240,16',
+            ].join(' ')}
+            fill="none"
+            stroke="rgba(220,60,50,0.18)"
+            strokeWidth="1"
+          />
+          {/* Flat line after last beat — signal terminating */}
+          <line x1="234" y1="16" x2="240" y2="16" stroke="rgba(220,60,50,0.1)" strokeWidth="1" />
+        </svg>
+      </motion.div>
+
       {/* Divider */}
       <motion.div
         initial={{ scaleX: 0 }}

@@ -289,6 +289,7 @@ export default function UploadPage() {
                         background: isDragging ? COLOR.accentFaint : 'transparent',
                         transition: 'border-color 300ms cubic-bezier(0.22, 1, 0.36, 1), background 300ms cubic-bezier(0.22, 1, 0.36, 1)',
                         textAlign: 'center',
+                        position: 'relative',
                       }}
                       onMouseEnter={(e) => {
                         if (!isDragging) {
@@ -301,6 +302,19 @@ export default function UploadPage() {
                         }
                       }}
                     >
+                      {/* Corner bracket marks — document scanning aesthetic */}
+                      <svg style={{ position: 'absolute', top: 12, left: 12, pointerEvents: 'none' }} width="20" height="20">
+                        <path d="M 0 16 L 0 0 L 16 0" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                      </svg>
+                      <svg style={{ position: 'absolute', top: 12, right: 12, pointerEvents: 'none' }} width="20" height="20">
+                        <path d="M 4 0 L 20 0 L 20 16" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                      </svg>
+                      <svg style={{ position: 'absolute', bottom: 12, left: 12, pointerEvents: 'none' }} width="20" height="20">
+                        <path d="M 0 4 L 0 20 L 16 20" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                      </svg>
+                      <svg style={{ position: 'absolute', bottom: 12, right: 12, pointerEvents: 'none' }} width="20" height="20">
+                        <path d="M 4 20 L 20 20 L 20 4" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                      </svg>
                       <div
                         style={{
                           fontFamily: MONO,

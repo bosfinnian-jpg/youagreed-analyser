@@ -369,14 +369,15 @@ export default function Home() {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 1.2, delay: 2.6, ease: EASE }}
           style={{
-            padding: '24px 48px', display: 'flex', justifyContent: 'space-between',
-            alignItems: 'center', fontFamily: MONO, fontSize: '10px',
-            letterSpacing: '0.15em', textTransform: 'uppercase', color: COLOR.inkFaint,
+            height: '44px', padding: '0 clamp(1.5rem, 4vw, 3rem)',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
+            textTransform: 'uppercase', color: COLOR.inkFaint,
             borderTop: `1px solid ${COLOR.inkTrace}`, position: 'relative', zIndex: 2,
           }}
         >
           <span>No data leaves your browser during analysis</span>
-          <span>University of Leeds — Digital Media</span>
+          <span>University of Leeds / 2026</span>
         </motion.footer>
       </main>
     </>

@@ -245,6 +245,7 @@ export default function OverviewPage({ results, sources, setPage }: {
           <svg style={{ position: 'absolute', top: 0, left: -8, pointerEvents: 'none', overflow: 'visible' }} width="24" height="24">
             <path d="M 20 2 L 2 2 L 2 20" fill="none" stroke="rgba(190,40,30,0.25)" strokeWidth="1" />
           </svg>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>01 / Overview</p>
           <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.4rem, 5.5vw, 3.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.05, maxWidth: 640 }}>
             This is what your data reveals.
           </h1>

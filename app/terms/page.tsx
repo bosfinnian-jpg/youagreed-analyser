@@ -435,43 +435,23 @@ export default function TermsPage() {
           lineHeight: 1.7,
         }}
       >
-        {/* Header — matches site header pattern */}
+        {/* Header — unified site header */}
         <header
           style={{
             borderBottom: '1px solid rgba(26,24,20,0.10)',
             background: 'rgba(238,236,229,0.97)',
-            position: 'sticky',
-            top: 0,
-            zIndex: 10,
+            position: 'sticky', top: 0, zIndex: 10,
             backdropFilter: 'blur(12px)',
+            height: '52px',
+            padding: '0 clamp(1.5rem, 4vw, 3rem)',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}
         >
-          <div
-            style={{
-              maxWidth: '760px',
-              margin: '0 auto',
-              padding: '16px 32px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <Link
-              href="/"
-              style={{
-                fontFamily: "'Courier Prime', monospace",
-                fontSize: '12px',
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                color: 'rgba(26,24,20,0.30)',
-                textDecoration: 'none',
-                transition: 'color 0.2s',
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(26,24,20,0.88)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(26,24,20,0.30)'; }}
-            >
-              trace.ai
-            </Link>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: '1.1rem', letterSpacing: '-0.02em', color: '#1a1816' }}>
+              trace<span style={{ color: 'rgba(190,40,30,0.90)' }}>.ai</span>
+            </span>
+          </Link>
             <span style={{
               fontFamily: "'Courier Prime', monospace",
               fontSize: '10px',

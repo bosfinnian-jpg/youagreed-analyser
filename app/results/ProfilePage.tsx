@@ -362,9 +362,9 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
         <motion.p
           initial={{ opacity: 0 }}
           animate={heroInView ? { opacity: 1 } : {}}
-          style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.20em', color: PALETTE.inkMuted, textTransform: 'uppercase', marginBottom: '1.2rem' }}
+          style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}
         >
-          02 — Profile
+          02 / Profile
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}

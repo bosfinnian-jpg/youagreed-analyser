@@ -170,42 +170,26 @@ export default function UploadPage() {
           flexDirection: 'column',
         }}
       >
-        {/* Header */}
+        {/* Header — unified site header */}
         <header
           className="ya-header"
           style={{
-            padding: '28px 48px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            height: '52px', padding: '0 clamp(1.5rem, 4vw, 3rem)',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             borderBottom: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          {/* Wordmark */}
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-            <span style={{
-              fontFamily: SERIF, fontSize: '1.3rem', fontWeight: 400,
-              fontStyle: 'italic', letterSpacing: '-0.02em', color: COLOR.ink,
-            }}>trace</span>
-            <span style={{
-              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.14em',
-              color: COLOR.accent, textTransform: 'uppercase',
-              position: 'relative', top: '-2px',
-            }}>.ai</span>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: SERIF, fontSize: '1.1rem', letterSpacing: '-0.02em', color: COLOR.ink }}>
+              trace<span style={{ color: COLOR.accent }}>.ai</span>
+            </span>
           </Link>
-          {/* Right — current state */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <span style={{
-              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
-              textTransform: 'uppercase', color: COLOR.inkFaint,
-            }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: COLOR.inkFaint }}>
               {isAnalysing ? 'Analysing' : 'Upload'}
             </span>
-            <div style={{ width: '1px', height: '14px', background: COLOR.inkFaint, opacity: 0.3 }} />
-            <span style={{
-              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
-              textTransform: 'uppercase', color: COLOR.inkFaint,
-            }}>MMXXVI</span>
+            <div style={{ width: '1px', height: '12px', background: COLOR.inkTrace }} />
+            <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: COLOR.inkFaint }}>2026</span>
           </div>
         </header>
 
@@ -519,23 +503,18 @@ export default function UploadPage() {
           </AnimatePresence>
         </section>
 
-        {/* Footer — matches landing */}
+        {/* Footer */}
         <footer
           className="ya-footer"
           style={{
-            padding: '28px 48px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontFamily: MONO,
-            fontSize: '10px',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: COLOR.inkFaint,
+            height: '44px', padding: '0 clamp(1.5rem, 4vw, 3rem)',
+            display: 'flex', alignItems: 'center',
+            fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
+            textTransform: 'uppercase', color: COLOR.inkFaint,
             borderTop: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          <span>MMXXVI</span>
+          <span>2026</span>
         </footer>
       </main>
     </>

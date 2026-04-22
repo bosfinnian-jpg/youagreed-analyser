@@ -474,14 +474,15 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
         transition={{ delay: 0.3, duration: 0.8 }}
         style={{
           fontFamily: TYPE.mono,
-          fontSize: '11px',
-          letterSpacing: '0.22em',
-          color: C.textFaint,
+          fontSize: '10px',
+          letterSpacing: '0.3em',
+          color: C.accent,
           textTransform: 'uppercase',
-          marginBottom: '2rem',
+          marginBottom: '1.4rem',
+          opacity: 0.7,
         }}
       >
-        A six-module course
+        05 / Understand
       </motion.p>
 
       <motion.h1

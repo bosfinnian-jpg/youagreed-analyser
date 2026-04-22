@@ -561,8 +561,8 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
       <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border }}>
         <div style={{ height: '2px', background: PALETTE.ink, marginBottom: 'clamp(2rem, 5vw, 3.5rem)', opacity: 0.08 }} />
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.22em', color: PALETTE.inkMuted, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
-          04 — Risk assessment
+          style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>
+          04 / Risk
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.2rem', maxWidth: '20ch' }}>

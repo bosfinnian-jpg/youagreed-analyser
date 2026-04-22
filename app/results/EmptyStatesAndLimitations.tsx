@@ -73,8 +73,8 @@ export function EmptyStateNotice({ state }: { state: EmptyStateConfig }) {
         {state.label}
       </p>
       <p style={{
-        fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkMuted,
-        lineHeight: 1.7, letterSpacing: '0.02em',
+        fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted,
+        lineHeight: 1.7,
       }}>
         {state.message}
       </p>
@@ -123,8 +123,8 @@ export function ConfidenceLimitations() {
         Methodological note
       </p>
       <h3 style={{
-        fontFamily: TYPE.serif, fontSize: '1.05rem', fontWeight: 400,
-        color: PALETTE.ink, marginBottom: '1.2rem',
+        fontFamily: TYPE.serif, fontSize: '1.25rem', fontWeight: 400,
+        color: PALETTE.ink, marginBottom: '1.4rem',
       }}>
         What this analysis can and cannot see
       </h3>
@@ -142,16 +142,16 @@ export function ConfidenceLimitations() {
             }}
           >
             <span style={{
-              fontFamily: TYPE.mono, fontSize: '11px', marginTop: '2px',
+              fontFamily: TYPE.mono, fontSize: '12px', marginTop: '3px',
               color: item.can ? PALETTE.green : PALETTE.inkFaint,
               fontWeight: 600,
             }}>
               {item.can ? 'CAN' : '—'}
             </span>
             <p style={{
-              fontFamily: TYPE.mono, fontSize: '10px',
+              fontFamily: TYPE.serif, fontSize: '1rem',
               color: item.can ? PALETTE.inkMuted : PALETTE.inkFaint,
-              lineHeight: 1.65, letterSpacing: '0.02em',
+              lineHeight: 1.7,
             }}>
               {item.text}
             </p>
@@ -160,8 +160,8 @@ export function ConfidenceLimitations() {
       </div>
 
       <p style={{
-        fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic',
-        color: PALETTE.inkFaint, lineHeight: 1.6, marginTop: '1.2rem',
+        fontFamily: TYPE.serif, fontSize: '1.05rem', fontStyle: 'italic',
+        color: PALETTE.inkMuted, lineHeight: 1.7, marginTop: '1.4rem',
         paddingTop: '1rem', borderTop: `1px solid ${PALETTE.border}`,
       }}>
         This tool demonstrates a fraction of what is inferrable from your data. 

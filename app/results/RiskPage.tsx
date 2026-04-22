@@ -227,7 +227,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         {scenario.dataPoints.map(dp => (
           <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '1rem 1.2rem' }}>
             <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{dp.label}</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '1.1rem', color: dp.alarming ? PALETTE.red : PALETTE.ink, letterSpacing: '-0.01em' }}>{dp.value}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '1.25rem', color: dp.alarming ? PALETTE.red : PALETTE.ink, letterSpacing: '-0.02em' }}>{dp.value}</p>
           </div>
         ))}
       </div>

@@ -165,7 +165,7 @@ function ColumnHeader({ year, clauseCount }: { year: string; clauseCount: number
       </div>
       <p style={{
         fontFamily: TYPE.mono,
-        fontSize: '10px',
+        fontSize: '11px',
         letterSpacing: '0.12em',
         color: PALETTE.inkFaint,
         textTransform: 'uppercase',
@@ -236,7 +236,7 @@ function ClauseRow({ clause, index, isInView }: {
             }}>{clause.topic}</span>
             <span style={{
               fontFamily: TYPE.mono,
-              fontSize: '10px',
+              fontSize: '11px',
               letterSpacing: '0.08em',
               color: PALETTE.inkFaint,
               display: 'block',
@@ -297,7 +297,7 @@ function ClauseRow({ clause, index, isInView }: {
                   >
                     <p style={{
                       fontFamily: TYPE.mono,
-                      fontSize: '10px',
+                      fontSize: '11px',
                       letterSpacing: '0.16em',
                       color: isLatest ? PALETTE.redMuted : PALETTE.inkFaint,
                       textTransform: 'uppercase',
@@ -399,7 +399,7 @@ function DriftSummary({ isInView }: { isInView: boolean }) {
           }}>{stat.value}</p>
           <p style={{
             fontFamily: TYPE.mono,
-            fontSize: '10px',
+            fontSize: '11px',
             letterSpacing: '0.12em',
             color: PALETTE.inkFaint,
             textTransform: 'uppercase',
@@ -464,14 +464,14 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '0.8rem' }}>
           <span style={{
             fontFamily: TYPE.mono,
-            fontSize: '10px',
+            fontSize: '11px',
             letterSpacing: '0.25em',
             color: PALETTE.redMuted,
             textTransform: 'uppercase',
           }}>Module 06</span>
           <span style={{
             fontFamily: TYPE.mono,
-            fontSize: '10px',
+            fontSize: '11px',
             letterSpacing: '0.2em',
             color: PALETTE.inkFaint,
             textTransform: 'uppercase',
@@ -528,7 +528,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
         }}>
           <p style={{
             fontFamily: TYPE.mono,
-            fontSize: '10px',
+            fontSize: '11px',
             letterSpacing: '0.2em',
             color: PALETTE.inkFaint,
             textTransform: 'uppercase',
@@ -551,7 +551,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
             >
               <span style={{
                 fontFamily: TYPE.mono,
-                fontSize: '10px',
+                fontSize: '11px',
                 letterSpacing: '0.1em',
                 color: activeFilter === f.id ? PALETTE.ink : PALETTE.inkFaint,
                 textTransform: 'uppercase',
@@ -559,7 +559,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
               }}>{f.label}</span>
               <span style={{
                 fontFamily: TYPE.mono,
-                fontSize: '10px',
+                fontSize: '12px',
                 color: activeFilter === f.id ? PALETTE.ink : PALETTE.inkFaint,
               }}>({f.count})</span>
             </button>
@@ -613,7 +613,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           <div>
             <p style={{
               fontFamily: TYPE.mono,
-              fontSize: '10px',
+              fontSize: '11px',
               letterSpacing: '0.2em',
               color: PALETTE.redMuted,
               textTransform: 'uppercase',
@@ -621,9 +621,9 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
             }}>The consent problem</p>
             <p style={{
               fontFamily: TYPE.serif,
-              fontSize: '1rem',
+              fontSize: '1.1rem',
               color: PALETTE.inkMuted,
-              lineHeight: 1.7,
+              lineHeight: 1.75,
             }}>
               In contract law, consent is specific. You agree to particular terms at a particular moment. When those terms change materially — as these have — consent to the original terms does not extend to the new ones. But that is precisely what continued use is treated as: ongoing consent to whatever the current policy says.
             </p>
@@ -631,7 +631,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           <div>
             <p style={{
               fontFamily: TYPE.mono,
-              fontSize: '10px',
+              fontSize: '11px',
               letterSpacing: '0.2em',
               color: PALETTE.redMuted,
               textTransform: 'uppercase',
@@ -639,9 +639,9 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
             }}>What changed most</p>
             <p style={{
               fontFamily: TYPE.serif,
-              fontSize: '1rem',
+              fontSize: '1.1rem',
               color: PALETTE.inkMuted,
-              lineHeight: 1.7,
+              lineHeight: 1.75,
             }}>
               The 2026 policy introduces advertising — OpenAI now receives data about you from advertisers and uses your data to measure ad effectiveness. This category did not exist in 2023. Neither did contact list upload, browser data collection, or the carve-out that exempts de-identified training data from your deletion rights.
             </p>
@@ -649,7 +649,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           <div>
             <p style={{
               fontFamily: TYPE.mono,
-              fontSize: '10px',
+              fontSize: '11px',
               letterSpacing: '0.2em',
               color: PALETTE.redMuted,
               textTransform: 'uppercase',
@@ -657,9 +657,9 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
             }}>The deletion carve-out</p>
             <p style={{
               fontFamily: TYPE.serif,
-              fontSize: '1rem',
+              fontSize: '1.1rem',
               color: PALETTE.inkMuted,
-              lineHeight: 1.7,
+              lineHeight: 1.75,
             }}>
               The 2026 policy explicitly states: data that has been de-identified and used for model training is exempt from deletion. You can delete your account. You cannot delete your cognitive pattern from a trained model. In 2023, this exception was not stated explicitly. Now it is.
             </p>

@@ -36,7 +36,7 @@ function ProfileRow({ label, value, redValue, delay }: { label: string; value: s
       <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '2px' }}>
         {label}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: redValue ? PALETTE.red : PALETTE.ink, lineHeight: 1.5 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: redValue ? PALETTE.red : PALETTE.ink, lineHeight: 1.6 }}>
         {value}
       </p>
     </motion.div>
@@ -62,7 +62,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
             Data broker profile
           </p>
-          <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.01em' }}>
+          <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em' }}>
             You, as a commercial product.
           </h2>
         </div>
@@ -177,7 +177,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
                   borderBottom: `1px solid ${PALETTE.border}`,
                 }}
               >
-                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkMuted }}>{seg.label}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.08em', color: PALETTE.inkMuted }}>{seg.label}</p>
                 <div style={{ position: 'relative', height: '2px', background: PALETTE.bgElevated }}>
                   <motion.div
                     initial={{ scaleX: 0 }}

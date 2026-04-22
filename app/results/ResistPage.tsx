@@ -219,7 +219,7 @@ function SectionHeader({ index, label, title, subtitle }: {
         fontFamily: TYPE.serif,
         fontSize: 'clamp(5rem, 12vw, 9rem)',
         fontWeight: 400,
-        color: 'rgba(26,24,20,0.025)',
+        color: 'rgba(26,24,20,0.07)',
         letterSpacing: '-0.04em',
         lineHeight: 1,
         pointerEvents: 'none',
@@ -280,7 +280,7 @@ function CoverageBar({ coverage, label }: { coverage: number; label?: string }) 
           transition={{ duration: 0.6, ease: 'easeOut', delay: 1.5 }}
           style={{
             position: 'absolute', top: 0, width: '20%', height: '100%',
-            background: `linear-gradient(90deg, transparent, rgba(26,24,20,0.4), transparent)`,
+            background: `linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent)`,
             pointerEvents: 'none',
           }}
         />
@@ -583,8 +583,8 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
             >
               <div style={{ padding: '1.8rem' }}>
                 <pre style={{
-                  fontFamily: TYPE.mono, fontSize: '11px', lineHeight: 1.75,
-                  color: PALETTE.inkMuted, letterSpacing: '0.02em',
+                  fontFamily: TYPE.mono, fontSize: '12px', lineHeight: 1.8,
+                  color: PALETTE.ink, letterSpacing: '0.02em',
                   whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                   maxHeight: 400, overflowY: 'auto',
                   borderLeft: `2px solid ${PALETTE.border}`,
@@ -771,8 +771,8 @@ function TierStructural() {
                 )}
               </div>
               <p style={{
-                fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint,
-                lineHeight: 1.6, letterSpacing: '0.03em', marginBottom: '1rem',
+                fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted,
+                lineHeight: 1.7, marginBottom: '1rem',
               }}>{alt.description}</p>
               <CoverageBar coverage={alt.privacy} label="Data stays on device" />
               <a

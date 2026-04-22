@@ -431,7 +431,7 @@ export default function TermsPage() {
           background: '#eeece5',
           color: '#1a1816',
           fontFamily: "'EB Garamond', Georgia, serif",
-          fontSize: '15px',
+          fontSize: '16px',
           lineHeight: 1.7,
         }}
       >
@@ -460,7 +460,7 @@ export default function TermsPage() {
               href="/"
               style={{
                 fontFamily: "'Courier Prime', monospace",
-                fontSize: '11px',
+                fontSize: '12px',
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
                 color: 'rgba(26,24,20,0.30)',
@@ -522,7 +522,7 @@ export default function TermsPage() {
           }} />
           <p style={{
             fontFamily: "'Courier Prime', monospace",
-            fontSize: '11px',
+            fontSize: '12px',
             letterSpacing: '0.22em',
             textTransform: 'uppercase',
             color: 'rgba(26,24,20,0.22)',
@@ -554,7 +554,7 @@ export default function TermsPage() {
           </p>
           <p style={{
             fontFamily: "'EB Garamond', Georgia, serif",
-            fontSize: '15px',
+            fontSize: '16px',
             fontStyle: 'italic',
             color: 'rgba(26,24,20,0.40)',
             margin: 0,
@@ -597,7 +597,7 @@ export default function TermsPage() {
                 style={{
                   fontFamily: "'EB Garamond', Georgia, serif",
                   color: 'rgba(26,24,20,0.65)',
-                  fontSize: '15px',
+                  fontSize: '16px',
                   lineHeight: 1.75,
                   whiteSpace: 'pre-wrap',
                 }}
@@ -620,7 +620,7 @@ export default function TermsPage() {
                 alignItems: 'flex-start',
                 gap: '12px',
                 fontFamily: "'EB Garamond', Georgia, serif",
-                fontSize: '15px',
+                fontSize: '16px',
                 color: 'rgba(26,24,20,0.65)',
                 cursor: 'pointer',
                 lineHeight: 1.6,
@@ -725,7 +725,7 @@ export default function TermsPage() {
               style={{
                 marginTop: '1.2rem',
                 fontFamily: "'Courier Prime', monospace",
-                fontSize: '11px',
+                fontSize: '12px',
                 letterSpacing: '0.12em',
                 color: 'rgba(26,24,20,0.20)',
               }}

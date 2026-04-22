@@ -412,7 +412,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                   viewport={{ once: true, margin: '-5%' }}
                   transition={{ delay: i * 0.05, duration: 0.5 }}
                   onClick={() => setExpandedAttr(isExp ? null : i)}
-                  whileHover={{ backgroundColor: 'rgba(26,24,20,0.018)' }}
+                  whileHover={{ backgroundColor: 'rgba(26,24,20,0.035)' }}
                   style={{
                     padding: '1.1rem 0 1.1rem 1.2rem',
                     borderBottom: `1px solid ${PALETTE.border}`,
@@ -647,7 +647,7 @@ function ProfileSection({ children, index }: { children: React.ReactNode; index?
           fontFamily: "'EB Garamond', serif",
           fontSize: 'clamp(80px, 12vw, 140px)',
           fontWeight: 400,
-          color: 'rgba(26,24,20,0.025)',
+          color: 'rgba(26,24,20,0.06)',
           lineHeight: 1,
           letterSpacing: '-0.04em',
           pointerEvents: 'none',

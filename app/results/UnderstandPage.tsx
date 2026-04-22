@@ -16,7 +16,7 @@ const TYPE = {
 
 const C = {
   bg: '#eeece5',
-  bgLift: '#18181680',
+  bgLift: 'rgba(26,24,20,0.04)',
   panel: 'rgba(250,249,247,0.9)',
   border: 'rgba(26,24,20,0.14)',
   borderStrong: 'rgba(26,24,20,0.28)',
@@ -24,9 +24,9 @@ const C = {
   textMuted: 'rgba(26,24,20,0.58)',
   textFaint: 'rgba(26,24,20,0.38)',
   textGhost: 'rgba(26,24,20,0.14)',
-  accent: 'rgba(220,60,50,0.85)',
-  accentFaint: 'rgba(220,60,50,0.25)',
-  success: 'rgba(180,220,180,0.75)',
+  accent: 'rgba(190,40,30,0.90)',
+  accentFaint: 'rgba(190,40,30,0.12)',
+  success: 'rgba(30,130,55,0.15)',
 };
 
 // ============================================================================

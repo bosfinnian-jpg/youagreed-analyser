@@ -89,7 +89,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
       layout
       style={{
         background: PALETTE.bgPanel,
-        border: `1px solid ${connected ? 'rgba(52,199,89,0.25)' : PALETTE.border}`,
+        border: `1px solid ${connected ? 'rgba(30,130,55,0.25)' : PALETTE.border}`,
         borderTop: `2px solid ${connected ? PALETTE.green : (SEVERITY_COLORS as any)[source.severity]}`,
         overflow: 'hidden',
         transition: 'border-color 0.3s' }}
@@ -99,8 +99,8 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
         {/* Icon */}
         <div style={{
           width: 40, height: 40, flexShrink: 0,
-          background: connected ? PALETTE.greenFaint : PALETTE.bgElevated,
-          border: `1px solid ${connected ? 'rgba(52,199,89,0.2)' : PALETTE.border}`,
+          background: connected ? 'rgba(30,130,55,0.08)' : PALETTE.bgElevated,
+          border: `1px solid ${connected ? 'rgba(30,130,55,0.2)' : PALETTE.border}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: connected ? PALETTE.green : PALETTE.inkFaint }}>
             {source.icon}
@@ -194,7 +194,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           )}
 
           {connected && (
-            <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(52,199,89,0.2)` }}>
+            <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(30,130,55,0.2)` }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.green, textTransform: 'uppercase' }}>
                 Source connected
               </p>
@@ -224,8 +224,8 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         width: '220px', height: '160px', pointerEvents: 'none', overflow: 'visible',
       }}>
         {/* Central node */}
-        <circle cx={110} cy={80} r={5} fill="none" stroke="rgba(220,60,50,0.3)" strokeWidth="1.5" />
-        <circle cx={110} cy={80} r={12} fill="none" stroke="rgba(220,60,50,0.08)" strokeWidth="1" />
+        <circle cx={110} cy={80} r={5} fill="none" stroke="rgba(190,40,30,0.3)" strokeWidth="1.5" />
+        <circle cx={110} cy={80} r={12} fill="none" stroke="rgba(190,40,30,0.08)" strokeWidth="1" />
         {/* Satellite nodes with connecting lines */}
         {[
           { x: 60, y: 30 }, { x: 170, y: 25 }, { x: 185, y: 90 },
@@ -237,7 +237,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
               strokeDasharray={i % 2 === 0 ? 'none' : '3 4'} />
             <circle cx={pt.x} cy={pt.y} r={3}
               fill="none"
-              stroke={i < 2 ? 'rgba(220,60,50,0.2)' : 'rgba(26,24,20,0.1)'}
+              stroke={i < 2 ? 'rgba(190,40,30,0.2)' : 'rgba(26,24,20,0.1)'}
               strokeWidth="1" />
           </g>
         ))}

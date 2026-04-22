@@ -418,7 +418,7 @@ export default function TermsPage() {
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
-        ::selection { background: rgba(220,60,50,0.20); }
+        ::selection { background: rgba(190,40,30,0.20); }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.18); }
@@ -483,7 +483,7 @@ export default function TermsPage() {
             </span>
           </div>
           {/* Reading progress bar */}
-          <div style={{ height: '1px', background: 'rgba(26,24,20,0.04)', position: 'relative' }}>
+          <div style={{ height: '1px', background: 'rgba(26,24,20,0.12)', position: 'relative' }}>
             <div style={{
               position: 'absolute', left: 0, top: 0, height: '100%',
               width: `${readProgress}%`,
@@ -508,7 +508,7 @@ export default function TermsPage() {
             position: 'absolute', top: '40px', right: '32px',
             fontFamily: "'Courier Prime', monospace",
             fontSize: '9px', letterSpacing: '0.2em',
-            color: 'rgba(26,24,20,0.08)', textTransform: 'uppercase',
+            color: 'rgba(26,24,20,0.22)', textTransform: 'uppercase',
             textAlign: 'right', lineHeight: 1.6,
           }}>
             <div>REF: TOS-2026-01</div>
@@ -518,7 +518,7 @@ export default function TermsPage() {
           {/* Vertical rule — left margin, document feel */}
           <div style={{
             position: 'absolute', left: '16px', top: '56px', bottom: '40px',
-            width: '1px', background: 'rgba(26,24,20,0.04)',
+            width: '1px', background: 'rgba(26,24,20,0.12)',
           }} />
           <p style={{
             fontFamily: "'Courier Prime', monospace",
@@ -576,7 +576,7 @@ export default function TermsPage() {
               key={index}
               style={{
                 marginBottom: '0',
-                borderBottom: '1px solid rgba(26,24,20,0.04)',
+                borderBottom: '1px solid rgba(26,24,20,0.10)',
                 padding: '2rem 0',
               }}
             >
@@ -633,7 +633,7 @@ export default function TermsPage() {
                 style={{
                   marginTop: '4px',
                   cursor: 'pointer',
-                  accentColor: 'rgba(220,60,50,0.85)',
+                  accentColor: 'rgba(190,40,30,0.85)',
                   flexShrink: 0,
                 }}
               />

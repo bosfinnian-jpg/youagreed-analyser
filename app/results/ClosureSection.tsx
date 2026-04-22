@@ -113,7 +113,7 @@ export default function ClosureSection({ analysis, setPage }: {
             fontFamily: TYPE.mono,
             fontSize: '11px',
             letterSpacing: '0.22em',
-            color: 'rgba(220,60,50,0.5)',
+            color: 'rgba(190,40,30,0.5)',
             textTransform: 'uppercase',
             marginBottom: 'clamp(3rem, 6vw, 5rem)',
           }}
@@ -138,11 +138,11 @@ export default function ClosureSection({ analysis, setPage }: {
                 <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
               </filter>
             </defs>
-            <line x1="0" y1="22" x2="320" y2="22" stroke="rgba(220,60,50,0.06)" strokeWidth="1" />
+            <line x1="0" y1="22" x2="320" y2="22" stroke="rgba(190,40,30,0.06)" strokeWidth="1" />
             <motion.polyline
               points="0,22 32,22 42,8 50,36 58,12 64,30 70,22 116,22 126,5 134,39 142,10 150,32 156,22 200,22 210,10 218,36 226,13 232,31 238,22 280,22 290,7 298,37 306,14 312,30 316,22 320,22"
               fill="none"
-              stroke="rgba(220,60,50,0.40)"
+              stroke="rgba(190,40,30,0.40)"
               strokeWidth="1.4"
               filter="url(#ekgGlowB)"
               strokeDasharray="800"

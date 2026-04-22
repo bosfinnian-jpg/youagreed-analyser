@@ -55,8 +55,8 @@ function RadarBg() {
         </radialGradient>
         {/* sweep trail gradient */}
         <radialGradient id="sweepGrad" cx="0%" cy="50%" r="100%">
-          <stop offset="0%" stopColor="rgba(220,60,50,0.12)" />
-          <stop offset="100%" stopColor="rgba(220,60,50,0)" />
+          <stop offset="0%" stopColor="rgba(190,40,30,0.12)" />
+          <stop offset="100%" stopColor="rgba(190,40,30,0)" />
         </radialGradient>
       </defs>
 
@@ -90,12 +90,12 @@ function RadarBg() {
 
         {/* Sweep line */}
         <path ref={sweepRef} d="M 0 0 L 520 0"
-          stroke="rgba(220,60,50,0.2)" strokeWidth={1}
+          stroke="rgba(190,40,30,0.2)" strokeWidth={1}
         />
 
         {/* Sweep wedge — trailing glow */}
         <circle cx={0} cy={0} r={200} fill="none"
-          stroke="rgba(220,60,50,0.03)" strokeWidth={40}
+          stroke="rgba(190,40,30,0.03)" strokeWidth={40}
           strokeDasharray={`${0.15 * 2 * Math.PI * 200} ${2 * Math.PI * 200}`}
           strokeDashoffset={0}
           transform="rotate(-8)"
@@ -116,9 +116,9 @@ function RadarBg() {
         })}
 
         {/* Centre pip */}
-        <circle cx={0} cy={0} r={2.5} fill="rgba(220,60,50,0.6)" />
-        <circle cx={0} cy={0} r={6} fill="none" stroke="rgba(220,60,50,0.2)" strokeWidth={1} />
-        <circle cx={0} cy={0} r={14} fill="none" stroke="rgba(220,60,50,0.07)" strokeWidth={0.75} />
+        <circle cx={0} cy={0} r={2.5} fill="rgba(190,40,30,0.6)" />
+        <circle cx={0} cy={0} r={6} fill="none" stroke="rgba(190,40,30,0.2)" strokeWidth={1} />
+        <circle cx={0} cy={0} r={14} fill="none" stroke="rgba(190,40,30,0.07)" strokeWidth={0.75} />
       </g>
     </svg>
   );
@@ -167,7 +167,7 @@ function CTAButton() {
         letterSpacing: '0.2em', textTransform: 'uppercase',
         color: hovered ? COLOR.bg : COLOR.ink,
         textDecoration: 'none', padding: '14px 32px',
-        border: `1px solid ${hovered ? 'rgba(240,238,232,0.6)' : COLOR.rule}`,
+        border: `1px solid ${hovered ? COLOR.ink : COLOR.rule}`,
         position: 'relative', overflow: 'hidden',
         transition: 'color 0.4s ease, border-color 0.4s ease',
       }}
@@ -224,7 +224,7 @@ export default function Home() {
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)',
             width: 600, height: 300,
-            background: 'radial-gradient(ellipse, rgba(220,60,50,0.06) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse, rgba(190,40,30,0.06) 0%, transparent 70%)',
             pointerEvents: 'none', zIndex: 1,
           }}
         />
@@ -272,13 +272,13 @@ export default function Home() {
             position: 'absolute', top: '15%', bottom: '15%',
             left: 'clamp(20px, 5vw, 80px)',
             width: '1px',
-            background: 'linear-gradient(180deg, transparent, rgba(240,238,232,0.06) 30%, rgba(240,238,232,0.06) 70%, transparent)',
+            background: 'linear-gradient(180deg, transparent, rgba(26,24,20,0.08) 30%, rgba(26,24,20,0.08) 70%, transparent)',
           }} />
           <div style={{
             position: 'absolute', top: '15%', bottom: '15%',
             right: 'clamp(20px, 5vw, 80px)',
             width: '1px',
-            background: 'linear-gradient(180deg, transparent, rgba(240,238,232,0.06) 30%, rgba(240,238,232,0.06) 70%, transparent)',
+            background: 'linear-gradient(180deg, transparent, rgba(26,24,20,0.08) 30%, rgba(26,24,20,0.08) 70%, transparent)',
           }} />
         </motion.div>
 
@@ -313,7 +313,7 @@ export default function Home() {
             >
               <p style={{
                 fontFamily: SERIF, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
-                lineHeight: 1.75, color: 'rgba(240,238,232,0.75)',
+                lineHeight: 1.75, color: 'rgba(26,24,20,0.78)',
                 margin: '0 0 1.6rem',
               }}>
                 This is a critical web tool. It takes your exported
@@ -321,7 +321,7 @@ export default function Home() {
               </p>
               <p style={{
                 fontFamily: SERIF, fontSize: 'clamp(1rem, 1.7vw, 1.2rem)',
-                lineHeight: 1.75, color: 'rgba(240,238,232,0.45)',
+                lineHeight: 1.75, color: 'rgba(26,24,20,0.50)',
                 margin: 0,
                 fontStyle: 'italic',
               }}>

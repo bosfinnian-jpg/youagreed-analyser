@@ -349,7 +349,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           <text x="4" y="24" fontFamily="'Courier Prime', monospace" fontSize="8"
             fill="rgba(26,24,20,0.15)" letterSpacing="2" textAnchor="start">PROFILED</text>
           <text x="4" y="36" fontFamily="'Courier Prime', monospace" fontSize="7"
-            fill="rgba(220,60,50,0.2)" letterSpacing="2" textAnchor="start">REF:{segmentId.slice(-6)}</text>
+            fill="rgba(190,40,30,0.2)" letterSpacing="2" textAnchor="start">REF:{segmentId.slice(-6)}</text>
         </g>
       </svg>
 
@@ -357,6 +357,8 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           OPENING — full-width statement that sets up everything below
           ================================================================ */}
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+        {/* Chapter rule */}
+        <div style={{ height: '2px', background: PALETTE.ink, marginBottom: 'clamp(2rem, 5vw, 3.5rem)', opacity: 0.08 }} />
         <motion.p
           initial={{ opacity: 0 }}
           animate={heroInView ? { opacity: 1 } : {}}

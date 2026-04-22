@@ -130,9 +130,9 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
 
             // Color: crisis = red, high anxiety = amber, normal = muted
             const barColor = week.crisisFlag
-              ? 'rgba(220,60,50,0.45)'
+              ? 'rgba(190,40,30,0.45)'
               : week.avgAnxiety > 4
-              ? 'rgba(255,179,0,0.25)'
+              ? 'rgba(160,100,0,0.25)'
               : 'rgba(26,24,20,0.12)';
 
             return (
@@ -177,8 +177,8 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
                 y={PADDING.top}
                 width={Math.max(x2 - x1, 4)}
                 height={chartHeight}
-                fill="rgba(220,60,50,0.06)"
-                stroke="rgba(220,60,50,0.15)"
+                fill="rgba(190,40,30,0.12)"
+                stroke="rgba(190,40,30,0.30)"
                 strokeWidth={0.5}
                 initial={{ opacity: 0 }}
                 animate={revealed ? { opacity: 1 } : { opacity: 0 }}

@@ -240,9 +240,10 @@ export default function OverviewPage({ results, sources, setPage }: {
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem', position: 'relative' }}>
-          {/* Geometric accent — top-left corner bracket */}
+          <div style={{ height: '2px', background: PALETTE.ink, marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)', opacity: 0.08 }} />
+          {/* Geometric accent — top-left corner bracket */
           <svg style={{ position: 'absolute', top: 0, left: -8, pointerEvents: 'none', overflow: 'visible' }} width="24" height="24">
-            <path d="M 20 2 L 2 2 L 2 20" fill="none" stroke="rgba(220,60,50,0.25)" strokeWidth="1" />
+            <path d="M 20 2 L 2 2 L 2 20" fill="none" stroke="rgba(190,40,30,0.25)" strokeWidth="1" />
           </svg>
           <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.4rem, 5.5vw, 3.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.05, maxWidth: 640 }}>
             This is what your data reveals.

@@ -211,7 +211,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
           -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
         }
-        ::selection { background: rgba(220,60,50,0.20); }
+        ::selection { background: rgba(190,40,30,0.20); }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.15); border-radius: 2px; }

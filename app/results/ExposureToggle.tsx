@@ -153,7 +153,7 @@ export default function ExposureToggle({ analysis }: { analysis: DeepAnalysis })
         >
           <div style={{
             width: 28, height: 14, borderRadius: 7, position: 'relative',
-            background: redacted ? 'rgba(220,60,50,0.3)' : PALETTE.bgElevated,
+            background: redacted ? 'rgba(190,40,30,0.3)' : PALETTE.bgElevated,
             transition: 'background 0.2s',
           }}>
             <motion.div

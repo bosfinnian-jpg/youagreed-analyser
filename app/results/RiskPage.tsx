@@ -559,6 +559,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
 
       {/* OPENING */}
       <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border }}>
+        <div style={{ height: '2px', background: PALETTE.ink, marginBottom: 'clamp(2rem, 5vw, 3.5rem)', opacity: 0.08 }} />
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.22em', color: PALETTE.inkMuted, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
           04 — Risk assessment

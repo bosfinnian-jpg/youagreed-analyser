@@ -140,8 +140,8 @@ function ColumnHeader({ year, clauseCount }: { year: string; clauseCount: number
       position: 'sticky',
       top: 52,
       zIndex: 10,
-      borderTop: isLatest ? `2px solid rgba(220,60,50,0.4)` : `2px solid transparent`,
-      boxShadow: isLatest ? `0 -1px 0 rgba(220,60,50,0.15), inset 0 1px 0 rgba(220,60,50,0.05)` : 'none',
+      borderTop: isLatest ? `2px solid rgba(190,40,30,0.4)` : `2px solid transparent`,
+      boxShadow: isLatest ? `0 -1px 0 rgba(190,40,30,0.15), inset 0 1px 0 rgba(190,40,30,0.05)` : 'none',
     }}>
       <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
         <span style={{
@@ -454,12 +454,12 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           <circle cx={20} cy={30} r={4} fill="none" stroke="rgba(26,24,20,0.2)" strokeWidth="1" />
           <text x={20} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(26,24,20,0.25)" letterSpacing="1">2023</text>
           {/* 2025 — medium */}
-          <circle cx={100} cy={30} r={6} fill="none" stroke="rgba(255,179,0,0.25)" strokeWidth="1" />
-          <text x={100} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(255,179,0,0.3)" letterSpacing="1">2025</text>
+          <circle cx={100} cy={30} r={6} fill="none" stroke="rgba(160,100,0,0.25)" strokeWidth="1" />
+          <text x={100} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(160,100,0,0.3)" letterSpacing="1">2025</text>
           {/* 2026 — largest, red */}
-          <circle cx={180} cy={30} r={9} fill="rgba(220,60,50,0.06)" stroke="rgba(220,60,50,0.35)" strokeWidth="1" />
-          <circle cx={180} cy={30} r={3} fill="rgba(220,60,50,0.4)" />
-          <text x={180} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(220,60,50,0.5)" letterSpacing="1">2026</text>
+          <circle cx={180} cy={30} r={9} fill="rgba(190,40,30,0.06)" stroke="rgba(190,40,30,0.35)" strokeWidth="1" />
+          <circle cx={180} cy={30} r={3} fill="rgba(190,40,30,0.4)" />
+          <text x={180} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(190,40,30,0.5)" letterSpacing="1">2026</text>
         </svg>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '0.8rem' }}>
           <span style={{
@@ -560,7 +560,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
               <span style={{
                 fontFamily: TYPE.mono,
                 fontSize: '10px',
-                color: activeFilter === f.id ? PALETTE.inkMuted : PALETTE.inkGhost,
+                color: activeFilter === f.id ? PALETTE.ink : PALETTE.inkFaint,
               }}>({f.count})</span>
             </button>
           ))}

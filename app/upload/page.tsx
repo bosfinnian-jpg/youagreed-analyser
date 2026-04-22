@@ -170,38 +170,43 @@ export default function UploadPage() {
           flexDirection: 'column',
         }}
       >
-        {/* Top meta bar — matches landing */}
+        {/* Header */}
         <header
           className="ya-header"
           style={{
-            padding: '32px 48px',
+            padding: '28px 48px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            fontFamily: MONO,
-            fontSize: '11px',
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: COLOR.inkFaint,
             borderBottom: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          <Link
-            href="/"
-            style={{
-              color: COLOR.inkFaint,
-              textDecoration: 'none',
-              transition: 'color 300ms',
-            }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = COLOR.ink; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = COLOR.inkFaint; }}
-          >
-            trace.ai
+          {/* Wordmark */}
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+            <span style={{
+              fontFamily: SERIF, fontSize: '1.3rem', fontWeight: 400,
+              fontStyle: 'italic', letterSpacing: '-0.02em', color: COLOR.ink,
+            }}>trace</span>
+            <span style={{
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.14em',
+              color: COLOR.accent, textTransform: 'uppercase',
+              position: 'relative', top: '-2px',
+            }}>.ai</span>
           </Link>
-          <span>
-            {isAnalysing ? 'Analysing' : 'Upload'}
-            <span style={{ color: COLOR.accent, marginLeft: '2px' }}>.</span>
-          </span>
+          {/* Right — current state */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+            <span style={{
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
+              textTransform: 'uppercase', color: COLOR.inkFaint,
+            }}>
+              {isAnalysing ? 'Analysing' : 'Upload'}
+            </span>
+            <div style={{ width: '1px', height: '14px', background: COLOR.inkFaint, opacity: 0.3 }} />
+            <span style={{
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
+              textTransform: 'uppercase', color: COLOR.inkFaint,
+            }}>MMXXVI</span>
+          </div>
         </header>
 
         {/* Main content */}

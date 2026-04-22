@@ -39,10 +39,10 @@ export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand
 // ============================================================================
 const NAV_ITEMS: { id: DashPage; label: string; short: string }[] = [
   { id: 'overview',  label: 'Overview',       short: '01' },
-  { id: 'profile',   label: 'My Profile',     short: '02' },
-  { id: 'sources',   label: 'Data Sources',   short: '03' },
-  { id: 'risk',      label: 'Risk Assessment',short: '04' },
-  { id: 'understand',label: 'Understand This',short: '05' },
+  { id: 'profile',   label: 'Profile',    short: '02' },
+  { id: 'sources',   label: 'Sources',    short: '03' },
+  { id: 'risk',      label: 'Risk',       short: '04' },
+  { id: 'understand',label: 'Understand', short: '05' },
   { id: 'resist',    label: 'Resist',         short: '06' },
 ];
 
@@ -67,118 +67,113 @@ function Nav({ page, setPage, results, exposureScore }: {
   }, []);
 
   const userName = results?.findings?.personalInfo?.names?.[0]?.name;
+  const scoreColor = exposureScore >= 70 ? PALETTE.red : exposureScore >= 40 ? PALETTE.amber : PALETTE.green;
 
   return (
     <motion.nav
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1, delay: 0.2 }}
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? 'rgba(238,236,229,0.97)' : PALETTE.bg,
+        background: scrolled ? 'rgba(238,236,229,0.96)' : PALETTE.bg,
+        backdropFilter: scrolled ? 'blur(16px)' : 'none',
+        transition: 'background 0.4s, border-color 0.4s',
         borderBottom: `1px solid ${scrolled ? PALETTE.border : 'transparent'}`,
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        transition: 'background 0.3s, border-color 0.3s',
-        display: 'flex', alignItems: 'center',
+        display: 'grid',
+        gridTemplateColumns: 'auto 1fr auto',
+        alignItems: 'center',
         padding: '0 clamp(1.5rem, 4vw, 3rem)',
-        height: '52px',
-        gap: '0',
+        height: '56px',
       }}
     >
-      {/* Wordmark */}
+      {/* Wordmark — serif, elegant */}
       <button
         onClick={() => setPage('overview')}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginRight: '2.5rem', flexShrink: 0 }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginRight: '3rem', flexShrink: 0 }}
       >
-        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.ink, textTransform: 'uppercase' }}>
+        <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.ink, fontWeight: 400 }}>
           trace
         </span>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
+        <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.red }}>
           .ai
         </span>
       </button>
 
-      {/* Nav items */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0', flex: 1, position: 'relative' }}>
+      {/* Centre — nav items */}
+      <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
         {NAV_ITEMS.map(item => (
           <button
             key={item.id}
             onClick={() => setPage(item.id)}
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              padding: '0 0.8rem', height: '52px',
-              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em',
+              padding: '0 1rem', height: '56px',
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.11em',
               textTransform: 'uppercase',
               color: page === item.id ? PALETTE.ink : PALETTE.inkFaint,
-              borderBottom: 'none',
-              transition: 'color 0.2s',
-              position: 'relative', top: '1px',
+              transition: 'color 0.18s',
+              position: 'relative',
+              whiteSpace: 'nowrap',
             }}
             onMouseEnter={e => { if (page !== item.id) e.currentTarget.style.color = PALETTE.inkMuted; }}
             onMouseLeave={e => { if (page !== item.id) e.currentTarget.style.color = PALETTE.inkFaint; }}
           >
             <span className="nav-label-full">{item.label}</span>
             <span className="nav-label-short">{item.short}</span>
-            {/* Sliding indicator — only on active */}
             {page === item.id && (
               <motion.div
                 layoutId="nav-active"
                 style={{
-                  position: 'absolute', bottom: -1, left: 0, right: 0,
-                  height: '1px', background: PALETTE.ink,
-                  boxShadow: `0 0 8px rgba(26,24,20,0.15)`,
+                  position: 'absolute', bottom: 0, left: '0.6rem', right: '0.6rem',
+                  height: '1px', background: PALETTE.ink, opacity: 0.45,
                 }}
-                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 34 }}
               />
             )}
           </button>
         ))}
       </div>
 
-      {/* Right: user + score */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>
-            Exposure
-          </span>
+      {/* Right — score + name, minimal */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.6rem', flexShrink: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1px' }}>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.08em',
-            color: exposureScore >= 70 ? PALETTE.red : exposureScore >= 40 ? PALETTE.amber : PALETTE.green,
-            fontWeight: 700,
-            textShadow: 'none',
+            fontFamily: TYPE.mono, fontSize: '13px', letterSpacing: '0.02em',
+            color: scoreColor, fontWeight: 600, lineHeight: 1,
           }}>
-            {exposureScore}/100
+            {exposureScore}<span style={{ fontSize: '10px', opacity: 0.55, fontWeight: 400 }}>/100</span>
+          </span>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 1 }}>
+            exposure
           </span>
         </div>
 
-        {userName && (
-          <div className="nav-username" style={{
-            padding: '0.3rem 0.8rem',
-            border: `1px solid ${PALETTE.border}`,
+        {userName && <>
+          <div style={{ width: '1px', height: '16px', background: PALETTE.border }} />
+          <span className="nav-username" style={{
+            fontFamily: TYPE.serif, fontSize: '0.9rem',
+            color: PALETTE.inkMuted, fontStyle: 'italic',
+            letterSpacing: '-0.01em',
           }}>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>
-              {userName}
-            </span>
-          </div>
-        )}
+            {userName}
+          </span>
+        </>}
       </div>
-      {/* Scroll progress bar */}
+
+      {/* Scroll progress line */}
       <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0,
-        height: '1px', background: PALETTE.border,
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          height: '100%',
-          width: `${scrollPct * 100}%`,
-          background: exposureScore >= 70 ? PALETTE.red : exposureScore >= 40 ? PALETTE.amber : PALETTE.green,
-          transition: 'width 0.1s linear',
-          opacity: scrollPct > 0.01 ? 1 : 0,
-        }} />
-      </div>
+        position: 'absolute', bottom: 0, left: 0,
+        width: `${scrollPct * 100}%`,
+        height: '1px', background: scoreColor,
+        opacity: scrollPct > 0.01 ? 0.55 : 0,
+        transition: 'width 0.12s linear, opacity 0.3s',
+        pointerEvents: 'none',
+      }} />
     </motion.nav>
   );
 }
+
 
 // ============================================================================
 // DASHBOARD LAYOUT WRAPPER
@@ -227,7 +222,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
 
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />
 
-      <main style={{ paddingTop: '52px', position: 'relative', zIndex: 1 }}>
+      <main style={{ paddingTop: '64px', position: 'relative', zIndex: 1 }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={page}

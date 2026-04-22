@@ -247,19 +247,40 @@ export default function Home() {
           >{m.text}</motion.div>
         ))}
 
-        {/* Header */}
+        {/* Header — masthead */}
         <motion.header className="ya-header"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 1.4, ease: EASE }}
           style={{
-            padding: '32px 48px', display: 'flex', justifyContent: 'space-between',
-            alignItems: 'center', fontFamily: MONO, fontSize: '11px',
-            letterSpacing: '0.15em', textTransform: 'uppercase', color: COLOR.inkFaint,
-            borderBottom: `1px solid ${COLOR.inkTrace}`, position: 'relative', zIndex: 2,
+            padding: '28px 48px', display: 'flex', justifyContent: 'space-between',
+            alignItems: 'center', position: 'relative', zIndex: 2,
+            borderBottom: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          <span>trace.ai</span>
-          <span>A critical web tool</span>
+          {/* Wordmark */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+            <span style={{
+              fontFamily: SERIF, fontSize: '1.3rem', fontWeight: 400,
+              fontStyle: 'italic', letterSpacing: '-0.02em', color: COLOR.ink,
+            }}>trace</span>
+            <span style={{
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.14em',
+              color: COLOR.accent, textTransform: 'uppercase',
+              position: 'relative', top: '-2px',
+            }}>.ai</span>
+          </div>
+          {/* Right meta */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+            <span style={{
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
+              textTransform: 'uppercase', color: COLOR.inkFaint,
+            }}>Critical web tool</span>
+            <div style={{ width: '1px', height: '14px', background: COLOR.inkFaint, opacity: 0.3 }} />
+            <span style={{
+              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
+              textTransform: 'uppercase', color: COLOR.inkFaint,
+            }}>MMXXVI</span>
+          </div>
         </motion.header>
 
         {/* Vertical margin rules — printed document feel */}
@@ -356,13 +377,14 @@ export default function Home() {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ duration: 1.2, delay: 2.6, ease: EASE }}
           style={{
-            padding: '28px 48px', display: 'flex', justifyContent: 'space-between',
+            padding: '24px 48px', display: 'flex', justifyContent: 'space-between',
             alignItems: 'center', fontFamily: MONO, fontSize: '10px',
             letterSpacing: '0.15em', textTransform: 'uppercase', color: COLOR.inkFaint,
             borderTop: `1px solid ${COLOR.inkTrace}`, position: 'relative', zIndex: 2,
           }}
         >
-          <span>MMXXVI</span>
+          <span>No data leaves your browser during analysis</span>
+          <span>University of Leeds — Digital Media</span>
         </motion.footer>
       </main>
     </>

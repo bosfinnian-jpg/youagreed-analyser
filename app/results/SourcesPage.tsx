@@ -247,7 +247,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem', paddingTop: 'clamp(3rem, 8vw, 6rem)' }}>
         <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>
-          03 / Data sources
+          03 / Sources
         </p>
         <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.2rem' }}>
           How much do they know?

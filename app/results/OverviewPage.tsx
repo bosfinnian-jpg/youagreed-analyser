@@ -27,33 +27,33 @@ function ExposureRing({ score }: { score: number }) {
     return () => cancelAnimationFrame(frame);
   }, [isInView, score]);
 
-  const r = 62;
+  const r = 88;
   const circ = 2 * Math.PI * r;
   const dash = (score / 100) * circ;
   const color = score >= 70 ? PALETTE.red : score >= 40 ? PALETTE.amber : PALETTE.green;
 
   return (
-    <div ref={ref} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
-      <div style={{ position: 'relative', width: 160, height: 160 }}>
+    <div ref={ref} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1.2rem' }}>
+      <div style={{ position: 'relative', width: 220, height: 220 }}>
         {/* Radiating axis lines behind the ring */}
-        <svg width="160" height="160" viewBox="0 0 160 160"
+        <svg width="220" height="220" viewBox="0 0 220 220"
           style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
           {[0, 45, 90, 135].map(deg => {
             const rad = (deg * Math.PI) / 180;
             return (
               <line key={deg}
-                x1={80} y1={80}
-                x2={80 + Math.cos(rad) * 74} y2={80 + Math.sin(rad) * 74}
+                x1={110} y1={110}
+                x2={110 + Math.cos(rad) * 104} y2={110 + Math.sin(rad) * 104}
                 stroke="rgba(240,237,232,0.05)" strokeWidth="1"
               />
             );
           })}
-          <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(240,237,232,0.04)" strokeWidth="1" strokeDasharray="3 8" />
+          <circle cx="110" cy="110" r="104" fill="none" stroke="rgba(240,237,232,0.04)" strokeWidth="1" strokeDasharray="3 8" />
         </svg>
-        <svg width="160" height="160" viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)' }}>
-          <circle cx="80" cy="80" r={r} fill="none" stroke={PALETTE.bgElevated} strokeWidth="3" />
+        <svg width="220" height="220" viewBox="0 0 220 220" style={{ transform: 'rotate(-90deg)' }}>
+          <circle cx="110" cy="110" r={r} fill="none" stroke={PALETTE.bgElevated} strokeWidth="3" />
           <motion.circle
-            cx="80" cy="80" r={r} fill="none"
+            cx="110" cy="110" r={r} fill="none"
             stroke={color} strokeWidth="3"
             strokeDasharray={`${circ}`}
             initial={{ strokeDashoffset: circ }}
@@ -63,11 +63,11 @@ function ExposureRing({ score }: { score: number }) {
           />
         </svg>
         <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontFamily: TYPE.serif, fontSize: '3rem', color: PALETTE.ink, letterSpacing: '-0.04em', lineHeight: 1 }}>{count}</span>
-          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '2px' }}>/100</span>
+          <span style={{ fontFamily: TYPE.serif, fontSize: '4.5rem', color: PALETTE.ink, letterSpacing: '-0.05em', lineHeight: 1 }}>{count}</span>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.16em', textTransform: 'uppercase', marginTop: '4px' }}>/100</span>
         </div>
       </div>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color, textTransform: 'uppercase', textAlign: 'center' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color, textTransform: 'uppercase', textAlign: 'center' }}>
         {score >= 70 ? 'Severe exposure' : score >= 40 ? 'Moderate exposure' : 'Limited exposure'}
       </p>
     </div>
@@ -276,9 +276,9 @@ export default function OverviewPage({ results, sources, setPage }: {
         )}
 
         {/* Row 1: Score + Stats + Risks */}
-        <div className="ov-row1" style={{ display: 'grid', gridTemplateColumns: '240px 1fr 280px', gap: '1px', background: PALETTE.border, marginBottom: '1px' }}>
+        <div className="ov-row1" style={{ display: 'grid', gridTemplateColumns: '280px 1fr 280px', gap: '1px', background: PALETTE.border, marginBottom: '1px' }}>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            style={{ background: PALETTE.bgPanel, padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+            style={{ background: PALETTE.bgPanel, padding: '2.5rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', minWidth: 280 }}>
             <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem', alignSelf: 'flex-start' }}>
               Exposure index
             </p>
@@ -335,7 +335,7 @@ export default function OverviewPage({ results, sources, setPage }: {
               {activeRisks.map((risk, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
                   <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: risk.active ? PALETTE.red : PALETTE.inkGhost, boxShadow: risk.active ? `0 0 8px ${PALETTE.red}` : 'none' }} />
-                  <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: risk.active ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase', flex: 1 }}>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.1em', color: risk.active ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase', flex: 1 }}>
                     {risk.label}
                   </span>
                   <button onClick={() => setPage('risk')}

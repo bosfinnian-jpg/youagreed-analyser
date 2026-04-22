@@ -109,7 +109,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.3rem' }}>
-            <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{source.label}</p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', color: PALETTE.ink }}>{source.label}</p>
             <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: (SEVERITY_COLORS as any)[source.severity], padding: '2px 6px', border: `1px solid ${(SEVERITY_COLORS as any)[source.severity]}30` }}>
               {source.severity}
             </span>
@@ -133,7 +133,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
       </div>
 
       <div style={{ padding: '0 1.5rem', paddingBottom: expanded ? 0 : '1.5rem' }}>
-        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '1rem' }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8, marginBottom: '1rem' }}>
           {source.description}
         </p>
 
@@ -161,7 +161,7 @@ function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEF
           <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
             How to export
           </p>
-          <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '1.5rem' }}>
+          <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8, marginBottom: '1.5rem' }}>
             {source.howToExport}
           </p>
 
@@ -302,7 +302,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
           About your data
         </p>
-        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
           All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists — not to collect it.
         </p>
       </motion.div>

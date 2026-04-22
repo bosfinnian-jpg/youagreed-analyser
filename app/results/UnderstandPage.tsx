@@ -770,7 +770,7 @@ function Module1({
                   background: C.panel,
                   border: `1px solid ${C.border}`,
                   fontFamily: TYPE.serif,
-                  fontSize: '1.1rem',
+                  fontSize: '1.15rem',
                   color: C.textMuted,
                   lineHeight: 1.6,
                   fontStyle: 'italic',
@@ -867,7 +867,7 @@ function Module1({
                 <p
                   style={{
                     fontFamily: TYPE.serif,
-                    fontSize: '1.1rem',
+                    fontSize: '1.15rem',
                     color: C.text,
                     marginBottom: '0.3rem',
                   }}
@@ -931,7 +931,7 @@ function Module1({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
+                fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
                 color: C.text,
                 lineHeight: 1.7,
                 maxWidth: '60ch',
@@ -1160,7 +1160,7 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '1.1rem',
+                fontSize: '1.15rem',
                 color: C.text,
                 lineHeight: 1.5,
                 marginBottom: '0.6rem',
@@ -1171,7 +1171,7 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '1.1rem',
+                fontSize: '1.15rem',
                 color: C.textMuted,
                 fontStyle: 'italic',
                 lineHeight: 1.5,
@@ -1350,7 +1350,7 @@ function Module3({
             border: `1px solid ${C.border}`,
             padding: '1rem',
             fontFamily: TYPE.serif,
-            fontSize: '1.1rem',
+            fontSize: '1.15rem',
             fontStyle: 'italic',
             color: C.text,
             lineHeight: 1.7,
@@ -1413,7 +1413,7 @@ function Module3({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '1.1rem',
+                fontSize: '1.15rem',
                 color: C.text,
                 lineHeight: 1.7,
                 marginBottom: '1rem',
@@ -1424,7 +1424,7 @@ function Module3({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '1.1rem',
+                fontSize: '1.15rem',
                 color: C.textMuted,
                 lineHeight: 1.7,
                 fontStyle: 'italic',
@@ -1501,7 +1501,7 @@ function Module4({
           <p
             style={{
               fontFamily: TYPE.serif,
-              fontSize: '1.1rem',
+              fontSize: '1.15rem',
               color: C.textMuted,
               lineHeight: 1.7,
               maxWidth: '50ch',
@@ -1631,7 +1631,7 @@ function Module4({
               background: C.panel,
               border: `1px solid ${C.border}`,
               fontFamily: TYPE.serif,
-              fontSize: '1.1rem',
+              fontSize: '1.15rem',
               color: C.textMuted,
               lineHeight: 1.7,
               marginBottom: finished ? '2rem' : 0,
@@ -1691,7 +1691,7 @@ function Module4({
                 <p
                   style={{
                     fontFamily: TYPE.serif,
-                    fontSize: '1.1rem',
+                    fontSize: '1.15rem',
                     color: C.text,
                     lineHeight: 1.7,
                     marginBottom: '1rem',
@@ -1702,7 +1702,7 @@ function Module4({
                 <p
                   style={{
                     fontFamily: TYPE.serif,
-                    fontSize: '1.1rem',
+                    fontSize: '1.15rem',
                     color: C.textMuted,
                     lineHeight: 1.7,
                     fontStyle: 'italic',
@@ -1791,7 +1791,7 @@ function Module5({
       <p
         style={{
           fontFamily: TYPE.serif,
-          fontSize: '1.1rem',
+          fontSize: '1.15rem',
           fontStyle: 'italic',
           color: C.textMuted,
           lineHeight: 1.65,
@@ -1847,7 +1847,7 @@ function Module5({
                 <p
                   style={{
                     fontFamily: TYPE.serif,
-                    fontSize: '1.1rem',
+                    fontSize: '1.15rem',
                     color: C.text,
                   }}
                 >
@@ -1882,7 +1882,7 @@ function Module5({
                       <p
                         style={{
                           fontFamily: TYPE.serif,
-                          fontSize: '1.1rem',
+                          fontSize: '1.15rem',
                           color: C.textMuted,
                           lineHeight: 1.75,
                           marginBottom: '1rem',
@@ -1951,7 +1951,7 @@ function Module5({
                           <p
                             style={{
                               fontFamily: TYPE.serif,
-                              fontSize: '1.1rem',
+                              fontSize: '1.15rem',
                               color: C.text,
                               lineHeight: 1.7,
                             }}
@@ -2167,7 +2167,7 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
               <p
                 style={{
                   fontFamily: TYPE.serif,
-                  fontSize: '1.1rem',
+                  fontSize: '1.15rem',
                   color: C.text,
                   marginBottom: '0.4rem',
                 }}

@@ -169,7 +169,7 @@ function SocialGraphSVG({ names }: { names: AnalysisResult['findings']['personal
   if (names.length === 0) {
     return (
       <div style={{ padding: '2rem 0' }}>
-        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
           No named individuals detected. Behavioural patterns alone are sufficient for cross-referencing your identity.
         </p>
       </div>
@@ -376,7 +376,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           initial={{ opacity: 0 }}
           animate={heroInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.4, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '55ch' }}
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '56ch' }}
         >
           Every attribute below was inferred, not declared. None required your permission. 
           Together they constitute the kind of profile that circulates across the data broker ecosystem — built from writing patterns, not from a form you filled in.
@@ -386,7 +386,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           INFERRED ATTRIBUTES — the confrontational core
           ================================================================ */}
-      <ProfileSection>
+      <ProfileSection index=1>
         <SectionHeader
           label="Inferred attributes"
           heading="What the system believes about you."
@@ -394,7 +394,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           body="None of these were stated. All were inferred from patterns in your writing. Click any row to see the evidence."
         />
         {attrs.length === 0 ? (
-          <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
+          <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
             Insufficient data to generate attribute predictions.
           </p>
         ) : (
@@ -452,7 +452,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '0.9rem', marginBottom: '0.3rem' }}>
                           Evidence
                         </p>
-                        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.65, fontStyle: 'italic' }}>
+                        <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, lineHeight: 1.65, fontStyle: 'italic' }}>
                           {attr.evidence}
                         </p>
                       </motion.div>
@@ -468,13 +468,13 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           COMMERCIAL VALUE — what the profile is worth
           ================================================================ */}
-      <ProfileSection>
+      <ProfileSection index=2>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
           <div style={{ flex: 1, minWidth: 240 }}>
             <SectionHeader
               label="Commercial value"
               heading="What a profile like yours is worth."
-              headingSize="clamp(1.4rem, 3vw, 2rem)"
+              headingSize="clamp(1.6rem, 3.2vw, 2.4rem)"
               body="These are the IAB advertising segments your inferred profile maps onto. OpenAI does not sell your data — but these are the categories your conversations would fall into if they entered the data broker ecosystem. The CPM rate is what advertisers pay per thousand impressions to reach someone with your profile."
             />
           </div>
@@ -498,7 +498,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
               ].map(item => (
                 <div key={item.l}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{item.l}</p>
-                  <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: results.privacyScore >= 70 && item.l === 'Quality' ? PALETTE.red : PALETTE.ink, textTransform: 'capitalize' }}>{item.v}</p>
+                  <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: results.privacyScore >= 70 && item.l === 'Quality' ? PALETTE.red : PALETTE.ink, textTransform: 'capitalize' }}>{item.v}</p>
                 </div>
               ))}
             </div>
@@ -521,7 +521,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                 style={{ background: PALETTE.bgPanel, padding: '1.5rem' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
-                  <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink, textTransform: 'capitalize', flex: 1, marginRight: '1rem' }}>
+                  <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, textTransform: 'capitalize', flex: 1, marginRight: '1rem' }}>
                     {seg.label.replace(/_/g, ' ')}
                   </p>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, letterSpacing: '0.04em', flexShrink: 0 }}>{seg.cpm}</p>
@@ -549,11 +549,11 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           SOCIAL GRAPH — the people you mentioned without their consent
           ================================================================ */}
-      <ProfileSection>
+      <ProfileSection index=3>
         <SectionHeader
           label="Social graph"
           heading="Everyone you mentioned is in here too."
-          headingSize="clamp(1.3rem, 2.5vw, 1.8rem)"
+          headingSize="clamp(1.6rem, 3vw, 2.2rem)"
           body="Every name you wrote became a node. Their data is now linked to yours. They did not consent to this. Neither did you."
         />
         <SocialGraphSVG names={results.findings.personalInfo.names} />
@@ -568,11 +568,11 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           BEHAVIOURAL FINGERPRINT — the identifying signature
           ================================================================ */}
       {results.hourDistribution && results.typeBreakdown && (
-        <ProfileSection>
+        <ProfileSection index=4>
           <SectionHeader
             label="Behavioural signature"
             heading="Your fingerprint."
-            headingSize="clamp(1.4rem, 3vw, 2rem)"
+            headingSize="clamp(1.6rem, 3.2vw, 2.4rem)"
             body="When you write, how you write, and what you write about — combined, this shape is unique to you. It can be used to identify you across platforms without a name."
           />
           <BehaviouralFingerprint hourDist={results.hourDistribution} typeBreakdown={results.typeBreakdown} />
@@ -633,9 +633,27 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
 // SHARED LAYOUT COMPONENTS
 // ============================================================================
 
-function ProfileSection({ children }: { children: React.ReactNode }) {
+function ProfileSection({ children, index }: { children: React.ReactNode; index?: number }) {
   return (
-    <div style={{ padding: 'clamp(3rem, 7vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
+    <div style={{ padding: 'clamp(3.5rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
+      {/* Ghost section number */}
+      {index !== undefined && (
+        <div style={{
+          position: 'absolute',
+          top: 'clamp(2rem, 5vw, 4rem)',
+          right: 'clamp(2rem, 5vw, 4rem)',
+          fontFamily: "'EB Garamond', serif",
+          fontSize: 'clamp(80px, 12vw, 140px)',
+          fontWeight: 400,
+          color: 'rgba(240,237,232,0.025)',
+          lineHeight: 1,
+          letterSpacing: '-0.04em',
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}>
+          {String(index).padStart(2, '0')}
+        </div>
+      )}
       {children}
     </div>
   );
@@ -647,10 +665,10 @@ function SectionHeader({ label, heading, headingSize, body }: { label: string; h
       <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.7rem' }}>
         {label}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: headingSize, fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: headingSize, fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1.2rem' }}>
         {heading}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '55ch' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '58ch' }}>
         {body}
       </p>
     </div>

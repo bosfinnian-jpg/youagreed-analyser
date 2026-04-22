@@ -243,8 +243,8 @@ function SectionHeader({ index, label, title, subtitle }: {
           lineHeight: 1.2, marginBottom: '0.8rem',
         }}>{title}</h2>
         <p style={{
-          fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted,
-          lineHeight: 1.6, fontStyle: 'italic', maxWidth: 560,
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted,
+          lineHeight: 1.75, fontStyle: 'italic', maxWidth: 560,
         }}>{subtitle}</p>
       </div>
     </div>
@@ -341,7 +341,7 @@ function TierImmediate({ analysis }: { analysis: DeepAnalysis }) {
                   }} />
                   <div>
                     <p style={{
-                      fontFamily: TYPE.serif, fontSize: '1.05rem', color: step.isCompleted ? PALETTE.inkMuted : PALETTE.ink,
+                      fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.2rem)', color: step.isCompleted ? PALETTE.inkMuted : PALETTE.ink,
                       textDecoration: step.isCompleted ? 'line-through' : 'none', lineHeight: 1.3,
                     }}>
                       {step.label}
@@ -383,8 +383,8 @@ function TierImmediate({ analysis }: { analysis: DeepAnalysis }) {
                           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem',
                         }}>What this doesn't cover</p>
                         <p style={{
-                          fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.inkMuted,
-                          lineHeight: 1.6,
+                          fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkMuted,
+                          lineHeight: 1.7,
                         }}>{step.gap}</p>
                       </div>
 
@@ -426,7 +426,7 @@ function TierImmediate({ analysis }: { analysis: DeepAnalysis }) {
         <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '1.4rem' }}>
           <CoverageBar coverage={totalCoverage} label="Combined coverage across all steps" />
           <p style={{
-            fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint,
+            fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkFaint,
             fontStyle: 'italic', marginTop: '1rem', lineHeight: 1.6,
           }}>
             Even completing every step above, the data already embedded in trained model weights remains. These actions only limit future exposure.
@@ -510,11 +510,11 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
                 color: PALETTE.redMuted, textTransform: 'uppercase',
               }}>{right.article}</span>
               <span style={{
-                fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, fontWeight: 400,
+                fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2vw, 1.4rem)', color: PALETTE.ink, fontWeight: 400,
               }}>{right.title}</span>
             </div>
             <p style={{
-              fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.inkMuted,
+              fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkMuted,
               lineHeight: 1.6, marginBottom: '1rem',
             }}>{right.description}</p>
             <div style={{
@@ -552,7 +552,7 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
               color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem',
             }}>Subject Access Request</p>
             <p style={{
-              fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink,
+              fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.ink,
             }}>A letter to OpenAI, drafted from your data.</p>
           </div>
           <button
@@ -631,7 +631,7 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
                 </div>
 
                 <p style={{
-                  fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint,
+                  fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkFaint,
                   fontStyle: 'italic', marginTop: '1.2rem', lineHeight: 1.6,
                 }}>
                   Fill in the bracketed fields before sending. Send to privacy@openai.com with the subject line: "Subject Access Request — Article 15 UK GDPR". They have 30 days to respond.
@@ -706,7 +706,7 @@ function TierStructural() {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.3rem' }}>
                   <span style={{
-                    fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink,
+                    fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.ink,
                   }}>{org.name}</span>
                   <span style={{
                     fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
@@ -761,7 +761,7 @@ function TierStructural() {
               style={{ background: PALETTE.bg, padding: '1.4rem' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                <span style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{alt.name}</span>
+                <span style={{ fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.ink }}>{alt.name}</span>
                 {alt.privacy === 100 && (
                   <span style={{
                     fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em',
@@ -924,9 +924,9 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 1, duration: 0.8 }}
         style={{
-          fontFamily: TYPE.serif, fontSize: '1.1rem',
-          color: PALETTE.inkMuted, lineHeight: 1.7,
-          fontStyle: 'italic', maxWidth: 560,
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)',
+          color: PALETTE.inkMuted, lineHeight: 1.8,
+          fontStyle: 'italic', maxWidth: 580,
         }}
       >
         Three tiers. Immediate actions that limit future exposure. Legal rights and how to exercise them. And the structural reality that no individual action can fix.
@@ -1013,7 +1013,7 @@ function ResistClosing() {
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 1.1, duration: 0.8 }}
         style={{
-          fontFamily: TYPE.serif, fontSize: '1rem',
+          fontFamily: TYPE.serif, fontSize: '1.1rem',
           color: PALETTE.inkFaint, fontStyle: 'italic', lineHeight: 1.7,
         }}
       >

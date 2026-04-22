@@ -233,7 +233,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
       </div>
 
       {/* Body */}
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.5rem', maxWidth: '65ch' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.5rem', maxWidth: '65ch' }}>
         {scenario.body}
       </p>
 
@@ -242,7 +242,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
           {scenario.precedent.source}
         </p>
-        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
           {scenario.precedent.detail}
         </p>
       </div>
@@ -390,10 +390,10 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.6rem', opacity: 0.8 }}>
         The mechanism
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.6rem', lineHeight: 1.2 }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.6rem', lineHeight: 1.15 }}>
         This is how data like yours gets used once it leaves a system.
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '2rem', maxWidth: '58ch' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, marginBottom: '2rem', maxWidth: '58ch' }}>
         Every time you load a webpage elsewhere on the internet, your behavioural profile enters a real-time auction. The data fuelling that auction is built from platforms like this one. Advertisers bid in under 100 milliseconds. The winner targets you. You are not notified.
       </p>
 
@@ -426,7 +426,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
           ].map(item => (
             <div key={item.l}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2px' }}>{item.l}</p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{item.v}</p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{item.v}</p>
             </div>
           ))}
         </div>
@@ -464,7 +464,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                   style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0', borderBottom: '1px solid ' + PALETTE.border }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                     <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp}ms</span>
-                    <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{bid.buyer}</span>
+                    <span style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{bid.buyer}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
@@ -580,7 +580,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
         </motion.div>
 
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '55ch' }}>
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '55ch' }}>
           Each scenario below uses your actual data. None is hypothetical. The systems described are running now.
         </motion.p>
       </div>
@@ -607,12 +607,12 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
           style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2.5rem', opacity: 0.12 }} />
         <motion.p initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.15rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: '52ch', marginBottom: '0.8rem' }}>
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2vw, 1.6rem)', color: PALETTE.ink, lineHeight: 1.65, maxWidth: '46ch', marginBottom: '1rem' }}>
           These scenarios are not speculative.
         </motion.p>
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '52ch' }}>
+          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '52ch' }}>
           They describe systems that are operational, legal, and commercially incentivised. The data that powers them was generated by you, collected without meaningful consent, and cannot be recalled.
         </motion.p>
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 0.55 }} viewport={{ once: true }}

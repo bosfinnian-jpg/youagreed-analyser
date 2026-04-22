@@ -412,7 +412,7 @@ export default function TermsPage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
         html, body {
-          background: #0e0e0d;
+          background: #f4f2ed;
           margin: 0;
           padding: 0;
           -webkit-font-smoothing: antialiased;
@@ -421,15 +421,15 @@ export default function TermsPage() {
         ::selection { background: rgba(220,60,50,0.20); }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); }
+        ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.18); }
       `}</style>
 
       <div
         ref={contentRef}
         style={{
           minHeight: '100vh',
-          background: '#0e0e0d',
-          color: 'rgba(240,237,232,0.88)',
+          background: '#f4f2ed',
+          color: '#1a1816',
           fontFamily: "'EB Garamond', Georgia, serif",
           fontSize: '15px',
           lineHeight: 1.7,
@@ -438,8 +438,8 @@ export default function TermsPage() {
         {/* Header — matches site header pattern */}
         <header
           style={{
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
-            background: 'rgba(14,14,13,0.96)',
+            borderBottom: '1px solid rgba(26,24,20,0.10)',
+            background: 'rgba(244,242,237,0.96)',
             position: 'sticky',
             top: 0,
             zIndex: 10,
@@ -463,12 +463,12 @@ export default function TermsPage() {
                 fontSize: '11px',
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
-                color: 'rgba(240,237,232,0.30)',
+                color: 'rgba(26,24,20,0.30)',
                 textDecoration: 'none',
                 transition: 'color 0.2s',
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.88)'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.30)'; }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(26,24,20,0.88)'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(26,24,20,0.30)'; }}
             >
               trace.ai
             </Link>
@@ -477,17 +477,17 @@ export default function TermsPage() {
               fontSize: '10px',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color: 'rgba(240,237,232,0.22)',
+              color: 'rgba(26,24,20,0.22)',
             }}>
               Terms of Service
             </span>
           </div>
           {/* Reading progress bar */}
-          <div style={{ height: '1px', background: 'rgba(255,255,255,0.04)', position: 'relative' }}>
+          <div style={{ height: '1px', background: 'rgba(26,24,20,0.04)', position: 'relative' }}>
             <div style={{
               position: 'absolute', left: 0, top: 0, height: '100%',
               width: `${readProgress}%`,
-              background: readProgress === 100 ? 'rgba(220,60,50,0.6)' : 'rgba(240,237,232,0.2)',
+              background: readProgress === 100 ? 'rgba(190,40,30,0.7)' : 'rgba(26,24,20,0.25)',
               transition: 'width 0.1s linear, background 0.3s',
             }} />
           </div>
@@ -499,7 +499,7 @@ export default function TermsPage() {
             maxWidth: '760px',
             margin: '0 auto',
             padding: '56px 32px 40px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: '1px solid rgba(26,24,20,0.10)',
             position: 'relative',
           }}
         >
@@ -508,7 +508,7 @@ export default function TermsPage() {
             position: 'absolute', top: '40px', right: '32px',
             fontFamily: "'Courier Prime', monospace",
             fontSize: '9px', letterSpacing: '0.2em',
-            color: 'rgba(240,237,232,0.08)', textTransform: 'uppercase',
+            color: 'rgba(26,24,20,0.08)', textTransform: 'uppercase',
             textAlign: 'right', lineHeight: 1.6,
           }}>
             <div>REF: TOS-2026-01</div>
@@ -518,14 +518,14 @@ export default function TermsPage() {
           {/* Vertical rule — left margin, document feel */}
           <div style={{
             position: 'absolute', left: '16px', top: '56px', bottom: '40px',
-            width: '1px', background: 'rgba(255,255,255,0.04)',
+            width: '1px', background: 'rgba(26,24,20,0.04)',
           }} />
           <p style={{
             fontFamily: "'Courier Prime', monospace",
             fontSize: '11px',
             letterSpacing: '0.22em',
             textTransform: 'uppercase',
-            color: 'rgba(240,237,232,0.22)',
+            color: 'rgba(26,24,20,0.22)',
             marginBottom: '0.8rem',
           }}>
             trace.ai / Legal
@@ -537,7 +537,7 @@ export default function TermsPage() {
               fontWeight: 400,
               letterSpacing: '-0.02em',
               margin: '0 0 1rem 0',
-              color: 'rgba(240,237,232,0.92)',
+              color: 'rgba(26,24,20,0.92)',
               lineHeight: 1.15,
             }}
           >
@@ -547,7 +547,7 @@ export default function TermsPage() {
             fontFamily: "'Courier Prime', monospace",
             fontSize: '10px',
             letterSpacing: '0.12em',
-            color: 'rgba(240,237,232,0.28)',
+            color: 'rgba(26,24,20,0.28)',
             margin: '0 0 4px 0',
           }}>
             Effective: 1 January 2026
@@ -556,7 +556,7 @@ export default function TermsPage() {
             fontFamily: "'EB Garamond', Georgia, serif",
             fontSize: '15px',
             fontStyle: 'italic',
-            color: 'rgba(240,237,232,0.40)',
+            color: 'rgba(26,24,20,0.40)',
             margin: 0,
           }}>
             Please read these terms carefully before using the Service.
@@ -576,7 +576,7 @@ export default function TermsPage() {
               key={index}
               style={{
                 marginBottom: '0',
-                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                borderBottom: '1px solid rgba(26,24,20,0.04)',
                 padding: '2rem 0',
               }}
             >
@@ -587,7 +587,7 @@ export default function TermsPage() {
                   fontWeight: 400,
                   letterSpacing: '0.16em',
                   textTransform: 'uppercase',
-                  color: 'rgba(240,237,232,0.30)',
+                  color: 'rgba(26,24,20,0.30)',
                   margin: '0 0 1rem 0',
                 }}
               >
@@ -596,7 +596,7 @@ export default function TermsPage() {
               <div
                 style={{
                   fontFamily: "'EB Garamond', Georgia, serif",
-                  color: 'rgba(240,237,232,0.65)',
+                  color: 'rgba(26,24,20,0.65)',
                   fontSize: '15px',
                   lineHeight: 1.75,
                   whiteSpace: 'pre-wrap',
@@ -621,7 +621,7 @@ export default function TermsPage() {
                 gap: '12px',
                 fontFamily: "'EB Garamond', Georgia, serif",
                 fontSize: '15px',
-                color: 'rgba(240,237,232,0.65)',
+                color: 'rgba(26,24,20,0.65)',
                 cursor: 'pointer',
                 lineHeight: 1.6,
               }}
@@ -658,21 +658,21 @@ export default function TermsPage() {
                   fontSize: '10px',
                   letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: 'rgba(240,237,232,0.40)',
+                  color: 'rgba(26,24,20,0.40)',
                   background: 'none',
-                  border: '1px solid rgba(255,255,255,0.10)',
+                  border: '1px solid rgba(26,24,20,0.10)',
                   cursor: 'pointer',
                   textDecoration: 'none',
                   display: 'inline-block',
                   transition: 'border-color 0.2s, color 0.2s',
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.25)';
-                  (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.70)';
+                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(26,24,20,0.25)';
+                  (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(26,24,20,0.70)';
                 }}
                 onMouseLeave={e => {
-                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.10)';
-                  (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(240,237,232,0.40)';
+                  (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(26,24,20,0.10)';
+                  (e.currentTarget as HTMLAnchorElement).style.color = 'rgba(26,24,20,0.40)';
                 }}
               >
                 Decline
@@ -687,16 +687,16 @@ export default function TermsPage() {
                     fontSize: '10px',
                     letterSpacing: '0.14em',
                     textTransform: 'uppercase',
-                    color: 'rgba(240,237,232,0.92)',
+                    color: 'rgba(26,24,20,0.92)',
                     background: 'none',
-                    border: '1px solid rgba(240,237,232,0.30)',
+                    border: '1px solid rgba(26,24,20,0.30)',
                     cursor: 'pointer',
                     textDecoration: 'none',
                     display: 'inline-block',
                     transition: 'border-color 0.2s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(240,237,232,0.60)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(240,237,232,0.30)'; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(26,24,20,0.60)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(26,24,20,0.30)'; }}
                 >
                   I Agree
                 </Link>
@@ -710,9 +710,9 @@ export default function TermsPage() {
                     fontSize: '10px',
                     letterSpacing: '0.14em',
                     textTransform: 'uppercase',
-                    color: 'rgba(240,237,232,0.18)',
+                    color: 'rgba(26,24,20,0.18)',
                     background: 'none',
-                    border: '1px solid rgba(255,255,255,0.06)',
+                    border: '1px solid rgba(26,24,20,0.06)',
                     cursor: 'not-allowed',
                   }}
                 >
@@ -727,7 +727,7 @@ export default function TermsPage() {
                 fontFamily: "'Courier Prime', monospace",
                 fontSize: '11px',
                 letterSpacing: '0.12em',
-                color: 'rgba(240,237,232,0.20)',
+                color: 'rgba(26,24,20,0.20)',
               }}
             >
               By clicking "I Agree", you acknowledge that you have read and understood the terms above.
@@ -738,7 +738,7 @@ export default function TermsPage() {
         {/* Footer */}
         <footer
           style={{
-            borderTop: '1px solid rgba(255,255,255,0.06)',
+            borderTop: '1px solid rgba(26,24,20,0.06)',
             padding: '24px 32px',
             textAlign: 'center',
           }}
@@ -749,7 +749,7 @@ export default function TermsPage() {
               fontSize: '10px',
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color: 'rgba(240,237,232,0.18)',
+              color: 'rgba(26,24,20,0.18)',
             }}>
               trace.ai / 2026
             </span>

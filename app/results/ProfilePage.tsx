@@ -344,10 +344,10 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       }}>
         {/* Bracket marks — like a classification stamp boundary */}
         <g transform="translate(160, 40)">
-          <path d="M -20 -20 L 0 -20 L 0 20" fill="none" stroke="rgba(240,237,232,0.08)" strokeWidth="1" />
-          <path d="M -20 60 L 0 60 L 0 20" fill="none" stroke="rgba(240,237,232,0.08)" strokeWidth="1" />
+          <path d="M -20 -20 L 0 -20 L 0 20" fill="none" stroke="rgba(26,24,20,0.08)" strokeWidth="1" />
+          <path d="M -20 60 L 0 60 L 0 20" fill="none" stroke="rgba(26,24,20,0.08)" strokeWidth="1" />
           <text x="4" y="24" fontFamily="'Courier Prime', monospace" fontSize="8"
-            fill="rgba(240,237,232,0.15)" letterSpacing="2" textAnchor="start">PROFILED</text>
+            fill="rgba(26,24,20,0.15)" letterSpacing="2" textAnchor="start">PROFILED</text>
           <text x="4" y="36" fontFamily="'Courier Prime', monospace" fontSize="7"
             fill="rgba(220,60,50,0.2)" letterSpacing="2" textAnchor="start">REF:{segmentId.slice(-6)}</text>
         </g>
@@ -410,7 +410,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                   viewport={{ once: true, margin: '-5%' }}
                   transition={{ delay: i * 0.05, duration: 0.5 }}
                   onClick={() => setExpandedAttr(isExp ? null : i)}
-                  whileHover={{ backgroundColor: 'rgba(240,237,232,0.018)' }}
+                  whileHover={{ backgroundColor: 'rgba(26,24,20,0.018)' }}
                   style={{
                     padding: '1.1rem 0 1.1rem 1.2rem',
                     borderBottom: `1px solid ${PALETTE.border}`,
@@ -645,7 +645,7 @@ function ProfileSection({ children, index }: { children: React.ReactNode; index?
           fontFamily: "'EB Garamond', serif",
           fontSize: 'clamp(80px, 12vw, 140px)',
           fontWeight: 400,
-          color: 'rgba(240,237,232,0.025)',
+          color: 'rgba(26,24,20,0.025)',
           lineHeight: 1,
           letterSpacing: '-0.04em',
           pointerEvents: 'none',

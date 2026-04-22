@@ -5,15 +5,15 @@ import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
 
 const COLOR = {
-  bg: '#0e0e0d',
-  ink: 'rgba(240,238,232,0.92)',
-  inkMuted: 'rgba(240,238,232,0.55)',
-  inkFaint: 'rgba(240,238,232,0.30)',
-  inkTrace: 'rgba(240,238,232,0.10)',
-  inkGhost: 'rgba(240,238,232,0.05)',
-  rule: 'rgba(240,238,232,0.15)',
-  accent: 'rgba(220,60,50,0.85)',
-  accentGlow: 'rgba(220,60,50,0.15)',
+  bg: '#f4f2ed',
+  ink: '#1a1816',
+  inkMuted: 'rgba(26,24,20,0.55)',
+  inkFaint: 'rgba(26,24,20,0.32)',
+  inkTrace: 'rgba(26,24,20,0.10)',
+  inkGhost: 'rgba(26,24,20,0.05)',
+  rule: 'rgba(26,24,20,0.15)',
+  accent: 'rgba(190,40,30,0.90)',
+  accentGlow: 'rgba(190,40,30,0.12)',
 } as const;
 
 const SERIF = "'EB Garamond', 'Times New Roman', Georgia, serif";
@@ -49,9 +49,9 @@ function RadarBg() {
     >
       <defs>
         <radialGradient id="rfade" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(240,238,232,0.06)" />
-          <stop offset="60%" stopColor="rgba(240,238,232,0.02)" />
-          <stop offset="100%" stopColor="rgba(240,238,232,0)" />
+          <stop offset="0%" stopColor="rgba(26,24,20,0.06)" />
+          <stop offset="60%" stopColor="rgba(26,24,20,0.02)" />
+          <stop offset="100%" stopColor="rgba(26,24,20,0)" />
         </radialGradient>
         {/* sweep trail gradient */}
         <radialGradient id="sweepGrad" cx="0%" cy="50%" r="100%">
@@ -65,14 +65,14 @@ function RadarBg() {
         {rings.map((r, i) => (
           <circle key={r} cx={0} cy={0} r={r}
             fill="none"
-            stroke={`rgba(240,238,232,${i === 0 ? 0.07 : 0.03})`}
+            stroke={`rgba(26,24,20,${i === 0 ? 0.08 : 0.04})`}
             strokeWidth={i === 0 ? 1 : 0.75}
           />
         ))}
 
         {/* Static axis lines */}
-        <line x1={-580} y1={0} x2={580} y2={0} stroke="rgba(240,238,232,0.025)" strokeWidth={0.75} />
-        <line x1={0} y1={-580} x2={0} y2={580} stroke="rgba(240,238,232,0.025)" strokeWidth={0.75} />
+        <line x1={-580} y1={0} x2={580} y2={0} stroke="rgba(26,24,20,0.06)" strokeWidth={0.75} />
+        <line x1={0} y1={-580} x2={0} y2={580} stroke="rgba(26,24,20,0.06)" strokeWidth={0.75} />
 
         {/* Rotating group */}
         <g ref={rotRef} style={{ transformOrigin: '0 0' }}>
@@ -82,7 +82,7 @@ function RadarBg() {
             return (
               <line key={i} x1={0} y1={0}
                 x2={Math.cos(a) * 540} y2={Math.sin(a) * 540}
-                stroke="rgba(240,238,232,0.018)" strokeWidth={0.75}
+                stroke="rgba(26,24,20,0.04)" strokeWidth={0.75}
               />
             );
           })}
@@ -109,7 +109,7 @@ function RadarBg() {
             <line key={i}
               x1={Math.cos(a) * inner} y1={Math.sin(a) * inner}
               x2={Math.cos(a) * 100} y2={Math.sin(a) * 100}
-              stroke={`rgba(240,238,232,${i % 9 === 0 ? 0.12 : 0.05})`}
+              stroke={`rgba(26,24,20,${i % 9 === 0 ? 0.14 : 0.06})`}
               strokeWidth={i % 9 === 0 ? 1 : 0.5}
             />
           );
@@ -242,7 +242,7 @@ export default function Home() {
             style={{
               position: 'absolute', ...m.style,
               fontFamily: MONO, fontSize: '9px', letterSpacing: '0.18em',
-              color: 'rgba(240,238,232,0.1)', textTransform: 'uppercase', zIndex: 2,
+              color: 'rgba(26,24,20,0.15)', textTransform: 'uppercase', zIndex: 2,
             }}
           >{m.text}</motion.div>
         ))}

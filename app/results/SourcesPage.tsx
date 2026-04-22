@@ -233,11 +233,11 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         ].map((pt, i) => (
           <g key={i}>
             <line x1={110} y1={80} x2={pt.x} y2={pt.y}
-              stroke="rgba(240,237,232,0.06)" strokeWidth="1"
+              stroke="rgba(26,24,20,0.06)" strokeWidth="1"
               strokeDasharray={i % 2 === 0 ? 'none' : '3 4'} />
             <circle cx={pt.x} cy={pt.y} r={3}
               fill="none"
-              stroke={i < 2 ? 'rgba(220,60,50,0.2)' : 'rgba(240,237,232,0.1)'}
+              stroke={i < 2 ? 'rgba(220,60,50,0.2)' : 'rgba(26,24,20,0.1)'}
               strokeWidth="1" />
           </g>
         ))}

@@ -15,15 +15,15 @@ const TYPE = {
 };
 
 const C = {
-  bg: '#0e0e0d',
+  bg: '#f4f2ed',
   bgLift: '#18181680',
-  panel: 'rgba(255,255,255,0.03)',
-  border: 'rgba(255,255,255,0.08)',
-  borderStrong: 'rgba(255,255,255,0.18)',
-  text: 'rgba(240,237,232,0.92)',
-  textMuted: 'rgba(240,237,232,0.55)',
-  textFaint: 'rgba(240,237,232,0.28)',
-  textGhost: 'rgba(240,237,232,0.14)',
+  panel: 'rgba(26,24,20,0.04)',
+  border: 'rgba(26,24,20,0.10)',
+  borderStrong: 'rgba(26,24,20,0.22)',
+  text: '#1a1816',
+  textMuted: 'rgba(26,24,20,0.58)',
+  textFaint: 'rgba(26,24,20,0.38)',
+  textGhost: 'rgba(26,24,20,0.14)',
   accent: 'rgba(220,60,50,0.85)',
   accentFaint: 'rgba(220,60,50,0.25)',
   success: 'rgba(180,220,180,0.75)',
@@ -325,7 +325,7 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
         body { background: ${C.bg}; }
-        .understand-root *::selection { background: ${C.accent}; color: #000; }
+        .understand-root *::selection { background: ${C.accent}; color: #fff; }
       `}</style>
 
       <div

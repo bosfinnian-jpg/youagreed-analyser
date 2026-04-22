@@ -552,7 +552,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
         {[0, 1, 2, 3].map(i => (
           <line key={i}
             x1={i * 60} y1={0} x2={i * 60 + 200} y2={200}
-            stroke="rgba(240,237,232,0.025)" strokeWidth="1"
+            stroke="rgba(26,24,20,0.025)" strokeWidth="1"
           />
         ))}
       </svg>

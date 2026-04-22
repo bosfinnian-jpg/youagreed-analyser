@@ -449,10 +449,10 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           opacity: 0.7,
         }}>
           {/* Connecting line */}
-          <line x1={20} y1={30} x2={180} y2={30} stroke="rgba(240,237,232,0.08)" strokeWidth="1" />
+          <line x1={20} y1={30} x2={180} y2={30} stroke="rgba(26,24,20,0.08)" strokeWidth="1" />
           {/* 2023 — smallest dot */}
-          <circle cx={20} cy={30} r={4} fill="none" stroke="rgba(240,237,232,0.2)" strokeWidth="1" />
-          <text x={20} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(240,237,232,0.25)" letterSpacing="1">2023</text>
+          <circle cx={20} cy={30} r={4} fill="none" stroke="rgba(26,24,20,0.2)" strokeWidth="1" />
+          <text x={20} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(26,24,20,0.25)" letterSpacing="1">2023</text>
           {/* 2025 — medium */}
           <circle cx={100} cy={30} r={6} fill="none" stroke="rgba(255,179,0,0.25)" strokeWidth="1" />
           <text x={100} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(255,179,0,0.3)" letterSpacing="1">2025</text>

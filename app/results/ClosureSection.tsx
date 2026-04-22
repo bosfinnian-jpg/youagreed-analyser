@@ -58,7 +58,7 @@ export default function ClosureSection({ analysis, setPage }: {
       {/* Full-bleed dark panel */}
       <div style={{
         background: 'linear-gradient(180deg, #0e0e0d 0%, #111110 100%)',
-        borderTop: `1px solid ${PALETTE.border}`,
+        borderTop: '1px solid rgba(240,237,232,0.08)',
         padding: 'clamp(5rem, 12vw, 9rem) clamp(2rem, 6vw, 4rem)',
         position: 'relative',
       }}>
@@ -99,7 +99,7 @@ export default function ClosureSection({ analysis, setPage }: {
             left: 'clamp(2rem, 6vw, 4rem)',
             right: 'clamp(2rem, 6vw, 4rem)',
             height: '1px',
-            background: `linear-gradient(90deg, ${PALETTE.border}, rgba(240,237,232,0.06) 40%, transparent)`,
+            background: 'linear-gradient(90deg, rgba(240,237,232,0.08), rgba(240,237,232,0.05) 40%, transparent)',
             transformOrigin: 'left',
           }}
         />
@@ -157,7 +157,7 @@ export default function ClosureSection({ analysis, setPage }: {
             <p style={{
               fontFamily: TYPE.serif,
               fontSize: 'clamp(1.4rem, 3vw, 2rem)',
-              color: PALETTE.ink,
+              color: 'rgba(240,237,232,0.92)',
               lineHeight: 1.65,
               fontWeight: 400,
               letterSpacing: '-0.02em',
@@ -176,7 +176,7 @@ export default function ClosureSection({ analysis, setPage }: {
             style={{
               fontFamily: TYPE.serif,
               fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-              color: PALETTE.inkMuted,
+              color: 'rgba(240,237,232,0.55)',
               lineHeight: 1.8,
               fontStyle: 'italic',
               marginBottom: 'clamp(3rem, 7vw, 5rem)',
@@ -197,7 +197,7 @@ export default function ClosureSection({ analysis, setPage }: {
               onClick={() => setPage('resist')}
               style={{
                 fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em',
-                color: PALETTE.ink, textTransform: 'uppercase',
+                color: 'rgba(240,237,232,0.90)', textTransform: 'uppercase',
                 background: 'none', border: `1px solid rgba(240,237,232,0.2)`,
                 padding: '0.85rem 1.8rem', cursor: 'pointer',
                 transition: 'border-color 0.25s, box-shadow 0.25s',
@@ -218,19 +218,19 @@ export default function ClosureSection({ analysis, setPage }: {
               onClick={() => setPage('sources')}
               style={{
                 fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
-                color: PALETTE.inkFaint, textTransform: 'uppercase',
+                color: 'rgba(240,237,232,0.40)', textTransform: 'uppercase',
                 background: 'none', border: 'none',
-                borderBottom: `1px solid ${PALETTE.border}`,
+                borderBottom: '1px solid rgba(240,237,232,0.12)',
                 paddingBottom: '2px', cursor: 'pointer',
                 transition: 'color 0.15s, border-color 0.15s',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.color = PALETTE.inkMuted;
-                e.currentTarget.style.borderColor = PALETTE.inkFaint;
+                e.currentTarget.style.color = 'rgba(240,237,232,0.70)';
+                e.currentTarget.style.borderColor = 'rgba(240,237,232,0.30)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.color = PALETTE.inkFaint;
-                e.currentTarget.style.borderColor = PALETTE.border;
+                e.currentTarget.style.color = 'rgba(240,237,232,0.40)';
+                e.currentTarget.style.borderColor = 'rgba(240,237,232,0.12)';
               }}
             >
               Add more data sources →

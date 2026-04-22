@@ -7,23 +7,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 // DESIGN SYSTEM
 // ============================================================================
 export const PALETTE = {
-  bg: '#0e0e0d',
-  bgPanel: '#141413',
-  bgElevated: '#1a1a18',
-  bgHover: '#1f1f1d',
-  border: 'rgba(255,255,255,0.06)',
-  borderHover: 'rgba(255,255,255,0.12)',
-  ink: '#f0ede8',
-  inkMuted: 'rgba(240,237,232,0.65)',
-  inkFaint: 'rgba(240,237,232,0.48)',
-  inkGhost: 'rgba(240,237,232,0.08)',
-  red: 'rgba(220,60,50,0.90)',
-  redMuted: 'rgba(220,60,50,0.45)',
-  redFaint: 'rgba(220,60,50,0.10)',
-  green: 'rgba(52,199,89,0.85)',
-  greenFaint: 'rgba(52,199,89,0.10)',
-  amber: 'rgba(255,179,0,0.85)',
-  amberFaint: 'rgba(255,179,0,0.10)',
+  bg: '#f4f2ed',
+  bgPanel: '#edead3',
+  bgElevated: '#e6e2d8',
+  bgHover: '#dedad0',
+  border: 'rgba(26,24,20,0.10)',
+  borderHover: 'rgba(26,24,20,0.18)',
+  ink: '#1a1816',
+  inkMuted: 'rgba(26,24,20,0.58)',
+  inkFaint: 'rgba(26,24,20,0.40)',
+  inkGhost: 'rgba(26,24,20,0.07)',
+  red: 'rgba(190,40,30,0.92)',
+  redMuted: 'rgba(190,40,30,0.50)',
+  redFaint: 'rgba(190,40,30,0.10)',
+  green: 'rgba(30,130,55,0.90)',
+  greenFaint: 'rgba(30,130,55,0.10)',
+  amber: 'rgba(160,100,0,0.88)',
+  amberFaint: 'rgba(160,100,0,0.10)',
 };
 
 export const TYPE = {
@@ -75,7 +75,7 @@ function Nav({ page, setPage, results, exposureScore }: {
       transition={{ duration: 0.8 }}
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? 'rgba(14,14,13,0.96)' : PALETTE.bg,
+        background: scrolled ? 'rgba(244,242,237,0.96)' : PALETTE.bg,
         borderBottom: `1px solid ${scrolled ? PALETTE.border : 'transparent'}`,
         backdropFilter: scrolled ? 'blur(12px)' : 'none',
         transition: 'background 0.3s, border-color 0.3s',
@@ -126,7 +126,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                 style={{
                   position: 'absolute', bottom: -1, left: 0, right: 0,
                   height: '1px', background: PALETTE.ink,
-                  boxShadow: `0 0 8px rgba(240,237,232,0.3)`,
+                  boxShadow: `0 0 8px rgba(26,24,20,0.15)`,
                 }}
                 transition={{ type: 'spring', stiffness: 380, damping: 30 }}
               />
@@ -205,7 +205,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
         body::after {
           content:''; position:fixed; inset:0; z-index:0;
-          background-image: radial-gradient(circle, rgba(240,237,232,0.07) 1px, transparent 1px);
+          background-image: radial-gradient(circle, rgba(26,24,20,0.07) 1px, transparent 1px);
           background-size: 40px 40px;
           opacity: 1; pointer-events:none;
           mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
@@ -214,7 +214,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         ::selection { background: rgba(220,60,50,0.20); }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.15); border-radius: 2px; }
         @media (max-width: 640px) {
           .nav-label-full { display: none !important; }
           .nav-label-short { display: inline !important; }

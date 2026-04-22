@@ -219,7 +219,7 @@ function SectionHeader({ index, label, title, subtitle }: {
         fontFamily: TYPE.serif,
         fontSize: 'clamp(5rem, 12vw, 9rem)',
         fontWeight: 400,
-        color: 'rgba(240,237,232,0.025)',
+        color: 'rgba(26,24,20,0.025)',
         letterSpacing: '-0.04em',
         lineHeight: 1,
         pointerEvents: 'none',
@@ -280,7 +280,7 @@ function CoverageBar({ coverage, label }: { coverage: number; label?: string }) 
           transition={{ duration: 0.6, ease: 'easeOut', delay: 1.5 }}
           style={{
             position: 'absolute', top: 0, width: '20%', height: '100%',
-            background: `linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)`,
+            background: `linear-gradient(90deg, transparent, rgba(26,24,20,0.4), transparent)`,
             pointerEvents: 'none',
           }}
         />
@@ -844,19 +844,19 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
         width: '260px', height: '260px', pointerEvents: 'none', overflow: 'visible',
       }}>
         {/* Intact square */}
-        <rect x={160} y={20} width={60} height={60} fill="none" stroke="rgba(240,237,232,0.05)" strokeWidth="1" />
+        <rect x={160} y={20} width={60} height={60} fill="none" stroke="rgba(26,24,20,0.05)" strokeWidth="1" />
         {/* Fragmenting — partial lines breaking apart */}
-        <line x1={160} y1={100} x2={200} y2={100} stroke="rgba(240,237,232,0.04)" strokeWidth="1" />
-        <line x1={210} y1={95} x2={230} y2={95} stroke="rgba(240,237,232,0.03)" strokeWidth="1" />
-        <line x1={160} y1={110} x2={185} y2={110} stroke="rgba(240,237,232,0.03)" strokeWidth="1" />
+        <line x1={160} y1={100} x2={200} y2={100} stroke="rgba(26,24,20,0.04)" strokeWidth="1" />
+        <line x1={210} y1={95} x2={230} y2={95} stroke="rgba(26,24,20,0.03)" strokeWidth="1" />
+        <line x1={160} y1={110} x2={185} y2={110} stroke="rgba(26,24,20,0.03)" strokeWidth="1" />
         {/* Small displaced squares */}
         <rect x={168} y={130} width={20} height={20} fill="none" stroke="rgba(220,60,50,0.08)" strokeWidth="1" />
-        <rect x={198} y={122} width={14} height={14} fill="none" stroke="rgba(240,237,232,0.04)" strokeWidth="1" />
-        <rect x={185} y={148} width={8} height={8} fill="none" stroke="rgba(240,237,232,0.03)" strokeWidth="1" />
+        <rect x={198} y={122} width={14} height={14} fill="none" stroke="rgba(26,24,20,0.04)" strokeWidth="1" />
+        <rect x={185} y={148} width={8} height={8} fill="none" stroke="rgba(26,24,20,0.03)" strokeWidth="1" />
         {/* Tiny floating dots */}
         <circle cx={220} cy={140} r={1.5} fill="rgba(220,60,50,0.2)" />
-        <circle cx={235} cy={128} r={1} fill="rgba(240,237,232,0.1)" />
-        <circle cx={175} cy={162} r={1} fill="rgba(240,237,232,0.08)" />
+        <circle cx={235} cy={128} r={1} fill="rgba(26,24,20,0.1)" />
+        <circle cx={175} cy={162} r={1} fill="rgba(26,24,20,0.08)" />
       </svg>
 
       {/* Label */}

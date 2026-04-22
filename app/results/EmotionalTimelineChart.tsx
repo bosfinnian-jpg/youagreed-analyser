@@ -85,7 +85,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
         </div>
         <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <div style={{ width: 20, height: 2, background: 'rgba(240,237,232,0.2)' }} />
+            <div style={{ width: 20, height: 2, background: 'rgba(26,24,20,0.2)' }} />
             <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Volume</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -133,7 +133,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
               ? 'rgba(220,60,50,0.45)'
               : week.avgAnxiety > 4
               ? 'rgba(255,179,0,0.25)'
-              : 'rgba(240,237,232,0.12)';
+              : 'rgba(26,24,20,0.12)';
 
             return (
               <motion.rect
@@ -229,7 +229,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
                 x={x}
                 y={PADDING.top + chartHeight + 16}
                 textAnchor="middle"
-                style={{ fontFamily: TYPE.mono, fontSize: '11px', fill: 'rgba(240,237,232,0.45)', letterSpacing: '0.08em' }}
+                style={{ fontFamily: TYPE.mono, fontSize: '11px', fill: 'rgba(26,24,20,0.45)', letterSpacing: '0.08em' }}
               >
                 {formatWeekLabel(week)}
               </text>

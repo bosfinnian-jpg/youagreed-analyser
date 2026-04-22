@@ -44,11 +44,11 @@ function ExposureRing({ score }: { score: number }) {
               <line key={deg}
                 x1={110} y1={110}
                 x2={110 + Math.cos(rad) * 104} y2={110 + Math.sin(rad) * 104}
-                stroke="rgba(240,237,232,0.05)" strokeWidth="1"
+                stroke="rgba(26,24,20,0.05)" strokeWidth="1"
               />
             );
           })}
-          <circle cx="110" cy="110" r="104" fill="none" stroke="rgba(240,237,232,0.04)" strokeWidth="1" strokeDasharray="3 8" />
+          <circle cx="110" cy="110" r="104" fill="none" stroke="rgba(26,24,20,0.04)" strokeWidth="1" strokeDasharray="3 8" />
         </svg>
         <svg width="220" height="220" viewBox="0 0 220 220" style={{ transform: 'rotate(-90deg)' }}>
           <circle cx="110" cy="110" r={r} fill="none" stroke={PALETTE.bgElevated} strokeWidth="3" />
@@ -309,14 +309,14 @@ export default function OverviewPage({ results, sources, setPage }: {
               >
                 <div className="stat-top-accent" style={{
                   position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
-                  background: `linear-gradient(90deg, ${PALETTE.border}, rgba(240,237,232,0.18), ${PALETTE.border})`,
+                  background: `linear-gradient(90deg, ${PALETTE.border}, rgba(26,24,20,0.18), ${PALETTE.border})`,
                   opacity: 0, transition: 'opacity 0.3s',
                 }} />
                 {/* Ghost index */}
                 <div style={{
                   position: 'absolute', top: '0.8rem', right: '1rem',
                   fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
-                  color: 'rgba(240,237,232,0.06)', textTransform: 'uppercase',
+                  color: 'rgba(26,24,20,0.06)', textTransform: 'uppercase',
                 }}>
                   {String(i + 1).padStart(2, '0')}
                 </div>

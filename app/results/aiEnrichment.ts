@@ -1,7 +1,5 @@
 // ============================================================================
-// aiEnrichment.ts
-// Selects candidate messages, calls the /api/enrich route in batches,
-// merges AI results back into the DeepAnalysis.
+// aiEnrichment.ts — rebuilt
 // ============================================================================
 
 import type { DeepAnalysis, ScoredMessage } from './deepParser';
@@ -14,6 +12,8 @@ export interface MessageEnrichment {
   emotional_intensity: number;
   named_people: { name: string; relationship: string | null }[];
   life_events: string[];
+  sensitive_topics: string[];
+  most_revealing_excerpt: string;
   topic: string;
 }
 
@@ -32,124 +32,76 @@ export interface ScoreBreakdownEntry {
   category: 'life_events' | 'commercial' | 'dependency' | 'confessional' | 'names' | 'volume';
 }
 
-const BATCH_SIZE = 20;
-const MAX_CANDIDATES = 240;
+const BATCH_SIZE = 25;
+const MAX_CANDIDATES = 300;
 const MAX_PARALLEL_BATCHES = 3;
 
-// Score component ceilings — must sum to exactly 100.
-// Reordered from the brief's original wording so the maximum feels structural,
-// not additive. A user hitting 100 has disclosed crises, been heavily profiled,
-// shown dependency, confessed repeatedly, named people, and written a lot.
+// Score component ceilings — sum to 100
 const SCORE_CEILINGS = {
-  life_events: 30,
-  commercial: 25,
-  dependency: 20,
-  confessional: 15,
-  names: 7,
-  volume: 3,
+  life_events:   30,
+  commercial:    22,
+  dependency:    18,
+  confessional:  18,
+  names:          7,
+  volume:         5,
 } as const;
 
 // ============================================================================
-// PRE-FILTER: STRUCTURAL TEMPLATE DETECTION
-// Catches business/productivity content before it enters the candidate pool.
-// Pattern-matched contamination is cheaper to reject here than to rely on AI
-// every time — and some templates slip past the AI anyway.
+// TEMPLATE DETECTION — structural pre-filter before AI
 // ============================================================================
 
-const TEMPLATE_KEYWORDS: readonly string[] = [
-  'cold call',
-  'sales script',
-  'objection handling',
-  'follow-up sequence',
-  'follow up sequence',
-  'email template',
-  'linkedin message',
-  'jordan platten',
-  'appointment setting',
-  'lead generation',
-  'close the deal',
-  'discovery call',
-  'cold email',
-  'cadence',
-  'outreach sequence',
-  'pitch deck',
-  'elevator pitch',
+const TEMPLATE_PATTERNS = [
+  /cold\s*call/i, /sales\s*script/i, /objection\s*handl/i,
+  /follow[\s-]*up\s*sequence/i, /email\s*template/i,
+  /linkedin\s*message/i, /appointment\s*set/i, /lead\s*gen/i,
+  /close\s*the\s*deal/i, /discovery\s*call/i, /cold\s*email/i,
+  /pitch\s*deck/i, /elevator\s*pitch/i, /outreach\s*sequence/i,
+  /jordan\s*platten/i, /cadence/i, /crm\s*follow/i,
+  /respond\s*to\s*objections/i, /value\s*proposition/i,
+  /you\s*are\s*an?\s+(ai|assistant|expert|helpful|professional)/i,
+  /act\s*as\s*(a|an)\s+/i, /you\s*are\s*a\s+specialized/i,
+  /\[your\s*(name|company|product)\]/i, /\{first_?name\}/i,
 ];
 
-interface TemplateSignals {
-  isLikelyTemplate: boolean;
-  reasons: string[];
-}
+function isStructuralTemplate(text: string): boolean {
+  // Pattern match first — fast path
+  if (TEMPLATE_PATTERNS.some(re => re.test(text))) return true;
 
-function detectTemplateSignals(text: string): TemplateSignals {
-  const reasons: string[] = [];
-  const lower = text.toLowerCase();
+  const lines = text.split('\n').filter(l => l.trim());
+  const n = Math.max(lines.length, 1);
 
-  // Keyword match — domain-specific sales/outreach content
-  for (const keyword of TEMPLATE_KEYWORDS) {
-    if (lower.includes(keyword)) {
-      reasons.push(`keyword:${keyword}`);
-      break; // one is enough to flag
-    }
+  // Heavy markdown structure = template
+  const headings = lines.filter(l => /^#{1,6}\s+\S/.test(l.trim())).length;
+  if (headings >= 4) return true;
+  if (headings >= 2 && n >= 8 && headings / n > 0.18) return true;
+
+  // Dense bold labels
+  const boldLabels = (text.match(/\*\*[^*\n]{1,60}:\*\*/g) || []).length;
+  if (boldLabels >= 3) return true;
+
+  // Step-by-step numbered structure
+  const numbered = lines.filter(l => /^\s*\d+[.)]\s+\S/.test(l)).length;
+  if (numbered >= 5 && numbered / n > 0.35) return true;
+
+  // ALL CAPS title line
+  const firstLine = lines[0]?.trim().replace(/[#*_`-]/g, '').trim() || '';
+  if (firstLine.length >= 8 && firstLine.length <= 100) {
+    const letters = firstLine.replace(/[^a-zA-Z]/g, '');
+    const uppers = firstLine.replace(/[^A-Z]/g, '');
+    if (letters.length >= 6 && uppers.length / letters.length >= 0.75) return true;
   }
 
-  const lines = text.split('\n');
-  const nonEmptyLines = lines.filter(l => l.trim().length > 0);
-  const totalLines = Math.max(nonEmptyLines.length, 1);
-
-  // Markdown heading density — templates are heavily sectioned
-  const headingCount = nonEmptyLines.filter(l => /^#{1,6}\s+\S/.test(l.trim())).length;
-  if (headingCount >= 3 || (headingCount / totalLines) > 0.15) {
-    reasons.push('heading_density');
-  }
-
-  // Bold label count — "**Goal:**", "**Step 1:**" style
-  const boldMatches = text.match(/\*\*[^*\n]{1,80}\*\*/g) || [];
-  if (boldMatches.length >= 4) {
-    reasons.push('bold_density');
-  }
-
-  // Horizontal rule dividers
-  const hrCount = nonEmptyLines.filter(l => /^\s*(-{3,}|={3,}|\*{3,}|_{3,})\s*$/.test(l)).length;
-  if (hrCount >= 2) {
-    reasons.push('hr_dividers');
-  }
-
-  // Bullet density — structured lists dominate templates
-  const bulletCount = nonEmptyLines.filter(l => /^\s*[-*•]\s+\S/.test(l) || /^\s*\d+[.)]\s+\S/.test(l)).length;
-  if (bulletCount >= 6 && (bulletCount / totalLines) > 0.4) {
-    reasons.push('bullet_density');
-  }
-
-  // All-caps title line at the top — "PERFECT SALES SCRIPT" style
-  const firstMeaningfulLine = nonEmptyLines[0]?.trim().replace(/[#*_\-`]/g, '').trim() || '';
-  if (firstMeaningfulLine.length >= 10 && firstMeaningfulLine.length <= 120) {
-    const letters = firstMeaningfulLine.replace(/[^A-Za-z]/g, '');
-    const uppers = firstMeaningfulLine.replace(/[^A-Z]/g, '');
-    if (letters.length >= 8 && uppers.length / letters.length >= 0.7) {
-      reasons.push('caps_title');
-    }
-  }
-
-  // Stage-direction brackets — "[pause]", "[if objection:]"
-  const stageDirections = (text.match(/\[[^\]\n]{2,40}\]/g) || []).length;
-  if (stageDirections >= 3) {
-    reasons.push('stage_directions');
-  }
-
-  return {
-    isLikelyTemplate: reasons.length >= 1 && (
-      reasons.some(r => r.startsWith('keyword:')) ||
-      reasons.length >= 2
-    ),
-    reasons,
-  };
+  return false;
 }
 
 // ============================================================================
 // CANDIDATE SELECTION
-// Pick the messages most likely to contain real personal signal.
 // ============================================================================
+
+const FIRST_PERSON_RE = /\b(i|i'm|i've|i'd|i'll|my|me|myself|i feel|i think|i know|i need|i want|i'm)\b/gi;
+const PERSONAL_QUESTION_RE = /\b(should i|what would you do|am i wrong|do you think i|what should i|is it okay if i|am i a|am i the|am i being|do i deserve|why do i|how do i deal|i don't know what to do|i feel like i|i can't stop)\b/i;
+const EMOTIONAL_RE = /\b(scared|terrified|ashamed|guilty|lonely|hopeless|desperate|broken|hurt|crying|overwhelmed|anxious|depressed|afraid|worthless|empty|numb|devastated|betrayed|furious|heartbroken|grieving|panicking|struggling|exhausted|trapped|humiliated|humiliating|embarrassed|regret|shame|helpless|miserable|suicidal|self-harm|cutting|relapse|triggered|dissociat|trauma|abused|abuse|addict|dependen|withdraw|sober|recovery|overdose|eating disorder|binge|purge|starv|restrict)\b/i;
+const SENSITIVE_RE = /\b(therapy|therapist|counsell|psychiatr|antidepressant|medication|mental health|diagnosis|disorder|anxiety|panic attack|ADHD|bipolar|OCD|PTSD|affair|cheating|infidel|secret|HIV|STI|pregnant|abortion|miscarriage|bankrupt|debt|evict|homeless|fired|laid off|arrest|court|criminal|probation|undocumented|immigration)\b/i;
 
 interface Candidate {
   index: number;
@@ -157,70 +109,58 @@ interface Candidate {
   priority: number;
 }
 
-// Regex compiled once rather than per-message — selectCandidates runs over
-// every message in the export, which can be 10k+ calls.
-const FIRST_PERSON_RE = /\b(i|i'm|i've|i'd|i'll|my|me|myself)\b/gi;
-const PERSONAL_QUESTION_RE = /\b(should i|what would you do|am i wrong|do you think i should|what should i do|is it okay if i|am i (a |the )?|do i)\b/i;
-const EMOTIONAL_LEXICON_RE = /\b(scared|terrified|ashamed|guilty|lonely|hopeless|desperate|broken|hurt|crying|overwhelmed|anxious|depressed|afraid|worthless|empty|numb|devastated|betrayed|furious|heartbroken|grieving|panicking|struggling|exhausted|trapped)\b/i;
-
 function selectCandidates(messages: ScoredMessage[]): Candidate[] {
   const candidates: Candidate[] = [];
 
   messages.forEach((m, index) => {
-    // Hard pre-filter: skip if structural signals say it's a template.
-    // These don't reach the AI at all — saves tokens and prevents templates
-    // from displacing genuine personal messages in the candidate pool.
-    const templateSignals = detectTemplateSignals(m.text);
-    if (templateSignals.isLikelyTemplate) return;
+    // Hard rejections
+    if (m.wordCount < 4) return;
+    if (isStructuralTemplate(m.text)) return;
 
-    if (m.wordCount < 5) return;
+    // Code blocks — reject ONLY if >70% of content is code
+    const codeBlocks = m.text.match(/```[\s\S]*?```/g) || [];
+    const codeChars = codeBlocks.reduce((s, b) => s + b.length, 0);
+    if (codeChars / m.text.length > 0.7) return;
 
-    // Pure code — drop entirely rather than just docking priority.
-    // The old behaviour (priority -= 5) still let long code through.
-    if (m.text.startsWith('```') || m.text.includes('function(') || m.text.includes('def ')) {
-      return;
-    }
-
-    // System-prompt-style messages — user is instructing the AI, not disclosing
-    if (/^(you are|system:|role:|act as)/i.test(m.text.trim())) return;
+    // Pure system prompts
+    if (/^(you are|system:|role:|act as|ignore previous|forget everything)/i.test(m.text.trim())) return;
 
     let priority = 0;
 
-    // Length — longer messages carry more signal
-    if (m.wordCount > 30) priority += 2;
-    if (m.wordCount > 80) priority += 3;
-    if (m.wordCount > 200) priority += 3;
+    // Length — more content = more signal
+    if (m.wordCount >= 15) priority += 1;
+    if (m.wordCount >= 40) priority += 2;
+    if (m.wordCount >= 100) priority += 3;
+    if (m.wordCount >= 250) priority += 2;
 
-    // Regex scored it as emotional/confessional — AI should verify
-    if (m.confessionalScore > 2) priority += 5;
-    if (m.anxietyScore > 4) priority += 4;
-    if (m.intimacyScore > 5) priority += 3;
-    if (m.validationScore > 4) priority += 2;
+    // Existing parser scores
+    if (m.confessionalScore >= 2) priority += m.confessionalScore * 1.2;
+    if (m.anxietyScore >= 3) priority += m.anxietyScore;
+    if (m.intimacyScore >= 4) priority += m.intimacyScore * 0.8;
 
-    // Late-night — emotional disclosures cluster 12am-4am
-    if (m.hour >= 0 && m.hour <= 4) priority += 3;
+    // Late night — highest signal density
+    if (m.hour >= 0 && m.hour <= 4) priority += 5;
+    if (m.hour >= 22) priority += 2;
 
-    // First-person density — "I" and "my" heavy
-    const iCount = (m.text.match(FIRST_PERSON_RE) || []).length;
-    if (iCount > 5) priority += 2;
-    if (iCount > 12) priority += 2;
+    // First person density
+    const ipCount = (m.text.match(FIRST_PERSON_RE) || []).length;
+    if (ipCount >= 5) priority += 2;
+    if (ipCount >= 12) priority += 3;
 
-    // IMPROVEMENT A: invert the old detectedSegments boost.
-    // Messages regex flagged for life events were getting +6 regardless of
-    // quality — this elevated false positives (e.g. "I lost my phone" flagged
-    // as job_loss). Instead, boost messages that show emotional language but
-    // weren't flagged — these are the false negatives AI should catch.
-    const hasRegexSegment = m.detectedSegments.length > 0;
-    const hasEmotionalLanguage = EMOTIONAL_LEXICON_RE.test(m.text);
-    if (hasEmotionalLanguage && !hasRegexSegment) priority += 5;
-    if (hasEmotionalLanguage && hasRegexSegment) priority += 2;
+    // Emotional language
+    if (EMOTIONAL_RE.test(m.text)) priority += 7;
 
-    // IMPROVEMENT A: personal decision-making questions directed at the AI.
-    // "Should I leave him?" "Am I wrong for feeling this way?" — high signal
-    // for confessional content that regex doesn't catch.
+    // Sensitive topic language
+    if (SENSITIVE_RE.test(m.text)) priority += 5;
+
+    // Personal questions directed at AI
     if (PERSONAL_QUESTION_RE.test(m.text)) priority += 4;
 
-    if (priority > 0) {
+    // Regex already flagged life events
+    if (m.detectedSegments.length > 0) priority += 3;
+
+    // Only queue messages with some signal
+    if (priority >= 2) {
       candidates.push({ index, message: m, priority });
     }
   });
@@ -230,23 +170,21 @@ function selectCandidates(messages: ScoredMessage[]): Candidate[] {
 }
 
 // ============================================================================
-// BATCHED API CALLS
+// BATCH EXECUTION
 // ============================================================================
 
 async function enrichBatch(batch: Candidate[]): Promise<MessageEnrichment[]> {
-  const payload = {
-    messages: batch.map(c => ({
-      id: c.index,
-      text: c.message.text,
-      hour: c.message.hour,
-      timestamp: c.message.timestamp,
-    })),
-  };
-
   const response = await fetch('/api/enrich', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      messages: batch.map(c => ({
+        id: c.index,
+        text: c.message.text,
+        hour: c.message.hour,
+        timestamp: c.message.timestamp,
+      })),
+    }),
   });
 
   if (!response.ok) {
@@ -273,7 +211,6 @@ async function runBatchesWithConcurrency(
         const enrichments = await enrichBatch(batches[myIdx]);
         results.push(...enrichments);
       } catch (err) {
-        // Partial enrichment is better than none — log, continue
         console.error(`Batch ${myIdx} failed:`, err);
       }
       onBatchDone();
@@ -281,9 +218,7 @@ async function runBatchesWithConcurrency(
   }
 
   const workerCount = Math.min(MAX_PARALLEL_BATCHES, batches.length);
-  const workers = Array.from({ length: workerCount }, () => worker());
-  await Promise.all(workers);
-
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
   return results;
 }
 
@@ -291,142 +226,70 @@ async function runBatchesWithConcurrency(
 // NAME HANDLING
 // ============================================================================
 
-// Particles that should remain lowercase in a title-cased name.
-// "van der Berg", "de la Cruz", "bin Salman" — capitalising these reads
-// as American and wrong for most non-English names.
-const NAME_PARTICLES: ReadonlySet<string> = new Set([
+const NAME_PARTICLES = new Set([
   'de', 'van', 'der', 'den', 'von', 'al', 'el', 'bin', 'ibn', 'la', 'le',
   'da', 'do', 'dos', 'du', 'di', 'af', 'av', 'ter', 'te', 'ten',
 ]);
 
 function titleCaseName(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return '';
-
-  return trimmed
-    .split(/\s+/)
-    .map((token, i) => {
-      // Strip non-alphabetic characters before casing, then re-examine
-      const cleaned = token.replace(/[^\p{L}'-]/gu, '');
-      if (!cleaned) return '';
-
-      const lower = cleaned.toLowerCase();
-
-      // Particles stay lowercase unless they're the first token
-      if (i > 0 && NAME_PARTICLES.has(lower)) return lower;
-
-      // Handle hyphenated names: "Anne-Marie"
-      if (lower.includes('-')) {
-        return lower.split('-').map(p => p ? p[0].toUpperCase() + p.slice(1) : '').join('-');
-      }
-
-      // Handle apostrophe names: "O'Brien", "D'Angelo"
-      if (lower.includes("'")) {
-        return lower.split("'").map((p, idx) => {
-          if (!p) return '';
-          // Capitalise after the apostrophe too (O'Brien not O'brien)
-          return idx === 0 || p.length > 1
-            ? p[0].toUpperCase() + p.slice(1)
-            : p.toUpperCase();
-        }).join("'");
-      }
-
-      return lower[0].toUpperCase() + lower.slice(1);
-    })
-    .filter(Boolean)
-    .join(' ');
+  return raw.trim().split(/\s+/).map((token, i) => {
+    const cleaned = token.replace(/[^\p{L}'-]/gu, '');
+    if (!cleaned) return '';
+    const lower = cleaned.toLowerCase();
+    if (i > 0 && NAME_PARTICLES.has(lower)) return lower;
+    if (lower.includes('-')) return lower.split('-').map(p => p ? p[0].toUpperCase() + p.slice(1) : '').join('-');
+    if (lower.includes("'")) return lower.split("'").map((p, idx) => (!p ? '' : idx === 0 || p.length > 1 ? p[0].toUpperCase() + p.slice(1) : p.toUpperCase())).join("'");
+    return lower[0].toUpperCase() + lower.slice(1);
+  }).filter(Boolean).join(' ');
 }
 
-// Strip relationship parentheticals so "Sarah (my ex)" keys the same as "Sarah"
-function stripRelationshipParenthetical(name: string): string {
+function stripRelationship(name: string): string {
   return name.replace(/\s*\([^)]*\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
 }
+
+const RELATIONSHIP_RE = /\b(my|our)\s+(girlfriend|boyfriend|wife|husband|partner|ex|fiancée?|mum|mom|mother|dad|father|brother|sister|son|daughter|boss|manager|coworker|colleague|friend|mate|therapist|doctor)\b/i;
 
 interface NameAggregate {
   canonical: string;
   mentions: number;
   relationship: string | null;
-  contexts: string[];
   hasRelationshipContext: boolean;
 }
 
-// Relationship context signals in the surrounding enrichment data.
-// A one-off mention of "Rae" means little, but "my girlfriend Rae" is strong.
-const RELATIONSHIP_CONTEXT_RE = /\b(my|our)\s+(girlfriend|boyfriend|wife|husband|partner|ex|fianc[eé]e?|mum|mom|mother|dad|father|brother|sister|son|daughter|boss|manager|coworker|colleague|friend|mate|therapist|doctor)\b/i;
+function dedupeNames(raw: Array<{ name: string; relationship: string | null; sourceText: string }>): NameAggregate[] {
+  const normalised = raw
+    .filter(e => e.name && e.name.length >= 2)
+    .map(e => {
+      const stripped = stripRelationship(e.name);
+      const display = titleCaseName(stripped);
+      if (!display || /^[A-Z]{1,3}$/.test(display) || /^\d+$/.test(display)) return null;
+      return { key: display.toLowerCase(), display, relationship: e.relationship, sourceText: e.sourceText };
+    })
+    .filter(Boolean) as Array<{ key: string; display: string; relationship: string | null; sourceText: string }>;
 
-function dedupeNames(
-  rawEntries: Array<{ name: string; relationship: string | null; sourceText: string }>
-): NameAggregate[] {
-  // First pass: normalise each raw mention
-  const normalised: Array<{ key: string; display: string; relationship: string | null; sourceText: string }> = [];
-
-  for (const entry of rawEntries) {
-    if (!entry.name) continue;
-    const stripped = stripRelationshipParenthetical(entry.name);
-    if (stripped.length < 2) continue;
-
-    // Filter obvious junk
-    if (/^[A-Z]{1,3}$/.test(entry.name)) continue;
-    if (/^\d+$/.test(entry.name)) continue;
-    // Single-word all-lowercase common nouns that slipped through ("taxi", "driver")
-    // get filtered at the AI prompt level, but we double-check here.
-    if (!/[A-Za-z]/.test(stripped)) continue;
-
-    const display = titleCaseName(stripped);
-    if (!display) continue;
-
-    normalised.push({
-      key: display.toLowerCase(),
-      display,
-      relationship: entry.relationship,
-      sourceText: entry.sourceText,
-    });
-  }
-
-  // Second pass: substring merge.
-  // "Rae" and "Rae Mitchell" should collapse. Keep the longer as canonical.
-  // We sort by length descending so longer names "absorb" shorter ones.
   const sorted = [...normalised].sort((a, b) => b.key.length - a.key.length);
   const aggregates = new Map<string, NameAggregate>();
 
   for (const entry of sorted) {
-    // Does this key match (or contain) any existing canonical?
-    let matchedCanonical: string | null = null;
-
+    let matchedKey: string | null = null;
     for (const [existingKey] of aggregates) {
-      // Word-boundary containment — "rae" matches "rae mitchell" but not "raesha"
-      const entryWords = entry.key.split(/\s+/);
-      const existingWords = existingKey.split(/\s+/);
-
-      // If every word of the shorter appears in the longer, they're the same person
-      const [shorter, longer] = entryWords.length <= existingWords.length
-        ? [entryWords, existingWords]
-        : [existingWords, entryWords];
-
-      const allShorterInLonger = shorter.every(w => longer.includes(w));
-
-      if (allShorterInLonger && shorter.length >= 1) {
-        matchedCanonical = existingKey;
-        break;
-      }
+      const eWords = entry.key.split(/\s+/);
+      const xWords = existingKey.split(/\s+/);
+      const [shorter, longer] = eWords.length <= xWords.length ? [eWords, xWords] : [xWords, eWords];
+      if (shorter.every(w => longer.includes(w))) { matchedKey = existingKey; break; }
     }
 
-    if (matchedCanonical) {
-      const agg = aggregates.get(matchedCanonical)!;
+    if (matchedKey) {
+      const agg = aggregates.get(matchedKey)!;
       agg.mentions += 1;
-      if (!agg.relationship && entry.relationship) {
-        agg.relationship = entry.relationship;
-      }
-      if (RELATIONSHIP_CONTEXT_RE.test(entry.sourceText)) {
-        agg.hasRelationshipContext = true;
-      }
+      if (!agg.relationship && entry.relationship) agg.relationship = entry.relationship;
+      if (RELATIONSHIP_RE.test(entry.sourceText)) agg.hasRelationshipContext = true;
     } else {
       aggregates.set(entry.key, {
         canonical: entry.display,
         mentions: 1,
         relationship: entry.relationship,
-        contexts: [],
-        hasRelationshipContext: RELATIONSHIP_CONTEXT_RE.test(entry.sourceText),
+        hasRelationshipContext: RELATIONSHIP_RE.test(entry.sourceText),
       });
     }
   }
@@ -439,106 +302,82 @@ function dedupeNames(
 // ============================================================================
 
 const EVENT_LABELS: Record<string, { label: string; severity: 'low' | 'medium' | 'high' }> = {
-  job_loss: { label: 'Possible job loss', severity: 'high' },
-  job_search: { label: 'Job seeking period', severity: 'medium' },
-  relationship_end: { label: 'Relationship breakdown', severity: 'high' },
-  relationship_start: { label: 'New relationship', severity: 'low' },
-  financial_distress: { label: 'Financial distress', severity: 'high' },
-  mental_health: { label: 'Mental health disclosure', severity: 'high' },
-  health_concern: { label: 'Health concern', severity: 'medium' },
-  bereavement: { label: 'Bereavement or loss', severity: 'high' },
-  identity_crisis: { label: 'Identity questioning', severity: 'medium' },
-  moving_home: { label: 'Relocating', severity: 'medium' },
-  new_baby: { label: 'New baby', severity: 'medium' },
-  wedding: { label: 'Wedding or engagement', severity: 'low' },
-  legal_issue: { label: 'Legal issue', severity: 'high' },
+  job_loss:            { label: 'Possible job loss',        severity: 'high'   },
+  job_search:          { label: 'Job-seeking period',       severity: 'medium' },
+  relationship_end:    { label: 'Relationship breakdown',   severity: 'high'   },
+  relationship_start:  { label: 'New relationship',         severity: 'low'    },
+  financial_distress:  { label: 'Financial distress',       severity: 'high'   },
+  mental_health:       { label: 'Mental health disclosure', severity: 'high'   },
+  health_concern:      { label: 'Health concern',           severity: 'medium' },
+  bereavement:         { label: 'Bereavement or loss',      severity: 'high'   },
+  identity_crisis:     { label: 'Identity questioning',     severity: 'medium' },
+  moving_home:         { label: 'Relocating',               severity: 'medium' },
+  new_baby:            { label: 'New baby',                 severity: 'medium' },
+  wedding:             { label: 'Wedding or engagement',    severity: 'low'    },
+  legal_issue:         { label: 'Legal issue',              severity: 'high'   },
 };
 
 // ============================================================================
-// SCORING
+// SCORING — sublinear curves, realistic distribution 40-65
 // ============================================================================
 
-// Each scorer returns a value 0..ceiling. The curves are chosen so a typical
-// user lands 40-65 and 100 remains exceptional — not nominal.
-
-function scoreLifeEvents(events: Array<{ severity: 'low' | 'medium' | 'high' }>): number {
-  const high = events.filter(e => e.severity === 'high').length;
+function scoreLifeEvents(events: Array<{ severity: string }>): number {
+  const high   = events.filter(e => e.severity === 'high').length;
   const medium = events.filter(e => e.severity === 'medium').length;
-  const low = events.filter(e => e.severity === 'low').length;
-
-  // Diminishing returns via sqrt — first crisis weighs heaviest
-  const raw = (Math.sqrt(high) * 14) + (Math.sqrt(medium) * 7) + (Math.sqrt(low) * 3);
+  const low    = events.filter(e => e.severity === 'low').length;
+  const raw = Math.sqrt(high) * 14 + Math.sqrt(medium) * 6 + Math.sqrt(low) * 2.5;
   return Math.min(SCORE_CEILINGS.life_events, Math.round(raw));
 }
 
 function scoreCommercial(segments: Array<{ confidence: number }>): number {
-  // Sum of confidences, scaled. Old formula was confidence/10 summed and
-  // min-capped at 25 — which meant 3 segments at confidence 90 gave 25.
-  // New: weighted so reaching 25 requires multiple high-confidence segments.
-  const weighted = segments.reduce((s, seg) => s + Math.pow(seg.confidence / 100, 1.5) * 10, 0);
+  const weighted = segments.reduce((s, seg) => s + Math.pow(seg.confidence / 100, 1.4) * 8, 0);
   return Math.min(SCORE_CEILINGS.commercial, Math.round(weighted));
 }
 
-function scoreDependency(dependencyScore: number): number {
-  // dependencyScore is already 0-100 in the deep parser.
-  // At 50 (moderate use) contributes 10. At 100 contributes the full 20.
-  const scaled = (dependencyScore / 100) * SCORE_CEILINGS.dependency;
-  return Math.min(SCORE_CEILINGS.dependency, Math.round(scaled));
+function scoreDependency(score: number): number {
+  return Math.min(SCORE_CEILINGS.dependency, Math.round((score / 100) * SCORE_CEILINGS.dependency));
 }
 
-function scoreConfessional(count: number): number {
-  // Logarithmic curve: 1 confession = 4, 5 confessions = 10, 15 = 13, 50 = 15.
-  // The brief lowered the threshold (>3 not >5) which means more confessions
-  // now count — so the curve has to flatten or everyone hits the ceiling.
+function scoreConfessional(count: number, avgScore: number): number {
   if (count === 0) return 0;
-  const raw = 4 + Math.log2(count) * 3.3;
-  return Math.min(SCORE_CEILINGS.confessional, Math.round(raw));
+  // count-based log curve + quality bonus from avg confessional score
+  const countPart = Math.log2(count + 1) * 4.5;
+  const qualityBonus = Math.max(0, (avgScore - 5) * 0.8);
+  return Math.min(SCORE_CEILINGS.confessional, Math.round(countPart + qualityBonus));
 }
 
 function scoreNames(count: number): number {
-  // Linear to the ceiling — 7+ names is the max. The point is simply that
-  // names exist in the corpus, not that 20 names is twice as bad as 10.
   return Math.min(SCORE_CEILINGS.names, count);
 }
 
-function scoreVolume(totalMessages: number): number {
-  // The old version gave 8 flat points at 5000 messages. Now a 3-point ceiling
-  // that curves in — 500 msgs = 1, 2000 = 2, 5000+ = 3.
-  if (totalMessages < 500) return 0;
-  if (totalMessages < 2000) return 1;
-  if (totalMessages < 5000) return 2;
+function scoreVolume(total: number): number {
+  if (total < 200) return 0;
+  if (total < 800) return 1;
+  if (total < 2000) return 2;
+  if (total < 5000) return 3;
+  if (total < 10000) return 4;
   return SCORE_CEILINGS.volume;
 }
 
 // ============================================================================
-// MERGING AI RESULTS INTO ANALYSIS
+// MERGE
 // ============================================================================
 
-function mergeEnrichments(
-  analysis: DeepAnalysis,
-  enrichments: MessageEnrichment[]
-): DeepAnalysis {
+function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment[]): DeepAnalysis {
   const enrichmentMap = new Map<number, MessageEnrichment>();
   for (const e of enrichments) enrichmentMap.set(e.id, e);
 
-  // --- Enriched messages (non-mutating) ---
-  const enrichedMessages: ScoredMessage[] = analysis.messages.map((m, idx) => {
+  const templateIds = new Set<number>(
+    enrichments.filter(e => e.is_template_or_script).map(e => e.id)
+  );
+
+  // Rebuild messages with AI-enhanced scores
+  const enrichedMessages = analysis.messages.map((m, idx) => {
     const e = enrichmentMap.get(idx);
     if (!e) return m;
-
     if (e.is_template_or_script) {
-      // AI flagged as template — zero out personal scores so it can't surface
-      // as a juiciest moment or contribute to aggregates downstream.
-      return {
-        ...m,
-        confessionalScore: 0,
-        anxietyScore: 0,
-        intimacyScore: 0,
-        messageType: 'factual' as const,
-        detectedSegments: m.detectedSegments,
-      };
+      return { ...m, confessionalScore: 0, anxietyScore: 0, intimacyScore: 0, messageType: 'factual' as const };
     }
-
     return {
       ...m,
       confessionalScore: Math.max(m.confessionalScore, e.confessional_score),
@@ -547,171 +386,139 @@ function mergeEnrichments(
     };
   });
 
-  // --- Purge templates from regex-built juiciestMoments ---
-  // Problem 1(b): even if the AI correctly flagged a template, the original
-  // analysis.juiciestMoments (built pre-enrichment) might still contain it.
-  // We identify template message IDs from the enrichment and purge them from
-  // the regex-built list before it's used as a fallback.
-  const templateMessageIds = new Set<number>();
-  for (const e of enrichments) {
-    if (e.is_template_or_script) templateMessageIds.add(e.id);
-  }
-
-  const purgedRegexJuiciest = analysis.juiciestMoments.filter(moment => {
-    // juiciestMoments don't carry message IDs directly — match by excerpt prefix
-    // against enriched messages marked as template.
-    for (const id of templateMessageIds) {
+  // Purge templates from regex-built juiciestMoments
+  const purgedRegex = analysis.juiciestMoments.filter(moment => {
+    for (const id of templateIds) {
       const msg = analysis.messages[id];
       if (!msg) continue;
-      const prefix = msg.text.substring(0, 80).replace(/\s+/g, ' ').trim();
-      const momentPrefix = (moment.excerpt || '').substring(0, 80).replace(/\s+/g, ' ').trim();
-      if (prefix && momentPrefix && (prefix === momentPrefix || prefix.startsWith(momentPrefix) || momentPrefix.startsWith(prefix))) {
-        return false;
-      }
+      const prefix = msg.text.substring(0, 60).replace(/\s+/g, ' ').trim();
+      const mPrefix = (moment.excerpt || '').substring(0, 60).replace(/\s+/g, ' ').trim();
+      if (prefix && mPrefix && (prefix === mPrefix || prefix.startsWith(mPrefix) || mPrefix.startsWith(prefix))) return false;
     }
     return true;
   });
 
-  // --- Rebuild named people with deduplication ---
-  const rawNameEntries: Array<{ name: string; relationship: string | null; sourceText: string }> = [];
-  for (const enrichment of enrichments) {
-    if (!enrichment.is_personal || enrichment.is_template_or_script) continue;
-    if (!enrichment.named_people) continue;
-    const sourceText = analysis.messages[enrichment.id]?.text || '';
-    for (const person of enrichment.named_people) {
-      if (!person.name || person.name.length < 2) continue;
-      rawNameEntries.push({
-        name: person.name,
-        relationship: person.relationship,
-        sourceText,
+  // Names
+  const rawNames: Array<{ name: string; relationship: string | null; sourceText: string }> = [];
+  for (const e of enrichments) {
+    if (!e.is_personal || e.is_template_or_script || !e.named_people) continue;
+    const src = analysis.messages[e.id]?.text || '';
+    for (const p of e.named_people) {
+      if (p.name && p.name.length >= 2) rawNames.push({ name: p.name, relationship: p.relationship, sourceText: src });
+    }
+  }
+
+  const nameAggregates = dedupeNames(rawNames);
+  const aiNames = nameAggregates
+    .filter(a => a.mentions >= 2 || a.hasRelationshipContext)
+    .sort((a, b) => b.mentions - a.mentions)
+    .slice(0, 12)
+    .map(a => ({ name: a.canonical, mentions: a.mentions, relationship: a.relationship || undefined, contexts: [] }));
+
+  // Sensitive topics — merge AI-extracted with regex findings
+  const aiSensitiveTopics: Array<{ category: string; excerpt: string; timestamp: string }> = [];
+  for (const e of enrichments) {
+    if (!e.is_personal || e.is_template_or_script) continue;
+    const msg = analysis.messages[e.id];
+    if (!msg) continue;
+    for (const topic of (e.sensitive_topics || [])) {
+      aiSensitiveTopics.push({
+        category: topic,
+        excerpt: e.most_revealing_excerpt || msg.text.substring(0, 150),
+        timestamp: new Date(msg.timestamp * 1000).toISOString(),
       });
     }
   }
+  // Merge with existing regex findings, dedup by category
+  const existingCategories = new Set(analysis.findings.sensitiveTopics.map(t => t.category));
+  const newSensitiveTopics = [
+    ...analysis.findings.sensitiveTopics,
+    ...aiSensitiveTopics.filter(t => !existingCategories.has(t.category)),
+  ];
 
-  const aggregates = dedupeNames(rawNameEntries);
-
-  // Inclusion rule: 2+ mentions OR has relationship context.
-  // This kills one-off spurious captures while preserving "my girlfriend Rae"
-  // mentioned once.
-  const aiNames = aggregates
-    .filter(a => a.mentions >= 2 || a.hasRelationshipContext)
-    .sort((a, b) => b.mentions - a.mentions)
-    .slice(0, 10)
-    .map(a => ({
-      name: a.canonical,
-      mentions: a.mentions,
-      relationship: a.relationship || undefined,
-      contexts: a.contexts,
-    }));
-
-  // --- Rebuild juiciest moments ---
+  // Juiciest moments — prefer AI's most_revealing_excerpt
   const personalEnrichments = enrichments
     .filter(e => e.is_personal && !e.is_template_or_script)
-    .map(e => ({
-      enrichment: e,
-      message: analysis.messages[e.id],
-    }))
-    .filter(x => x.message);
+    .map(e => ({ e, msg: analysis.messages[e.id] }))
+    .filter(x => x.msg);
 
   const aiJuiciest = personalEnrichments
-    .map(({ enrichment, message }) => {
-      // IMPROVEMENT B: extend the sort with late-night and length factors.
-      const base = enrichment.confessional_score * 1.5 + enrichment.emotional_intensity;
-      const lateNight = (message.hour >= 0 && message.hour <= 4) ? 2.5 : 0;
-      // Log-scale length so a 400-word confession doesn't 10x a 40-word one
-      const lengthBoost = Math.min(3, Math.log2(Math.max(message.wordCount, 10) / 10));
-      return {
-        enrichment,
-        message,
-        sortScore: base + lateNight + lengthBoost,
-      };
+    .map(({ e, msg }) => {
+      const base = e.confessional_score * 1.6 + e.emotional_intensity * 1.0;
+      const lateNight = (msg.hour >= 0 && msg.hour <= 4) ? 3 : msg.hour >= 22 ? 1.5 : 0;
+      const lengthBoost = Math.min(3, Math.log2(Math.max(msg.wordCount, 10) / 10));
+      const sensitiveBoost = (e.sensitive_topics || []).length * 1.5;
+      return { e, msg, score: base + lateNight + lengthBoost + sensitiveBoost };
     })
-    .sort((a, b) => b.sortScore - a.sortScore)
-    .slice(0, 5) // Brief: fewer, better. Was 10, now 5.
-    .map(({ message, enrichment }) => ({
-      timestamp: new Date(message.timestamp * 1000).toISOString(),
-      excerpt: message.text.substring(0, 300),
-      juiceScore: Math.round((enrichment.confessional_score + enrichment.emotional_intensity) / 2),
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6)
+    .map(({ e, msg }) => ({
+      timestamp: new Date(msg.timestamp * 1000).toISOString(),
+      // Use AI-identified most revealing excerpt if available, otherwise first 300 chars
+      excerpt: e.most_revealing_excerpt && e.most_revealing_excerpt.length > 20
+        ? e.most_revealing_excerpt
+        : msg.text.substring(0, 300),
+      juiceScore: Math.round((e.confessional_score + e.emotional_intensity) / 2),
       reason: [
-        enrichment.confessional_score > 6 ? 'confession' : null,
-        enrichment.emotional_intensity > 6 ? 'emotional' : null,
-        message.hour >= 0 && message.hour <= 4 ? 'late_night' : null,
-        enrichment.topic,
+        e.confessional_score >= 7 ? 'confession' : null,
+        e.emotional_intensity >= 7 ? 'emotional distress' : null,
+        (msg.hour >= 0 && msg.hour <= 4) ? 'late night' : null,
+        (e.sensitive_topics || []).length > 0 ? e.sensitive_topics[0] : null,
+        e.topic,
       ].filter(Boolean).join(', '),
     }));
 
-  // --- Rebuild life events with deduplication by event type ---
-  // Problem 5: the AI can emit the same event type across multiple batches
-  // (message 42 and message 67 both produce "relationship_end"). Aggregate by
-  // type first, emit one entry per type with median date and count.
+  // Life events — aggregate by type, require 1+ occurrence
   const eventBuckets = new Map<string, ScoredMessage[]>();
-  for (const enrichment of enrichments) {
-    if (!enrichment.is_personal || enrichment.is_template_or_script) continue;
-    const msg = analysis.messages[enrichment.id];
+  for (const e of enrichments) {
+    if (!e.is_personal || e.is_template_or_script) continue;
+    const msg = analysis.messages[e.id];
     if (!msg) continue;
-    for (const eventType of enrichment.life_events || []) {
-      const existing = eventBuckets.get(eventType) || [];
-      existing.push(msg);
-      eventBuckets.set(eventType, existing);
+    for (const ev of (e.life_events || [])) {
+      const bucket = eventBuckets.get(ev) || [];
+      bucket.push(msg);
+      eventBuckets.set(ev, bucket);
     }
   }
 
-  const aiLifeEvents = Array.from(eventBuckets.entries())
-    .filter(([, msgs]) => msgs.length >= 1)
-    .map(([eventType, msgs]) => {
-      const config = EVENT_LABELS[eventType] || { label: eventType, severity: 'medium' as const };
-      const sorted = [...msgs].sort((a, b) => a.timestamp - b.timestamp);
-      const median = sorted[Math.floor(sorted.length / 2)];
-      return {
-        type: eventType,
-        label: config.label,
-        approximateDate: new Date(median.timestamp * 1000).toLocaleDateString('en-GB', {
-          month: 'long',
-          year: 'numeric',
-        }),
-        evidence: sorted.slice(0, 3).map(m => `"${m.text.substring(0, 80)}..."`),
-        severity: config.severity,
-        count: msgs.length,
-      };
-    })
-    .sort((a, b) => {
-      const order = { high: 0, medium: 1, low: 2 };
-      return order[a.severity] - order[b.severity];
-    });
+  const aiLifeEvents = Array.from(eventBuckets.entries()).map(([type, msgs]) => {
+    const cfg = EVENT_LABELS[type] || { label: type, severity: 'medium' as const };
+    const sorted = [...msgs].sort((a, b) => a.timestamp - b.timestamp);
+    const median = sorted[Math.floor(sorted.length / 2)];
+    return {
+      type,
+      label: cfg.label,
+      approximateDate: new Date(median.timestamp * 1000).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }),
+      evidence: sorted.slice(0, 3).map(m => `"${m.text.substring(0, 80)}..."`),
+      severity: cfg.severity,
+      count: msgs.length,
+    };
+  }).sort((a, b) => ({ high: 0, medium: 1, low: 2 }[a.severity] - { high: 0, medium: 1, low: 2 }[b.severity]));
 
-  // --- Recompute type breakdown ---
+  // Type breakdown
   const typeBreakdown = enrichedMessages.reduce((acc, m) => {
     acc[m.messageType] = (acc[m.messageType] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
-  // --- Score calculation — each component capped at its ceiling ---
-  const lifeEventsContribution = scoreLifeEvents(aiLifeEvents);
+  // Scoring
+  const lifeEventsContribution = scoreLifeEvents(aiLifeEvents.length > 0 ? aiLifeEvents : analysis.lifeEvents);
   const commercialContribution = scoreCommercial(analysis.commercialProfile.segments);
   const dependencyContribution = scoreDependency(analysis.dependency.dependencyScore);
 
-  // Problem 6: threshold lowered from >5 to >3.
-  const confessionalCount = enrichments.filter(
-    e => e.is_personal && !e.is_template_or_script && e.confessional_score > 3
-  ).length;
-  const confessionalContribution = scoreConfessional(confessionalCount);
+  const confessionals = enrichments.filter(e => e.is_personal && !e.is_template_or_script && e.confessional_score >= 4);
+  const avgConfScore = confessionals.length > 0
+    ? confessionals.reduce((s, e) => s + e.confessional_score, 0) / confessionals.length
+    : 0;
+  const confessionalContribution = scoreConfessional(confessionals.length, avgConfScore);
 
   const namesContribution = scoreNames(aiNames.length);
   const volumeContribution = scoreVolume(analysis.totalUserMessages);
 
   const newScore = Math.max(0, Math.min(100,
-    lifeEventsContribution +
-    commercialContribution +
-    dependencyContribution +
-    confessionalContribution +
-    namesContribution +
-    volumeContribution
+    lifeEventsContribution + commercialContribution + dependencyContribution +
+    confessionalContribution + namesContribution + volumeContribution
   ));
-
-  // --- Score breakdown for ScoreBreakdown.tsx ---
-  const highSeverityCount = aiLifeEvents.filter(e => e.severity === 'high').length;
-  const mediumSeverityCount = aiLifeEvents.filter(e => e.severity === 'medium').length;
-  const topSegment = analysis.commercialProfile.segments[0];
 
   const scoreBreakdown: ScoreBreakdownEntry[] = [
     {
@@ -719,65 +526,56 @@ function mergeEnrichments(
       contribution: lifeEventsContribution,
       category: 'life_events',
       detail: aiLifeEvents.length === 0
-        ? 'No significant life events were detected in your messages.'
-        : `${aiLifeEvents.length} event${aiLifeEvents.length === 1 ? '' : 's'} detected` +
-          (highSeverityCount > 0 ? `, ${highSeverityCount} high-severity` : '') +
-          (mediumSeverityCount > 0 ? `, ${mediumSeverityCount} medium-severity` : '') + '.',
+        ? 'No significant life events detected.'
+        : `${aiLifeEvents.length} event${aiLifeEvents.length === 1 ? '' : 's'}: ${aiLifeEvents.filter(e => e.severity === 'high').length} high-severity.`,
     },
     {
       label: 'Commercial profile strength',
       contribution: commercialContribution,
       category: 'commercial',
       detail: analysis.commercialProfile.segments.length === 0
-        ? 'No commercial targeting segments were inferred.'
-        : `${analysis.commercialProfile.segments.length} segment${analysis.commercialProfile.segments.length === 1 ? '' : 's'} inferred` +
-          (topSegment ? `, led by "${topSegment.label}" at ${Math.round(topSegment.confidence)}% confidence` : '') + '.',
+        ? 'No targeting segments inferred.'
+        : `${analysis.commercialProfile.segments.length} segments inferred.`,
     },
     {
-      label: 'Dependency pattern',
+      label: 'AI dependency pattern',
       contribution: dependencyContribution,
       category: 'dependency',
-      detail: `Dependency score ${Math.round(analysis.dependency.dependencyScore)}/100 based on frequency, recency and emotional reliance.`,
+      detail: `Dependency score ${Math.round(analysis.dependency.dependencyScore)}/100.`,
     },
     {
       label: 'Confessional disclosures',
       contribution: confessionalContribution,
       category: 'confessional',
-      detail: confessionalCount === 0
-        ? 'No confessional messages were identified.'
-        : `${confessionalCount} confessional message${confessionalCount === 1 ? '' : 's'} identified.`,
+      detail: confessionals.length === 0
+        ? 'No confessional messages identified.'
+        : `${confessionals.length} confessional message${confessionals.length === 1 ? '' : 's'} (avg score ${avgConfScore.toFixed(1)}/10).`,
     },
     {
       label: 'People named',
       contribution: namesContribution,
       category: 'names',
       detail: aiNames.length === 0
-        ? 'No individuals were named in identifiable contexts.'
-        : `${aiNames.length} individual${aiNames.length === 1 ? '' : 's'} named` +
-          (aiNames.length > 0 ? `: ${aiNames.slice(0, 3).map(n => n.name).join(', ')}${aiNames.length > 3 ? ' and others' : ''}` : '') + '.',
+        ? 'No individuals identified.'
+        : `${aiNames.length} individual${aiNames.length === 1 ? '' : 's'}: ${aiNames.slice(0, 3).map(n => n.name).join(', ')}${aiNames.length > 3 ? ' and others' : ''}.`,
     },
     {
       label: 'Message volume',
       contribution: volumeContribution,
       category: 'volume',
-      detail: `${analysis.totalUserMessages.toLocaleString('en-GB')} messages written over ${analysis.timespan.days} days.`,
+      detail: `${analysis.totalUserMessages.toLocaleString('en-GB')} messages over ${analysis.timespan.days} days.`,
     },
   ];
 
-  const updatedFindings = {
-    ...analysis.findings,
-    personalInfo: {
-      ...analysis.findings.personalInfo,
-      names: aiNames,
-    },
-  };
-
-  // Return a new object — never mutate the input
   return {
     ...analysis,
     messages: enrichedMessages,
-    findings: updatedFindings,
-    juiciestMoments: aiJuiciest.length > 0 ? aiJuiciest : purgedRegexJuiciest,
+    findings: {
+      ...analysis.findings,
+      personalInfo: { ...analysis.findings.personalInfo, names: aiNames },
+      sensitiveTopics: newSensitiveTopics,
+    },
+    juiciestMoments: aiJuiciest.length > 0 ? aiJuiciest : purgedRegex,
     lifeEvents: aiLifeEvents.length > 0 ? aiLifeEvents : analysis.lifeEvents,
     typeBreakdown,
     privacyScore: newScore,
@@ -813,42 +611,20 @@ export async function enrichAnalysisWithAI(
   try {
     const enrichments = await runBatchesWithConcurrency(batches, () => {
       batchesDone++;
-      onProgress?.({
-        stage: 'enriching',
-        batchesDone,
-        batchesTotal: batches.length,
-        messagesEnriched: batchesDone * BATCH_SIZE,
-      });
+      onProgress?.({ stage: 'enriching', batchesDone, batchesTotal: batches.length, messagesEnriched: batchesDone * BATCH_SIZE });
     });
 
-    onProgress?.({
-      stage: 'merging',
-      batchesDone: batches.length,
-      batchesTotal: batches.length,
-      messagesEnriched: enrichments.length,
-    });
+    onProgress?.({ stage: 'merging', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
 
     const merged = mergeEnrichments(analysis, enrichments);
 
-    onProgress?.({
-      stage: 'done',
-      batchesDone: batches.length,
-      batchesTotal: batches.length,
-      messagesEnriched: enrichments.length,
-    });
+    onProgress?.({ stage: 'done', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
 
     return merged;
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     console.error('AI enrichment failed:', err);
-    onProgress?.({
-      stage: 'failed',
-      batchesDone,
-      batchesTotal: batches.length,
-      messagesEnriched: 0,
-      error: message,
-    });
-    // Fallback preserved — dashboard never breaks if API is down
+    onProgress?.({ stage: 'failed', batchesDone, batchesTotal: batches.length, messagesEnriched: 0, error: message });
     return analysis;
   }
 }

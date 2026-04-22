@@ -1,35 +1,50 @@
 // ============================================================================
 // analyzeExport.ts
 // Runs deep parser, then AI enrichment, stores final result.
+// Supports ChatGPT and Claude exports, and merging multiple sources.
 // ============================================================================
 
 import { analyzeDeep, type DeepAnalysis } from './deepParser';
 import { enrichAnalysisWithAI, type EnrichmentProgress } from './aiEnrichment';
+import { isClaudeExport, normaliseClaude } from './claudeParser';
 
 export interface AnalyzeProgress {
   phase: 'parsing' | 'ai_enriching' | 'storing' | 'done';
   aiProgress?: EnrichmentProgress;
 }
 
+export type SourceType = 'chatgpt' | 'claude';
+
+export function detectSourceType(jsonData: any[]): SourceType {
+  return isClaudeExport(jsonData) ? 'claude' : 'chatgpt';
+}
+
+// Normalise any supported export format into ChatGPT-compatible format
+function normaliseToGPTFormat(jsonData: any[], sourceType: SourceType): any[] {
+  if (sourceType === 'claude') {
+    return normaliseClaude(jsonData);
+  }
+  return jsonData; // ChatGPT is already the native format
+}
+
 export async function analyzeExport(
   jsonData: any[],
-  onProgress?: (p: AnalyzeProgress) => void
+  onProgress?: (p: AnalyzeProgress) => void,
+  sourceType?: SourceType
 ): Promise<{
   analysis: DeepAnalysis;
   revealData: import('./CountdownReveal').RevealData;
 }> {
+  const detectedType = sourceType ?? detectSourceType(jsonData);
+  const normalised = normaliseToGPTFormat(jsonData, detectedType);
+
   onProgress?.({ phase: 'parsing' });
 
-  // Run the regex-based deep parser first
-  let analysis = analyzeDeep(jsonData);
-
-  // Store a regex-only snapshot immediately so the dashboard can load
-  // even if AI enrichment is slow or fails
+  let analysis = analyzeDeep(normalised);
   storeAnalysis(analysis);
 
   onProgress?.({ phase: 'ai_enriching' });
 
-  // Run AI enrichment — this can take 20-40 seconds
   try {
     analysis = await enrichAnalysisWithAI(analysis, (aiProgress) => {
       onProgress?.({ phase: 'ai_enriching', aiProgress });
@@ -51,13 +66,54 @@ export async function analyzeExport(
 }
 
 // ============================================================================
+// MERGE — combine two source analyses
+// Used when a second source (e.g. Claude) is added to an existing ChatGPT analysis
+// ============================================================================
+
+export async function mergeAndReanalyze(
+  existingJsonKey: string,
+  newJsonData: any[],
+  newSourceType: SourceType,
+  onProgress?: (p: AnalyzeProgress) => void
+): Promise<{
+  analysis: DeepAnalysis;
+  revealData: import('./CountdownReveal').RevealData;
+}> {
+  // Get the raw JSON for the existing source if stored
+  const existingRaw = sessionStorage.getItem('rawJson_' + existingJsonKey);
+
+  let combined: any[];
+  const newNormalised = normaliseToGPTFormat(newJsonData, newSourceType);
+
+  if (existingRaw) {
+    const existingParsed = JSON.parse(existingRaw);
+    combined = [...existingParsed, ...newNormalised];
+  } else {
+    // Can't get original — just analyse the new source alone
+    combined = newNormalised;
+  }
+
+  return analyzeExport(combined, onProgress, 'chatgpt');
+}
+
+// Store raw JSON for later merging
+export function storeRawJson(sourceId: string, jsonData: any[], sourceType: SourceType): void {
+  const normalised = normaliseToGPTFormat(jsonData, sourceType);
+  try {
+    sessionStorage.setItem('rawJson_' + sourceId, JSON.stringify(normalised));
+  } catch {
+    // sessionStorage full — skip, analysis will still work
+  }
+}
+
+// ============================================================================
 // STORAGE
 // ============================================================================
 
 function storeAnalysis(analysis: DeepAnalysis): void {
   const storableAnalysis = {
     ...analysis,
-    messages: undefined, // drop raw messages — they're large
+    messages: undefined,
     privacyScore: analysis.privacyScore,
     stats: analysis.rawStats,
     findings: analysis.findings,

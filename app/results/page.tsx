@@ -42,6 +42,7 @@ interface AnalysisResult {
 
 const DEFAULT_SOURCES = [
   { id: 'chatgpt', label: 'ChatGPT', connected: false },
+  { id: 'claude', label: 'Claude', connected: false },
   { id: 'google', label: 'Google', connected: false },
   { id: 'instagram', label: 'Instagram', connected: false },
   { id: 'spotify', label: 'Spotify', connected: false },
@@ -75,6 +76,10 @@ export default function ResultsPage() {
     setSources(prev => prev.map(s => s.id === sourceId ? { ...s, connected: true } : s));
   }, []);
 
+  const handleAnalysisUpdate = useCallback((updatedResults: any) => {
+    setResults(updatedResults);
+  }, []);
+
   if (!results) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f2ed' }}>
@@ -90,7 +95,7 @@ export default function ResultsPage() {
     <DashboardLayout results={results} page={page} setPage={handleSetPage}>
       {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={handleSetPage} />}
       {page === 'profile' && <ProfilePage results={results} />}
-      {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} />}
+      {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} />}
       {page === 'risk' && <RiskPage results={results} />}
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
       {page === 'resist' && <ResistPage analysis={results as any} />}

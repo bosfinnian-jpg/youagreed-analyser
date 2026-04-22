@@ -85,7 +85,6 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
   const segments = r.commercialProfile?.segments || [];
   const scenarios: RiskScenario[] = [];
 
-  // INSURANCE
   const insuranceRelevance = sensitiveCount * 3 + (anxietyScore > 3 ? 20 : 0) + highSevEvents.length * 10 + (nightPct > 10 ? 8 : 0);
   scenarios.push({
     id: 'insurance',
@@ -107,7 +106,6 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     precedent: { source: 'FTC v. BetterHelp, 2023', detail: 'BetterHelp shared therapy status data with Facebook and Snapchat for ad targeting. Fine: $7.8 million. Users had been told their data was private.' },
   });
 
-  // EMPLOYMENT
   const careerEvents = lifeEvents.filter(e => ['job_loss', 'job_search'].includes(e.type));
   const employRelevance = (totalMsgs > 2000 ? 15 : totalMsgs > 500 ? 8 : 0) + themes.length * 5 + (depScore > 50 ? 12 : 0) + (anxietyScore > 3 ? 10 : 0);
   scenarios.push({
@@ -118,7 +116,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     subtitle: careerEvents.length > 0
       ? `${careerEvents.length} career-related life event${careerEvents.length > 1 ? 's' : ''} detected. AI screening tools flag this as instability.`
       : 'Your writing patterns are sufficient for personality inference. No interview required.',
-    body: `You submitted ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution '}form a personality signature. Companies like Humantic AI claim 78–85% accuracy in personality profiling from text alone — and they build these profiles from publicly available and purchased data. ${anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.'}${depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage — a flag for productivity screening.' : ''}`,
+    body: `You submitted ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution '}form a personality signature. Companies like Humantic AI claim 78–85% accuracy in personality profiling from text alone. ${anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.'}${depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage — a flag for productivity screening.' : ''}`,
     dataPoints: [
       { label: 'Messages analysed', value: totalMsgs.toLocaleString('en-GB'), alarming: totalMsgs > 2000 },
       { label: 'Career events', value: String(careerEvents.length), alarming: careerEvents.length > 0 },
@@ -128,13 +126,12 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     precedent: { source: 'Mobley v. Workday, 2024', detail: 'A US federal court allowed a discrimination case to proceed against Workday after a plaintiff was rejected from 100+ jobs by its AI screening tools.' },
   });
 
-  // TARGETING
   const targetRelevance = segments.length * 8 + (nightPct > 5 ? 10 : 0) + sensitiveCount * 2;
   scenarios.push({
     id: 'targeting',
     severity: targetRelevance > 25 ? 'critical' : targetRelevance > 10 ? 'high' : 'medium',
     relevance: targetRelevance,
-    title: `Your data matches ${segments.length || 'multiple'} advertising segment${segments.length === 1 ? '' : 's'} used across the digital economy. You did not consent to this classification.`,
+    title: `Your data matches ${segments.length || 'multiple'} advertising segment${segments.length === 1 ? '' : 's'}. You did not consent to this classification.`,
     subtitle: segments.length > 0
       ? `Segments: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
       : 'Behavioural patterns are sufficient for segment assignment without explicit disclosures.',
@@ -148,7 +145,6 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     precedent: { source: 'FTC v. Oracle, 2024', detail: 'Oracle settled for $115 million over tracking and selling user data from platforms users never interacted with directly.' },
   });
 
-  // BREACH
   const breachRelevance = (r.privacyScore || 0) * 0.5 + nameCount * 3 + locCount * 4 + sensitiveCount * 2;
   scenarios.push({
     id: 'breach',
@@ -170,79 +166,121 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
 }
 
 // ============================================================================
-// HERO SCENARIO — the most relevant one, expanded by default
+// SEVERITY COLOURS
+// ============================================================================
+
+function sevColor(severity: string) {
+  if (severity === 'critical') return PALETTE.red;
+  if (severity === 'high') return PALETTE.amber;
+  if (severity === 'medium') return PALETTE.inkMuted;
+  return PALETTE.inkFaint;
+}
+
+// ============================================================================
+// HERO SCENARIO — full-width, unboxed, Resist-pattern
 // ============================================================================
 
 function HeroScenario({ scenario }: { scenario: RiskScenario }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
-
-  const sevColors: Record<string, string> = {
-    critical: PALETTE.red, high: PALETTE.amber, medium: PALETTE.inkMuted, low: PALETTE.inkFaint,
-  };
-  const sc = sevColors[scenario.severity] || PALETTE.inkFaint;
+  const sc = sevColor(scenario.severity);
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, delay: 0.2 }}
+      transition={{ duration: 0.8, delay: 0.1 }}
       style={{
-        padding: 'clamp(2rem, 5vw, 3.5rem) clamp(2rem, 5vw, 4rem)',
+        paddingBottom: 'clamp(3rem, 7vw, 5rem)',
         borderBottom: `1px solid ${PALETTE.border}`,
-        borderLeft: `4px solid ${sc}`,
-        background: scenario.severity === 'critical'
-          ? `rgba(190,40,30,0.04)`
-          : scenario.severity === 'high' ? `rgba(160,100,0,0.03)` : 'transparent',
-        boxShadow: scenario.severity === 'critical'
-          ? 'inset 3px 0 0 rgba(190,40,30,0.40)'
-          : 'none',
-        position: 'relative',
+        marginBottom: 'clamp(3rem, 7vw, 5rem)',
       }}
     >
-      {/* Severity + category */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: sc, textTransform: 'uppercase', padding: '3px 8px', border: `1px solid ${sc}40` }}>
+      {/* Severity label */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+        <span style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+          color: sc, textTransform: 'uppercase',
+          padding: '3px 8px', border: `1px solid ${sc}40`,
+        }}>
           {scenario.severity}
         </span>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          {scenario.id.replace(/_/g, ' ')}
-        </span>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginLeft: 'auto' }}>
-          Highest risk
+        <span style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+        }}>
+          {scenario.id} / highest relevance
         </span>
       </div>
 
-      {/* Title — larger, more weight */}
-      <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.2, marginBottom: '0.8rem', maxWidth: '36ch' }}>
+      {/* Title — large, declarative */}
+      <h2 style={{
+        fontFamily: TYPE.serif,
+        fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+        fontWeight: 400, color: PALETTE.ink,
+        letterSpacing: '-0.02em', lineHeight: 1.2,
+        maxWidth: '22ch', marginBottom: '1.2rem',
+      }}>
         {scenario.title}
       </h2>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '2rem', maxWidth: '55ch' }}>
+
+      <p style={{
+        fontFamily: TYPE.serif,
+        fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+        color: PALETTE.inkMuted, lineHeight: 1.8,
+        maxWidth: '55ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
+        fontStyle: 'italic',
+      }}>
         {scenario.subtitle}
       </p>
 
-      {/* Data points — 2x2 grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1px', background: PALETTE.border, marginBottom: '2rem' }}>
+      {/* Data points — horizontal strip, no box around them */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+        gap: '1px', background: PALETTE.border,
+        marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
+      }}>
         {scenario.dataPoints.map(dp => (
-          <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '1rem 1.2rem' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '4px' }}>{dp.label}</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '1.25rem', color: dp.alarming ? PALETTE.red : PALETTE.ink, letterSpacing: '-0.02em' }}>{dp.value}</p>
+          <div key={dp.label} style={{ background: PALETTE.bgPanel, padding: '1.2rem 1.4rem' }}>
+            <p style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem',
+            }}>{dp.label}</p>
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.6rem)',
+              color: dp.alarming ? PALETTE.red : PALETTE.ink,
+              letterSpacing: '-0.02em', lineHeight: 1,
+            }}>{dp.value}</p>
           </div>
         ))}
       </div>
 
       {/* Body */}
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.5rem', maxWidth: '65ch' }}>
+      <p style={{
+        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+        color: PALETTE.inkMuted, lineHeight: 1.85,
+        maxWidth: '62ch', marginBottom: '2rem',
+      }}>
         {scenario.body}
       </p>
 
-      {/* Precedent */}
-      <div style={{ padding: '1.2rem 1.5rem', background: PALETTE.bgElevated, borderLeft: `2px solid ${PALETTE.border}` }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+      {/* Precedent — left-bordered, no heavy box */}
+      <div style={{
+        borderLeft: `2px solid ${PALETTE.border}`,
+        paddingLeft: '1.5rem',
+      }}>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem',
+        }}>
           {scenario.precedent.source}
         </p>
-        <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
+        <p style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
+          fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.7,
+        }}>
           {scenario.precedent.detail}
         </p>
       </div>
@@ -251,45 +289,63 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
 }
 
 // ============================================================================
-// SECONDARY SCENARIO CARD — accordion, collapsed by default
+// SECONDARY SCENARIO — accordion, clean
 // ============================================================================
 
 function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-5%' });
   const [expanded, setExpanded] = useState(false);
-
-  const sevColors: Record<string, string> = {
-    critical: PALETTE.red, high: PALETTE.amber, medium: PALETTE.inkMuted, low: PALETTE.inkFaint,
-  };
-  const sc = sevColors[scenario.severity] || PALETTE.inkFaint;
+  const sc = sevColor(scenario.severity);
 
   return (
     <motion.article
       ref={ref}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay: index * 0.08, duration: 0.5 }}
+      transition={{ delay: index * 0.1, duration: 0.6 }}
+      style={{
+        borderBottom: `1px solid ${PALETTE.border}`,
+        paddingTop: '1.6rem',
+        paddingBottom: expanded ? '2rem' : '1.6rem',
+        cursor: 'pointer',
+        transition: 'padding-bottom 0.2s',
+      }}
       onClick={() => setExpanded(!expanded)}
-      style={{ background: PALETTE.bgPanel, padding: '1.4rem 2rem', borderLeft: '2px solid ' + (expanded ? sc : sc + '40'), cursor: 'pointer', transition: 'border-color 0.2s' }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+      {/* Header row */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
         <div style={{ flex: 1 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', marginBottom: '0.5rem' }}>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: sc, textTransform: 'uppercase', padding: '2px 5px', border: `1px solid ${sc}35` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.7rem' }}>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+              color: sc, textTransform: 'uppercase',
+              padding: '2px 6px', border: `1px solid ${sc}35`,
+            }}>
               {scenario.severity}
             </span>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-              {scenario.id.replace(/_/g, ' ')}
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase',
+            }}>
+              {scenario.id}
             </span>
           </div>
-          <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35, marginBottom: expanded ? '0.6rem' : 0 }}>
+          <h3 style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(1.2rem, 2.2vw, 1.5rem)',
+            fontWeight: 400, color: PALETTE.ink,
+            lineHeight: 1.3, maxWidth: '48ch',
+          }}>
             {scenario.title}
           </h3>
         </div>
-        <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, flexShrink: 0, marginTop: '0.15rem' }}>
-          {expanded ? '−' : '+'}
-        </span>
+        <span style={{
+          fontFamily: TYPE.mono, fontSize: '1.2rem',
+          color: PALETTE.inkFaint, flexShrink: 0,
+          marginTop: '1.4rem', transition: 'transform 0.2s',
+          transform: expanded ? 'rotate(45deg)' : 'none',
+        }}>+</span>
       </div>
 
       <AnimatePresence>
@@ -298,30 +354,56 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.28 }}
+            transition={{ duration: 0.3 }}
             style={{ overflow: 'hidden' }}
           >
-            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.2rem' }}>
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
+              fontStyle: 'italic', color: PALETTE.inkMuted,
+              lineHeight: 1.8, marginTop: '1.2rem', marginBottom: '1.5rem',
+              maxWidth: '55ch',
+            }}>
               {scenario.subtitle}
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1px', background: PALETTE.border, marginBottom: '1.2rem' }}>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+              gap: '1px', background: PALETTE.border,
+              marginBottom: '1.5rem',
+            }}>
               {scenario.dataPoints.map(dp => (
-                <div key={dp.label} style={{ background: PALETTE.bgElevated, padding: '0.7rem 0.9rem' }}>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{dp.label}</p>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: dp.alarming ? PALETTE.red : PALETTE.ink }}>{dp.value}</p>
+                <div key={dp.label} style={{ background: PALETTE.bgPanel, padding: '1rem 1.2rem' }}>
+                  <p style={{
+                    fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em',
+                    color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem',
+                  }}>{dp.label}</p>
+                  <p style={{
+                    fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+                    color: dp.alarming ? PALETTE.red : PALETTE.ink,
+                    letterSpacing: '-0.02em',
+                  }}>{dp.value}</p>
                 </div>
               ))}
             </div>
-            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.2rem' }}>
+
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
+              color: PALETTE.inkMuted, lineHeight: 1.85,
+              maxWidth: '60ch', marginBottom: '1.5rem',
+            }}>
               {scenario.body}
             </p>
-            <div style={{ padding: '1rem 1.2rem', background: PALETTE.bgElevated, borderLeft: `2px solid ${PALETTE.border}` }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                {scenario.precedent.source}
-              </p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.7 }}>
-                {scenario.precedent.detail}
-              </p>
+
+            <div style={{ borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.2rem' }}>
+              <p style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem',
+              }}>{scenario.precedent.source}</p>
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)',
+                fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.7,
+              }}>{scenario.precedent.detail}</p>
             </div>
           </motion.div>
         )}
@@ -331,7 +413,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
 }
 
 // ============================================================================
-// RTB AUCTION — moved after scenarios, acts as mechanism explanation
+// RTB AUCTION
 // ============================================================================
 
 function RTBAuction({ results }: { results: AnalysisResult }) {
@@ -380,54 +462,76 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
   useEffect(() => { return () => { if (intervalRef.current) clearInterval(intervalRef.current); }; }, []);
 
   return (
-    <motion.section
+    <motion.div
       ref={ref}
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : {}}
       transition={{ duration: 0.8 }}
-      style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: '1px solid ' + PALETTE.border }}
+      style={{
+        paddingTop: 'clamp(3rem, 7vw, 5rem)',
+        paddingBottom: 'clamp(3rem, 7vw, 5rem)',
+        borderBottom: `1px solid ${PALETTE.border}`,
+        marginBottom: 'clamp(3rem, 7vw, 5rem)',
+      }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.6rem', opacity: 0.8 }}>
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+        color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
+      }}>
         The mechanism
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.6rem', lineHeight: 1.15 }}>
+
+      <h2 style={{
+        fontFamily: TYPE.serif,
+        fontSize: 'clamp(1.6rem, 3.5vw, 2.6rem)',
+        fontWeight: 400, color: PALETTE.ink,
+        letterSpacing: '-0.02em', lineHeight: 1.2,
+        maxWidth: '24ch', marginBottom: '1.2rem',
+      }}>
         This is how data like yours gets used once it leaves a system.
-      </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, marginBottom: '2rem', maxWidth: '58ch' }}>
+      </h2>
+
+      <p style={{
+        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+        color: PALETTE.inkMuted, lineHeight: 1.85,
+        maxWidth: '55ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
+        fontStyle: 'italic',
+      }}>
         Every time you load a webpage elsewhere on the internet, your behavioural profile enters a real-time auction. The data fuelling that auction is built from platforms like this one. Advertisers bid in under 100 milliseconds. The winner targets you. You are not notified.
       </p>
 
       {/* Lot card */}
-      <div style={{ background: PALETTE.bgElevated, border: '1px solid ' + PALETTE.border, padding: '1.5rem 2rem', marginBottom: '1.5rem', maxWidth: 560 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-          <div>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>Lot</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.ink }}>
-              {'USR-' + String(results.privacyScore).padStart(3, '0') + '-' + String(totalMsgs % 10000).padStart(4, '0')}
-            </p>
-          </div>
-          <div style={{ textAlign: 'right' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>Quality</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: results.privacyScore >= 70 ? PALETTE.red : PALETTE.ink }}>
-              {results.privacyScore >= 70 ? 'PREMIUM' : results.privacyScore >= 40 ? 'STANDARD' : 'SPARSE'}
-            </p>
-          </div>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1rem' }}>
-          {segmentLabels.map(seg => (
-            <span key={seg} style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.red, padding: '3px 8px', border: '1px solid ' + PALETTE.red + '28', textTransform: 'capitalize' }}>{seg}</span>
-          ))}
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+      <div style={{
+        borderLeft: `3px solid ${PALETTE.red}`,
+        paddingLeft: 'clamp(1.5rem, 3vw, 2.5rem)',
+        marginBottom: 'clamp(2rem, 5vw, 3rem)',
+        maxWidth: 520,
+      }}>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1rem',
+        }}>
+          Your data lot
+        </p>
+        <div style={{ display: 'flex', gap: 'clamp(2rem, 5vw, 4rem)', flexWrap: 'wrap', marginBottom: '1rem' }}>
           {[
-            { l: 'Data points', v: totalMsgs.toLocaleString('en-GB') },
+            { l: 'Lot ID', v: 'USR-' + String(results.privacyScore).padStart(3, '0') + '-' + String(totalMsgs % 10000).padStart(4, '0') },
+            { l: 'Quality', v: results.privacyScore >= 70 ? 'PREMIUM' : results.privacyScore >= 40 ? 'STANDARD' : 'SPARSE' },
             { l: 'Location', v: homeLoc ? homeLoc.location : 'Inferred' },
-            { l: 'Vulnerability', v: nightPct > 5 ? nightPct + '% nocturnal' : 'Standard' },
           ].map(item => (
             <div key={item.l}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2px' }}>{item.l}</p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{item.v}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>{item.l}</p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink }}>{item.v}</p>
             </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+          {segmentLabels.map(seg => (
+            <span key={seg} style={{
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em',
+              color: PALETTE.red, padding: '3px 8px',
+              border: `1px solid ${PALETTE.red}28`, textTransform: 'capitalize',
+            }}>{seg}</span>
           ))}
         </div>
       </div>
@@ -436,7 +540,13 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       {phase === 'idle' && (
         <button
           onClick={runAuction}
-          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', textTransform: 'uppercase', color: PALETTE.bg, background: PALETTE.red, border: 'none', padding: '0.9rem 2.2rem', cursor: 'pointer', transition: 'opacity 0.15s' }}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+            textTransform: 'uppercase', color: PALETTE.bgPanel,
+            background: PALETTE.red, border: 'none',
+            padding: '0.9rem 2.2rem', cursor: 'pointer',
+            transition: 'opacity 0.15s',
+          }}
           onMouseEnter={e => { e.currentTarget.style.opacity = '0.82'; }}
           onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
         >
@@ -445,67 +555,82 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       )}
 
       {(phase === 'running' || phase === 'sold') && (
-        <div style={{ maxWidth: 560 }}>
+        <div style={{ maxWidth: 520 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.7rem' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
               {phase === 'running' ? 'Bidding in progress' : 'Auction complete'}
             </p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: phase === 'sold' ? PALETTE.red : PALETTE.inkMuted }}>{elapsed}ms</p>
           </div>
-          <div style={{ height: '2px', background: PALETTE.ink + '08', marginBottom: '1.2rem', position: 'relative', overflow: 'hidden' }}>
-            <motion.div animate={{ scaleX: phase === 'sold' ? 1 : 0.7 }} transition={{ duration: 0.5 }}
-              style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: phase === 'sold' ? PALETTE.red : PALETTE.inkMuted }} />
+          <div style={{ height: '1px', background: PALETTE.border, marginBottom: '1.5rem', position: 'relative', overflow: 'hidden' }}>
+            <motion.div
+              animate={{ scaleX: phase === 'sold' ? 1 : 0.7 }}
+              transition={{ duration: 0.5 }}
+              style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: phase === 'sold' ? PALETTE.red : PALETTE.inkMuted }}
+            />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: '1.5rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1.5rem' }}>
             <AnimatePresence>
               {bids.map((bid, i) => (
-                <motion.div key={bid.buyer + i}
-                  initial={{ opacity: 0, x: -16, height: 0 }} animate={{ opacity: 1, x: 0, height: 'auto' }} transition={{ duration: 0.25 }}
-                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0', borderBottom: '1px solid ' + PALETTE.border }}>
+                <motion.div
+                  key={bid.buyer + i}
+                  initial={{ opacity: 0, x: -12, height: 0 }}
+                  animate={{ opacity: 1, x: 0, height: 'auto' }}
+                  transition={{ duration: 0.25 }}
+                  style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.7rem 0', borderBottom: `1px solid ${PALETTE.border}` }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                     <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp}ms</span>
                     <span style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{bid.buyer}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                     <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, letterSpacing: '0.04em', width: '4.5rem', textAlign: 'right' }}>£{bid.amount.toFixed(4)}</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, width: '4.5rem', textAlign: 'right' }}>£{bid.amount.toFixed(4)}</span>
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
+
           <AnimatePresence>
             {phase === 'sold' && winner && (
-              <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
-                style={{ background: PALETTE.red + '08', border: '1px solid ' + PALETTE.red + '25', padding: '1.2rem 1.5rem', marginBottom: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.8rem' }}>
-                  <div>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.3rem' }}>SOLD</p>
-                    <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{winner.buyer}</p>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.2rem', textTransform: 'capitalize' }}>{winner.segment}</p>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '1.4rem', color: PALETTE.red, letterSpacing: '0.02em' }}>£{winner.amount.toFixed(4)}</p>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.2rem' }}>{elapsed}ms elapsed</p>
-                  </div>
-                </div>
-                <div style={{ height: '1px', background: PALETTE.border, marginBottom: '0.8rem' }} />
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                style={{
+                  borderLeft: `3px solid ${PALETTE.red}`,
+                  paddingLeft: '1.5rem',
+                  marginBottom: '1.5rem',
+                }}
+              >
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.25em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Sold</p>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', color: PALETTE.ink, marginBottom: '0.3rem' }}>{winner.buyer}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '1.2rem', color: PALETTE.red, letterSpacing: '0.02em', marginBottom: '0.8rem' }}>£{winner.amount.toFixed(4)}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
                   In a real auction, the winner receives: a behavioural profile, segment classifications, a vulnerability window{homeLoc ? `, your approximate location (${homeLoc.location})` : ''}, and your emotional pattern data. You were not consulted. This transaction is legal.
                 </p>
               </motion.div>
             )}
           </AnimatePresence>
+
           {phase === 'sold' && (
-            <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+            <motion.button
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
               onClick={() => { setPhase('idle'); setBids([]); setElapsed(0); setWinner(null); }}
-              style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.inkFaint, background: 'none', border: '1px solid ' + PALETTE.border, padding: '0.5rem 1rem', cursor: 'pointer' }}>
+              style={{
+                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
+                textTransform: 'uppercase', color: PALETTE.inkFaint,
+                background: 'none', border: `1px solid ${PALETTE.border}`,
+                padding: '0.5rem 1rem', cursor: 'pointer',
+              }}
+            >
               Run again
             </motion.button>
           )}
         </div>
       )}
-    </motion.section>
+    </motion.div>
   );
 }
 
@@ -520,108 +645,180 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
   const activeCount = scenarios.filter(s => s.severity === 'critical' || s.severity === 'high').length;
   const heroScenario = scenarios[0];
   const secondaryScenarios = scenarios.slice(1);
+  const pad = 'clamp(2rem, 6vw, 5rem)';
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
+    <div style={{
+      maxWidth: 1000, margin: '0 auto',
+      padding: `0 ${pad}`,
+      paddingBottom: 'clamp(4rem, 10vw, 8rem)',
+      position: 'relative',
+    }}>
 
-      {/* Slow diagonal scan geometry — fixed to this page section */}
+      {/* Background geometry — top right, faint crosshair */}
       <svg style={{
-        position: 'absolute', top: 0, right: 0, width: '340px', height: '340px',
-        pointerEvents: 'none', overflow: 'visible', opacity: 0.6,
+        position: 'absolute', top: 0, right: 0,
+        width: '260px', height: '260px',
+        pointerEvents: 'none', overflow: 'visible',
       }}>
-        {/* Crosshair targeting reticle */}
-        <g transform="translate(240, 120)">
-          <circle cx={0} cy={0} r={60} fill="none" stroke="rgba(190,40,30,0.18)" strokeWidth="1" />
-          <circle cx={0} cy={0} r={40} fill="none" stroke="rgba(190,40,30,0.14)" strokeWidth="1" />
-          <circle cx={0} cy={0} r={4} fill="none" stroke="rgba(190,40,30,0.35)" strokeWidth="1" />
-          <line x1={-80} y1={0} x2={-10} y2={0} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
-          <line x1={10} y1={0} x2={80} y2={0} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
-          <line x1={0} y1={-80} x2={0} y2={-10} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
-          <line x1={0} y1={10} x2={0} y2={80} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
-          {/* Corner ticks on outer ring */}
-          {[0, 90, 180, 270].map(deg => {
-            const rad = (deg * Math.PI) / 180;
-            return (
-              <g key={deg} transform={`rotate(${deg})`}>
-                <line x1={55} y1={0} x2={65} y2={0} stroke="rgba(190,40,30,0.35)" strokeWidth="1.5" />
-              </g>
-            );
-          })}
+        <g transform="translate(200, 100)">
+          <circle cx={0} cy={0} r={55} fill="none" stroke="rgba(190,40,30,0.12)" strokeWidth="1" />
+          <circle cx={0} cy={0} r={35} fill="none" stroke="rgba(190,40,30,0.08)" strokeWidth="1" />
+          <circle cx={0} cy={0} r={3} fill="none" stroke="rgba(190,40,30,0.25)" strokeWidth="1" />
+          <line x1={-70} y1={0} x2={-8} y2={0} stroke="rgba(190,40,30,0.15)" strokeWidth="1" />
+          <line x1={8} y1={0} x2={70} y2={0} stroke="rgba(190,40,30,0.15)" strokeWidth="1" />
+          <line x1={0} y1={-70} x2={0} y2={-8} stroke="rgba(190,40,30,0.15)" strokeWidth="1" />
+          <line x1={0} y1={8} x2={0} y2={70} stroke="rgba(190,40,30,0.15)" strokeWidth="1" />
         </g>
-        {/* Diagonal grid lines */}
-        {[0, 1, 2, 3].map(i => (
-          <line key={i}
-            x1={i * 60} y1={0} x2={i * 60 + 200} y2={200}
-            stroke="rgba(26,24,20,0.025)" strokeWidth="1"
-          />
-        ))}
       </svg>
 
-      {/* OPENING */}
-      <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border, paddingTop: 'clamp(3rem, 8vw, 6rem)' }}>
-        <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>
+      {/* HEADER — Resist pattern */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={{
+          padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)',
+          borderBottom: `1px solid ${PALETTE.border}`,
+          marginBottom: 'clamp(3rem, 7vw, 5rem)',
+        }}
+      >
+        {/* Page label */}
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.7 }}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
+          }}
+        >
           04 / Risk
         </motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 5vw, 3.2rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.2rem', maxWidth: '20ch' }}>
+
+        {/* Active count — the big number */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '2.5rem' }}
+        >
+          <span style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(3.5rem, 10vw, 7rem)',
+            fontWeight: 400,
+            color: activeCount > 2 ? PALETTE.red : PALETTE.amber,
+            letterSpacing: '-0.04em', lineHeight: 1,
+          }}>
+            {activeCount}
+          </span>
+          <div>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block',
+            }}>active risk scenarios</span>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block', marginTop: '2px',
+            }}>from {totalMsgs.toLocaleString('en-GB')} messages</span>
+          </div>
+        </motion.div>
+
+        {/* Statement */}
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.9 }}
+          style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(1.6rem, 4vw, 2.8rem)',
+            fontWeight: 400, color: PALETTE.ink,
+            letterSpacing: '-0.02em', lineHeight: 1.25,
+            maxWidth: 600, marginBottom: '1.5rem',
+          }}
+        >
           These systems are operational today.
         </motion.h1>
 
-        {/* Active risk count — visual, not just text */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3, duration: 0.8 }}
-          style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '1.2rem' }}>
-          <span style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', color: activeCount > 2 ? PALETTE.red : PALETTE.amber, letterSpacing: '-0.04em', lineHeight: 1 }}>
-            {activeCount}
-          </span>
-          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-            active risk scenario{activeCount === 1 ? '' : 's'} from your {totalMsgs.toLocaleString('en-GB')} messages
-          </span>
-        </motion.div>
-
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.45, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '55ch' }}>
-          Each scenario below uses your actual data. None is hypothetical. The systems described are running now.
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.8,
+            fontStyle: 'italic', maxWidth: 560,
+          }}
+        >
+          Each scenario below uses your actual data. None is hypothetical. The systems described are running now, and the legal frameworks governing them permit what you are about to read.
         </motion.p>
-      </div>
+      </motion.div>
 
-      {/* HERO SCENARIO — most relevant, fully expanded */}
+      {/* HERO SCENARIO */}
       {heroScenario && <HeroScenario scenario={heroScenario} />}
 
-      {/* SECONDARY SCENARIOS — accordion */}
+      {/* SECONDARY SCENARIOS */}
       {secondaryScenarios.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
+        <div style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
           {secondaryScenarios.map((scenario, i) => (
             <ScenarioCard key={scenario.id} scenario={scenario} index={i} />
           ))}
         </div>
       )}
 
-      {/* RTB AUCTION — the mechanism behind all four */}
+      {/* RTB AUCTION */}
       <RTBAuction results={results} />
 
       {/* CLOSING */}
-      <div style={{ padding: 'clamp(3rem, 7vw, 5rem) clamp(2rem, 5vw, 4rem)' }}>
-        <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
+      <div>
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2.5rem', opacity: 0.12 }} />
-        <motion.p initial={{ opacity: 0, y: 6 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2.5rem', opacity: 0.10 }}
+        />
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2vw, 1.6rem)', color: PALETTE.ink, lineHeight: 1.65, maxWidth: '46ch', marginBottom: '1rem' }}>
+          style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)',
+            color: PALETTE.ink, lineHeight: 1.55,
+            maxWidth: '42ch', marginBottom: '1rem',
+          }}
+        >
           These scenarios are not speculative.
         </motion.p>
-        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '52ch' }}>
+          style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.85,
+            maxWidth: '52ch', marginBottom: '2.5rem',
+          }}
+        >
           They describe systems that are operational, legal, and commercially incentivised. The data that powers them was generated by you, collected without meaningful consent, and cannot be recalled.
         </motion.p>
-        <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 0.55 }} viewport={{ once: true }}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 0.5 }}
+          viewport={{ once: true }}
           transition={{ delay: 1, duration: 1 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2.5rem' }}>
+          style={{
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase',
+          }}
+        >
           End of risk assessment.
         </motion.p>
       </div>
+
     </div>
   );
 }

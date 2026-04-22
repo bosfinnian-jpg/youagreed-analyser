@@ -37,6 +37,18 @@ interface AnalysisResult {
   typeBreakdown?: Record<string, number>;
   emotionalTimeline?: unknown;
   mostVulnerablePeriod?: string;
+  psychologicalPortrait?: {
+    attachmentStyle: string | null;
+    communicationPattern: string | null;
+    primaryCopingMechanism: string | null;
+    emotionalBaselineLabel: string;
+    selfPerceptionThemes: string[];
+    relationshipDynamics: string | null;
+    dominantNarrative: string | null;
+    writingVoice: string | null;
+    inferredBeliefs?: string[];
+  };
+  scoreBreakdown?: Array<{ label: string; contribution: number; detail: string; category: string }>;
 }
 
 // ============================================================================
@@ -314,6 +326,140 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
 // MAIN EXPORT
 // ============================================================================
 
+
+// ============================================================================
+// PSYCHOLOGICAL PORTRAIT — the most revealing section
+// ============================================================================
+
+function PsychologicalPortraitSection({ portrait, lifeEvents }: {
+  portrait: NonNullable<AnalysisResult['psychologicalPortrait']>;
+  lifeEvents: AnalysisResult['lifeEvents'];
+}) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const beliefs = portrait.inferredBeliefs || [];
+
+  const portraitRows = [
+    portrait.emotionalBaselineLabel && { label: 'Emotional baseline', value: portrait.emotionalBaselineLabel },
+    portrait.attachmentStyle && { label: 'Attachment pattern', value: portrait.attachmentStyle },
+    portrait.primaryCopingMechanism && { label: 'Primary coping', value: portrait.primaryCopingMechanism },
+    portrait.dominantNarrative && { label: 'Dominant narrative', value: portrait.dominantNarrative },
+    portrait.relationshipDynamics && { label: 'Relationship dynamics', value: portrait.relationshipDynamics },
+    portrait.writingVoice && { label: 'Writing voice', value: portrait.writingVoice },
+  ].filter(Boolean) as Array<{ label: string; value: string }>;
+
+  return (
+    <ProfileSection index={0}>
+      <SectionHeader
+        label="Psychological portrait"
+        heading="What your writing reveals about how you think."
+        headingSize="clamp(1.6rem, 3.5vw, 2.4rem)"
+        body="This is not what you said. This is what the pattern of your saying it reveals — your attachment style, coping mechanisms, self-perception, and the beliefs embedded in how you communicate. None of this required you to answer a questionnaire."
+      />
+
+      <div ref={ref} style={{ display: 'flex', flexDirection: 'column' }}>
+        {portraitRows.map((row, i) => (
+          <motion.div
+            key={row.label}
+            initial={{ opacity: 0, x: -6 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: i * 0.08, duration: 0.5 }}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '180px 1fr',
+              gap: '2rem',
+              padding: '1.2rem 0',
+              borderBottom: `1px solid ${PALETTE.border}`,
+              alignItems: 'start',
+            }}
+          >
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '0.2rem' }}>
+              {row.label}
+            </p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.65 }}>
+              {row.value}
+            </p>
+          </motion.div>
+        ))}
+
+        {portrait.selfPerceptionThemes.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, x: -6 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ delay: portraitRows.length * 0.08, duration: 0.5 }}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '180px 1fr',
+              gap: '2rem',
+              padding: '1.2rem 0',
+              borderBottom: `1px solid ${PALETTE.border}`,
+              alignItems: 'start',
+            }}
+          >
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '0.2rem' }}>
+              Self-perception
+            </p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+              {portrait.selfPerceptionThemes.map((theme, i) => (
+                <span key={i} style={{
+                  fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
+                  textTransform: 'uppercase', color: PALETTE.red,
+                  padding: '3px 8px', border: `1px solid ${PALETTE.red}30`,
+                }}>{theme}</span>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {beliefs.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          style={{ marginTop: 'clamp(2rem, 4vw, 3rem)' }}
+        >
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
+          }}>
+            Inferred core beliefs
+          </p>
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.75, fontStyle: 'italic',
+            maxWidth: '55ch', marginBottom: '1.5rem',
+          }}>
+            These are not statements you made. They are beliefs the system infers from how you frame yourself, others, and the world across hundreds of messages.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {beliefs.map((belief, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -6 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ delay: 0.7 + i * 0.1, duration: 0.5 }}
+                style={{
+                  padding: '1.1rem 0 1.1rem 1.5rem',
+                  borderBottom: `1px solid ${PALETTE.border}`,
+                  borderLeft: `2px solid ${PALETTE.red}30`,
+                }}
+              >
+                <p style={{
+                  fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
+                  fontStyle: 'italic', color: PALETTE.ink, lineHeight: 1.5,
+                }}>
+                  &ldquo;{belief}&rdquo;
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+    </ProfileSection>
+  );
+}
+
 export default function ProfilePage({ results }: { results: AnalysisResult }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const heroInView = useInView(heroRef, { once: true });
@@ -386,7 +532,17 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       </div>
 
       {/* ================================================================
-          INFERRED ATTRIBUTES — the confrontational core
+          PSYCHOLOGICAL PORTRAIT — the confrontational core, first
+          ================================================================ */}
+      {results.psychologicalPortrait && (
+        <PsychologicalPortraitSection
+          portrait={results.psychologicalPortrait}
+          lifeEvents={results.lifeEvents}
+        />
+      )}
+
+      {/* ================================================================
+          INFERRED ATTRIBUTES
           ================================================================ */}
       <ProfileSection index={1}>
         <SectionHeader

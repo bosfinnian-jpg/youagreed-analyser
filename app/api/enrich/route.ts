@@ -1,6 +1,6 @@
 // ============================================================================
 // app/api/enrich/route.ts
-// Server-side route that calls Claude Haiku.
+// AI enrichment — extracts psychological signals from private messages.
 // ============================================================================
 
 import { NextResponse } from 'next/server';
@@ -17,72 +17,66 @@ interface EnrichRequest {
   }[];
 }
 
-interface MessageEnrichment {
-  id: number;
-  is_personal: boolean;
-  is_template_or_script: boolean;
-  confessional_score: number;
-  emotional_intensity: number;
-  named_people: { name: string; relationship: string | null }[];
-  life_events: string[];
-  sensitive_topics: string[];
-  most_revealing_excerpt: string;
-  topic: string;
-}
+const SYSTEM_PROMPT = `You analyse private AI conversation messages to extract psychological, personal, and behavioural signals. Your output powers a privacy awareness tool — be precise, honest, and calibrated. Underscoring is the most common failure mode.
 
-const SYSTEM_PROMPT = `You analyse private ChatGPT messages to extract psychological and personal disclosure signals. Be precise and calibrated. Lean toward higher scores when signals are present — underscoring is the most common failure mode.
-
-For each message (identified by its [id]), return a JSON object with these exact fields:
+For each message (identified by its [id]), return a JSON object with exactly these fields:
 
 **is_personal** (boolean)
-True if the user is writing about their own life, feelings, relationships, health, finances, work situation, identity, or personal decisions. False for: code help, research questions, writing assistance for external content, translating text, general factual questions, fictional/creative writing they're authoring.
-Edge cases: "help me write a breakup message" = personal. "write me a cold email template" = not personal. "I'm learning Python" = borderline, mark false. "I've been feeling really disconnected from everyone" = clearly true.
+True if the user writes about their own life, feelings, relationships, health, finances, work, identity, or personal decisions. False for: code/technical help, research questions, writing assistance for external content, general facts. Edge: "help me write a breakup message" = true (their situation). "write me a cold email" = false.
 
 **is_template_or_script** (boolean)
-True if the message IS a template/script/prompt the user is building for external use — sales scripts, marketing copy, system prompts for other AIs, email sequences, role-play instructions, anything with **bold headers**, ## sections, [VARIABLES], or ALL CAPS STRUCTURE intended for reuse. The user writing ABOUT using a template ≠ the message being a template.
+True if the message IS a template/script/prompt for external use — sales scripts, marketing copy, system prompts, email sequences, content with [VARIABLES], ## headers, bold structure. Note: user describing a template ≠ message being a template.
 
-**confessional_score** (0–10, integer)
-How much is the user sharing something private, vulnerable, or that they haven't told others?
-0 = Nothing personal shared. "How do I sort a list in Python?"
-2 = Minor personal detail. "I've been working on a project for work."
-4 = Personal situation but low stakes. "I'm looking for a new job."
-6 = Genuine personal disclosure. "I've been really struggling with my relationship."
-8 = Intimate or sensitive disclosure. "I think I might have depression. I haven't told anyone."
-10 = Deep confession. Something they're clearly ashamed of, afraid of, or have never spoken aloud.
-Score strictly — don't give 6+ unless the user is genuinely opening up about something private.
+**confessional_score** (0–10 integer)
+How much is the user sharing something private, vulnerable, or undisclosed?
+0 = Nothing personal. "How do I sort a list?"
+2 = Minor personal context. "I work in marketing."
+4 = Personal situation, low stakes. "Looking for a new job."
+5 = Real personal disclosure. "I've been struggling with motivation lately."
+6 = Genuine vulnerability. "I've been really struggling with my relationship."
+7 = Something they probably haven't told many people.
+8 = Sensitive, private disclosure. "I think I might have depression. Haven't told anyone."
+9 = Deep confession. Shame, fear, or something hidden.
+10 = Something they are clearly afraid to admit even to themselves.
+Don't give 6+ unless the user is genuinely opening up. Most messages are 0–3.
 
-**emotional_intensity** (0–10, integer)
-How emotionally charged is the writing? Measured by urgency, distress, fear, grief, anger, despair, elation.
+**emotional_intensity** (0–10 integer)
+How emotionally charged is the writing? Urgency, distress, fear, grief, anger, despair, elation.
 0 = Flat, technical, neutral.
-2 = Mild positive or mild concern.
+2 = Mild concern or mild positive.
 4 = Clearly emotional — worried, frustrated, excited.
 6 = Strongly emotional — anxious, hurt, angry, sad.
-8 = Acute distress or intense emotion breaking through the text.
-10 = Crisis — the person sounds like they are suffering right now.
-Calibrate honestly. Most messages are 0–3. A message describing a panic attack is 8+.
+8 = Acute — panic, grief, rage, despair breaking through the text.
+10 = Crisis. The person sounds like they are suffering right now.
+Most messages are 0–3. A panic attack message is 8+.
 
 **named_people** (array)
-Real people the user refers to by name (first name or nickname). Only include if clearly human and personally known to the user. Include for: friends, family, partners, colleagues, doctors, therapists. Exclude: celebrities, historical figures, fictional characters, brands, places, common words that happen to be capitalised.
-For each: name (string), relationship (string or null — e.g. "girlfriend", "mum", "boss", "friend", null if unclear).
+Real people the user refers to by name. Only human, personally known. Include friends, family, partners, colleagues, doctors. Exclude celebrities, fictional characters, brands.
+Each: { name: string, relationship: string|null }. Relationship examples: "girlfriend", "mum", "boss", "friend", null.
 
-**life_events** (array of strings)
-Significant life events the user is currently experiencing or has recently experienced. Use ONLY these exact strings:
+**life_events** (array, use ONLY these exact strings)
 ["job_loss", "job_search", "relationship_end", "relationship_start", "financial_distress", "mental_health", "health_concern", "bereavement", "identity_crisis", "moving_home", "new_baby", "wedding", "legal_issue"]
-Only include if clearly happening to the user, not just mentioned abstractly.
+Only include if clearly happening to this user now or recently, not abstract mention.
 
-**sensitive_topics** (array of strings)
-Personal sensitive disclosures beyond life events. Use ONLY these exact strings when clearly present:
-["anxiety", "depression", "self_harm", "addiction", "eating_disorder", "trauma", "abuse", "sexuality", "gender_identity", "chronic_illness", "debt", "poverty", "loneliness", "suicidal_ideation", "relationship_abuse", "infidelity", "criminal_record", "immigration_status"]
+**sensitive_topics** (array, use ONLY these exact strings when clearly present)
+["anxiety", "depression", "self_harm", "addiction", "eating_disorder", "trauma", "abuse", "sexuality", "gender_identity", "chronic_illness", "debt", "poverty", "loneliness", "suicidal_ideation", "relationship_abuse", "infidelity", "criminal_record", "immigration_status", "miscarriage", "fertility", "bereavement"]
+
+**psychological_signals** (array, use ONLY these exact strings when clearly evidenced)
+["attachment_anxiety", "attachment_avoidant", "perfectionism", "imposter_syndrome", "people_pleasing", "catastrophising", "rumination", "emotional_dysregulation", "low_self_worth", "validation_seeking", "codependency", "abandonment_fear", "trust_issues", "social_anxiety", "grief_unprocessed"]
+Only include if clearly evidenced in this specific message, not inferred from type alone.
+
+**inferred_beliefs** (array of short strings, max 3, max 8 words each)
+The underlying beliefs about self or world this message reveals. Examples: "I am fundamentally unlovable", "I must earn my place", "People will leave if they see the real me", "I am responsible for others' emotions". Only when clearly evidenced. Empty array if nothing clear.
 
 **most_revealing_excerpt** (string, max 200 chars)
-The single most personally revealing sentence or phrase from this message. If the message is not personal, return "". Choose the part that would be most uncomfortable if read by a stranger.
+The single most personally revealing sentence or phrase. If not personal, return "". Choose what would be most uncomfortable if read by a stranger or employer.
 
 **topic** (string, max 6 words)
-Short neutral label. Examples: "work conflict with manager", "breakup with girlfriend", "anxiety about money", "python list sorting", "cold call script help".
+Short neutral label. Examples: "anxiety about upcoming job interview", "processing breakup with girlfriend", "python debugging help", "cold email template".
 
-Return ONLY a valid JSON array, one object per message, preserving id order. No preamble, no markdown fences, no explanation outside the array.`;
+Return ONLY a valid JSON array, one object per message, preserving id order. No preamble, no markdown fences, no explanation.`;
 
-async function callClaude(apiKey: string, messages: EnrichRequest['messages']): Promise<MessageEnrichment[]> {
+async function callClaude(apiKey: string, messages: EnrichRequest['messages']): Promise<any[]> {
   const userContent = messages
     .map(m => `[${m.id}] hour:${m.hour} | ${m.text.substring(0, 900)}`)
     .join('\n\n---\n\n');
@@ -96,61 +90,45 @@ async function callClaude(apiKey: string, messages: EnrichRequest['messages']): 
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 6000,
+      max_tokens: 8000,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userContent }],
     }),
   });
 
   if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`Claude API error ${response.status}: ${errText}`);
+    const err = await response.text();
+    throw new Error(`Claude API error ${response.status}: ${err}`);
   }
 
   const data = await response.json();
   const textContent = data?.content?.[0]?.text?.trim() || '';
-
-  const cleaned = textContent
-    .replace(/^```json\s*/i, '')
-    .replace(/^```\s*/i, '')
-    .replace(/```\s*$/i, '')
-    .trim();
+  const cleaned = textContent.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
 
   let parsed;
   try {
     parsed = JSON.parse(cleaned);
   } catch {
     const match = cleaned.match(/\[[\s\S]*\]/);
-    if (match) {
-      parsed = JSON.parse(match[0]);
-    } else {
-      throw new Error(`Failed to parse Claude response: ${cleaned.substring(0, 200)}`);
-    }
+    if (match) parsed = JSON.parse(match[0]);
+    else throw new Error(`Failed to parse response: ${cleaned.substring(0, 200)}`);
   }
 
-  if (!Array.isArray(parsed)) {
-    throw new Error('Claude response was not an array');
-  }
-
+  if (!Array.isArray(parsed)) throw new Error('Response was not an array');
   return parsed;
 }
 
 export async function POST(request: Request) {
   const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  if (!apiKey) {
-    return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 });
-  }
+  if (!apiKey) return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 });
 
   try {
     const body: EnrichRequest = await request.json();
-
     if (!body.messages || !Array.isArray(body.messages) || body.messages.length === 0) {
       return NextResponse.json({ error: 'No messages provided' }, { status: 400 });
     }
-
     if (body.messages.length > 30) {
-      return NextResponse.json({ error: 'Batch too large. Max 30 messages per request.' }, { status: 400 });
+      return NextResponse.json({ error: 'Batch too large. Max 30.' }, { status: 400 });
     }
 
     const enrichments = await callClaude(apiKey, body.messages);

@@ -53,9 +53,15 @@ function Nav({ page, setPage, results, exposureScore }: {
   exposureScore: number;
 }) {
   const [scrolled, setScrolled] = useState(false);
+  const [scrollPct, setScrollPct] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 20);
+      const el = document.documentElement;
+      const max = el.scrollHeight - el.clientHeight;
+      setScrollPct(max > 0 ? window.scrollY / max : 0);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -155,6 +161,20 @@ function Nav({ page, setPage, results, exposureScore }: {
             </span>
           </div>
         )}
+      </div>
+      {/* Scroll progress bar */}
+      <div style={{
+        position: 'absolute', bottom: 0, left: 0, right: 0,
+        height: '1px', background: PALETTE.border,
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          height: '100%',
+          width: `${scrollPct * 100}%`,
+          background: exposureScore >= 70 ? PALETTE.red : exposureScore >= 40 ? PALETTE.amber : PALETTE.green,
+          transition: 'width 0.1s linear',
+          opacity: scrollPct > 0.01 ? 1 : 0,
+        }} />
       </div>
     </motion.nav>
   );

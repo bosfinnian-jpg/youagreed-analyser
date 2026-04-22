@@ -248,10 +248,10 @@ export default function SourcesPage({ connectedSources, onUpload }: {
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
           03 / Data sources
         </p>
-        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>
+        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1rem' }}>
           How much do they know?
         </h1>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 600 }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 600 }}>
           Each source you add expands the profile. A single export is enough to demonstrate the problem. More makes the argument harder to ignore.
         </p>
       </motion.div>

@@ -427,11 +427,11 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                           {attr.category}
                         </span>
                       </div>
-                      <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink, lineHeight: 1.35 }}>{attr.label}</p>
+                      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.35 }}>{attr.label}</p>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
                       <div style={{ textAlign: 'right' }}>
-                        <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: attr.confidence > 70 ? PALETTE.red : PALETTE.inkMuted, letterSpacing: '-0.01em' }}>
+                        <span style={{ fontFamily: TYPE.mono, fontSize: 'clamp(1rem, 1.6vw, 1.2rem)', color: attr.confidence > 70 ? PALETTE.red : PALETTE.inkMuted, letterSpacing: '-0.01em' }}>
                           {attr.confidence}%
                         </span>
                       </div>

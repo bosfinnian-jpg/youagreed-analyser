@@ -383,7 +383,7 @@ function TierImmediate({ analysis }: { analysis: DeepAnalysis }) {
                           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem',
                         }}>What this doesn't cover</p>
                         <p style={{
-                          fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted,
+                          fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.inkMuted,
                           lineHeight: 1.6,
                         }}>{step.gap}</p>
                       </div>
@@ -426,7 +426,7 @@ function TierImmediate({ analysis }: { analysis: DeepAnalysis }) {
         <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '1.4rem' }}>
           <CoverageBar coverage={totalCoverage} label="Combined coverage across all steps" />
           <p style={{
-            fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkFaint,
+            fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint,
             fontStyle: 'italic', marginTop: '1rem', lineHeight: 1.6,
           }}>
             Even completing every step above, the data already embedded in trained model weights remains. These actions only limit future exposure.
@@ -510,11 +510,11 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
                 color: PALETTE.redMuted, textTransform: 'uppercase',
               }}>{right.article}</span>
               <span style={{
-                fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink, fontWeight: 400,
+                fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, fontWeight: 400,
               }}>{right.title}</span>
             </div>
             <p style={{
-              fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted,
+              fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.inkMuted,
               lineHeight: 1.6, marginBottom: '1rem',
             }}>{right.description}</p>
             <div style={{
@@ -631,7 +631,7 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
                 </div>
 
                 <p style={{
-                  fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkFaint,
+                  fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint,
                   fontStyle: 'italic', marginTop: '1.2rem', lineHeight: 1.6,
                 }}>
                   Fill in the bracketed fields before sending. Send to privacy@openai.com with the subject line: "Subject Access Request — Article 15 UK GDPR". They have 30 days to respond.
@@ -761,7 +761,7 @@ function TierStructural() {
               style={{ background: PALETTE.bg, padding: '1.4rem' }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{alt.name}</span>
+                <span style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{alt.name}</span>
                 {alt.privacy === 100 && (
                   <span style={{
                     fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em',

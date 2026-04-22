@@ -262,6 +262,26 @@ export default function Home() {
           <span>A critical web tool</span>
         </motion.header>
 
+        {/* Vertical margin rules — printed document feel */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ delay: 1.8, duration: 1.4 }}
+          style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}
+        >
+          <div style={{
+            position: 'absolute', top: '15%', bottom: '15%',
+            left: 'clamp(20px, 5vw, 80px)',
+            width: '1px',
+            background: 'linear-gradient(180deg, transparent, rgba(240,238,232,0.06) 30%, rgba(240,238,232,0.06) 70%, transparent)',
+          }} />
+          <div style={{
+            position: 'absolute', top: '15%', bottom: '15%',
+            right: 'clamp(20px, 5vw, 80px)',
+            width: '1px',
+            background: 'linear-gradient(180deg, transparent, rgba(240,238,232,0.06) 30%, rgba(240,238,232,0.06) 70%, transparent)',
+          }} />
+        </motion.div>
+
         {/* Hero */}
         <section className="ya-hero" style={{
           flex: 1, display: 'flex', flexDirection: 'column',
@@ -289,17 +309,22 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.4, delay: 1.3, ease: EASE }}
-              style={{
-                fontFamily: SERIF, fontSize: 'clamp(17px, 1.6vw, 20px)',
-                lineHeight: 1.7, color: COLOR.inkMuted,
-                maxWidth: '540px', margin: '0 auto',
-              }}
+              style={{ maxWidth: '580px', margin: '0 auto' }}
             >
-              <p style={{ margin: '0 0 24px' }}>
+              <p style={{
+                fontFamily: SERIF, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
+                lineHeight: 1.75, color: 'rgba(240,238,232,0.75)',
+                margin: '0 0 1.6rem',
+              }}>
                 This is a critical web tool. It takes your exported
                 ChatGPT history and produces the dossier a data broker would build from it.
               </p>
-              <p style={{ margin: 0 }}>
+              <p style={{
+                fontFamily: SERIF, fontSize: 'clamp(1rem, 1.7vw, 1.2rem)',
+                lineHeight: 1.75, color: 'rgba(240,238,232,0.45)',
+                margin: 0,
+                fontStyle: 'italic',
+              }}>
                 The analysis runs in your browser. Nothing is uploaded.
                 What you learn is not reversible.
               </p>

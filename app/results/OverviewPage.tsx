@@ -184,16 +184,16 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: i * 0.07 }}
             onClick={() => setPage(finding.page)}
-            style={{ background: 'none', border: 'none', borderBottom: `1px solid ${PALETTE.border}`, padding: '0.9rem 0', cursor: 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', transition: 'padding-left 0.15s' }}
+            style={{ background: 'none', border: 'none', borderBottom: `1px solid ${PALETTE.border}`, padding: '1.2rem 0', cursor: 'pointer', textAlign: 'left', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', transition: 'padding-left 0.15s', width: '100%' }}
             onMouseEnter={e => { e.currentTarget.style.paddingLeft = '0.5rem'; }}
             onMouseLeave={e => { e.currentTarget.style.paddingLeft = '0'; }}
           >
             <div>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.2rem' }}>{finding.label}</p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.ink }}>{finding.value}</p>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.15rem', textTransform: 'capitalize' }}>{finding.detail}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>{finding.label}</p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.35rem)', color: PALETTE.ink, letterSpacing: '-0.01em', marginBottom: '0.2rem' }}>{finding.value}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'capitalize', lineHeight: 1.5 }}>{finding.detail}</p>
             </div>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, flexShrink: 0 }}>→</span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, flexShrink: 0 }}>→</span>
           </motion.button>
         ))}
       </div>
@@ -244,12 +244,15 @@ export default function OverviewPage({ results, sources, setPage }: {
           <svg style={{ position: 'absolute', top: 0, left: -8, pointerEvents: 'none', overflow: 'visible' }} width="24" height="24">
             <path d="M 20 2 L 2 2 L 2 20" fill="none" stroke="rgba(220,60,50,0.25)" strokeWidth="1" />
           </svg>
-          <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+          <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.4rem, 5.5vw, 3.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.05, maxWidth: 640 }}>
             This is what your data reveals.
           </h1>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '0.6rem' }}>
-            AI exposure report / generated from your ChatGPT export
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+            <div style={{ width: 24, height: '1px', background: PALETTE.border }} />
+            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+              AI exposure report / generated from your ChatGPT export
+            </p>
+          </div>
         </motion.div>
 
         {/* Sources nudge — only if sources not all connected */}
@@ -292,7 +295,7 @@ export default function OverviewPage({ results, sources, setPage }: {
               { label: 'Avg message length', value: stats?.avgMessageLength ? `${stats.avgMessageLength} chars` : '—' },
             ].map((item, i) => (
               <div key={i}
-                style={{ background: PALETTE.bgPanel, padding: '1.4rem 1.6rem', position: 'relative', overflow: 'hidden', transition: 'background 0.25s' }}
+                style={{ background: PALETTE.bgPanel, padding: '1.8rem 2rem', position: 'relative', overflow: 'hidden', transition: 'background 0.25s', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', minHeight: '110px' }}
                 onMouseEnter={e => {
                   e.currentTarget.style.background = PALETTE.bgElevated;
                   const accent = e.currentTarget.querySelector('.stat-top-accent') as HTMLElement;
@@ -305,12 +308,20 @@ export default function OverviewPage({ results, sources, setPage }: {
                 }}
               >
                 <div className="stat-top-accent" style={{
-                  position: 'absolute', top: 0, left: '20%', right: '20%', height: '1px',
-                  background: `linear-gradient(90deg, transparent, rgba(240,237,232,0.25), transparent)`,
+                  position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
+                  background: `linear-gradient(90deg, ${PALETTE.border}, rgba(240,237,232,0.18), ${PALETTE.border})`,
                   opacity: 0, transition: 'opacity 0.3s',
                 }} />
-                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{item.label}</p>
-                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.2vw, 1.6rem)', color: PALETTE.ink, letterSpacing: '-0.02em' }}>{item.value}</p>
+                {/* Ghost index */}
+                <div style={{
+                  position: 'absolute', top: '0.8rem', right: '1rem',
+                  fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+                  color: 'rgba(240,237,232,0.06)', textTransform: 'uppercase',
+                }}>
+                  {String(i + 1).padStart(2, '0')}
+                </div>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>{item.label}</p>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1 }}>{item.value}</p>
               </div>
             ))}
           </motion.div>
@@ -406,12 +417,15 @@ export default function OverviewPage({ results, sources, setPage }: {
             <button
               key={i}
               onClick={() => setPage(item.page)}
-              style={{ background: PALETTE.bgPanel, border: 'none', cursor: 'pointer', padding: '1.8rem 2rem', textAlign: 'left', transition: 'background 0.15s' }}
+              style={{ background: PALETTE.bgPanel, border: 'none', cursor: 'pointer', padding: '2.2rem 2.4rem', textAlign: 'left', transition: 'background 0.15s', position: 'relative', overflow: 'hidden' }}
               onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgHover; }}
               onMouseLeave={e => { e.currentTarget.style.background = PALETTE.bgPanel; }}
             >
-              <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, marginBottom: '0.4rem' }}>{item.label} →</p>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.10em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>{item.sub}</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+                {String(i + 1).padStart(2, '0')}
+              </p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, marginBottom: '0.5rem', letterSpacing: '-0.01em' }}>{item.label} →</p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.09em', color: PALETTE.inkMuted, textTransform: 'uppercase', lineHeight: 1.6 }}>{item.sub}</p>
             </button>
           ))}
         </motion.div>

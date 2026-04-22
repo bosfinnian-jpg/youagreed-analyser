@@ -215,10 +215,10 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
       </div>
 
       {/* Title — larger, more weight */}
-      <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.25, marginBottom: '0.8rem', maxWidth: '36ch' }}>
+      <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.2, marginBottom: '0.8rem', maxWidth: '36ch' }}>
         {scenario.title}
       </h2>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '2rem', maxWidth: '55ch' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '2rem', maxWidth: '55ch' }}>
         {scenario.subtitle}
       </p>
 
@@ -283,7 +283,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
               {scenario.id.replace(/_/g, ' ')}
             </span>
           </div>
-          <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35, marginBottom: expanded ? '0.6rem' : 0 }}>
+          <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', fontWeight: 400, color: PALETTE.ink, lineHeight: 1.35, marginBottom: expanded ? '0.6rem' : 0 }}>
             {scenario.title}
           </h3>
         </div>
@@ -301,7 +301,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
             transition={{ duration: 0.28 }}
             style={{ overflow: 'hidden' }}
           >
-            <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.65, marginBottom: '1.2rem' }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.2rem' }}>
               {scenario.subtitle}
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1px', background: PALETTE.border, marginBottom: '1.2rem' }}>
@@ -312,14 +312,14 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
                 </div>
               ))}
             </div>
-            <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.2rem' }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '1.2rem' }}>
               {scenario.body}
             </p>
             <div style={{ padding: '1rem 1.2rem', background: PALETTE.bgElevated, borderLeft: `2px solid ${PALETTE.border}` }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
                 {scenario.precedent.source}
               </p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.7 }}>
                 {scenario.precedent.detail}
               </p>
             </div>

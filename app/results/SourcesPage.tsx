@@ -1,312 +1,363 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE } from './DashboardLayout';
 
-const SOURCE_DEFINITIONS = [
-  {
-    id: 'chatgpt',
-    label: 'ChatGPT',
-    company: 'OpenAI',
-    description: 'Your full conversation history. The most revealing source — contains your reasoning patterns, emotional disclosures, and cognitive fingerprint.',
-    reveals: ['Cognitive profile', 'Emotional patterns', 'Vulnerability windows', 'Personal relationships', 'Sensitive disclosures'],
-    howToExport: 'ChatGPT Settings → Data Controls → Export Data. You will receive a ZIP file. Upload conversations.json from inside it.',
-    severity: 'critical',
-    fileType: '.json',
-    icon: 'GPT' },
+// ============================================================================
+// COMING SOON SOURCES — what's planned but not yet implemented
+// ============================================================================
+
+const COMING_SOON = [
   {
     id: 'google',
     label: 'Google Takeout',
     company: 'Google',
-    description: 'Search history, location timeline, YouTube watch history, Gmail metadata. Builds a behavioural map across years of activity.',
-    reveals: ['Location history', 'Search patterns', 'Interest graph', 'Daily routines', 'Media consumption'],
-    howToExport: 'takeout.google.com → select Search History, Location History, YouTube. Download as JSON.',
-    severity: 'high',
     fileType: '.json / .zip',
-    icon: 'GGL' },
+    description: 'Search history, location timeline, YouTube watch history. Builds a behavioural map across years of activity.',
+    reveals: ['Location history', 'Search patterns', 'Daily routines', 'Interest graph'],
+    severity: 'high',
+  },
   {
     id: 'instagram',
     label: 'Instagram',
     company: 'Meta',
-    description: 'Message content, post history, story interactions, account connections. Reveals your social graph and emotional relationship patterns.',
-    reveals: ['Social graph', 'Message patterns', 'Emotional tone', 'Relationship history', 'Location tags'],
-    howToExport: 'Instagram Settings → Your Activity → Download Your Information. Select JSON format.',
-    severity: 'high',
     fileType: '.json / .zip',
-    icon: 'INS' },
+    description: 'Message content, post history, story interactions, account connections. Reveals your social graph and relationship patterns.',
+    reveals: ['Social graph', 'Message patterns', 'Relationship history', 'Location tags'],
+    severity: 'high',
+  },
   {
     id: 'spotify',
     label: 'Spotify',
-    company: 'Spotify',
-    description: 'Listening history and patterns. Music correlates strongly with emotional state — your data reveals mood cycles, sleep patterns, and stress responses.',
-    reveals: ['Emotional cycles', 'Sleep patterns', 'Stress indicators', 'Taste profile', 'Listening windows'],
-    howToExport: 'Spotify Account → Privacy Settings → Download Your Data. Takes up to 30 days.',
-    severity: 'medium',
+    company: 'Spotify AB',
     fileType: '.json',
-    icon: 'SPT' },
+    description: 'Listening history and temporal patterns. Music correlates strongly with emotional state — mood cycles, sleep patterns, stress responses.',
+    reveals: ['Emotional cycles', 'Sleep patterns', 'Stress indicators', 'Taste profile'],
+    severity: 'medium',
+  },
   {
     id: 'linkedin',
     label: 'LinkedIn',
     company: 'Microsoft',
-    description: 'Professional network, job search history, message content, skill endorsements. Used directly by employment screening algorithms.',
-    reveals: ['Professional network', 'Job search history', 'Career anxiety signals', 'Skill gaps', 'Salary expectations'],
-    howToExport: 'LinkedIn Settings → Data Privacy → Get a copy of your data. Select all options.',
-    severity: 'medium',
     fileType: '.zip',
-    icon: 'LIN' },
+    description: 'Professional network, job search history, message content. Used directly by employment screening algorithms.',
+    reveals: ['Professional network', 'Career anxiety', 'Salary signals', 'Skill gaps'],
+    severity: 'medium',
+  },
   {
     id: 'twitter',
     label: 'X / Twitter',
     company: 'X Corp',
-    description: 'Tweets, DMs, likes, search history. Political views, interests, and social behaviour are inferred and made available to data brokers and advertisers.',
-    reveals: ['Political signals', 'Interest graph', 'Social behaviour', 'Opinion patterns', 'Network map'],
-    howToExport: 'X Settings → Your Account → Download an archive of your data.',
-    severity: 'medium',
     fileType: '.zip',
-    icon: 'X' },
+    description: 'Tweets, DMs, likes, search history. Political views and social behaviour are inferred and sold to data brokers.',
+    reveals: ['Political signals', 'Opinion patterns', 'Social behaviour', 'Network map'],
+    severity: 'medium',
+  },
 ];
 
-const SEVERITY_COLORS = {
+const SEV_COLOR: Record<string, string> = {
   critical: PALETTE.red,
   high: PALETTE.amber,
-  medium: 'rgba(120,180,255,0.85)' };
+  medium: PALETTE.inkMuted,
+};
 
-function SourceCard({ source, connected, onUpload }: { source: typeof SOURCE_DEFINITIONS[0]; connected: boolean; onUpload: (id: string, file: File) => void }) {
-  const [expanded, setExpanded] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+// ============================================================================
+// COMING SOON CARD
+// ============================================================================
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file) onUpload(source.id, file);
-  };
+function ComingSoonCard({ source, index }: { source: typeof COMING_SOON[0]; index: number }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const sc = SEV_COLOR[source.severity] || PALETTE.inkFaint;
 
   return (
     <motion.div
-      layout
+      ref={ref}
+      initial={{ opacity: 0, y: 8 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: index * 0.08, duration: 0.6 }}
       style={{
-        background: PALETTE.bgPanel,
-        border: `1px solid ${connected ? 'rgba(30,130,55,0.25)' : PALETTE.border}`,
-        borderTop: `2px solid ${connected ? PALETTE.green : (SEVERITY_COLORS as any)[source.severity]}`,
-        overflow: 'hidden',
-        transition: 'border-color 0.3s' }}
+        borderBottom: `1px solid ${PALETTE.border}`,
+        paddingTop: '1.8rem',
+        paddingBottom: '1.8rem',
+        opacity: 0.72,
+      }}
     >
-      {/* Header */}
-      <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-        {/* Icon */}
-        <div style={{
-          width: 40, height: 40, flexShrink: 0,
-          background: connected ? 'rgba(30,130,55,0.08)' : PALETTE.bgElevated,
-          border: `1px solid ${connected ? 'rgba(30,130,55,0.2)' : PALETTE.border}`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: connected ? PALETTE.green : PALETTE.inkFaint }}>
-            {source.icon}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
+        <div style={{ flex: 1 }}>
+          {/* Label row */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.7rem', flexWrap: 'wrap' }}>
+            <span style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+              color: PALETTE.ink,
+            }}>{source.label}</span>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase',
+            }}>{source.company}</span>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em',
+              color: sc, textTransform: 'uppercase',
+              padding: '2px 6px', border: `1px solid ${sc}35`,
+            }}>{source.severity}</span>
+          </div>
+
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.75,
+            maxWidth: '52ch', marginBottom: '1rem',
+          }}>
+            {source.description}
+          </p>
+
+          {/* Reveals */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {source.reveals.map((r, i) => (
+              <span key={i} style={{
+                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: PALETTE.inkFaint,
+                padding: '2px 7px', border: `1px solid ${PALETTE.border}`,
+              }}>{r}</span>
+            ))}
+          </div>
+        </div>
+
+        {/* Coming soon badge */}
+        <div style={{ flexShrink: 0, textAlign: 'right' }}>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase',
+            display: 'block', whiteSpace: 'nowrap',
+          }}>
+            Coming soon
+          </span>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase',
+            display: 'block', marginTop: '0.2rem',
+          }}>
+            {source.fileType}
           </span>
         </div>
-
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.3rem' }}>
-            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', color: PALETTE.ink }}>{source.label}</p>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: (SEVERITY_COLORS as any)[source.severity], padding: '2px 6px', border: `1px solid ${(SEVERITY_COLORS as any)[source.severity]}30` }}>
-              {source.severity}
-            </span>
-            {connected && (
-              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', textTransform: 'uppercase', color: PALETTE.green, padding: '2px 6px', border: `1px solid ${PALETTE.green}30` }}>
-                Connected
-              </span>
-            )}
-          </div>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-            {source.company}
-          </p>
-        </div>
-
-        <button
-          onClick={() => setExpanded(!expanded)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', color: PALETTE.inkFaint, fontFamily: TYPE.mono, fontSize: '10px', padding: '0.25rem', flexShrink: 0 }}
-        >
-          {expanded ? '−' : '+'}
-        </button>
       </div>
-
-      <div style={{ padding: '0 1.5rem', paddingBottom: expanded ? 0 : '1.5rem' }}>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8, marginBottom: '1rem' }}>
-          {source.description}
-        </p>
-
-        {/* Reveals */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '1.2rem' }}>
-          {source.reveals.map((r, i) => (
-            <span key={i} style={{
-              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase',
-              color: PALETTE.inkMuted, padding: '3px 8px',
-              border: `1px solid ${PALETTE.border}` }}>
-              {r}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Expanded: how to export + upload */}
-      {expanded && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          style={{ padding: '0 1.5rem 1.5rem', borderTop: `1px solid ${PALETTE.border}`, paddingTop: '1.5rem', marginTop: '0' }}
-        >
-          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
-            How to export
-          </p>
-          <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8, marginBottom: '1.5rem' }}>
-            {source.howToExport}
-          </p>
-
-          {/* Upload zone */}
-          {!connected && (
-            <div
-              onDragOver={e => { e.preventDefault(); setDragging(true); }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={handleDrop}
-              onClick={() => inputRef.current?.click()}
-              style={{
-                border: `1px dashed ${dragging ? PALETTE.ink : PALETTE.border}`,
-                padding: '2rem',
-                textAlign: 'center',
-                cursor: 'pointer',
-                background: dragging ? PALETTE.bgElevated : 'transparent',
-                transition: 'all 0.2s' }}
-            >
-              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-                Drop {source.fileType} here or click to upload
-              </p>
-              <input
-                ref={inputRef}
-                type="file"
-                accept={source.fileType.includes('zip') ? '.json,.zip' : '.json'}
-                style={{ display: 'none' }}
-                onChange={e => { if (e.target.files?.[0]) onUpload(source.id, e.target.files[0]); }}
-              />
-            </div>
-          )}
-
-          {connected && (
-            <div style={{ padding: '1rem', background: PALETTE.greenFaint, border: `1px solid rgba(30,130,55,0.2)` }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.green, textTransform: 'uppercase' }}>
-                Source connected
-              </p>
-            </div>
-          )}
-        </motion.div>
-      )}
     </motion.div>
   );
 }
 
 // ============================================================================
-// SOURCES PAGE
+// MAIN PAGE
 // ============================================================================
-export default function SourcesPage({ connectedSources, onUpload }: {
+
+export default function SourcesPage({ connectedSources }: {
   connectedSources: Record<string, boolean>;
   onUpload: (id: string, file: File) => void;
 }) {
-  const connectedCount = Object.values(connectedSources).filter(Boolean).length;
+  const ref = useRef(null);
+  const pad = 'clamp(2rem, 6vw, 5rem)';
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 clamp(2rem, 6vw, 5rem)', paddingBottom: 'clamp(4rem, 10vw, 8rem)', position: 'relative' }}>
+    <div style={{
+      maxWidth: 1000, margin: '0 auto',
+      padding: `0 ${pad}`,
+      paddingBottom: 'clamp(4rem, 10vw, 8rem)',
+      position: 'relative',
+    }}>
 
-      {/* Network node geometry — data sources connecting */}
+      {/* Background geometry — network nodes */}
       <svg style={{
-        position: 'absolute', top: '1rem', right: '1rem',
-        width: '220px', height: '160px', pointerEvents: 'none', overflow: 'visible',
+        position: 'absolute', top: 0, right: 0,
+        width: '260px', height: '260px',
+        pointerEvents: 'none', overflow: 'visible',
       }}>
-        {/* Central node */}
-        <circle cx={110} cy={80} r={5} fill="none" stroke="rgba(190,40,30,0.3)" strokeWidth="1.5" />
-        <circle cx={110} cy={80} r={12} fill="none" stroke="rgba(190,40,30,0.08)" strokeWidth="1" />
-        {/* Satellite nodes with connecting lines */}
+        <circle cx={200} cy={80} r={5} fill="none" stroke="rgba(26,24,20,0.12)" strokeWidth="1.5" />
+        <circle cx={200} cy={80} r={18} fill="none" stroke="rgba(26,24,20,0.05)" strokeWidth="1" />
         {[
-          { x: 60, y: 30 }, { x: 170, y: 25 }, { x: 185, y: 90 },
-          { x: 155, y: 138 }, { x: 65, y: 130 }, { x: 32, y: 78 },
+          { x: 155, y: 35 }, { x: 240, y: 30 }, { x: 248, y: 110 },
+          { x: 215, y: 148 }, { x: 155, y: 130 },
         ].map((pt, i) => (
           <g key={i}>
-            <line x1={110} y1={80} x2={pt.x} y2={pt.y}
-              stroke="rgba(26,24,20,0.06)" strokeWidth="1"
-              strokeDasharray={i % 2 === 0 ? 'none' : '3 4'} />
-            <circle cx={pt.x} cy={pt.y} r={3}
-              fill="none"
-              stroke={i < 2 ? 'rgba(190,40,30,0.2)' : 'rgba(26,24,20,0.1)'}
-              strokeWidth="1" />
+            <line x1={200} y1={80} x2={pt.x} y2={pt.y}
+              stroke="rgba(26,24,20,0.05)" strokeWidth="1"
+              strokeDasharray={i % 2 === 0 ? 'none' : '3 5'} />
+            <circle cx={pt.x} cy={pt.y} r={2.5}
+              fill="none" stroke="rgba(26,24,20,0.08)" strokeWidth="1" />
           </g>
         ))}
       </svg>
 
-      {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem', paddingTop: 'clamp(3rem, 8vw, 6rem)' }}>
-        <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
-        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>
-          03 / Sources
-        </p>
-        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.2rem' }}>
-          How much do they know?
-        </h1>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 600 }}>
-          Each source you add expands the profile. A single export is enough to demonstrate the problem. More makes the argument harder to ignore.
-        </p>
-      </motion.div>
-
-      {/* Progress */}
+      {/* HEADER */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        style={{ padding: '1.2rem 1.5rem', background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}
+        transition={{ duration: 1 }}
+        style={{
+          padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)',
+          borderBottom: `1px solid ${PALETTE.border}`,
+          marginBottom: 'clamp(3rem, 6vw, 5rem)',
+        }}
       >
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          {connectedCount} of {SOURCE_DEFINITIONS.length} sources connected
-        </p>
-        <div style={{ flex: 1, height: '2px', background: PALETTE.bgElevated, overflow: 'hidden' }}>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: connectedCount / SOURCE_DEFINITIONS.length }}
-            transition={{ duration: 1, ease: [0.4, 0, 0.2, 1] }}
-            style={{ height: '100%', background: PALETTE.red, transformOrigin: 'left' }}
-          />
-        </div>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint }}>
-          {connectedCount === 0 ? 'ChatGPT connected' : connectedCount < 3 ? 'Each addition compounds the exposure' : 'Significant exposure surface'}
-        </p>
+        <motion.p
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.7 }}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
+          }}
+        >
+          03 / Sources
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', marginBottom: '2.5rem' }}
+        >
+          <span style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(3.5rem, 10vw, 7rem)',
+            fontWeight: 400, color: PALETTE.red,
+            letterSpacing: '-0.04em', lineHeight: 1,
+          }}>1</span>
+          <div>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block',
+            }}>source connected</span>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block', marginTop: '2px',
+            }}>of 6 planned</span>
+          </div>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.9 }}
+          style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(1.6rem, 4vw, 2.8rem)',
+            fontWeight: 400, color: PALETTE.ink,
+            letterSpacing: '-0.02em', lineHeight: 1.25,
+            maxWidth: 600, marginBottom: '1.5rem',
+          }}
+        >
+          ChatGPT is already enough.
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.8,
+            fontStyle: 'italic', maxWidth: 560,
+          }}
+        >
+          A single conversation export reveals more than most people expect. Additional sources compound the exposure — each one adds a new dimension to the profile that already exists about you. More sources are coming.
+        </motion.p>
       </motion.div>
 
-      {/* Source cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '1px', background: PALETTE.border }}>
-        {SOURCE_DEFINITIONS.map(source => (
-          <div key={source.id} style={{ background: PALETTE.bg }}>
-            <SourceCard
-              source={source}
-              connected={!!connectedSources[source.id]}
-              onUpload={onUpload}
-            />
+      {/* CHATGPT — the one live source */}
+      <div style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+          color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
+        }}>
+          Active source
+        </p>
+
+        <div style={{
+          borderLeft: `3px solid ${PALETTE.green}`,
+          paddingLeft: 'clamp(2rem, 4vw, 3rem)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
+            <span style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)',
+              color: PALETTE.ink,
+            }}>ChatGPT</span>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase',
+            }}>OpenAI</span>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+              color: PALETTE.green, textTransform: 'uppercase',
+              padding: '2px 7px', border: `1px solid ${PALETTE.green}35`,
+            }}>Connected</span>
           </div>
-        ))}
+
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.8,
+            maxWidth: '55ch', marginBottom: '1.2rem',
+          }}>
+            Your full conversation history — the most revealing source. Contains your reasoning patterns, emotional disclosures, vulnerability windows, and the cognitive fingerprint that cannot be deleted from a trained model.
+          </p>
+
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+            {['Cognitive profile', 'Emotional patterns', 'Vulnerability windows', 'Personal relationships', 'Sensitive disclosures'].map((r, i) => (
+              <span key={i} style={{
+                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: PALETTE.inkMuted,
+                padding: '2px 7px', border: `1px solid ${PALETTE.border}`,
+              }}>{r}</span>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* Privacy note */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        style={{ marginTop: '2rem', padding: '1.2rem 1.5rem', border: `1px solid ${PALETTE.border}` }}
-      >
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+      {/* COMING SOON */}
+      <div style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '1.5rem',
+          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+        }}>
+          <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase', whiteSpace: 'nowrap',
+          }}>In development</p>
+        </div>
+
+        <p style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+          color: PALETTE.inkMuted, lineHeight: 1.8,
+          fontStyle: 'italic', maxWidth: '55ch',
+          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+        }}>
+          Each of these sources adds a distinct layer to the profile. Together they make the argument undeniable — that modern surveillance is not a single database but an aggregate of dozens, each one legal, each one consented to in a terms of service nobody reads.
+        </p>
+
+        <div ref={ref}>
+          {COMING_SOON.map((source, i) => (
+            <ComingSoonCard key={source.id} source={source} index={i} />
+          ))}
+        </div>
+      </div>
+
+      {/* LOCAL PROCESSING NOTE */}
+      <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '2rem' }}>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.8rem',
+        }}>
           About your data
         </p>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
+        <p style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
+          color: PALETTE.inkFaint, lineHeight: 1.8, maxWidth: '52ch',
+        }}>
           All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists — not to collect it.
         </p>
-      </motion.div>
+      </div>
+
     </div>
   );
 }

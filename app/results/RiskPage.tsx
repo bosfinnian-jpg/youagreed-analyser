@@ -316,7 +316,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
               {scenario.body}
             </p>
             <div style={{ padding: '1rem 1.2rem', background: PALETTE.bgElevated, borderLeft: `2px solid ${PALETTE.border}` }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
                 {scenario.precedent.source}
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
@@ -463,11 +463,11 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                   initial={{ opacity: 0, x: -16, height: 0 }} animate={{ opacity: 1, x: 0, height: 'auto' }} transition={{ duration: 0.25 }}
                   style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.55rem 0', borderBottom: '1px solid ' + PALETTE.border }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp}ms</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, width: '2.5rem' }}>{bid.timestamp}ms</span>
                     <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.ink }}>{bid.buyer}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
                     <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, letterSpacing: '0.04em', width: '4.5rem', textAlign: 'right' }}>£{bid.amount.toFixed(4)}</span>
                   </div>
                 </motion.div>

@@ -497,13 +497,13 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                 { l: 'Contacts', v: String(results.findings.personalInfo.names.length) },
               ].map(item => (
                 <div key={item.l}>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2px' }}>{item.l}</p>
+                  <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{item.l}</p>
                   <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: results.privacyScore >= 70 && item.l === 'Quality' ? PALETTE.red : PALETTE.ink, textTransform: 'capitalize' }}>{item.v}</p>
                 </div>
               ))}
             </div>
             <div style={{ height: '1px', background: PALETTE.border, margin: '1rem 0' }} />
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em', color: PALETTE.inkFaint, lineHeight: 1.6 }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.7, fontStyle: 'italic' }}>
               This is the profile that would be available if this data entered the broker ecosystem.
             </p>
           </motion.div>
@@ -526,7 +526,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
                   </p>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, letterSpacing: '0.04em', flexShrink: 0 }}>{seg.cpm}</p>
                 </div>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em', color: PALETTE.inkFaint, marginBottom: '0.6rem' }}>{seg.category}</p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.inkFaint, marginBottom: '0.6rem' }}>{seg.category}</p>
                 <div style={{ height: '2px', background: PALETTE.ink + '08', position: 'relative', overflow: 'hidden' }}>
                   <motion.div
                     initial={{ scaleX: 0 }}
@@ -635,7 +635,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
 
 function ProfileSection({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+    <div style={{ padding: 'clamp(3rem, 7vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
       {children}
     </div>
   );
@@ -643,11 +643,11 @@ function ProfileSection({ children }: { children: React.ReactNode }) {
 
 function SectionHeader({ label, heading, headingSize, body }: { label: string; heading: string; headingSize: string; body: string }) {
   return (
-    <div style={{ marginBottom: '2rem' }}>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+    <div style={{ marginBottom: '2.5rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.7rem' }}>
         {label}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: headingSize, fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '0.8rem' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: headingSize, fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.15, marginBottom: '1rem' }}>
         {heading}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '55ch' }}>

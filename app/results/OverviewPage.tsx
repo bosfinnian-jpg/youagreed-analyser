@@ -86,13 +86,22 @@ function OpeningQuoteCard({ results }: { results: any }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, duration: 0.9 }}
-      style={{ padding: '2rem', background: PALETTE.bgPanel, borderLeft: `2px solid ${PALETTE.red}`, height: '100%', boxSizing: 'border-box' }}
+      style={{ padding: '2rem', background: PALETTE.bgPanel, borderLeft: `2px solid ${PALETTE.red}`, height: '100%', boxSizing: 'border-box', position: 'relative' }}
     >
-      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>
         Most exposing moment
       </p>
-      <blockquote style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.25rem)', fontStyle: 'italic', color: PALETTE.ink, lineHeight: 1.65, marginBottom: '1.2rem' }}>
-        &ldquo;{moment.excerpt?.substring(0, 240)}{moment.excerpt?.length > 240 ? '...' : ''}&rdquo;
+      <blockquote style={{
+        fontFamily: TYPE.serif,
+        fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
+        fontStyle: 'italic',
+        color: PALETTE.ink,
+        lineHeight: 1.75,
+        marginBottom: '1.4rem',
+        borderLeft: 'none',
+        paddingLeft: 0,
+      }}>
+        &ldquo;{moment.excerpt?.substring(0, 260)}{moment.excerpt?.length > 260 ? '…' : ''}&rdquo;
       </blockquote>
       {date && (
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
@@ -389,10 +398,10 @@ export default function OverviewPage({ results, sources, setPage }: {
           style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.border }}
         >
           {[
-            { label: 'Go deeper: your profile', sub: 'Cognitive fingerprint, social graph, locations', page: 'profile' as DashPage },
-            { label: 'Go deeper: your risks', sub: 'Insurance, employment, targeting, breach scenarios', page: 'risk' as DashPage },
-            { label: 'Go deeper: understand this', sub: 'What this data means and why it cannot be deleted', page: 'understand' as DashPage },
-            { label: 'What you can do', sub: 'Settings, legal rights, organisations, alternatives', page: 'resist' as DashPage },
+            { label: 'Your profile', sub: 'Cognitive fingerprint, social graph, locations', page: 'profile' as DashPage },
+            { label: 'Your risks', sub: 'Insurance, employment, targeting, breach scenarios', page: 'risk' as DashPage },
+            { label: 'Understand this', sub: 'Why your data cannot be deleted from a trained model', page: 'understand' as DashPage },
+            { label: 'What you can do', sub: 'Legal rights, real settings, organisations, alternatives', page: 'resist' as DashPage },
           ].map((item, i) => (
             <button
               key={i}

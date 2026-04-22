@@ -438,34 +438,35 @@ export default function TermsPage() {
         {/* Header — unified site header */}
         <header
           style={{
-            borderBottom: '1px solid rgba(26,24,20,0.10)',
             background: 'rgba(238,236,229,0.97)',
             position: 'sticky', top: 0, zIndex: 10,
             backdropFilter: 'blur(12px)',
+          }}
+        >
+          <div style={{
             height: '52px',
             padding: '0 clamp(1.5rem, 4vw, 3rem)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          }}
-        >
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: '1.1rem', letterSpacing: '-0.02em', color: '#1a1816' }}>
-              trace<span style={{ color: 'rgba(190,40,30,0.90)' }}>.ai</span>
-            </span>
-          </Link>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.38)' }}>
-              Terms of Service
-            </span>
-            <div style={{ width: '1px', height: '12px', background: 'rgba(26,24,20,0.15)' }} />
-            <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.28)' }}>2026</span>
+          }}>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <span style={{ fontFamily: "'EB Garamond', Georgia, serif", fontSize: '1.1rem', letterSpacing: '-0.02em', color: '#1a1816' }}>
+                trace<span style={{ color: 'rgba(190,40,30,0.90)' }}>.ai</span>
+              </span>
+            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.38)' }}>
+                Terms of Service
+              </span>
+              <div style={{ width: '1px', height: '12px', background: 'rgba(26,24,20,0.15)' }} />
+              <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.28)' }}>2026</span>
+            </div>
           </div>
-        </header>
           {/* Reading progress bar */}
-          <div style={{ height: '1px', background: 'rgba(26,24,20,0.12)', position: 'relative' }}>
+          <div style={{ height: '1px', background: 'rgba(26,24,20,0.10)', position: 'relative' }}>
             <div style={{
               position: 'absolute', left: 0, top: 0, height: '100%',
               width: `${readProgress}%`,
-              background: readProgress === 100 ? 'rgba(190,40,30,0.7)' : 'rgba(26,24,20,0.25)',
+              background: readProgress === 100 ? 'rgba(190,40,30,0.7)' : 'rgba(26,24,20,0.30)',
               transition: 'width 0.1s linear, background 0.3s',
             }} />
           </div>

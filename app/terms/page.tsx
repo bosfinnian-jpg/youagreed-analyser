@@ -412,7 +412,7 @@ export default function TermsPage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
         html, body {
-          background: #f4f2ed;
+          background: #eeece5;
           margin: 0;
           padding: 0;
           -webkit-font-smoothing: antialiased;
@@ -428,7 +428,7 @@ export default function TermsPage() {
         ref={contentRef}
         style={{
           minHeight: '100vh',
-          background: '#f4f2ed',
+          background: '#eeece5',
           color: '#1a1816',
           fontFamily: "'EB Garamond', Georgia, serif",
           fontSize: '15px',
@@ -439,7 +439,7 @@ export default function TermsPage() {
         <header
           style={{
             borderBottom: '1px solid rgba(26,24,20,0.10)',
-            background: 'rgba(244,242,237,0.96)',
+            background: 'rgba(238,236,229,0.97)',
             position: 'sticky',
             top: 0,
             zIndex: 10,

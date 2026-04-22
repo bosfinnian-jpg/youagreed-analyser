@@ -7,12 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 // DESIGN SYSTEM
 // ============================================================================
 export const PALETTE = {
-  bg: '#f4f2ed',
-  bgPanel: '#edead3',
-  bgElevated: '#e6e2d8',
-  bgHover: '#dedad0',
-  border: 'rgba(26,24,20,0.10)',
-  borderHover: 'rgba(26,24,20,0.18)',
+  bg: '#eeece5',
+  bgPanel: '#faf9f7',
+  bgElevated: '#f0ede8',
+  bgHover: '#f5f3ef',
+  border: 'rgba(26,24,20,0.14)',
+  borderHover: 'rgba(26,24,20,0.22)',
   ink: '#1a1816',
   inkMuted: 'rgba(26,24,20,0.58)',
   inkFaint: 'rgba(26,24,20,0.40)',
@@ -75,7 +75,7 @@ function Nav({ page, setPage, results, exposureScore }: {
       transition={{ duration: 0.8 }}
       style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? 'rgba(244,242,237,0.96)' : PALETTE.bg,
+        background: scrolled ? 'rgba(238,236,229,0.97)' : PALETTE.bg,
         borderBottom: `1px solid ${scrolled ? PALETTE.border : 'transparent'}`,
         backdropFilter: scrolled ? 'blur(12px)' : 'none',
         transition: 'background 0.3s, border-color 0.3s',
@@ -145,7 +145,7 @@ function Nav({ page, setPage, results, exposureScore }: {
             fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.08em',
             color: exposureScore >= 70 ? PALETTE.red : exposureScore >= 40 ? PALETTE.amber : PALETTE.green,
             fontWeight: 700,
-            textShadow: exposureScore >= 70 ? `0 0 12px ${PALETTE.red}` : exposureScore >= 40 ? `0 0 12px ${PALETTE.amber}` : 'none',
+            textShadow: 'none',
           }}>
             {exposureScore}/100
           </span>
@@ -205,7 +205,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
         body::after {
           content:''; position:fixed; inset:0; z-index:0;
-          background-image: radial-gradient(circle, rgba(26,24,20,0.07) 1px, transparent 1px);
+          background-image: radial-gradient(circle, rgba(26,24,20,0.09) 1px, transparent 1px);
           background-size: 40px 40px;
           opacity: 1; pointer-events:none;
           mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);

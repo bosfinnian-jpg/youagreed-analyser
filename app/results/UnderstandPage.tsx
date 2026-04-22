@@ -15,11 +15,11 @@ const TYPE = {
 };
 
 const C = {
-  bg: '#f4f2ed',
+  bg: '#eeece5',
   bgLift: '#18181680',
-  panel: 'rgba(26,24,20,0.04)',
-  border: 'rgba(26,24,20,0.10)',
-  borderStrong: 'rgba(26,24,20,0.22)',
+  panel: 'rgba(250,249,247,0.9)',
+  border: 'rgba(26,24,20,0.14)',
+  borderStrong: 'rgba(26,24,20,0.28)',
   text: '#1a1816',
   textMuted: 'rgba(26,24,20,0.58)',
   textFaint: 'rgba(26,24,20,0.38)',

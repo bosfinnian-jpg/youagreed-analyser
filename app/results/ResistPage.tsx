@@ -337,7 +337,7 @@ function TierImmediate({ analysis }: { analysis: DeepAnalysis }) {
                   <div style={{
                     width: 6, height: 6, borderRadius: '50%', marginTop: '0.5rem', flexShrink: 0,
                     background: step.isCompleted ? PALETTE.green : step.covers > 50 ? PALETTE.amber : PALETTE.red,
-                    boxShadow: step.isCompleted ? `0 0 6px ${PALETTE.green}` : step.covers < 30 ? `0 0 6px ${PALETTE.red}` : 'none',
+                    boxShadow: 'none',
                   }} />
                   <div>
                     <p style={{

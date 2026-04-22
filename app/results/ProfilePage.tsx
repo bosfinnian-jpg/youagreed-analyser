@@ -360,7 +360,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
         <motion.p
           initial={{ opacity: 0 }}
           animate={heroInView ? { opacity: 1 } : {}}
-          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.2rem' }}
+          style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.20em', color: PALETTE.inkMuted, textTransform: 'uppercase', marginBottom: '1.2rem' }}
         >
           02 — Profile
         </motion.p>
@@ -662,7 +662,7 @@ function ProfileSection({ children, index }: { children: React.ReactNode; index?
 function SectionHeader({ label, heading, headingSize, body }: { label: string; heading: string; headingSize: string; body: string }) {
   return (
     <div style={{ marginBottom: '2.5rem' }}>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.7rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.20em', color: PALETTE.inkMuted, textTransform: 'uppercase', marginBottom: '0.8rem' }}>
         {label}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: headingSize, fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1.2rem' }}>

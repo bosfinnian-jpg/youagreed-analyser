@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRef, useState, useEffect } from 'react';
 
 const COLOR = {
-  bg: '#f4f2ed',
+  bg: '#eeece5',
   ink: '#1a1816',
   inkMuted: 'rgba(26,24,20,0.55)',
   inkFaint: 'rgba(26,24,20,0.32)',

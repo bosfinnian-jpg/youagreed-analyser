@@ -13,14 +13,14 @@ import { analyzeExport, type AnalyzeProgress } from '@/app/results/analyzeExport
 // ============================================================================
 
 const COLOR = {
-  bg: '#0e0e0d',
-  ink: 'rgba(240,238,232,0.92)',
-  inkMuted: 'rgba(240,238,232,0.55)',
-  inkFaint: 'rgba(240,238,232,0.30)',
-  inkTrace: 'rgba(240,238,232,0.12)',
-  rule: 'rgba(240,238,232,0.18)',
-  accent: 'rgba(220,60,50,0.85)',
-  accentFaint: 'rgba(220,60,50,0.15)',
+  bg: '#eeece5',
+  ink: '#1a1816',
+  inkMuted: 'rgba(26,24,20,0.55)',
+  inkFaint: 'rgba(26,24,20,0.32)',
+  inkTrace: 'rgba(26,24,20,0.10)',
+  rule: 'rgba(26,24,20,0.15)',
+  accent: 'rgba(190,40,30,0.90)',
+  accentFaint: 'rgba(190,40,30,0.08)',
 } as const;
 
 const SERIF = "'EB Garamond', 'Times New Roman', Georgia, serif";
@@ -293,7 +293,7 @@ export default function UploadPage() {
                       }}
                       onMouseEnter={(e) => {
                         if (!isDragging) {
-                          (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(240,238,232,0.35)';
+                          (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(26,24,20,0.35)';
                         }
                       }}
                       onMouseLeave={(e) => {
@@ -304,16 +304,16 @@ export default function UploadPage() {
                     >
                       {/* Corner bracket marks — document scanning aesthetic */}
                       <svg style={{ position: 'absolute', top: 12, left: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 0 16 L 0 0 L 16 0" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                        <path d="M 0 16 L 0 0 L 16 0" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
                       </svg>
                       <svg style={{ position: 'absolute', top: 12, right: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 4 0 L 20 0 L 20 16" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                        <path d="M 4 0 L 20 0 L 20 16" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
                       </svg>
                       <svg style={{ position: 'absolute', bottom: 12, left: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 0 4 L 0 20 L 16 20" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                        <path d="M 0 4 L 0 20 L 16 20" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
                       </svg>
                       <svg style={{ position: 'absolute', bottom: 12, right: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 4 20 L 20 20 L 20 4" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(240,238,232,0.2)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
+                        <path d="M 4 20 L 20 20 L 20 4" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
                       </svg>
                       <div
                         style={{

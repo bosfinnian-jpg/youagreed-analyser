@@ -193,10 +193,10 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         borderBottom: `1px solid ${PALETTE.border}`,
         borderLeft: `4px solid ${sc}`,
         background: scenario.severity === 'critical'
-          ? `${PALETTE.red}05`
-          : scenario.severity === 'high' ? `rgba(255,179,0,0.02)` : 'transparent',
+          ? `rgba(190,40,30,0.04)`
+          : scenario.severity === 'high' ? `rgba(160,100,0,0.03)` : 'transparent',
         boxShadow: scenario.severity === 'critical'
-          ? `inset 4px 0 24px rgba(220,60,50,0.04)`
+          ? 'inset 3px 0 0 rgba(190,40,30,0.40)'
           : 'none',
         position: 'relative',
       }}
@@ -531,19 +531,19 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
       }}>
         {/* Crosshair targeting reticle */}
         <g transform="translate(240, 120)">
-          <circle cx={0} cy={0} r={60} fill="none" stroke="rgba(220,60,50,0.08)" strokeWidth="1" />
-          <circle cx={0} cy={0} r={40} fill="none" stroke="rgba(220,60,50,0.06)" strokeWidth="1" />
-          <circle cx={0} cy={0} r={4} fill="none" stroke="rgba(220,60,50,0.2)" strokeWidth="1" />
-          <line x1={-80} y1={0} x2={-10} y2={0} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
-          <line x1={10} y1={0} x2={80} y2={0} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
-          <line x1={0} y1={-80} x2={0} y2={-10} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
-          <line x1={0} y1={10} x2={0} y2={80} stroke="rgba(220,60,50,0.12)" strokeWidth="1" />
+          <circle cx={0} cy={0} r={60} fill="none" stroke="rgba(190,40,30,0.18)" strokeWidth="1" />
+          <circle cx={0} cy={0} r={40} fill="none" stroke="rgba(190,40,30,0.14)" strokeWidth="1" />
+          <circle cx={0} cy={0} r={4} fill="none" stroke="rgba(190,40,30,0.35)" strokeWidth="1" />
+          <line x1={-80} y1={0} x2={-10} y2={0} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
+          <line x1={10} y1={0} x2={80} y2={0} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
+          <line x1={0} y1={-80} x2={0} y2={-10} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
+          <line x1={0} y1={10} x2={0} y2={80} stroke="rgba(190,40,30,0.22)" strokeWidth="1" />
           {/* Corner ticks on outer ring */}
           {[0, 90, 180, 270].map(deg => {
             const rad = (deg * Math.PI) / 180;
             return (
               <g key={deg} transform={`rotate(${deg})`}>
-                <line x1={55} y1={0} x2={65} y2={0} stroke="rgba(220,60,50,0.2)" strokeWidth="1.5" />
+                <line x1={55} y1={0} x2={65} y2={0} stroke="rgba(190,40,30,0.35)" strokeWidth="1.5" />
               </g>
             );
           })}
@@ -560,7 +560,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
       {/* OPENING */}
       <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border }}>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
+          style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.22em', color: PALETTE.inkMuted, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
           04 — Risk assessment
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.7 }}

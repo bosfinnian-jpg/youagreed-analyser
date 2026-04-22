@@ -77,9 +77,9 @@ export default function ResultsPage() {
 
   if (!results) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0e0e0d' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f4f2ed' }}>
         <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2.4, repeat: Infinity }}
-          style={{ fontFamily: '"Courier Prime", monospace', fontSize: '11px', letterSpacing: '0.2em', color: 'rgba(26,24,20,0.2)', textTransform: 'uppercase' }}>
+          style={{ fontFamily: '"Courier Prime", monospace', fontSize: '11px', letterSpacing: '0.2em', color: 'rgba(26,24,20,0.35)', textTransform: 'uppercase' }}>
           {"Loading"}
         </motion.p>
       </div>

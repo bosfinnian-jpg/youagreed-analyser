@@ -334,7 +334,7 @@ export default function OverviewPage({ results, sources, setPage }: {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {activeRisks.map((risk, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.7rem' }}>
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: risk.active ? PALETTE.red : PALETTE.inkGhost, boxShadow: risk.active ? `0 0 8px ${PALETTE.red}` : 'none' }} />
+                  <div style={{ width: 7, height: 7, borderRadius: '50%', flexShrink: 0, background: risk.active ? PALETTE.red : PALETTE.inkGhost, boxShadow: 'none' }} />
                   <span style={{ fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.1em', color: risk.active ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase', flex: 1 }}>
                     {risk.label}
                   </span>

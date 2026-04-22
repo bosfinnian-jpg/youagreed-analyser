@@ -247,39 +247,31 @@ export default function Home() {
           >{m.text}</motion.div>
         ))}
 
-        {/* Header — masthead */}
+        {/* Header */}
         <motion.header className="ya-header"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, ease: EASE }}
+          transition={{ duration: 1.2, delay: 0.3, ease: EASE }}
           style={{
-            padding: '28px 48px', display: 'flex', justifyContent: 'space-between',
-            alignItems: 'center', position: 'relative', zIndex: 2,
+            padding: '0 48px', height: '52px',
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            position: 'relative', zIndex: 2,
             borderBottom: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          {/* Wordmark */}
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-            <span style={{
-              fontFamily: SERIF, fontSize: '1.3rem', fontWeight: 400,
-              fontStyle: 'italic', letterSpacing: '-0.02em', color: COLOR.ink,
-            }}>trace</span>
-            <span style={{
-              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.14em',
-              color: COLOR.accent, textTransform: 'uppercase',
-              position: 'relative', top: '-2px',
-            }}>.ai</span>
-          </div>
-          {/* Right meta */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
-            <span style={{
-              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
-              textTransform: 'uppercase', color: COLOR.inkFaint,
-            }}>Critical web tool</span>
-            <div style={{ width: '1px', height: '14px', background: COLOR.inkFaint, opacity: 0.3 }} />
-            <span style={{
-              fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
-              textTransform: 'uppercase', color: COLOR.inkFaint,
-            }}>MMXXVI</span>
+          {/* Wordmark — matches dashboard */}
+          <span style={{ fontFamily: SERIF, fontSize: '1.1rem', letterSpacing: '-0.02em', color: COLOR.ink }}>
+            trace<span style={{ color: COLOR.accent }}>.ai</span>
+          </span>
+
+          {/* Right — minimal classification meta */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: COLOR.inkFaint }}>
+              Critical web tool
+            </span>
+            <div style={{ width: '1px', height: '12px', background: COLOR.inkTrace }} />
+            <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: COLOR.inkFaint }}>
+              2026
+            </span>
           </div>
         </motion.header>
 

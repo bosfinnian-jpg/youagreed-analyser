@@ -79,9 +79,13 @@ export default function UploadPage() {
               setStage('Reading message content');
               setDetail(`Batch ${p.aiProgress.batchesDone} of ${p.aiProgress.batchesTotal}`);
             } else if (p.aiProgress.stage === 'merging') {
-              setProgress(92);
+              setProgress(88);
               setStage('Building your profile');
               setDetail(`${p.aiProgress.messagesEnriched} messages analysed`);
+            } else if (p.aiProgress.stage === 'synthesizing') {
+              setProgress(94);
+              setStage('Writing your intelligence briefing');
+              setDetail('Synthesising across the full corpus');
             } else if (p.aiProgress.stage === 'failed') {
               setStage('Finalising');
               setDetail('');

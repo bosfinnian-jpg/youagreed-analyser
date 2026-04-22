@@ -126,6 +126,17 @@ export interface DeepAnalysis {
   privacyScore: number;
   findings: any;
   juiciestMoments: any[];
+  synthesis?: {
+    characterSummary: string;
+    demographicPredictions: Array<{ attribute: string; value: string; confidence: number; evidence: string }>;
+    verbalTells: Array<{ tell: string; meaning: string; frequency: string }>;
+    predictedBehaviours: Array<{ behaviour: string; likelihood: string; evidence: string }>;
+    commercialTargets: Array<{ brand: string; category: string; why: string }>;
+    recurringConcerns: Array<{ concern: string; evidence: string }>;
+    unintentionalDisclosures: Array<{ disclosure: string; via: string }>;
+    inferredCoreBeliefs: string[];
+    generatedAt: number;
+  };
 }
 
 // ============================================================================

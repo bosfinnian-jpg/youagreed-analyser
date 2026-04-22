@@ -389,9 +389,11 @@ export default function SourcesPage({
             setSourceStates(prev => ({ ...prev, [sourceId]: { ...prev[sourceId], progress: 28, stage: 'Selecting messages' } }));
           } else if (p.aiProgress?.stage === 'enriching') {
             const pct = p.aiProgress.batchesTotal > 0
-              ? 30 + (p.aiProgress.batchesDone / p.aiProgress.batchesTotal) * 60
+              ? 30 + (p.aiProgress.batchesDone / p.aiProgress.batchesTotal) * 55
               : 50;
             setSourceStates(prev => ({ ...prev, [sourceId]: { ...prev[sourceId], progress: Math.round(pct), stage: `Analysing batch ${p.aiProgress!.batchesDone} of ${p.aiProgress!.batchesTotal}` } }));
+          } else if (p.aiProgress?.stage === 'synthesizing') {
+            setSourceStates(prev => ({ ...prev, [sourceId]: { ...prev[sourceId], progress: 90, stage: 'Writing intelligence briefing' } }));
           }
         } else if (p.phase === 'storing') {
           setSourceStates(prev => ({ ...prev, [sourceId]: { ...prev[sourceId], progress: 95, stage: 'Updating dashboard' } }));

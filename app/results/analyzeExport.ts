@@ -136,6 +136,9 @@ function storeAnalysis(analysis: DeepAnalysis): void {
       days: analysis.timespan.days,
     },
     typeBreakdown: analysis.typeBreakdown,
+    psychologicalPortrait: analysis.psychologicalPortrait,
+    synthesis: (analysis as any).synthesis,
+    scoreBreakdown: (analysis as any).scoreBreakdown,
     aiEnriched: true,
   };
 

@@ -49,6 +49,16 @@ interface AnalysisResult {
     inferredBeliefs?: string[];
   };
   scoreBreakdown?: Array<{ label: string; contribution: number; detail: string; category: string }>;
+  synthesis?: {
+    characterSummary: string;
+    demographicPredictions: Array<{ attribute: string; value: string; confidence: number; evidence: string }>;
+    verbalTells: Array<{ tell: string; meaning: string; frequency: string }>;
+    predictedBehaviours: Array<{ behaviour: string; likelihood: string; evidence: string }>;
+    commercialTargets: Array<{ brand: string; category: string; why: string }>;
+    recurringConcerns: Array<{ concern: string; evidence: string }>;
+    unintentionalDisclosures: Array<{ disclosure: string; via: string }>;
+    inferredCoreBeliefs: string[];
+  };
 }
 
 // ============================================================================
@@ -328,137 +338,488 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
 
 
 // ============================================================================
-// PSYCHOLOGICAL PORTRAIT — the most revealing section
+// SYNTHESIS SECTIONS — AI-generated intelligence briefing
 // ============================================================================
 
-function PsychologicalPortraitSection({ portrait, lifeEvents }: {
-  portrait: NonNullable<AnalysisResult['psychologicalPortrait']>;
-  lifeEvents: AnalysisResult['lifeEvents'];
-}) {
+// Animated reveal wrapper
+function Reveal({ delay = 0, children }: { delay?: number; children: React.ReactNode }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-  const beliefs = portrait.inferredBeliefs || [];
+  const inView = useInView(ref, { once: true, margin: '-10%' });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 10 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay, duration: 0.7 }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-  const portraitRows = [
-    portrait.emotionalBaselineLabel && { label: 'Emotional baseline', value: portrait.emotionalBaselineLabel },
-    portrait.attachmentStyle && { label: 'Attachment pattern', value: portrait.attachmentStyle },
-    portrait.primaryCopingMechanism && { label: 'Primary coping', value: portrait.primaryCopingMechanism },
-    portrait.dominantNarrative && { label: 'Dominant narrative', value: portrait.dominantNarrative },
-    portrait.relationshipDynamics && { label: 'Relationship dynamics', value: portrait.relationshipDynamics },
-    portrait.writingVoice && { label: 'Writing voice', value: portrait.writingVoice },
-  ].filter(Boolean) as Array<{ label: string; value: string }>;
+// ----- CHARACTER SUMMARY -----
+function CharacterSummarySection({ summary }: { summary: string }) {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+  const sentences = summary.split(/(?<=\.)\s+/).filter(s => s.trim().length > 0);
 
   return (
     <ProfileSection index={0}>
       <SectionHeader
-        label="Psychological portrait"
-        heading="What your writing reveals about how you think."
-        headingSize="clamp(1.6rem, 3.5vw, 2.4rem)"
-        body="This is not what you said. This is what the pattern of your saying it reveals — your attachment style, coping mechanisms, self-perception, and the beliefs embedded in how you communicate. None of this required you to answer a questionnaire."
+        label="Intelligence briefing"
+        heading="The subject, in forensic terms."
+        headingSize="clamp(1.8rem, 4vw, 2.8rem)"
+        body="The passage below was written by an AI model after reading the most revealing messages in the corpus. It is a synthesis, not a quotation. Every claim is grounded in the evidence that follows. No questionnaire was completed."
       />
 
-      <div ref={ref} style={{ display: 'flex', flexDirection: 'column' }}>
-        {portraitRows.map((row, i) => (
-          <motion.div
-            key={row.label}
-            initial={{ opacity: 0, x: -6 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: i * 0.08, duration: 0.5 }}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '180px 1fr',
-              gap: '2rem',
-              padding: '1.2rem 0',
-              borderBottom: `1px solid ${PALETTE.border}`,
-              alignItems: 'start',
-            }}
-          >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '0.2rem' }}>
-              {row.label}
-            </p>
-            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.65 }}>
-              {row.value}
-            </p>
-          </motion.div>
-        ))}
-
-        {portrait.selfPerceptionThemes.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, x: -6 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: portraitRows.length * 0.08, duration: 0.5 }}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '180px 1fr',
-              gap: '2rem',
-              padding: '1.2rem 0',
-              borderBottom: `1px solid ${PALETTE.border}`,
-              alignItems: 'start',
-            }}
-          >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', paddingTop: '0.2rem' }}>
-              Self-perception
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-              {portrait.selfPerceptionThemes.map((theme, i) => (
-                <span key={i} style={{
-                  fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
-                  textTransform: 'uppercase', color: PALETTE.red,
-                  padding: '3px 8px', border: `1px solid ${PALETTE.red}30`,
-                }}>{theme}</span>
-              ))}
-            </div>
-          </motion.div>
-        )}
+      <div ref={ref} style={{
+        borderLeft: `3px solid ${PALETTE.red}`,
+        paddingLeft: 'clamp(1.5rem, 3vw, 2.5rem)',
+        marginBottom: 'clamp(2rem, 4vw, 3rem)',
+      }}>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+          color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
+        }}>
+          Forensic portrait — confidential
+        </p>
+        <div style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(1.2rem, 2.2vw, 1.55rem)',
+          color: PALETTE.ink,
+          lineHeight: 1.75,
+          maxWidth: '56ch',
+        }}>
+          {sentences.map((sentence, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ delay: 0.3 + i * 0.25, duration: 0.9 }}
+              style={{ display: 'inline' }}
+            >
+              {sentence}{i < sentences.length - 1 ? ' ' : ''}
+            </motion.span>
+          ))}
+        </div>
       </div>
 
-      {beliefs.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          style={{ marginTop: 'clamp(2rem, 4vw, 3rem)' }}
-        >
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
-          }}>
-            Inferred core beliefs
-          </p>
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)',
-            color: PALETTE.inkMuted, lineHeight: 1.75, fontStyle: 'italic',
-            maxWidth: '55ch', marginBottom: '1.5rem',
-          }}>
-            These are not statements you made. They are beliefs the system infers from how you frame yourself, others, and the world across hundreds of messages.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {beliefs.map((belief, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -6 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: 0.7 + i * 0.1, duration: 0.5 }}
-                style={{
-                  padding: '1.1rem 0 1.1rem 1.5rem',
-                  borderBottom: `1px solid ${PALETTE.border}`,
-                  borderLeft: `2px solid ${PALETTE.red}30`,
-                }}
-              >
-                <p style={{
-                  fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-                  fontStyle: 'italic', color: PALETTE.ink, lineHeight: 1.5,
-                }}>
-                  &ldquo;{belief}&rdquo;
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      )}
+      <Reveal delay={0.3}>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+        }}>
+          Generated from {sentences.length} sentence{sentences.length === 1 ? '' : 's'} of synthesis.
+          This is what a model knows about you after a single reading.
+        </p>
+      </Reveal>
     </ProfileSection>
   );
 }
+
+// ----- INFERRED CORE BELIEFS -----
+function CoreBeliefsSection({ beliefs }: { beliefs: string[] }) {
+  if (beliefs.length === 0) return null;
+  return (
+    <ProfileSection index={1}>
+      <SectionHeader
+        label="Inferred core beliefs"
+        heading="What your writing reveals you believe about yourself."
+        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
+        body="None of these are statements you made. They are the underlying beliefs the model infers from the pattern of how you frame yourself, others, and the world. First-person because that is the grammar of a belief."
+      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {beliefs.map((belief, i) => (
+          <Reveal key={i} delay={i * 0.08}>
+            <div style={{
+              padding: '1.4rem 0 1.4rem 1.8rem',
+              borderBottom: `1px solid ${PALETTE.border}`,
+              borderLeft: `2px solid ${PALETTE.red}35`,
+              position: 'relative',
+            }}>
+              <span style={{
+                position: 'absolute', left: '-1px', top: '50%',
+                width: '12px', height: '1px', background: PALETTE.red,
+                opacity: 0.6,
+              }} />
+              <p style={{
+                fontFamily: TYPE.serif,
+                fontSize: 'clamp(1.15rem, 2.2vw, 1.5rem)',
+                fontStyle: 'italic',
+                color: PALETTE.ink,
+                lineHeight: 1.45,
+                letterSpacing: '-0.005em',
+              }}>
+                &ldquo;{belief}&rdquo;
+              </p>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </ProfileSection>
+  );
+}
+
+// ----- DEMOGRAPHIC PREDICTIONS -----
+function DemographicPredictionsSection({ predictions }: { predictions: AnalysisResult['synthesis'] extends infer T ? T extends { demographicPredictions: infer P } ? P : never : never }) {
+  const [expanded, setExpanded] = useState<number | null>(null);
+  if (!predictions || predictions.length === 0) return null;
+
+  return (
+    <ProfileSection index={2}>
+      <SectionHeader
+        label="Demographic predictions"
+        heading="What can be inferred without asking."
+        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
+        body="Each prediction below was derived purely from your writing patterns, topic distribution, and language markers. This is the kind of profile data brokers build without consent, by the hundreds of millions of rows."
+      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {predictions.map((pred: any, i: number) => {
+          const isExp = expanded === i;
+          const confColor = pred.confidence >= 75 ? PALETTE.red : pred.confidence >= 55 ? PALETTE.amber : PALETTE.inkMuted;
+          return (
+            <motion.button
+              key={i}
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-5%' }}
+              transition={{ delay: i * 0.06, duration: 0.5 }}
+              onClick={() => setExpanded(isExp ? null : i)}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+                padding: '1.3rem 0',
+                borderBottom: `1px solid ${PALETTE.border}`,
+                display: 'grid',
+                gridTemplateColumns: '180px 1fr 80px 20px',
+                gap: '1.5rem',
+                alignItems: 'center',
+                width: '100%',
+              }}
+            >
+              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+                {pred.attribute}
+              </span>
+              <span style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)', color: PALETTE.ink, letterSpacing: '-0.01em' }}>
+                {pred.value}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <div style={{ flex: 1, height: '1px', background: PALETTE.border, position: 'relative', overflow: 'hidden' }}>
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    whileInView={{ scaleX: pred.confidence / 100 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + i * 0.06, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: confColor }}
+                  />
+                </div>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: confColor, minWidth: '2.5rem', textAlign: 'right' }}>
+                  {pred.confidence}%
+                </span>
+              </div>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, transition: 'transform 0.2s', transform: isExp ? 'rotate(45deg)' : 'none', textAlign: 'right' }}>
+                +
+              </span>
+              <AnimatePresence>
+                {isExp && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ gridColumn: '1 / -1', overflow: 'hidden', paddingTop: '1rem' }}
+                  >
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                      Evidence
+                    </p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: '55ch' }}>
+                      {pred.evidence}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          );
+        })}
+      </div>
+    </ProfileSection>
+  );
+}
+
+// ----- VERBAL TELLS -----
+function VerbalTellsSection({ tells }: { tells: any[] }) {
+  if (!tells || tells.length === 0) return null;
+  return (
+    <ProfileSection index={3}>
+      <SectionHeader
+        label="Verbal tells"
+        heading="The phrases you use without realising."
+        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
+        body="Writing style has a fingerprint. These are recurring phrases, hedges, and linguistic tics pulled from your corpus — each one revealing something about how you think, what you assume, and what you protect yourself from."
+      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {tells.map((t: any, i: number) => (
+          <Reveal key={i} delay={i * 0.08}>
+            <div style={{
+              padding: '1.5rem 0',
+              borderBottom: `1px solid ${PALETTE.border}`,
+              display: 'grid',
+              gridTemplateColumns: '1fr auto',
+              gap: '2rem',
+              alignItems: 'start',
+            }}>
+              <div>
+                <p style={{
+                  fontFamily: TYPE.serif,
+                  fontSize: 'clamp(1.15rem, 2.2vw, 1.4rem)',
+                  fontStyle: 'italic',
+                  color: PALETTE.ink,
+                  letterSpacing: '-0.005em',
+                  marginBottom: '0.6rem',
+                  lineHeight: 1.4,
+                }}>
+                  &ldquo;{t.tell}&rdquo;
+                </p>
+                <p style={{
+                  fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
+                  color: PALETTE.inkMuted, lineHeight: 1.7,
+                  maxWidth: '52ch',
+                }}>
+                  {t.meaning}
+                </p>
+              </div>
+              <span style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                color: PALETTE.inkFaint, textTransform: 'uppercase',
+                whiteSpace: 'nowrap', paddingTop: '0.4rem',
+              }}>
+                {t.frequency}
+              </span>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </ProfileSection>
+  );
+}
+
+// ----- RECURRING CONCERNS -----
+function RecurringConcernsSection({ concerns }: { concerns: any[] }) {
+  if (!concerns || concerns.length === 0) return null;
+  return (
+    <ProfileSection index={4}>
+      <SectionHeader
+        label="Recurring concerns"
+        heading="What you keep coming back to."
+        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
+        body="Across the corpus, these are the preoccupations you return to — often under different phrasings, across different weeks. A pattern is more revealing than any single conversation."
+      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {concerns.map((c: any, i: number) => (
+          <Reveal key={i} delay={i * 0.1}>
+            <div style={{
+              padding: '1.4rem 0',
+              borderBottom: `1px solid ${PALETTE.border}`,
+              display: 'flex', alignItems: 'baseline', gap: '1.5rem',
+            }}>
+              <span style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+                color: PALETTE.redMuted, textTransform: 'uppercase',
+                minWidth: '2rem',
+              }}>
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{
+                  fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.35rem)',
+                  color: PALETTE.ink, lineHeight: 1.5, marginBottom: '0.4rem',
+                  letterSpacing: '-0.01em',
+                }}>
+                  {c.concern}
+                </p>
+                <p style={{
+                  fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em',
+                  color: PALETTE.inkFaint, lineHeight: 1.6,
+                }}>
+                  {c.evidence}
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </ProfileSection>
+  );
+}
+
+// ----- UNINTENTIONAL DISCLOSURES -----
+function UnintentionalDisclosuresSection({ disclosures }: { disclosures: any[] }) {
+  if (!disclosures || disclosures.length === 0) return null;
+  return (
+    <ProfileSection index={5}>
+      <SectionHeader
+        label="Unintentional disclosures"
+        heading="What you gave away without meaning to."
+        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
+        body="Every disclosure below was incidental. You were asking a question about something else — and the answer you needed required you to mention a location, a salary, a medication, a date, a relationship. You did not choose to disclose any of this. You disclosed it anyway."
+      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {disclosures.map((d: any, i: number) => (
+          <Reveal key={i} delay={i * 0.08}>
+            <div style={{
+              padding: '1.6rem 0',
+              borderBottom: `1px solid ${PALETTE.border}`,
+            }}>
+              <p style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+                color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.8rem',
+              }}>
+                Disclosure {String(i + 1).padStart(2, '0')}
+              </p>
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2.2vw, 1.45rem)',
+                color: PALETTE.ink, lineHeight: 1.5, marginBottom: '1rem',
+                letterSpacing: '-0.01em',
+              }}>
+                {d.disclosure}
+              </p>
+              <div style={{
+                borderLeft: `2px solid ${PALETTE.border}`,
+                paddingLeft: '1rem',
+              }}>
+                <p style={{
+                  fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+                  color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem',
+                }}>
+                  Via
+                </p>
+                <p style={{
+                  fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
+                  fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65,
+                  maxWidth: '55ch',
+                }}>
+                  {d.via}
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </ProfileSection>
+  );
+}
+
+// ----- PREDICTED BEHAVIOURS -----
+function PredictedBehavioursSection({ behaviours }: { behaviours: any[] }) {
+  if (!behaviours || behaviours.length === 0) return null;
+  const likelihoodColor = (l: string) => l === 'High' ? PALETTE.red : l === 'Medium' ? PALETTE.amber : PALETTE.inkMuted;
+
+  return (
+    <ProfileSection index={6}>
+      <SectionHeader
+        label="Predicted next behaviours"
+        heading="What the model thinks you will do next."
+        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
+        body="These are not guesses. They are the forward projections a pattern-matching system derives from your recent trajectory. This is the kind of inference ad networks, insurers, and recruitment algorithms run continuously on behavioural data."
+      />
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {behaviours.map((b: any, i: number) => {
+          const lc = likelihoodColor(b.likelihood);
+          return (
+            <Reveal key={i} delay={i * 0.08}>
+              <div style={{
+                padding: '1.5rem 0',
+                borderBottom: `1px solid ${PALETTE.border}`,
+                display: 'grid',
+                gridTemplateColumns: '1fr auto',
+                gap: '2rem',
+                alignItems: 'start',
+              }}>
+                <div>
+                  <p style={{
+                    fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.35rem)',
+                    color: PALETTE.ink, lineHeight: 1.45, letterSpacing: '-0.01em',
+                    marginBottom: '0.6rem',
+                  }}>
+                    {b.behaviour}
+                  </p>
+                  <p style={{
+                    fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em',
+                    color: PALETTE.inkFaint, lineHeight: 1.65,
+                  }}>
+                    {b.evidence}
+                  </p>
+                </div>
+                <span style={{
+                  fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+                  color: lc, textTransform: 'uppercase',
+                  padding: '3px 8px', border: `1px solid ${lc}40`,
+                  whiteSpace: 'nowrap', paddingTop: '3px',
+                }}>
+                  {b.likelihood}
+                </span>
+              </div>
+            </Reveal>
+          );
+        })}
+      </div>
+    </ProfileSection>
+  );
+}
+
+// ----- COMMERCIAL TARGETS — specific real brands -----
+function CommercialTargetsSection({ targets }: { targets: any[] }) {
+  if (!targets || targets.length === 0) return null;
+  return (
+    <ProfileSection index={7}>
+      <SectionHeader
+        label="Advertisers who would target you"
+        heading="The brands that would pay to reach this profile."
+        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
+        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data entered the broker ecosystem — through a breach, a policy change, or a data-sharing agreement — these are the advertisers whose algorithms would identify you as a high-value target."
+      />
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+        gap: '1px',
+        background: PALETTE.border,
+      }}>
+        {targets.map((t: any, i: number) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '-5%' }}
+            transition={{ delay: i * 0.06, duration: 0.6 }}
+            style={{ background: PALETTE.bgPanel, padding: '1.6rem 1.8rem' }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.6rem' }}>
+              <p style={{
+                fontFamily: TYPE.serif,
+                fontSize: 'clamp(1.2rem, 2vw, 1.45rem)',
+                color: PALETTE.ink, letterSpacing: '-0.015em',
+              }}>
+                {t.brand}
+              </p>
+              <p style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+                color: PALETTE.redMuted, textTransform: 'uppercase',
+              }}>
+                {t.category}
+              </p>
+            </div>
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: '1.05rem',
+              color: PALETTE.inkMuted, lineHeight: 1.7, fontStyle: 'italic',
+            }}>
+              {t.why}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </ProfileSection>
+  );
+}
+
 
 export default function ProfilePage({ results }: { results: AnalysisResult }) {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -532,19 +893,25 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       </div>
 
       {/* ================================================================
-          PSYCHOLOGICAL PORTRAIT — the confrontational core, first
+          SYNTHESIS — intelligence briefing sections (00–07)
           ================================================================ */}
-      {results.psychologicalPortrait && (
-        <PsychologicalPortraitSection
-          portrait={results.psychologicalPortrait}
-          lifeEvents={results.lifeEvents}
-        />
+      {results.synthesis && (
+        <>
+          <CharacterSummarySection summary={results.synthesis.characterSummary} />
+          <CoreBeliefsSection beliefs={results.synthesis.inferredCoreBeliefs || []} />
+          <DemographicPredictionsSection predictions={results.synthesis.demographicPredictions as any} />
+          <VerbalTellsSection tells={results.synthesis.verbalTells} />
+          <RecurringConcernsSection concerns={results.synthesis.recurringConcerns} />
+          <UnintentionalDisclosuresSection disclosures={results.synthesis.unintentionalDisclosures} />
+          <PredictedBehavioursSection behaviours={results.synthesis.predictedBehaviours} />
+          <CommercialTargetsSection targets={results.synthesis.commercialTargets} />
+        </>
       )}
 
       {/* ================================================================
-          INFERRED ATTRIBUTES
+          INFERRED ATTRIBUTES (08) — regex-derived fallback set
           ================================================================ */}
-      <ProfileSection index={1}>
+      <ProfileSection index={8}>
         <SectionHeader
           label="Inferred attributes"
           heading="What the system believes about you."
@@ -626,7 +993,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           COMMERCIAL VALUE — what the profile is worth
           ================================================================ */}
-      <ProfileSection index={2}>
+      <ProfileSection index={9}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
           <div style={{ flex: 1, minWidth: 240 }}>
             <SectionHeader
@@ -707,7 +1074,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           SOCIAL GRAPH — the people you mentioned without their consent
           ================================================================ */}
-      <ProfileSection index={3}>
+      <ProfileSection index={10}>
         <SectionHeader
           label="Social graph"
           heading="Everyone you mentioned is in here too."
@@ -726,7 +1093,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           BEHAVIOURAL FINGERPRINT — the identifying signature
           ================================================================ */}
       {results.hourDistribution && results.typeBreakdown && (
-        <ProfileSection index={4}>
+        <ProfileSection index={11}>
           <SectionHeader
             label="Behavioural signature"
             heading="Your fingerprint."

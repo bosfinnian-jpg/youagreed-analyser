@@ -5,6 +5,7 @@
 // ============================================================================
 
 import type { DeepAnalysis, ScoredMessage } from './deepParser';
+import { runSynthesis, type Synthesis } from './synthesis';
 
 export interface MessageEnrichment {
   id: number;
@@ -22,7 +23,7 @@ export interface MessageEnrichment {
 }
 
 export interface EnrichmentProgress {
-  stage: 'selecting' | 'enriching' | 'merging' | 'done' | 'failed';
+  stage: 'selecting' | 'enriching' | 'merging' | 'synthesizing' | 'done' | 'failed';
   batchesDone: number;
   batchesTotal: number;
   messagesEnriched: number;
@@ -465,6 +466,18 @@ export async function enrichAnalysisWithAI(analysis: DeepAnalysis, onProgress?: 
     });
     onProgress?.({ stage: 'merging', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
     const merged = mergeEnrichments(analysis, enrichments);
+
+    // Synthesis pass — one final call reading the top excerpts together
+    onProgress?.({ stage: 'synthesizing', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
+    try {
+      const synthesis = await runSynthesis(merged, enrichments);
+      if (synthesis) {
+        (merged as DeepAnalysis & { synthesis?: Synthesis }).synthesis = synthesis;
+      }
+    } catch (synthErr) {
+      console.error('Synthesis failed, continuing without:', synthErr);
+    }
+
     onProgress?.({ stage: 'done', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
     return merged;
   } catch (err: unknown) {

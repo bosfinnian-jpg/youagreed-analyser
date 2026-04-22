@@ -462,12 +462,19 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
         justifyContent: 'center',
-        padding: 'clamp(2rem, 6vw, 5rem)',
-        textAlign: 'center',
+        maxWidth: 1000,
+        margin: '0 auto',
+        padding: '0 clamp(2rem, 6vw, 5rem)',
+        paddingTop: 'clamp(3rem, 8vw, 6rem)',
       }}
     >
+      <motion.div
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{ scaleX: 1, opacity: 1 }}
+        transition={{ delay: 0.1, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+        style={{ height: '1px', background: C.text, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)', transformOrigin: 'left' }}
+      />
       <motion.p
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -479,7 +486,6 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           color: C.accent,
           textTransform: 'uppercase',
           marginBottom: '1.4rem',
-          opacity: 0.7,
         }}
       >
         05 / Understand
@@ -496,7 +502,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           color: C.text,
           letterSpacing: '-0.02em',
           lineHeight: 1.1,
-          maxWidth: '18ch',
+          maxWidth: '22ch',
           marginBottom: '2rem',
         }}
       >
@@ -2013,10 +2019,11 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
         justifyContent: 'center',
-        padding: 'clamp(2rem, 6vw, 5rem)',
-        textAlign: 'center',
+        maxWidth: 1000,
+        margin: '0 auto',
+        padding: '0 clamp(2rem, 6vw, 5rem)',
+        paddingTop: 'clamp(3rem, 8vw, 6rem)',
       }}
     >
       <motion.div

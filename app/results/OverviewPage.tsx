@@ -236,11 +236,11 @@ export default function OverviewPage({ results, sources, setPage }: {
         }
       `}</style>
 
-      <div style={{ padding: 'clamp(1.5rem, 5vw, 4rem)', maxWidth: 1280, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1240, margin: '0 auto', padding: '0 clamp(2rem, 5vw, 4rem)', paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
 
         {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem', position: 'relative' }}>
-          <div style={{ height: '2px', background: PALETTE.ink, marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)', opacity: 0.08 }} />
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} style={{ marginBottom: '2rem', position: 'relative', paddingTop: 'clamp(3rem, 8vw, 6rem)' }}>
+          <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
           {/* Geometric accent — top-left corner bracket */}
           <svg style={{ position: 'absolute', top: 0, left: -8, pointerEvents: 'none', overflow: 'visible' }} width="24" height="24">
             <path d="M 20 2 L 2 2 L 2 20" fill="none" stroke="rgba(190,40,30,0.25)" strokeWidth="1" />

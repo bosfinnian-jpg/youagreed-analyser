@@ -216,7 +216,7 @@ export default function SourcesPage({ connectedSources, onUpload }: {
   const connectedCount = Object.values(connectedSources).filter(Boolean).length;
 
   return (
-    <div style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem)', maxWidth: 1280, margin: '0 auto', position: 'relative' }}>
+    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 clamp(2rem, 6vw, 5rem)', paddingBottom: 'clamp(4rem, 10vw, 8rem)', position: 'relative' }}>
 
       {/* Network node geometry — data sources connecting */}
       <svg style={{
@@ -244,11 +244,12 @@ export default function SourcesPage({ connectedSources, onUpload }: {
       </svg>
 
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem' }}>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '2.5rem', paddingTop: 'clamp(3rem, 8vw, 6rem)' }}>
+        <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>
           03 / Data sources
         </p>
-        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1rem' }}>
+        <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.2rem' }}>
           How much do they know?
         </h1>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 600 }}>

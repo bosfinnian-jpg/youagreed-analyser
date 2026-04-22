@@ -1032,7 +1032,7 @@ export default function ResistPage({ analysis }: ResistPageProps) {
 
   return (
     <div style={{
-      maxWidth: 960, margin: '0 auto',
+      maxWidth: 1000, margin: '0 auto',
       padding: `0 ${pad}`,
       paddingBottom: 'clamp(4rem, 10vw, 8rem)',
     }}>

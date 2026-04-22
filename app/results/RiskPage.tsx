@@ -522,7 +522,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
   const secondaryScenarios = scenarios.slice(1);
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+    <div style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
 
       {/* Slow diagonal scan geometry — fixed to this page section */}
       <svg style={{
@@ -558,8 +558,8 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
       </svg>
 
       {/* OPENING */}
-      <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border }}>
-        <div style={{ height: '2px', background: PALETTE.ink, marginBottom: 'clamp(2rem, 5vw, 3.5rem)', opacity: 0.08 }} />
+      <div style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem) clamp(2rem, 4vw, 3rem)', borderBottom: '1px solid ' + PALETTE.border, paddingTop: 'clamp(3rem, 8vw, 6rem)' }}>
+        <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}>
           04 / Risk

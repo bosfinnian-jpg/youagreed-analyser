@@ -335,7 +335,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
   };
 
   return (
-    <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative' }}>
+    <div style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
 
       {/* Classification geometry — top right */}
       <svg style={{
@@ -358,7 +358,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           ================================================================ */}
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
         {/* Chapter rule */}
-        <div style={{ height: '2px', background: PALETTE.ink, marginBottom: 'clamp(2rem, 5vw, 3.5rem)', opacity: 0.08 }} />
+        <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
         <motion.p
           initial={{ opacity: 0 }}
           animate={heroInView ? { opacity: 1 } : {}}

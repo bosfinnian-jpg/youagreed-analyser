@@ -452,16 +452,14 @@ export default function TermsPage() {
               trace<span style={{ color: 'rgba(190,40,30,0.90)' }}>.ai</span>
             </span>
           </Link>
-            <span style={{
-              fontFamily: "'Courier Prime', monospace",
-              fontSize: '10px',
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: 'rgba(26,24,20,0.22)',
-            }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.38)' }}>
               Terms of Service
             </span>
+            <div style={{ width: '1px', height: '12px', background: 'rgba(26,24,20,0.15)' }} />
+            <span style={{ fontFamily: "'Courier Prime', monospace", fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.28)' }}>2026</span>
           </div>
+        </header>
           {/* Reading progress bar */}
           <div style={{ height: '1px', background: 'rgba(26,24,20,0.12)', position: 'relative' }}>
             <div style={{

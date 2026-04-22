@@ -386,7 +386,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           INFERRED ATTRIBUTES — the confrontational core
           ================================================================ */}
-      <ProfileSection index=1>
+      <ProfileSection index={1}>
         <SectionHeader
           label="Inferred attributes"
           heading="What the system believes about you."
@@ -468,7 +468,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           COMMERCIAL VALUE — what the profile is worth
           ================================================================ */}
-      <ProfileSection index=2>
+      <ProfileSection index={2}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
           <div style={{ flex: 1, minWidth: 240 }}>
             <SectionHeader
@@ -549,7 +549,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
       {/* ================================================================
           SOCIAL GRAPH — the people you mentioned without their consent
           ================================================================ */}
-      <ProfileSection index=3>
+      <ProfileSection index={3}>
         <SectionHeader
           label="Social graph"
           heading="Everyone you mentioned is in here too."
@@ -568,7 +568,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           BEHAVIOURAL FINGERPRINT — the identifying signature
           ================================================================ */}
       {results.hourDistribution && results.typeBreakdown && (
-        <ProfileSection index=4>
+        <ProfileSection index={4}>
           <SectionHeader
             label="Behavioural signature"
             heading="Your fingerprint."

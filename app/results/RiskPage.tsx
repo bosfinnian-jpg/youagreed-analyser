@@ -808,7 +808,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button
-              onClick={() => setPage?.('permanent')}
+              onClick={() => setPage?.('terms')}
               style={{
                 fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
                 letterSpacing: '-0.01em', color: PALETTE.ink,
@@ -820,7 +820,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
             >
               <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT III</span>
-              Why it cannot be removed →
+              Read the terms → →
             </button>
             <button
               onClick={() => setPage?.('understand')}

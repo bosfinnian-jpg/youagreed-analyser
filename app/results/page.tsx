@@ -11,6 +11,7 @@ import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
 import CannotBeDeletedPage from './CannotBeDeletedPage';
 import ResistPage from './ResistPage';
+import PolicyDriftPage from './PolicyDriftPage';
 
 interface AnalysisResult {
   privacyScore: number;
@@ -99,6 +100,7 @@ export default function ResultsPage() {
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} />}
       {page === 'risk' && <RiskPage results={results} setPage={handleSetPage} />}
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
+      {page === 'terms' && <PolicyDriftPage setPage={handleSetPage} />}
       {page === 'permanent' && <CannotBeDeletedPage results={results} setPage={handleSetPage} />}
       {page === 'resist' && <ResistPage analysis={results as any} />}
     </DashboardLayout>

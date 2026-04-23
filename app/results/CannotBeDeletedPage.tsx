@@ -678,7 +678,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
           transition={{ delay: 0.15, duration: 0.6 }}
           style={{ marginBottom: '0.75rem' }}
         >
-          <ActLabel roman="III" title="The Permanence" pageLabel="06 / Permanent" />
+          <ActLabel roman="III" title="The Permanence" pageLabel="07 / Permanent" />
         </motion.div>
         <motion.div
           initial={{ opacity: 0 }}

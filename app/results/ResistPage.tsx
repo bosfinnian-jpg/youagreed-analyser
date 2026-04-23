@@ -860,7 +860,7 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
       </svg>
 
       {/* Label */}
-        <ActLabel roman="IV" title="After" pageLabel="07 / Resist" />
+        <ActLabel roman="IV" title="After" pageLabel="08 / Resist" />
         <ThreadSentence>The extraction is complete. The argument is complete. This is what remains.</ThreadSentence>
       
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import PolicyDrift from './PolicyDrift';
 import { ActLabel, ThreadSentence } from './DashboardLayout';
 
 // ============================================================================
@@ -40,7 +39,6 @@ const MODULES = [
   { id: 3, label: 'You cannot take it back', short: 'Permanence' },
   { id: 4, label: 'You did not really consent', short: 'Consent' },
   { id: 5, label: 'Read the terms', short: 'Terms' },
-  { id: 6, label: 'Policy drift', short: 'Drift' },
 ];
 
 // ============================================================================
@@ -356,10 +354,6 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
             <Module4 key="m4" onComplete={() => markComplete(4)} onAdvance={advance} completed={isComplete} />
           ) : currentModule === 5 ? (
             <Module5 key="m5" onComplete={() => markComplete(5)} onAdvance={advance} completed={isComplete} />
-          ) : currentModule === 6 ? (
-            <div key="m6" style={{ padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem)' }}>
-              <PolicyDrift onAdvance={() => { markComplete(6); advance(); }} />
-            </div>
           ) : (
             <CompletionScreen key="done" setPage={setPage} />
           )}        </AnimatePresence>
@@ -1991,7 +1985,7 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
   };
 
   const handleResist = () => {
-    if (setPage) setPage('resist');
+    if (setPage) setPage('terms');
     else window.location.href = '/results';
   };
 

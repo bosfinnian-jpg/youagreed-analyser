@@ -521,7 +521,7 @@ function BottomCTAs({ setPage }: { setPage: (p: DashPage) => void }) {
           The inference →
         </button>
         <button
-          onClick={() => setPage('permanent')}
+          onClick={() => setPage('terms')}
           style={{
             fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
             color: PALETTE.inkFaint, background: 'none', border: 'none',
@@ -530,7 +530,7 @@ function BottomCTAs({ setPage }: { setPage: (p: DashPage) => void }) {
             textDecoration: 'underline', textDecorationColor: PALETTE.border,
           }}
         >
-          Skip to: why it cannot be deleted
+          Skip to: the terms →
         </button>
       </div>
     </motion.div>

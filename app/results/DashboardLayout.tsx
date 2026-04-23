@@ -32,7 +32,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'permanent' | 'resist' | 'sources-detail';
+export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'resist' | 'sources-detail';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -56,6 +56,7 @@ const ACTS = [
       { id: 'profile' as DashPage, label: 'Profile', short: '02', desc: 'What the patterns reveal' },
       { id: 'risk' as DashPage, label: 'Risk', short: '04', desc: 'What the record enables' },
       { id: 'understand' as DashPage, label: 'Understand', short: '05', desc: 'How inference works' },
+      { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to' },
     ],
   },
   {
@@ -64,7 +65,7 @@ const ACTS = [
     roman: 'III',
     title: 'The Permanence',
     pages: [
-      { id: 'permanent' as DashPage, label: 'Permanent', short: '06', desc: 'Why it cannot be removed' },
+      { id: 'permanent' as DashPage, label: 'Permanent', short: '07', desc: 'Why it cannot be removed' },
     ],
   },
   {
@@ -73,7 +74,7 @@ const ACTS = [
     roman: 'IV',
     title: 'After',
     pages: [
-      { id: 'resist' as DashPage, label: 'Resist', short: '07', desc: 'What remains possible' },
+      { id: 'resist' as DashPage, label: 'Resist', short: '08', desc: 'What remains possible' },
     ],
   },
 ] as const;
@@ -333,8 +334,8 @@ function Nav({ page, setPage, results, exposureScore }: {
           onClick={() => handleNav('overview')}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}
         >
-          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.ink }}>you</span>
-          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.red }}>agreed</span>
+          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.ink }}>trace</span>
+          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.red }}>.ai</span>
         </button>
 
         {/* Desktop act nav — hover dropdowns */}

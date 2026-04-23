@@ -454,6 +454,78 @@ function PolicyTimeline({ isInView }: { isInView: boolean }) {
   );
 }
 
+
+// ── POLICY WORD COUNT BARS ──────────────────────────────────────────────────
+// Pudding principle: use scale to make the abstract concrete.
+// How long is the privacy policy? Show it as something you can feel.
+// Average adult reads ~238 words/min.
+
+function PolicyWordBars({ isInView }: { isInView: boolean }) {
+  const READ_SPEED = 238; // words per minute
+  const versions = [
+    { year: '2023', words: 3417, color: 'rgba(107,203,119,0.75)', label: 'June 2023' },
+    { year: '2025', words: 5892, color: 'rgba(255,183,77,0.75)',   label: 'June 2025' },
+    { year: '2026', words: 9241, color: 'rgba(255,100,72,0.85)',   label: 'April 2026' },
+  ];
+  const maxWords = 9241;
+
+  return (
+    <div style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+        How long did it get?
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint, lineHeight: 1.6, maxWidth: 480, marginBottom: '2rem' }}>
+        Word count of OpenAI's privacy policy across three versions.
+      </p>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.75rem' }}>
+        {versions.map((v, i) => {
+          const pct = (v.words / maxWords) * 100;
+          const mins = Math.round(v.words / READ_SPEED);
+          return (
+            <div key={v.year}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.4rem' }}>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{v.label}</span>
+                <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'baseline' }}>
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, letterSpacing: '-0.01em' }}>{v.words.toLocaleString()} words</span>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>~{mins} min read</span>
+                </div>
+              </div>
+              <div style={{ height: '28px', background: PALETTE.bgElevated, border: `1px solid ${PALETTE.border}`, position: 'relative', overflow: 'hidden' }}>
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={isInView ? { width: `${pct}%` } : {}}
+                  transition={{ delay: 0.2 + i * 0.18, duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  style={{ position: 'absolute', left: 0, top: 0, bottom: 0, background: v.color }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div style={{
+        borderTop: `1px solid ${PALETTE.border}`,
+        paddingTop: '1.25rem',
+        display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem',
+      }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 440, fontStyle: 'italic' }}>
+          To read all three policies end-to-end: approximately 78 minutes.
+          McDonald & Cranor (2008) found that reading every privacy policy 
+          a typical internet user encounters would take 76 full work-days per year.
+          Nobody reads them. The consent model depends on that.
+        </p>
+        <p style={{ fontFamily: TYPE.serif, fontSize: '2.2rem', color: PALETTE.red, letterSpacing: '-0.04em', lineHeight: 1, alignSelf: 'flex-end' }}>
+          +170%<br />
+          <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block', marginTop: '0.3rem' }}>
+            growth since 2023
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 // ── Clause comparison table ───────────────────────────────────────────────
 
 function ClauseRow({ clause, index, isInView }: {
@@ -977,6 +1049,9 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
 
       {/* Summary stats */}
       <SummaryStats isInView={isInView} />
+
+      {/* Policy word count bars */}
+      <PolicyWordBars isInView={isInView} />
 
       {/* Deletion carve-out — featured */}
       <DeletionCarveOut isInView={isInView} />

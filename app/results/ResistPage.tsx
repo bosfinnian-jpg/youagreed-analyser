@@ -963,6 +963,124 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
 // CLOSING
 // ============================================================================
 
+
+// ── EXPOSURE COVERAGE GRID ──────────────────────────────────────────────────
+// Pudding principle: make the incompleteness of solutions visible.
+// 100 cells = your total data exposure surface.
+// Each action covers some cells. 21 can never be covered.
+
+function ExposureGrid() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  // Each step covers specific cells (predetermined layout)
+  // Cell index 0-99. Last 21 (indices 79-99) are permanently red.
+  const ACTIONS = [
+    { label: 'Disable training', cells: 31, color: 'rgba(107,203,119,0.8)',  description: 'Prevents future training use' },
+    { label: 'Delete history',   cells: 22, color: 'rgba(78,205,196,0.8)',   description: 'Removes from account view' },
+    { label: 'Temp chats',       cells: 18, color: 'rgba(187,134,252,0.75)', description: 'Limits new data retention' },
+    { label: 'Memory off',       cells: 8,  color: 'rgba(255,183,77,0.8)',   description: 'Stops profile memory' },
+  ];
+  const PERMANENT_UNCOVERABLE = 21;
+  const TOTAL = 100;
+
+  // Build cell colour map
+  const cellColors: (string | null)[] = new Array(TOTAL).fill(null);
+  let cursor = 0;
+  ACTIONS.forEach(a => {
+    for (let i = 0; i < a.cells; i++) cellColors[cursor++] = a.color;
+  });
+  // Last 21 are permanently exposed
+  for (let i = TOTAL - PERMANENT_UNCOVERABLE; i < TOTAL; i++) {
+    cellColors[i] = 'permanently-exposed';
+  }
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 12 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
+      style={{
+        borderTop: `1px solid ${PALETTE.border}`,
+        paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
+        marginTop: 'clamp(2.5rem, 5vw, 4rem)',
+      }}
+    >
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+        Exposure coverage — all actions taken
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.inkFaint, lineHeight: 1.7, maxWidth: 520, marginBottom: '2rem' }}>
+        Each cell represents 1% of your data exposure surface. Even if you complete every available action, these remain.
+      </p>
+
+      {/* The grid — 10×10 */}
+      <div style={{ marginBottom: '1.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: '3px', maxWidth: 420 }}>
+          {cellColors.map((color, i) => {
+            const isPermanent = color === 'permanently-exposed';
+            const delay = 0.02 + (i / 100) * 0.6;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.3 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay, duration: 0.3, type: 'spring', stiffness: 400 }}
+                title={isPermanent ? 'Cannot be removed — already in model weights' : color ? 'Covered by available actions' : 'Uncovered'}
+                style={{
+                  aspectRatio: '1',
+                  background: isPermanent
+                    ? 'rgba(190,40,30,0.75)'
+                    : color
+                      ? color
+                      : PALETTE.bgElevated,
+                  border: isPermanent
+                    ? `1px solid rgba(190,40,30,0.4)`
+                    : `1px solid ${PALETTE.border}`,
+                  borderRadius: '2px',
+                  position: 'relative',
+                  boxShadow: isPermanent ? '0 0 4px rgba(190,40,30,0.25)' : 'none',
+                }}
+              />
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '2rem', maxWidth: 420 }}>
+        {ACTIONS.map((a, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ width: 12, height: 12, background: a.color, borderRadius: '2px', flexShrink: 0 }} />
+            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em', color: PALETTE.inkMuted, textTransform: 'uppercase' }}>
+              {a.label} — {a.cells} cells
+            </span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint }}>
+              {a.description}
+            </span>
+          </div>
+        ))}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{ width: 12, height: 12, background: 'rgba(190,40,30,0.75)', borderRadius: '2px', flexShrink: 0 }} />
+          <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em', color: PALETTE.red, textTransform: 'uppercase' }}>
+            Already in model weights — {PERMANENT_UNCOVERABLE} cells
+          </span>
+        </div>
+      </div>
+
+      <p style={{
+        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+        color: PALETTE.ink, lineHeight: 1.7, maxWidth: 560, fontStyle: 'italic',
+        borderLeft: `3px solid ${PALETTE.red}`, paddingLeft: '1rem',
+      }}>
+        {PERMANENT_UNCOVERABLE}% of your exposure surface cannot be reduced by any action currently available to you.
+        Those cells represent the cognitive patterns already embedded in the model weights —
+        the part of you that cannot be retrieved.
+      </p>
+    </motion.div>
+  );
+}
+
 function ResistClosing() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-10%' });
@@ -1036,6 +1154,7 @@ export default function ResistPage({ analysis }: ResistPageProps) {
         <TierStructural />
       </div>
 
+      <ExposureGrid />
       <ResistClosing />
     </div>
   );

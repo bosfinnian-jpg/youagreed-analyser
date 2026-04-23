@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
@@ -579,6 +579,98 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
 // ============================================================================
 // CLOSING STATEMENT
 // ============================================================================
+
+// ── THE RETRAINING BAR ─────────────────────────────────────────────────────
+// Pudding principle: show impossibility through time the reader can feel.
+// 90 real days to retrain GPT-4. The bar counts up in actual seconds.
+// It will always show 0.000%.
+
+function RetrainingBar() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const [elapsed, setElapsed] = useState(0);
+  const startRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!isInView) return;
+    startRef.current = Date.now();
+    const id = setInterval(() => { setElapsed((Date.now() - startRef.current!) / 1000); }, 80);
+    return () => clearInterval(id);
+  }, [isInView]);
+
+  const RETRAIN_SECS = 90 * 24 * 3600;
+  const pct = (elapsed / RETRAIN_SECS) * 100;
+  const pctStr = pct.toFixed(7);
+
+  // July 22 2026 = April 23 + 90 days
+  const completionStr = '22 July 2026';
+
+  const facts = [
+    { value: '~90 days', label: 'Full GPT-4 retraining time' },
+    { value: '$100M+', label: 'Estimated compute cost' },
+    { value: '1.8T', label: 'Parameters to update' },
+  ];
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 12 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
+      style={{
+        borderTop: `1px solid ${PALETTE.border}`,
+        paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
+        marginTop: 'clamp(2.5rem, 5vw, 4rem)',
+        marginBottom: 'clamp(3rem, 6vw, 5rem)',
+      }}
+    >
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
+        The only real alternative — full model retraining
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560, marginBottom: '2.5rem' }}>
+        The only way to guarantee removal of your data is to retrain the model from scratch — excluding your conversations. For GPT-4, that takes approximately 90 days of continuous compute. If OpenAI began retraining at the exact moment you started reading this page, this is how far along they would be.
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.border, marginBottom: '2rem' }}>
+        {facts.map((f, i) => (
+          <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.2 + i * 0.1 }} style={{ background: PALETTE.bgPanel, padding: '1.4rem' }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '0.4rem' }}>{f.value}</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{f.label}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+            Retraining progress — from the moment you opened this page
+          </span>
+          <span style={{ fontFamily: TYPE.mono, fontSize: '13px', color: PALETTE.red, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.05em' }}>
+            {pctStr}%
+          </span>
+        </div>
+        <div style={{ height: '8px', background: PALETTE.bgElevated, border: `1px solid ${PALETTE.border}`, position: 'relative', overflow: 'hidden' }}>
+          <div style={{
+            position: 'absolute', left: 0, top: 0, bottom: 0,
+            width: `${Math.min(pct, 100)}%`,
+            background: `rgba(190,40,30,0.5)`,
+            transition: 'width 0.08s linear',
+          }} />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.08em' }}>
+          Est. completion if started now: <span style={{ color: PALETTE.inkMuted }}>{completionStr}</span>
+        </p>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.redMuted, letterSpacing: '0.06em', fontStyle: 'italic' }}>
+          New training data is added continuously. That date is a fiction.
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 function ClosingStatement({ setPage }: { setPage: (p: any) => void }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -757,6 +849,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
       <OneWayFlow />
       <WhatWeightsAre />
       <MachineUnlearning />
+      <RetrainingBar />
       <LegalGap />
       <ConsentFailure />
       <YourDataSpecifically analysis={results} />

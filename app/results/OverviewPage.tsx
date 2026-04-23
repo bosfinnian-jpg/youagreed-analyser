@@ -27,6 +27,76 @@ function useCounter(target: number, isInView: boolean, duration = 1800) {
   return count;
 }
 
+
+// ── GHOST TEXT — your own words haunt the background ────────────────────────
+// Phrases from the user's conversations drift upward behind the hero.
+// Barely visible. Just enough that you might recognise your own words.
+function GhostText({ results }: { results: any }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animRef   = useRef<number>(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const raw: string[] = [];
+    results?.juiciestMoments?.forEach((m: any) => {
+      if (m.excerpt) {
+        const words = m.excerpt.split(' ');
+        for (let i = 0; i < words.length - 3; i += 3) raw.push(words.slice(i, i + 4).join(' '));
+      }
+    });
+    results?.findings?.sensitiveTopics?.forEach((t: any) => { if (t.excerpt) raw.push(t.excerpt.substring(0, 40)); });
+    results?.findings?.repetitiveThemes?.forEach((t: any) => { if (t.theme) raw.push(t.theme); });
+    const fb = ["I've been feeling","my doctor said","I can't stop thinking","what should I do","I'm struggling with","nobody else knows","I haven't told anyone","how do I deal with","I keep worrying about","it's been getting worse","I need help","I don't know how to"];
+    const frags = raw.length >= 6 ? raw : fb;
+
+    const resize = () => { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; };
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    const ghosts = Array.from({ length: 22 }, (_, i) => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      text: frags[i % frags.length],
+      speed: 9 + Math.random() * 13,
+      opacity: 0.032 + Math.random() * 0.042,
+      size: 10 + Math.random() * 6,
+      tilt: (Math.random() - 0.5) * 0.06,
+    }));
+
+    let last = 0;
+    const draw = (ts: number) => {
+      const dt = Math.min((ts - last) / 1000, 0.05);
+      last = ts;
+      const W = canvas.width, H = canvas.height;
+      ctx.clearRect(0, 0, W, H);
+      for (const g of ghosts) {
+        g.y -= g.speed * dt;
+        if (g.y < -30) {
+          g.y = H + 20;
+          g.x = Math.random() * W;
+          g.text = frags[Math.floor(Math.random() * frags.length)];
+        }
+        ctx.save();
+        ctx.translate(g.x, g.y);
+        ctx.rotate(g.tilt);
+        ctx.font = `${g.size}px "EB Garamond", Georgia, serif`;
+        ctx.fillStyle = `rgba(26,24,20,${g.opacity})`;
+        ctx.fillText(g.text, 0, 0);
+        ctx.restore();
+      }
+      animRef.current = requestAnimationFrame(draw);
+    };
+    animRef.current = requestAnimationFrame(draw);
+    return () => { cancelAnimationFrame(animRef.current); window.removeEventListener('resize', resize); };
+  }, [results]);
+
+  return <canvas ref={canvasRef} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }} />;
+}
+
 function OverviewHeader({ score, stats, results }: { score: number; stats: any; results: any }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -53,6 +123,7 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         overflow: 'hidden',
       }}
     >
+      <GhostText results={results} />
       <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}

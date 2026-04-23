@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import DataThread, { getPageColorHex } from './DataThread';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ============================================================================
@@ -438,8 +439,8 @@ function Nav({ page, setPage, results, exposureScore }: {
         <div style={{
           position: 'absolute', bottom: 0, left: 0,
           width: `${scrollPct * 100}%`, height: '1px',
-          background: scoreColor,
-          opacity: scrollPct > 0.01 && !menuOpen ? 0.5 : 0,
+          background: getPageColorHex(page),
+          opacity: scrollPct > 0.01 && !menuOpen ? 0.65 : 0,
           transition: 'width 0.12s linear, opacity 0.3s',
           pointerEvents: 'none',
         }} />
@@ -702,6 +703,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
       `}</style>
 
+      <DataThread page={page} />
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />
 
       <main style={{ paddingTop: '64px', position: 'relative', zIndex: 1 }}>

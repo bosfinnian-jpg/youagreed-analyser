@@ -1109,6 +1109,40 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
         </ProfileSection>
       )}
 
+      {/* ════════════════════════════════════════════════════════════════════
+          ACT TRANSITION — to Risk
+          ════════════════════════════════════════════════════════════════════ */}
+      {setPage && (
+        <div style={{
+          maxWidth: 1000, margin: '0 auto',
+          padding: 'clamp(2rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem)',
+          borderTop: `1px solid ${PALETTE.border}`,
+        }}>
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 540,
+            marginBottom: '1.5rem', fontStyle: 'italic',
+          }}>
+            The profile is what the record reveals. Act II continues: what the profile enables — and for whom.
+          </p>
+          <button
+            onClick={() => setPage('risk')}
+            style={{
+              fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+              letterSpacing: '-0.01em', color: PALETTE.ink,
+              background: 'none', border: `1px solid ${PALETTE.border}`,
+              padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
+              cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s', textAlign: 'left',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.borderHover; (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
+          >
+            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT II / Continues</span>
+            What it enables →
+          </button>
+        </div>
+      )}
+
       {/* ================================================================
           CLOSING
           ================================================================ */}

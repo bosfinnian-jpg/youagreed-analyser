@@ -37,7 +37,7 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
   const scoreLabel = score >= 70 ? 'Severe exposure' : score >= 40 ? 'Moderate exposure' : 'Limited exposure';
   const scoreColor = score >= 70 ? PALETTE.red : score >= 40 ? PALETTE.amber : PALETTE.green;
   const primaryName = results?.findings?.personalInfo?.names?.[0]?.name;
-  const headline = primaryName ? `${primaryName}, this is your data profile.` : 'This is your data profile.';
+  const headline = primaryName ? `${primaryName}, this was extracted from your conversations.` : 'This was extracted from your conversations.';
 
   return (
     <motion.div

@@ -490,8 +490,8 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
                 padding: '1.3rem 0',
                 borderBottom: `1px solid ${PALETTE.border}`,
                 display: 'grid',
-                gridTemplateColumns: '180px 1fr 80px 20px',
-                gap: '1.5rem',
+                gridTemplateColumns: 'minmax(120px, 180px) 1fr minmax(60px, 80px) 20px',
+                gap: '1rem',
                 alignItems: 'center',
                 width: '100%',
               }}
@@ -559,7 +559,7 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {tells.map((t: any, i: number) => (
           <Reveal key={i} delay={i * 0.08}>
-            <div style={{
+            <div className="tells-row" style={{
               padding: '1.5rem 0',
               borderBottom: `1px solid ${PALETTE.border}`,
               display: 'grid',
@@ -842,7 +842,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
   };
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
+    <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
 
       {/* Classification geometry — top right */}
       <svg style={{
@@ -1160,15 +1160,15 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
 
 function ProfileSection({ children, index }: { children: React.ReactNode; index?: number }) {
   return (
-    <div style={{ padding: 'clamp(3.5rem, 8vw, 6rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
+    <div style={{ padding: 'clamp(2.5rem, 8vw, 6rem) clamp(1.25rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
       {/* Ghost section number */}
       {index !== undefined && (
-        <div style={{
+        <div className="section-ghost-num" style={{
           position: 'absolute',
-          top: 'clamp(2rem, 5vw, 4rem)',
-          right: 'clamp(2rem, 5vw, 4rem)',
+          top: 'clamp(1.5rem, 5vw, 4rem)',
+          right: 'clamp(1rem, 5vw, 4rem)',
           fontFamily: "'EB Garamond', serif",
-          fontSize: 'clamp(80px, 12vw, 140px)',
+          fontSize: 'clamp(60px, 12vw, 140px)',
           fontWeight: 400,
           color: 'rgba(26,24,20,0.06)',
           lineHeight: 1,

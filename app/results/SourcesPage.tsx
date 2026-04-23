@@ -104,7 +104,7 @@ function ActiveSourceCard({
           padding: '1.4rem 0',
           display: 'grid',
           gridTemplateColumns: '1fr auto auto auto',
-          alignItems: 'center', gap: '1.5rem',
+          alignItems: 'center', gap: 'clamp(0.6rem, 2vw, 1.5rem)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.8rem', flexWrap: 'wrap' }}>
@@ -414,7 +414,7 @@ export default function SourcesPage({
   }, [onUpload, onAnalysisUpdate]);
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: `0 ${pad}`, paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
+    <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', padding: `0 ${pad}`, paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
 
       {/* HEADER */}
       <motion.div
@@ -437,7 +437,7 @@ export default function SourcesPage({
           03 / Sources
         </motion.p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'end', gap: '3rem' }}>
+        <div className="sources-header-grid" style={{ display: 'grid', gridTemplateColumns: '1fr auto', alignItems: 'end', gap: '3rem' }}>
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.8 }}>
             <h1 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 4.5vw, 3.2rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '1rem', maxWidth: '22ch' }}>
               Every platform you use is building a file on you.

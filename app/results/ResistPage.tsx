@@ -1031,7 +1031,7 @@ export default function ResistPage({ analysis }: ResistPageProps) {
   const pad = 'clamp(2rem, 6vw, 5rem)';
 
   return (
-    <div style={{
+    <div className="dash-page-inner" style={{
       maxWidth: 1000, margin: '0 auto',
       padding: `0 ${pad}`,
       paddingBottom: 'clamp(4rem, 10vw, 8rem)',

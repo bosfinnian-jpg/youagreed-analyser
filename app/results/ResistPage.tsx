@@ -491,7 +491,7 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
       {/* Rights grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(280px, 100%), 1fr))',
         gap: '1px',
         background: PALETTE.border,
         marginBottom: 'clamp(2rem, 4vw, 3.5rem)',
@@ -748,7 +748,7 @@ function TierStructural() {
         }}>Alternatives that don't extract</p>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(250px, 100%), 1fr))',
           gap: '1px',
           background: PALETTE.border,
         }}>
@@ -884,7 +884,7 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
           }}
         >
           <span style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(3.5rem, 10vw, 7rem)',
+            fontFamily: TYPE.serif, fontSize: 'clamp(2.8rem, 10vw, 7rem)',
             fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.04em',
             lineHeight: 1,
           }}>

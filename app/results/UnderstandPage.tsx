@@ -741,6 +741,7 @@ function Module1({
       canAdvance={revealed}
     >
       <div
+        className="understand-inference-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 120px 1fr',

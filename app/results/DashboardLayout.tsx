@@ -391,30 +391,64 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           .nav-desktop { display: none !important; }
         }
 
-        /* Mobile page padding adjustments */
+        /* ── Mobile responsive overrides ── */
         @media (max-width: 640px) {
+          /* Page padding */
           .dash-page-inner {
             padding-left: 1.25rem !important;
             padding-right: 1.25rem !important;
           }
-          /* Two-column grids collapse on mobile */
+
+          /* Two-column grids → single column */
           .ov-two-col { grid-template-columns: 1fr !important; }
           .mob-stack { grid-template-columns: 1fr !important; flex-direction: column !important; }
+          .sources-header-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
 
-          /* Sources header stat block — stack below on mobile */
-          .sources-header-grid { grid-template-columns: 1fr !important; }
+          /* Understand inference grid — 3col → stack */
+          .understand-inference-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .understand-inference-grid > *:nth-child(2) {
+            display: none !important;
+          }
 
-          /* Profile demographic grid — collapse label column on mobile */
-          .demo-grid { grid-template-columns: 1fr 1fr 24px !important; }
-
-          /* Verbal tells grid — stack on mobile */
+          /* Verbal tells — hide frequency badge, it crowds */
           .tells-row { grid-template-columns: 1fr !important; }
+          .tells-row > *:last-child { display: none !important; }
 
-          /* RTB auction bid rows — hide segment col on mobile */
+          /* Demographic predictions — hide evidence expand, simplify grid */
+          .demo-grid {
+            grid-template-columns: 1fr auto !important;
+            gap: 0.8rem !important;
+          }
+          .demo-grid > *:nth-child(3) { display: none !important; }
+
+          /* Nav strip cards — reduce padding */
+          .nav-strip-card { padding: 1.4rem 1.2rem !important; }
+
+          /* Key findings row — tighter */
+          .findings-row { gap: 1rem !important; }
+
+          /* RTB auction — hide segment label on bid rows */
           .bid-row-seg { display: none !important; }
+
+          /* Policy drift comparison — make scrollable rather than breaking */
+          .policy-drift-table {
+            min-width: 0;
+            overflow-x: auto;
+          }
+
+          /* Large serif numbers (score hero) — clamp aggressively */
+          .score-hero { font-size: clamp(3rem, 15vw, 5rem) !important; }
+
+          /* Remove decorative SVGs on very small screens */
+          .deco-svg { display: none !important; }
+
+          /* Stat strip — wrap freely */
+          .stat-strip { gap: 1.5rem !important; flex-wrap: wrap !important; }
         }
 
-        /* Profile section ghost numbers — hide on small screens */
+        /* Section ghost numbers — hide on small screens */
         @media (max-width: 480px) {
           .section-ghost-num { display: none !important; }
         }

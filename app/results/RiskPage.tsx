@@ -656,7 +656,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
     }}>
 
       {/* Background geometry — top right, faint crosshair */}
-      <svg style={{
+      <svg className="deco-svg" style={{
         position: 'absolute', top: 0, right: 0,
         width: '260px', height: '260px',
         pointerEvents: 'none', overflow: 'visible',

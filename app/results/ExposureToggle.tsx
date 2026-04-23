@@ -191,7 +191,7 @@ export default function ExposureToggle({ analysis }: { analysis: DeepAnalysis })
               transition={{ delay: i * 0.05 }}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '180px 1fr',
+                gridTemplateColumns: 'minmax(100px, 160px) 1fr',
                 gap: '1rem',
                 padding: '0.7rem 0',
                 borderBottom: `1px solid ${PALETTE.border}`,

@@ -490,7 +490,7 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
                 padding: '1.3rem 0',
                 borderBottom: `1px solid ${PALETTE.border}`,
                 display: 'grid',
-                gridTemplateColumns: 'minmax(120px, 180px) 1fr minmax(60px, 80px) 20px',
+                gridTemplateColumns: 'minmax(100px, 160px) 1fr minmax(55px, 70px) 20px',
                 gap: '1rem',
                 alignItems: 'center',
                 width: '100%',
@@ -779,7 +779,7 @@ function CommercialTargetsSection({ targets }: { targets: any[] }) {
       />
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(min(300px, 100%), 1fr))',
         gap: '1px',
         background: PALETTE.border,
       }}>
@@ -845,7 +845,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
     <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
 
       {/* Classification geometry — top right */}
-      <svg style={{
+      <svg className="deco-svg" style={{
         position: 'absolute', top: 0, right: 0, width: '200px', height: '200px',
         pointerEvents: 'none', overflow: 'visible',
       }}>
@@ -1035,7 +1035,7 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
         </div>
 
         {segments.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1px', background: PALETTE.border }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))', gap: '1px', background: PALETTE.border }}>
             {segments.map((seg, i) => (
               <motion.div
                 key={seg.label}

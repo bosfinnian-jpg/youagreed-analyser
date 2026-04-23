@@ -187,7 +187,7 @@ function ActiveSourceCard({
                     cursor: 'pointer',
                     background: 'transparent',
                     transition: 'border-color 0.2s, background 0.2s',
-                    maxWidth: 480,
+                    maxWidth: 'min(480px, 100%)',
                   }}
                   onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.inkMuted; (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
@@ -210,7 +210,7 @@ function ActiveSourceCard({
 
               {/* Error state */}
               {state.status === 'error' && state.error && (
-                <div style={{ borderLeft: `3px solid ${PALETTE.red}`, paddingLeft: '1.2rem', maxWidth: 480, marginTop: '1rem' }}>
+                <div style={{ borderLeft: `3px solid ${PALETTE.red}`, paddingLeft: '1.2rem', maxWidth: 'min(480px, 100%)', marginTop: '1rem' }}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.4rem' }}>Upload failed</p>
                   <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: PALETTE.inkMuted, lineHeight: 1.7 }}>{state.error}</p>
                   <button

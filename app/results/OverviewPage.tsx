@@ -59,7 +59,7 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
       }}
     >
       {/* Geometric accent */}
-      <svg style={{
+      <svg className="deco-svg" style={{
         position: 'absolute', top: 0, right: 0,
         width: '260px', height: '260px', pointerEvents: 'none', overflow: 'visible',
       }}>
@@ -151,7 +151,7 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ delay: 1.3, duration: 0.6 }}
-          style={{
+          className="stat-strip" style={{
             display: 'flex', gap: 'clamp(2rem, 5vw, 4rem)',
             marginTop: 'clamp(2rem, 5vw, 3.5rem)',
             paddingTop: 'clamp(1.5rem, 3vw, 2rem)',
@@ -308,6 +308,7 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
               animate={isInView ? { opacity: 1, x: 0 } : {}}
               transition={{ delay: i * 0.08 }}
               onClick={() => setPage(finding.page)}
+              className="findings-row"
               style={{
                 background: 'none', border: 'none',
                 borderBottom: `1px solid ${PALETTE.border}`,

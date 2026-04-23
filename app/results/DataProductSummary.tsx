@@ -27,7 +27,7 @@ function ProfileRow({ label, value, redValue, delay }: { label: string; value: s
       transition={{ delay: delay * 0.08 }}
       style={{
         display: 'grid',
-        gridTemplateColumns: '180px 1fr',
+        gridTemplateColumns: 'minmax(100px, 160px) 1fr',
         gap: '1rem',
         padding: '0.6rem 0',
         borderBottom: `1px solid ${PALETTE.border}`,

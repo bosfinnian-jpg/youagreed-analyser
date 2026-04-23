@@ -509,6 +509,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 0.3, duration: 0.6 }}
+        className="policy-drift-table"
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr repeat(3, 1fr)',
@@ -517,7 +518,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           marginBottom: '1px',
         }}
       >
-        {/* Filter controls in the first column */}
+        {/* Filter controls in the first column */
         <div style={{
           background: PALETTE.bgPanel,
           padding: '1rem 1.6rem',

@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
 
 // ============================================================================
@@ -869,7 +869,11 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
         }}
       >
-        07 / Resist
+07 / Resist</p>
+          </motion.p>
+          <ActLabel roman="IV" title="After" pageLabel="07 / Resist" />
+          <ThreadSentence>The extraction is complete. The argument is complete. This is what remains.</ThreadSentence>
+          <p style={{ display: 'none' }}>
       </motion.p>
 
       {/* Counter block */}
@@ -916,7 +920,7 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
           maxWidth: 680, marginBottom: '1.5rem',
         }}
       >
-        You cannot undo what has already been extracted. But there is a structure to what you can still do.
+        The record exists. The inference is complete. It cannot be reversed. What follows is not a solution — it is what remains possible.
       </motion.h1>
 
       <motion.p
@@ -929,7 +933,7 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
           maxWidth: 580,
         }}
       >
-        Three tiers. Immediate actions that limit future exposure. Legal rights and how to exercise them. And the structural reality that no individual action can fix.
+        Three tiers of action — not because they undo anything, but because limiting what comes next is the only agency that remains. Immediate steps. Legal rights. And the structural forces operating at the level where the real problem lives.
       </motion.p>
 
       {/* Stats strip */}

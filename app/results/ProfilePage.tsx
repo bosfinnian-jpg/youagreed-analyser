@@ -2,7 +2,7 @@
 
 import { useRef, useState, useMemo } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
 import { RetainedTag } from './CannotBeDeletedPage';
 
 // ============================================================================
@@ -822,7 +822,7 @@ function CommercialTargetsSection({ targets }: { targets: any[] }) {
 }
 
 
-export default function ProfilePage({ results }: { results: AnalysisResult }) {
+export default function ProfilePage({ results, setPage }: { results: AnalysisResult; setPage?: (p: any) => void }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const heroInView = useInView(heroRef, { once: true });
 
@@ -872,7 +872,11 @@ export default function ProfilePage({ results }: { results: AnalysisResult }) {
           animate={heroInView ? { opacity: 1 } : {}}
           style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}
         >
-          02 / Profile
+02 / Profile</p>
+          </motion.p>
+          <ActLabel roman="II" title="The Inference" pageLabel="02 / Profile" />
+          <ThreadSentence>Not what you said. What the pattern of how you said it reveals about who you are.</ThreadSentence>
+          <p style={{ display: 'none' }}>
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}

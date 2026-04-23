@@ -95,7 +95,7 @@ export default function ResultsPage() {
   return (
     <DashboardLayout results={results} page={page} setPage={handleSetPage}>
       {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={handleSetPage} />}
-      {page === 'profile' && <ProfilePage results={results} />}
+      {page === 'profile' && <ProfilePage results={results} setPage={handleSetPage} />}
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} />}
       {page === 'risk' && <RiskPage results={results} />}
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}

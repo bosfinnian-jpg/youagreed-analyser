@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE, type DashPage } from './DashboardLayout';
+import { PALETTE, TYPE, type DashPage, ActLabel, ThreadSentence } from './DashboardLayout';
 import DataProductSummary from './DataProductSummary';
 import EmotionalTimelineChart from './EmotionalTimelineChart';
 import { ConfidenceLimitations, getActiveEmptyStates, EmptyStateNotice } from './EmptyStatesAndLimitations';
@@ -53,17 +53,13 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         overflow: 'hidden',
       }}
     >
-      <motion.p
+      <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ delay: 0.15, duration: 0.6 }}
-        style={{
-          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-          color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
-        }}
       >
-        01 / Overview
-      </motion.p>
+        <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -113,9 +109,21 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         style={{
           fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
           color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560,
+          marginBottom: '1rem',
         }}
       >
-        Every conversation you have had with an AI system leaves a trace — not just in logs, but embedded in the model itself. This profile cannot be removed. This report maps what has been extracted from you, and why it stays.
+        You agreed to terms that described this process. They did not describe it fully. What follows is a record of what was taken from your conversations — patterns of thought, disclosed vulnerabilities, named people, mapped locations. Each item is permanent. None of it can be returned.
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 1.1, duration: 0.8 }}
+        style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+        }}
+      >
+        Act I of IV. The record.
       </motion.p>
 
       {messages > 0 && (
@@ -485,67 +493,46 @@ function BottomCTAs({ setPage }: { setPage: (p: DashPage) => void }) {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7 }}
       style={{
-        display: 'flex', gap: 'clamp(1rem, 3vw, 2rem)',
-        flexWrap: 'wrap',
         paddingTop: 'clamp(2rem, 5vw, 3.5rem)',
         borderTop: `1px solid ${PALETTE.border}`,
       }}
     >
-      <button
-        onClick={() => setPage('profile')}
-        style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-          letterSpacing: '-0.01em',
-          color: PALETTE.ink,
-          background: 'none',
-          border: `1px solid ${PALETTE.border}`,
-          padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.5rem, 3vw, 2.5rem)',
-          cursor: 'pointer',
-          transition: 'border-color 0.15s, background 0.15s',
-          textAlign: 'left',
-          lineHeight: 1.3,
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.borderColor = PALETTE.borderHover;
-          e.currentTarget.style.background = PALETTE.bgPanel;
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = PALETTE.border;
-          e.currentTarget.style.background = 'none';
-        }}
-      >
-        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>02</span>
-        Read your full profile →
-      </button>
-
-      <button
-        onClick={() => setPage('permanent')}
-        style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-          letterSpacing: '-0.01em',
-          color: PALETTE.ink,
-          background: 'none',
-          border: `1px solid ${PALETTE.border}`,
-          padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.5rem, 3vw, 2.5rem)',
-          cursor: 'pointer',
-          transition: 'border-color 0.15s, background 0.15s',
-          textAlign: 'left',
-          lineHeight: 1.3,
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.borderColor = PALETTE.borderHover;
-          e.currentTarget.style.background = PALETTE.bgPanel;
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = PALETTE.border;
-          e.currentTarget.style.background = 'none';
-        }}
-      >
-        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>06</span>
-        Why it cannot be deleted →
-      </button>
+      <p style={{
+        fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
+        color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 540,
+        marginBottom: '1.5rem', fontStyle: 'italic',
+      }}>
+        The record shows what was extracted. Act II shows what the patterns of that record reveal about who you are.
+      </p>
+      <div style={{ display: 'flex', gap: 'clamp(0.75rem, 2vw, 1.25rem)', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => setPage('profile')}
+          style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+            letterSpacing: '-0.01em', color: PALETTE.ink,
+            background: 'none', border: `1px solid ${PALETTE.border}`,
+            padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
+            cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s', textAlign: 'left', lineHeight: 1.3,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.borderHover; e.currentTarget.style.background = PALETTE.bgPanel; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = PALETTE.border; e.currentTarget.style.background = 'none'; }}
+        >
+          <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT II</span>
+          The inference →
+        </button>
+        <button
+          onClick={() => setPage('permanent')}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
+            color: PALETTE.inkFaint, background: 'none', border: 'none',
+            cursor: 'pointer', textTransform: 'uppercase',
+            padding: 'clamp(0.85rem, 2vw, 1.25rem) 0',
+            textDecoration: 'underline', textDecorationColor: PALETTE.border,
+          }}
+        >
+          Skip to: why it cannot be deleted
+        </button>
+      </div>
     </motion.div>
   );
 }

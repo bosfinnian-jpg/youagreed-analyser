@@ -488,7 +488,16 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           marginBottom: '1.4rem',
         }}
       >
-        05 / Understand
+05 / Understand</p>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.4em', color: 'rgba(26,24,20,0.07)', textTransform: 'uppercase', marginBottom: '0.15rem' }}>ACT II — The Inference</p>
+        </div>
+        <div style={{ borderLeft: '2px solid rgba(26,24,20,0.14)', paddingLeft: '1.25rem', marginTop: '0.75rem', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
+          <p style={{ fontFamily: 'EB Garamond, Georgia, serif', fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: 'rgba(26,24,20,0.58)', lineHeight: 1.75, maxWidth: 560, fontStyle: 'italic' }}>
+            How a conversation becomes a profile without anyone deciding to build one.
+          </p>
+        </div>
+        <p style={{ display: 'none' }}>
       </motion.p>
 
       <motion.h1

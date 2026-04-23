@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
 
 // ============================================================================
@@ -672,17 +672,21 @@ export default function CannotBeDeletedPage({ results, setPage }: {
           marginBottom: 'clamp(3rem, 6vw, 5rem)',
         }}
       >
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.15, duration: 0.6 }}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
-          }}
+          style={{ marginBottom: '0.75rem' }}
         >
-          06 / Permanent
-        </motion.p>
+          <ActLabel roman="III" title="The Permanence" pageLabel="06 / Permanent" />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.25, duration: 0.7 }}
+        >
+          <ThreadSentence>Why deletion is a different operation from removal. The argument is technical, legal, and final.</ThreadSentence>
+        </motion.div>
 
         {/* Hero number — message count or a fixed weight count */}
         <motion.div

@@ -38,14 +38,66 @@ export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand
 // NAV
 // ============================================================================
 const NAV_ITEMS: { id: DashPage; label: string; short: string }[] = [
-  { id: 'overview',  label: 'Overview',       short: '01' },
+  { id: 'overview',  label: 'Overview',   short: '01' },
   { id: 'profile',   label: 'Profile',    short: '02' },
-  { id: 'sources',   label: 'Sources',    short: '03' },
   { id: 'risk',      label: 'Risk',       short: '04' },
   { id: 'understand',label: 'Understand', short: '05' },
-  { id: 'permanent', label: 'Permanent',       short: '06' },
-  { id: 'resist',    label: 'Resist',         short: '07' },
+  { id: 'permanent', label: 'Permanent',  short: '06' },
+  { id: 'resist',    label: 'Resist',     short: '07' },
+  { id: 'sources',   label: 'Sources',   short: '03' },
 ];
+
+// Four-act structure for the hamburger drawer
+const ACT_STRUCTURE = [
+  { roman: 'I',   label: 'The Record',      ids: ['overview'] as DashPage[] },
+  { roman: 'II',  label: 'The Inference',   ids: ['profile', 'risk', 'understand'] as DashPage[] },
+  { roman: 'III', label: 'The Permanence',  ids: ['permanent'] as DashPage[] },
+  { roman: 'IV',  label: 'After',           ids: ['resist'] as DashPage[] },
+] as const;
+
+// ============================================================================
+// SHARED NARRATIVE COMPONENTS — exported for use across all result pages
+// ============================================================================
+export function ActLabel({ roman, title, pageLabel }: { roman: string; title: string; pageLabel: string }) {
+  return (
+    <div style={{ marginBottom: '1rem' }}>
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.4em',
+        color: PALETTE.inkGhost, textTransform: 'uppercase', marginBottom: '0.2rem',
+      }}>
+        ACT {roman} — {title}
+      </p>
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
+        color: PALETTE.redMuted, textTransform: 'uppercase',
+      }}>
+        {pageLabel}
+      </p>
+    </div>
+  );
+}
+
+export function ThreadSentence({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      borderLeft: `2px solid ${PALETTE.border}`,
+      paddingLeft: '1.25rem',
+      marginTop: '0.75rem',
+      marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
+    }}>
+      <p style={{
+        fontFamily: TYPE.serif,
+        fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
+        color: PALETTE.inkMuted,
+        lineHeight: 1.75,
+        maxWidth: 560,
+        fontStyle: 'italic',
+      }}>
+        {children}
+      </p>
+    </div>
+  );
+}
 
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
@@ -257,9 +309,14 @@ function Nav({ page, setPage, results, exposureScore }: {
                 borderBottom: `1px solid ${PALETTE.border}`,
                 flexShrink: 0,
               }}>
-                <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-                  Navigate
-                </span>
+                <div>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block' }}>
+                    The argument
+                  </span>
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '11px', color: PALETTE.inkFaint, fontStyle: 'italic', letterSpacing: '0.02em' }}>
+                    four acts
+                  </span>
+                </div>
                 <button
                   onClick={() => setMenuOpen(false)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
@@ -268,54 +325,108 @@ function Nav({ page, setPage, results, exposureScore }: {
                 </button>
               </div>
 
-              {/* Nav items — large, serif, breathing */}
-              <div style={{ flex: 1, padding: 'clamp(1.5rem, 4vw, 2.5rem) 0' }}>
-                {NAV_ITEMS.map((item, i) => {
-                  const isActive = page === item.id;
-                  return (
-                    <motion.button
-                      key={item.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.06 + i * 0.06, duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
-                      onClick={() => handleNav(item.id)}
-                      style={{
-                        width: '100%', background: 'none', border: 'none',
-                        cursor: 'pointer', textAlign: 'left',
-                        padding: '1rem clamp(1.5rem, 4vw, 2.5rem)',
-                        display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
-                        borderBottom: `1px solid ${PALETTE.border}`,
-                        transition: 'background 0.15s',
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgElevated; }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
-                    >
-                      <span style={{
-                        fontFamily: TYPE.serif,
-                        fontSize: 'clamp(1.3rem, 3vw, 1.7rem)',
-                        color: isActive ? PALETTE.ink : PALETTE.inkMuted,
-                        letterSpacing: '-0.02em',
-                        fontStyle: isActive ? 'normal' : 'normal',
-                      }}>
-                        {item.label}
-                        {isActive && (
+              {/* Nav — four acts */}
+              <div style={{ flex: 1, paddingTop: '0.5rem', paddingBottom: 'clamp(1rem, 3vw, 1.5rem)' }}>
+                {ACT_STRUCTURE.map((act, actIdx) => (
+                  <div key={act.roman}>
+                    {/* Act divider */}
+                    <div style={{
+                      padding: '0.85rem clamp(1.5rem, 4vw, 2.5rem) 0.4rem',
+                      display: 'flex', alignItems: 'center', gap: '0.75rem',
+                    }}>
+                      <p style={{
+                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.35em',
+                        color: PALETTE.inkGhost, textTransform: 'uppercase', whiteSpace: 'nowrap',
+                      }}>ACT {act.roman}</p>
+                      <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
+                      <p style={{
+                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em',
+                        color: PALETTE.inkFaint, textTransform: 'uppercase', whiteSpace: 'nowrap',
+                      }}>{act.label}</p>
+                    </div>
+                    {/* Act items */}
+                    {act.ids.map((id, i) => {
+                      const item = NAV_ITEMS.find(n => n.id === id)!;
+                      const isActive = page === item.id;
+                      const globalIdx = actIdx * 3 + i;
+                      return (
+                        <motion.button
+                          key={item.id}
+                          initial={{ opacity: 0, x: 16 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.05 + globalIdx * 0.05, duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                          onClick={() => handleNav(item.id)}
+                          style={{
+                            width: '100%', background: 'none', border: 'none',
+                            cursor: 'pointer', textAlign: 'left',
+                            padding: '0.85rem clamp(1.5rem, 4vw, 2.5rem)',
+                            display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+                            transition: 'background 0.15s',
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgElevated; }}
+                          onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+                        >
                           <span style={{
-                            display: 'inline-block', width: '4px', height: '4px',
-                            borderRadius: '50%', background: PALETTE.red,
-                            marginLeft: '0.6rem', verticalAlign: 'middle',
-                          }} />
-                        )}
-                      </span>
-                      <span style={{
-                        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-                        color: isActive ? PALETTE.redMuted : PALETTE.inkFaint,
-                        textTransform: 'uppercase',
-                      }}>
-                        {item.short}
-                      </span>
-                    </motion.button>
-                  );
-                })}
+                            fontFamily: TYPE.serif,
+                            fontSize: 'clamp(1.25rem, 2.8vw, 1.6rem)',
+                            color: isActive ? PALETTE.ink : PALETTE.inkMuted,
+                            letterSpacing: '-0.02em',
+                          }}>
+                            {item.label}
+                            {isActive && (
+                              <span style={{
+                                display: 'inline-block', width: '4px', height: '4px',
+                                borderRadius: '50%', background: PALETTE.red,
+                                marginLeft: '0.6rem', verticalAlign: 'middle',
+                              }} />
+                            )}
+                          </span>
+                          <span style={{
+                            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                            color: isActive ? PALETTE.redMuted : PALETTE.inkFaint,
+                            textTransform: 'uppercase',
+                          }}>
+                            {item.short}
+                          </span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                ))}
+                {/* Sources — utility */}
+                <div style={{
+                  marginTop: '0.5rem',
+                  borderTop: `1px solid ${PALETTE.border}`,
+                  padding: '0.5rem 0 0',
+                }}>
+                  {(['sources'] as DashPage[]).map(id => {
+                    const item = NAV_ITEMS.find(n => n.id === id)!;
+                    const isActive = page === item.id;
+                    return (
+                      <button
+                        key={id}
+                        onClick={() => handleNav(item.id)}
+                        style={{
+                          width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+                          textAlign: 'left', padding: '0.75rem clamp(1.5rem, 4vw, 2.5rem)',
+                          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+                          transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
+                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                      >
+                        <span style={{
+                          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em',
+                          color: isActive ? PALETTE.ink : PALETTE.inkFaint, textTransform: 'uppercase',
+                        }}>
+                          {item.label}
+                          {isActive && <span style={{ display: 'inline-block', width: '4px', height: '4px', borderRadius: '50%', background: PALETTE.red, marginLeft: '0.5rem', verticalAlign: 'middle' }} />}
+                        </span>
+                        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{item.short}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Drawer footer — score */}

@@ -517,7 +517,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           marginBottom: '1px',
         }}
       >
-        {/* Filter controls in the first column */
+        {/* Filter controls in the first column */}
         <div style={{
           background: PALETTE.bgPanel,
           padding: '1rem 1.6rem',

@@ -869,12 +869,11 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
         }}
       >
-07 / Resist</p>
-          </motion.p>
-          <ActLabel roman="IV" title="After" pageLabel="07 / Resist" />
-          <ThreadSentence>The extraction is complete. The argument is complete. This is what remains.</ThreadSentence>
-          <p style={{ display: 'none' }}>
-      </motion.p>
+07 / Resist
+        </motion.p>
+        <ActLabel roman="IV" title="After" pageLabel="07 / Resist" />
+        <ThreadSentence>The extraction is complete. The argument is complete. This is what remains.</ThreadSentence>
+      
 
       {/* Counter block */}
       {days > 0 && (

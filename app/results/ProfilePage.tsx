@@ -867,17 +867,8 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
         {/* Chapter rule */}
         <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={heroInView ? { opacity: 1 } : {}}
-          style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.4rem' }}
-        >
-02 / Profile</p>
-          </motion.p>
-          <ActLabel roman="II" title="The Inference" pageLabel="02 / Profile" />
-          <ThreadSentence>Not what you said. What the pattern of how you said it reveals about who you are.</ThreadSentence>
-          <p style={{ display: 'none' }}>
-        </motion.p>
+        <ActLabel roman="II" title="The Inference" pageLabel="02 / Profile" />
+        <ThreadSentence>Not what you said. What the pattern of how you said it reveals about who you are.</ThreadSentence>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={heroInView ? { opacity: 1, y: 0 } : {}}

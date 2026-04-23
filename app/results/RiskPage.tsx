@@ -691,12 +691,11 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
             color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
           }}
         >
-04 / Risk</p>
-          </motion.p>
-          <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
-          <ThreadSentence>What the record enables — if it ever leaves this system. And the technical reason it might not need to.</ThreadSentence>
-          <p style={{ display: 'none' }}>
+04 / Risk
         </motion.p>
+        <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
+        <ThreadSentence>What the record enables — if it ever leaves this system. And the technical reason it might not need to.</ThreadSentence>
+        
 
         {/* Active count — the big number */}
         <motion.div
@@ -849,8 +848,6 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
             </button>
           </div>
         </div>
-        <p style={{ display: 'none' }}>
-        </motion.p>
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 0.5 }}

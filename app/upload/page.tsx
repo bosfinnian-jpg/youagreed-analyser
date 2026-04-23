@@ -131,6 +131,44 @@ export default function UploadPage() {
     if (file) handleFile(file);
   }, [handleFile]);
 
+  const handleDemo = useCallback(async () => {
+    setError(null);
+    setIsAnalysing(true);
+    setProgress(5);
+    setStage('Loading demo data');
+    setDetail('');
+    try {
+      const res = await fetch('/demo-conversations.json');
+      const jsonData = await res.json();
+      await analyzeExport(jsonData, (p: AnalyzeProgress) => {
+        if (p.phase === 'parsing') {
+          setProgress(20); setStage('Extracting patterns'); setDetail('');
+        } else if (p.phase === 'ai_enriching') {
+          if (p.aiProgress) {
+            if (p.aiProgress.stage === 'selecting') {
+              setProgress(25); setStage('Selecting high-signal messages'); setDetail('');
+            } else if (p.aiProgress.stage === 'enriching') {
+              const pct = p.aiProgress.batchesTotal > 0
+                ? 30 + (p.aiProgress.batchesDone / p.aiProgress.batchesTotal) * 60
+                : 30;
+              setProgress(Math.round(pct));
+              setStage('Reading message content');
+              setDetail(`Batch ${p.aiProgress.batchesDone} of ${p.aiProgress.batchesTotal}`);
+            } else if (p.aiProgress.stage === 'synthesizing') {
+              setProgress(92); setStage('Synthesising profile'); setDetail('');
+            }
+          }
+        } else if (p.phase === 'complete') {
+          setProgress(100); setStage('Analysis complete'); setDetail('');
+        }
+      });
+      router.push('/results');
+    } catch (err: any) {
+      setIsAnalysing(false);
+      setError(err?.message || 'Demo failed to load.');
+    }
+  }, [router]);
+
   const handleDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); }, []);
   const handleDragLeave = useCallback(() => setIsDragging(false), []);
 
@@ -335,13 +373,36 @@ export default function UploadPage() {
                   </label>
                 </motion.div>
 
+                {/* Demo mode */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.8, ease: EASE }}
+                  style={{ marginTop: '20px', textAlign: 'center' }}
+                >
+                  <button
+                    onClick={handleDemo}
+                    style={{
+                      fontFamily: MONO, fontSize: '10px', letterSpacing: '0.2em',
+                      textTransform: 'uppercase', color: COLOR.inkFaint,
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      padding: '0.4rem 0', borderBottom: `1px solid ${COLOR.rule}`,
+                      transition: 'color 0.15s, border-color 0.15s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.color = COLOR.inkMuted; e.currentTarget.style.borderColor = COLOR.inkFaint; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = COLOR.inkFaint; e.currentTarget.style.borderColor = COLOR.rule; }}
+                  >
+                    No file? Load demo data →
+                  </button>
+                </motion.div>
+
                 {/* Quiet procedural note */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 1, delay: 1, ease: EASE }}
                   style={{
-                    marginTop: '32px',
+                    marginTop: '24px',
                     textAlign: 'center',
                     fontFamily: MONO,
                     fontSize: '10px',

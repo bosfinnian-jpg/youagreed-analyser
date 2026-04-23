@@ -9,6 +9,7 @@ import ProfilePage from './ProfilePage';
 import RiskPage from './RiskPage';
 import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
+import CannotBeDeletedPage from './CannotBeDeletedPage';
 import ResistPage from './ResistPage';
 
 interface AnalysisResult {
@@ -98,6 +99,7 @@ export default function ResultsPage() {
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} />}
       {page === 'risk' && <RiskPage results={results} />}
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
+      {page === 'permanent' && <CannotBeDeletedPage results={results} setPage={handleSetPage} />}
       {page === 'resist' && <ResistPage analysis={results as any} />}
     </DashboardLayout>
   );

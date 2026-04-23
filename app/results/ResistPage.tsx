@@ -869,7 +869,7 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
         }}
       >
-        06 / Resist
+        07 / Resist
       </motion.p>
 
       {/* Counter block */}
@@ -897,8 +897,8 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
             }}>days of data</span>
             <span style={{
               fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
-              color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block',
-            }}>already collected</span>
+              color: PALETTE.red, textTransform: 'uppercase', display: 'block',
+            }}>embedded permanently</span>
           </div>
         </motion.div>
       )}

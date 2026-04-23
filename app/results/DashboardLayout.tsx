@@ -32,7 +32,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'resist' | 'sources-detail';
+export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'permanent' | 'resist' | 'sources-detail';
 
 // ============================================================================
 // NAV
@@ -43,7 +43,8 @@ const NAV_ITEMS: { id: DashPage; label: string; short: string }[] = [
   { id: 'sources',   label: 'Sources',    short: '03' },
   { id: 'risk',      label: 'Risk',       short: '04' },
   { id: 'understand',label: 'Understand', short: '05' },
-  { id: 'resist',    label: 'Resist',         short: '06' },
+  { id: 'permanent', label: 'Permanent',       short: '06' },
+  { id: 'resist',    label: 'Resist',         short: '07' },
 ];
 
 function HamburgerIcon({ open }: { open: boolean }) {

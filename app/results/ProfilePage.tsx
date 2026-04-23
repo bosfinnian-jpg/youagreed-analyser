@@ -3,6 +3,7 @@
 import { useRef, useState, useMemo } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { PALETTE, TYPE } from './DashboardLayout';
+import { RetainedTag } from './CannotBeDeletedPage';
 
 // ============================================================================
 // TYPES
@@ -369,7 +370,7 @@ function CharacterSummarySection({ summary }: { summary: string }) {
         label="Intelligence briefing"
         heading="The subject, in forensic terms."
         headingSize="clamp(1.8rem, 4vw, 2.8rem)"
-        body="The passage below was written by an AI model after reading the most revealing messages in the corpus. It is a synthesis, not a quotation. Every claim is grounded in the evidence that follows. No questionnaire was completed."
+        body="The passage below was written by an AI model after reading the most revealing messages in the corpus. It is a synthesis, not a quotation. Every claim is grounded in the evidence that follows. No questionnaire was completed. All of it is permanent."
       />
 
       <div ref={ref} style={{
@@ -381,7 +382,7 @@ function CharacterSummarySection({ summary }: { summary: string }) {
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
         }}>
-          Forensic portrait — confidential
+          Forensic portrait — confidential   ● Retained in model weights
         </p>
         <div style={{
           fontFamily: TYPE.serif,

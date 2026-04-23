@@ -7,6 +7,7 @@ import DataProductSummary from './DataProductSummary';
 import EmotionalTimelineChart from './EmotionalTimelineChart';
 import { ConfidenceLimitations, getActiveEmptyStates, EmptyStateNotice } from './EmptyStatesAndLimitations';
 import ClosureSection from './ClosureSection';
+import { RetainedTag } from './CannotBeDeletedPage';
 
 function useCounter(target: number, isInView: boolean, duration = 1800) {
   const [count, setCount] = useState(0);
@@ -114,7 +115,7 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
           color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560,
         }}
       >
-        Every conversation you have had with an AI system leaves a trace — not just in logs, but embedded in the model itself. This report maps what has been extracted from you, and what it is worth to the people who hold it.
+        Every conversation you have had with an AI system leaves a trace — not just in logs, but embedded in the model itself. This profile cannot be removed. This report maps what has been extracted from you, and why it stays.
       </motion.p>
 
       {messages > 0 && (
@@ -201,7 +202,7 @@ function MostExposingMoment({ results }: { results: any }) {
         <p style={{
           fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
           color: PALETTE.redMuted, textTransform: 'uppercase',
-        }}>Retained in model weights</p>
+        }}>● Retained in model weights — cannot be unlearned</p>
       </div>
     </motion.div>
   );
@@ -519,7 +520,7 @@ function BottomCTAs({ setPage }: { setPage: (p: DashPage) => void }) {
       </button>
 
       <button
-        onClick={() => setPage('understand')}
+        onClick={() => setPage('permanent')}
         style={{
           fontFamily: TYPE.serif,
           fontSize: 'clamp(1rem, 2vw, 1.2rem)',
@@ -542,7 +543,7 @@ function BottomCTAs({ setPage }: { setPage: (p: DashPage) => void }) {
           e.currentTarget.style.background = 'none';
         }}
       >
-        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>05</span>
+        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>06</span>
         Why it cannot be deleted →
       </button>
     </motion.div>

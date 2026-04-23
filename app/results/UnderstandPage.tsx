@@ -1437,7 +1437,7 @@ function Module3({
                 fontStyle: 'italic',
               }}
             >
-              Cooper et al. (2024): removing information from a model's training data does not guarantee the model cannot reproduce or reflect that information. There is no production system, at this scale, that implements unlearning. The GDPR right to be forgotten was written for databases, not neural networks.
+              Cooper et al. (2024): removing information from a model's training data does not guarantee the model cannot reproduce or reflect that information. There is no production system, at this scale, that implements unlearning. The GDPR right to be forgotten was written for databases, not neural networks. The full argument for why this is technically irreversible is laid out in the next section of this report.
             </p>
           </motion.div>
         )}

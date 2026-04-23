@@ -8,11 +8,7 @@ import EmotionalTimelineChart from './EmotionalTimelineChart';
 import { ConfidenceLimitations, getActiveEmptyStates, EmptyStateNotice } from './EmptyStatesAndLimitations';
 import ClosureSection from './ClosureSection';
 
-// ============================================================================
-// ANIMATED COUNTER
-// ============================================================================
-
-function useCounter(target: number, isInView: boolean, duration = 2000) {
+function useCounter(target: number, isInView: boolean, duration = 1800) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!isInView || target === 0) return;
@@ -30,10 +26,6 @@ function useCounter(target: number, isInView: boolean, duration = 2000) {
   return count;
 }
 
-// ============================================================================
-// HEADER
-// ============================================================================
-
 function OverviewHeader({ score, stats, results }: { score: number; stats: any; results: any }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
@@ -43,13 +35,15 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
 
   const scoreLabel = score >= 70 ? 'Severe exposure' : score >= 40 ? 'Moderate exposure' : 'Limited exposure';
   const scoreColor = score >= 70 ? PALETTE.red : score >= 40 ? PALETTE.amber : PALETTE.green;
+  const primaryName = results?.findings?.personalInfo?.names?.[0]?.name;
+  const headline = primaryName ? `${primaryName}, this is your data profile.` : 'This is your data profile.';
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
+      transition={{ duration: 0.9 }}
       style={{
         padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)',
         borderBottom: `1px solid ${PALETTE.border}`,
@@ -58,26 +52,10 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         overflow: 'hidden',
       }}
     >
-      {/* Geometric accent */}
-      <svg className="deco-svg" style={{
-        position: 'absolute', top: 0, right: 0,
-        width: '260px', height: '260px', pointerEvents: 'none', overflow: 'visible',
-      }}>
-        <rect x={160} y={20} width={60} height={60} fill="none" stroke="rgba(26,24,20,0.05)" strokeWidth="1" />
-        <line x1={160} y1={100} x2={200} y2={100} stroke="rgba(26,24,20,0.04)" strokeWidth="1" />
-        <line x1={210} y1={95} x2={230} y2={95} stroke="rgba(26,24,20,0.03)" strokeWidth="1" />
-        <line x1={160} y1={110} x2={185} y2={110} stroke="rgba(26,24,20,0.03)" strokeWidth="1" />
-        <rect x={168} y={130} width={20} height={20} fill="none" stroke="rgba(190,40,30,0.08)" strokeWidth="1" />
-        <rect x={198} y={122} width={14} height={14} fill="none" stroke="rgba(26,24,20,0.04)" strokeWidth="1" />
-        <circle cx={220} cy={140} r={1.5} fill="rgba(190,40,30,0.2)" />
-        <circle cx={235} cy={128} r={1} fill="rgba(26,24,20,0.1)" />
-      </svg>
-
-      {/* Page label */}
       <motion.p
         initial={{ opacity: 0, y: 6 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.2, duration: 0.7 }}
+        transition={{ delay: 0.15, duration: 0.6 }}
         style={{
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
@@ -86,19 +64,15 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         01 / Overview
       </motion.p>
 
-      {/* Score — massive, like the day counter on Resist */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 0.4, duration: 0.8 }}
-        style={{
-          display: 'flex', alignItems: 'baseline', gap: '1rem',
-          marginBottom: '2.5rem',
-        }}
+        transition={{ delay: 0.3, duration: 0.8 }}
+        style={{ display: 'flex', alignItems: 'baseline', gap: '1.25rem', marginBottom: '2rem' }}
       >
         <span style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(3.5rem, 10vw, 7rem)',
+          fontSize: 'clamp(4rem, 12vw, 8rem)',
           fontWeight: 400, color: scoreColor,
           letterSpacing: '-0.04em', lineHeight: 1,
         }}>
@@ -106,53 +80,52 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         </span>
         <div>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em',
             color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block',
           }}>out of 100</span>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
-            color: scoreColor, textTransform: 'uppercase', display: 'block', marginTop: '2px',
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em',
+            color: scoreColor, textTransform: 'uppercase', display: 'block', marginTop: '3px',
           }}>{scoreLabel}</span>
         </div>
       </motion.div>
 
-      {/* Main statement */}
       <motion.h1
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.6, duration: 0.9 }}
+        transition={{ delay: 0.55, duration: 0.8 }}
         style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(1.6rem, 4vw, 2.8rem)',
+          fontSize: 'clamp(1.8rem, 4.5vw, 3rem)',
           fontWeight: 400, color: PALETTE.ink,
-          letterSpacing: '-0.02em', lineHeight: 1.25,
-          maxWidth: 680, marginBottom: '1.5rem',
+          letterSpacing: '-0.025em', lineHeight: 1.2,
+          maxWidth: 700, marginBottom: '1.25rem',
         }}
       >
-        This is what your data reveals.
+        {headline}
       </motion.h1>
 
       <motion.p
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 1, duration: 0.8 }}
+        transition={{ delay: 0.85, duration: 0.8 }}
         style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
-          color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 580,
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
+          color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560,
         }}
       >
-        Every conversation you have had with an AI system leaves a trace. Not just in logs — in the model itself. This report maps what has been extracted from you.
+        Every conversation you have had with an AI system leaves a trace — not just in logs, but embedded in the model itself. This report maps what has been extracted from you, and what it is worth to the people who hold it.
       </motion.p>
 
-      {/* Stats strip */}
       {messages > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.3, duration: 0.6 }}
-          className="stat-strip" style={{
+          transition={{ delay: 1.1, duration: 0.6 }}
+          className="stat-strip"
+          style={{
             display: 'flex', gap: 'clamp(2rem, 5vw, 4rem)',
-            marginTop: 'clamp(2rem, 5vw, 3.5rem)',
+            marginTop: 'clamp(2.5rem, 5vw, 3.5rem)',
             paddingTop: 'clamp(1.5rem, 3vw, 2rem)',
             borderTop: `1px solid ${PALETTE.border}`,
             flexWrap: 'wrap',
@@ -161,16 +134,16 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
           {[
             { label: 'Messages analysed', value: messages.toLocaleString() },
             timeSpan ? { label: 'Time span', value: timeSpan } : null,
-            stats?.avgMessageLength ? { label: 'Avg length', value: `${stats.avgMessageLength} chars` } : null,
+            stats?.avgMessageLength ? { label: 'Avg message length', value: `${stats.avgMessageLength} chars` } : null,
           ].filter(Boolean).map((stat: any, i) => (
             <div key={i}>
               <p style={{
-                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-                color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem',
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+                color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.35rem',
               }}>{stat.label}</p>
               <p style={{
-                fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)',
-                color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1,
+                fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 2.8vw, 2rem)',
+                color: PALETTE.ink, letterSpacing: '-0.025em', lineHeight: 1,
               }}>{stat.value}</p>
             </div>
           ))}
@@ -179,10 +152,6 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
     </motion.div>
   );
 }
-
-// ============================================================================
-// MOST EXPOSING MOMENT
-// ============================================================================
 
 function MostExposingMoment({ results }: { results: any }) {
   const moment = results?.juiciestMoments?.[0];
@@ -196,54 +165,72 @@ function MostExposingMoment({ results }: { results: any }) {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.9 }}
       style={{
         borderLeft: `3px solid ${PALETTE.red}`,
-        paddingLeft: 'clamp(2rem, 4vw, 3rem)',
-        paddingTop: '0.25rem',
-        paddingBottom: '0.25rem',
+        paddingLeft: 'clamp(1.5rem, 4vw, 3rem)',
+        paddingTop: '0.5rem',
+        paddingBottom: '0.5rem',
       }}
     >
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-        color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
+        color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.25rem',
       }}>
         Most exposing moment
       </p>
       <blockquote style={{
         fontFamily: TYPE.serif,
-        fontSize: 'clamp(1.15rem, 2.2vw, 1.45rem)',
+        fontSize: 'clamp(1.15rem, 2.5vw, 1.5rem)',
         color: PALETTE.ink,
         lineHeight: 1.75,
-        marginBottom: '1.4rem',
-        maxWidth: 700,
+        marginBottom: '1.25rem',
+        maxWidth: 680,
       }}>
-        &ldquo;{moment.excerpt?.substring(0, 300)}{moment.excerpt?.length > 300 ? '…' : ''}&rdquo;
+        &ldquo;{moment.excerpt?.substring(0, 300)}{moment.excerpt?.length > 300 ? '\u2026' : ''}&rdquo;
       </blockquote>
-      {date && (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
+        {date && (
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase',
+          }}>{date}</p>
+        )}
         <p style={{
-          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
-          color: PALETTE.inkFaint, textTransform: 'uppercase',
-        }}>
-          {date} · Held in model weights permanently
-        </p>
-      )}
+          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
+          color: PALETTE.redMuted, textTransform: 'uppercase',
+        }}>Retained in model weights</p>
+      </div>
     </motion.div>
   );
 }
-
-// ============================================================================
-// KEY FINDINGS
-// ============================================================================
 
 function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage) => void }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const emptyStates = results ? getActiveEmptyStates(results) : [];
 
-  const findings = [
+  const topStats = [
+    results?.findings?.sensitiveTopics?.length > 0 && {
+      number: results.findings.sensitiveTopics.length,
+      label: 'sensitive disclosures',
+      color: PALETTE.red,
+    },
+    results?.findings?.personalInfo?.names?.length > 0 && {
+      number: results.findings.personalInfo.names.length,
+      label: 'people identified',
+      color: PALETTE.ink,
+    },
+    results?.lifeEvents?.length > 0 && {
+      number: results.lifeEvents.length,
+      label: 'life events detected',
+      color: PALETTE.ink,
+    },
+  ].filter(Boolean) as { number: number; label: string; color: string }[];
+
+  const rows = [
     results?.findings?.personalInfo?.names?.length > 0 && {
       label: 'People identified',
       value: `${results.findings.personalInfo.names.length} individuals`,
@@ -285,7 +272,7 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
         Key findings
       </p>
 
-      {findings.length === 0 ? (
+      {rows.length === 0 ? (
         emptyStates.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
             {emptyStates.slice(0, 3).map(state => (
@@ -298,55 +285,90 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
           </p>
         )
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {findings.map((finding, i) => (
-            <motion.button
-              key={i}
-              initial={{ opacity: 0, x: -6 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ delay: i * 0.08 }}
-              onClick={() => setPage(finding.page)}
-              className="findings-row"
+        <>
+          {topStats.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ delay: 0.1 }}
               style={{
-                background: 'none', border: 'none',
+                display: 'flex', gap: 'clamp(2rem, 5vw, 3.5rem)',
+                flexWrap: 'wrap',
+                paddingBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+                marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
                 borderBottom: `1px solid ${PALETTE.border}`,
-                padding: '1.4rem 0',
-                cursor: 'pointer', textAlign: 'left',
-                display: 'grid',
-                gridTemplateColumns: '1fr auto',
-                alignItems: 'center', gap: '2rem',
-                transition: 'padding-left 0.15s',
-                width: '100%',
               }}
-              onMouseEnter={e => { e.currentTarget.style.paddingLeft = '0.6rem'; }}
-              onMouseLeave={e => { e.currentTarget.style.paddingLeft = '0'; }}
             >
-              <div>
-                <p style={{
-                  fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
-                  color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem',
-                }}>{finding.label}</p>
-                <p style={{
-                  fontFamily: TYPE.serif, fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
-                  color: PALETTE.ink, letterSpacing: '-0.01em', marginBottom: '0.25rem',
-                }}>{finding.value}</p>
-                <p style={{
-                  fontFamily: TYPE.mono, fontSize: '12px', color: PALETTE.inkMuted,
-                  textTransform: 'capitalize', lineHeight: 1.5,
-                }}>{finding.detail}</p>
-              </div>
-              <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, flexShrink: 0 }}>→</span>
-            </motion.button>
-          ))}
-        </div>
+              {topStats.map((s, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.1 + i * 0.07 }}
+                >
+                  <p style={{
+                    fontFamily: TYPE.serif,
+                    fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+                    color: s.color,
+                    letterSpacing: '-0.03em',
+                    lineHeight: 1,
+                    marginBottom: '0.3rem',
+                  }}>{s.number}</p>
+                  <p style={{
+                    fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+                    color: PALETTE.inkFaint, textTransform: 'uppercase',
+                  }}>{s.label}</p>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {rows.map((row, i) => (
+              <motion.button
+                key={i}
+                initial={{ opacity: 0, x: -6 }}
+                animate={isInView ? { opacity: 1, x: 0 } : {}}
+                transition={{ delay: 0.2 + i * 0.07 }}
+                onClick={() => setPage(row.page)}
+                className="findings-row"
+                style={{
+                  background: 'none', border: 'none',
+                  borderBottom: `1px solid ${PALETTE.border}`,
+                  padding: '1.2rem 0',
+                  cursor: 'pointer', textAlign: 'left',
+                  display: 'grid',
+                  gridTemplateColumns: '1fr auto',
+                  alignItems: 'center', gap: '2rem',
+                  transition: 'padding-left 0.15s',
+                  width: '100%',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.paddingLeft = '0.5rem'; }}
+                onMouseLeave={e => { e.currentTarget.style.paddingLeft = '0'; }}
+              >
+                <div>
+                  <p style={{
+                    fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+                    color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.35rem',
+                  }}>{row.label}</p>
+                  <p style={{
+                    fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
+                    color: PALETTE.ink, letterSpacing: '-0.01em', marginBottom: '0.2rem',
+                  }}>{row.value}</p>
+                  <p style={{
+                    fontFamily: TYPE.mono, fontSize: '12px', color: PALETTE.inkMuted,
+                    textTransform: 'capitalize', lineHeight: 1.5,
+                  }}>{row.detail}</p>
+                </div>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, flexShrink: 0 }}>→</span>
+              </motion.button>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
 }
-
-// ============================================================================
-// ACTIVE RISKS
-// ============================================================================
 
 function ActiveRisks({ results, score, setPage }: { results: any; score: number; setPage: (p: DashPage) => void }) {
   const ref = useRef(null);
@@ -359,6 +381,8 @@ function ActiveRisks({ results, score, setPage }: { results: any; score: number;
     { label: 'Data breach exposure', active: score > 40 },
   ];
 
+  const activeCount = risks.filter(r => r.active).length;
+
   return (
     <motion.div
       ref={ref}
@@ -370,27 +394,45 @@ function ActiveRisks({ results, score, setPage }: { results: any; score: number;
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
         color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
       }}>
-        Active risk categories
+        Risk categories
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', marginBottom: '2rem' }}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.15 }}
+        style={{ marginBottom: '2rem' }}
+      >
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+          color: activeCount >= 3 ? PALETTE.red : activeCount >= 1 ? PALETTE.amber : PALETTE.green,
+          letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '0.3rem',
+        }}>{activeCount}</p>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+        }}>active risk{activeCount !== 1 ? 's' : ''} of {risks.length}</p>
+      </motion.div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.9rem', marginBottom: '2.5rem' }}>
         {risks.map((risk, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, x: -6 }}
+            initial={{ opacity: 0, x: -4 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: i * 0.1 }}
-            style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}
+            transition={{ delay: 0.2 + i * 0.07 }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.9rem' }}
           >
             <div style={{
-              width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-              background: risk.active ? PALETTE.red : 'transparent',
-              border: risk.active ? 'none' : `1px solid rgba(26,24,20,0.25)`,
+              width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
+              background: risk.active ? (activeCount >= 3 ? PALETTE.red : PALETTE.amber) : 'transparent',
+              border: risk.active ? 'none' : `1px solid rgba(26,24,20,0.22)`,
             }} />
             <span style={{
               fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.1em',
-              color: risk.active ? PALETTE.ink : PALETTE.inkMuted,
-              textTransform: 'uppercase', flex: 1,
+              color: risk.active ? PALETTE.ink : PALETTE.inkFaint,
+              textTransform: 'uppercase',
             }}>
               {risk.label}
             </span>
@@ -404,21 +446,17 @@ function ActiveRisks({ results, score, setPage }: { results: any; score: number;
           fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
           color: PALETTE.ink, textTransform: 'uppercase',
           background: 'none', border: `1px solid ${PALETTE.border}`,
-          padding: '0.7rem 1.2rem', cursor: 'pointer',
+          padding: '0.65rem 1.1rem', cursor: 'pointer',
           transition: 'border-color 0.15s',
         }}
-        onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.inkMuted; }}
+        onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.borderHover; }}
         onMouseLeave={e => { e.currentTarget.style.borderColor = PALETTE.border; }}
       >
-        View risk assessment →
+        Full risk assessment →
       </button>
     </motion.div>
   );
 }
-
-// ============================================================================
-// SECTION RULE
-// ============================================================================
 
 function SectionRule({ label }: { label: string }) {
   return (
@@ -435,70 +473,81 @@ function SectionRule({ label }: { label: string }) {
   );
 }
 
-// ============================================================================
-// NAV STRIP
-// ============================================================================
-
-function NavStrip({ setPage }: { setPage: (p: DashPage) => void }) {
+function BottomCTAs({ setPage }: { setPage: (p: DashPage) => void }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-
-  const items = [
-    { label: 'Your profile', sub: 'Cognitive fingerprint, social graph, locations', page: 'profile' as DashPage, num: '02' },
-    { label: 'Your risks', sub: 'Insurance, employment, targeting, breach scenarios', page: 'risk' as DashPage, num: '04' },
-    { label: 'Understand this', sub: 'Why your data cannot be deleted from a trained model', page: 'understand' as DashPage, num: '05' },
-    { label: 'What you can do', sub: 'Legal rights, real settings, organisations, alternatives', page: 'resist' as DashPage, num: '06' },
-  ];
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-      transition={{ duration: 0.8 }}
+      initial={{ opacity: 0, y: 8 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.7 }}
       style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        gap: '1px',
-        background: PALETTE.border,
+        display: 'flex', gap: 'clamp(1rem, 3vw, 2rem)',
+        flexWrap: 'wrap',
+        paddingTop: 'clamp(2rem, 5vw, 3.5rem)',
+        borderTop: `1px solid ${PALETTE.border}`,
       }}
     >
-      {items.map((item, i) => (
-        <motion.button
-          key={i}
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: i * 0.1 }}
-          onClick={() => setPage(item.page)}
-          style={{
-            background: PALETTE.bgPanel, border: 'none',
-            cursor: 'pointer', padding: '2rem',
-            textAlign: 'left', transition: 'background 0.15s',
-          }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgHover; }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
-        >
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.8rem',
-          }}>{item.num}</p>
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-            color: PALETTE.ink, marginBottom: '0.6rem', letterSpacing: '-0.01em',
-          }}>{item.label} →</p>
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.06em',
-            color: PALETTE.inkMuted, lineHeight: 1.65,
-          }}>{item.sub}</p>
-        </motion.button>
-      ))}
+      <button
+        onClick={() => setPage('profile')}
+        style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+          letterSpacing: '-0.01em',
+          color: PALETTE.ink,
+          background: 'none',
+          border: `1px solid ${PALETTE.border}`,
+          padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.5rem, 3vw, 2.5rem)',
+          cursor: 'pointer',
+          transition: 'border-color 0.15s, background 0.15s',
+          textAlign: 'left',
+          lineHeight: 1.3,
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = PALETTE.borderHover;
+          e.currentTarget.style.background = PALETTE.bgPanel;
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = PALETTE.border;
+          e.currentTarget.style.background = 'none';
+        }}
+      >
+        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>02</span>
+        Read your full profile →
+      </button>
+
+      <button
+        onClick={() => setPage('understand')}
+        style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
+          letterSpacing: '-0.01em',
+          color: PALETTE.ink,
+          background: 'none',
+          border: `1px solid ${PALETTE.border}`,
+          padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.5rem, 3vw, 2.5rem)',
+          cursor: 'pointer',
+          transition: 'border-color 0.15s, background 0.15s',
+          textAlign: 'left',
+          lineHeight: 1.3,
+        }}
+        onMouseEnter={e => {
+          e.currentTarget.style.borderColor = PALETTE.borderHover;
+          e.currentTarget.style.background = PALETTE.bgPanel;
+        }}
+        onMouseLeave={e => {
+          e.currentTarget.style.borderColor = PALETTE.border;
+          e.currentTarget.style.background = 'none';
+        }}
+      >
+        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>05</span>
+        Why it cannot be deleted →
+      </button>
     </motion.div>
   );
 }
-
-// ============================================================================
-// MAIN PAGE
-// ============================================================================
 
 export default function OverviewPage({ results, sources, setPage }: {
   results: any;
@@ -525,12 +574,11 @@ export default function OverviewPage({ results, sources, setPage }: {
         paddingBottom: 'clamp(4rem, 10vw, 8rem)',
       }}>
 
-        {/* Sources nudge */}
         {connected < sources.length && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
             style={{
-              padding: '0.9rem 0',
+              padding: '0.85rem 0',
               display: 'flex', alignItems: 'center',
               justifyContent: 'space-between', gap: '1.5rem',
               borderBottom: `1px solid ${PALETTE.border}`,
@@ -538,7 +586,7 @@ export default function OverviewPage({ results, sources, setPage }: {
             }}
           >
             <p style={{
-              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
+              fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em',
               color: PALETTE.inkFaint, textTransform: 'uppercase',
             }}>
               Analysis based on ChatGPT export only
@@ -546,7 +594,7 @@ export default function OverviewPage({ results, sources, setPage }: {
             <button
               onClick={() => setPage('sources')}
               style={{
-                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
+                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em',
                 textTransform: 'uppercase', color: PALETTE.inkMuted,
                 background: 'none', border: `1px solid ${PALETTE.border}`,
                 padding: '0.4rem 0.8rem', cursor: 'pointer', whiteSpace: 'nowrap',
@@ -560,22 +608,19 @@ export default function OverviewPage({ results, sources, setPage }: {
           </motion.div>
         )}
 
-        {/* Hero */}
         <OverviewHeader score={score} stats={stats} results={results} />
 
-        {/* Most exposing moment */}
         {results?.juiciestMoments?.[0] && (
           <div style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
             <MostExposingMoment results={results} />
           </div>
         )}
 
-        {/* Key findings + Active risks */}
         <div
           className="ov-two-col"
           style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
+            gridTemplateColumns: '3fr 2fr',
             gap: 'clamp(3rem, 8vw, 6rem)',
             marginBottom: 'clamp(4rem, 10vw, 8rem)',
             alignItems: 'start',
@@ -585,15 +630,13 @@ export default function OverviewPage({ results, sources, setPage }: {
           <ActiveRisks results={results} score={score} setPage={setPage} />
         </div>
 
-        {/* Emotional timeline */}
         {hasDeepData && results.emotionalTimeline?.weeks?.length > 2 && (
           <div style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
-            <SectionRule label="Emotional pattern" />
+            <SectionRule label="Emotional pattern over time" />
             <EmotionalTimelineChart timeline={results.emotionalTimeline} totalMessages={results.totalUserMessages || 0} />
           </div>
         )}
 
-        {/* Data product summary */}
         {hasDeepData && (
           <div style={{ marginBottom: 'clamp(4rem, 10vw, 8rem)' }}>
             <SectionRule label="Commercial profile" />
@@ -601,18 +644,14 @@ export default function OverviewPage({ results, sources, setPage }: {
           </div>
         )}
 
-        {/* Navigate deeper */}
         <div style={{ marginBottom: 'clamp(4rem, 10vw, 6rem)' }}>
-          <SectionRule label="Continue reading" />
-          <NavStrip setPage={setPage} />
+          <BottomCTAs setPage={setPage} />
         </div>
 
-        {/* Confidence note */}
         <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '2rem', marginBottom: 'clamp(3rem, 6vw, 5rem)' }}>
           <ConfidenceLimitations />
         </div>
 
-        {/* Closure */}
         {hasDeepData && <ClosureSection analysis={results} setPage={setPage} />}
 
       </div>

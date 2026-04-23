@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ActLabel, ThreadSentence } from './DashboardLayout';
 
 // ============================================================================
@@ -32,6 +32,219 @@ const C = {
 // ============================================================================
 // MODULE METADATA
 // ============================================================================
+
+
+// ── INTERACTIVE INFERENCE DEMO ───────────────────────────────────────────────
+// Pudding principle: make the abstract tangible.
+// Type anything. Watch the model classify it in real time.
+// The inference is instant — that's the point.
+
+const INFERENCE_RULES: { pattern: RegExp; label: string; color: string; bg: string }[] = [
+  { pattern: /\b(anxious|anxiety|panic|worried|stress|depression|depressed|sad|lonely|hopeless|desperate|suicidal|self-harm|harm|crying|overwhelm|breakdown|spiral)\b/gi, label: 'Mental health signal', color: 'rgba(255,100,72,0.9)', bg: 'rgba(255,100,72,0.1)' },
+  { pattern: /\b(doctor|hospital|medication|meds|prescription|diagnosis|therapy|therapist|counsell|psychiatr|GP|NHS|pain|symptom|ill|sick|cancer|surgery)\b/gi, label: 'Health disclosure', color: 'rgba(255,183,77,0.9)', bg: 'rgba(255,183,77,0.1)' },
+  { pattern: /\b(debt|loan|money|broke|afford|financial|salary|redundan|unemploy|bankruptcy|mortgage|rent|credit|borrow|budget|saving|bankrupt)\b/gi, label: 'Financial vulnerability', color: 'rgba(78,205,196,0.9)', bg: 'rgba(78,205,196,0.1)' },
+  { pattern: /\b(relationship|breakup|divorce|partner|wife|husband|girlfriend|boyfriend|ex|split|affair|cheating|dating|marriage|separated|custody)\b/gi, label: 'Relationship data', color: 'rgba(107,203,119,0.9)', bg: 'rgba(107,203,119,0.1)' },
+  { pattern: /\b(secret|nobody knows|don't tell|private|confidential|haven't told|can't tell|shouldn't say|just between|promise you won't)\b/gi, label: 'Confidentiality signal', color: 'rgba(187,134,252,0.9)', bg: 'rgba(187,134,252,0.1)' },
+  { pattern: /\b(I feel|I'm feeling|I feel like|makes me feel|feeling very|been feeling|felt so|I felt)\b/gi, label: 'Emotional disclosure', color: 'rgba(190,40,30,0.7)', bg: 'rgba(190,40,30,0.08)' },
+];
+
+const SAMPLE_PHRASES = [
+  "I've been feeling really anxious lately and my doctor suggested I see a therapist but I can't really afford it right now.",
+  "Nobody else knows about this but my relationship is falling apart and I'm not sure I can keep going.",
+  "I need help — I'm in serious debt and I haven't told my partner yet. I don't know what to do.",
+];
+
+interface Tagged { text: string; label?: string; color?: string; bg?: string }
+
+function tagPhrase(input: string): Tagged[] {
+  // Build a map of character positions to their tags
+  const result: Tagged[] = [];
+  const text = input;
+  let tagged = new Array(text.length).fill(null) as (null | { label: string; color: string; bg: string })[];
+
+  // Apply rules (first match wins)
+  for (const rule of INFERENCE_RULES) {
+    rule.pattern.lastIndex = 0;
+    let m;
+    while ((m = rule.pattern.exec(text)) !== null) {
+      for (let i = m.index; i < m.index + m[0].length; i++) {
+        if (!tagged[i]) tagged[i] = { label: rule.label, color: rule.color, bg: rule.bg };
+      }
+    }
+  }
+
+  let i = 0;
+  while (i < text.length) {
+    if (!tagged[i]) {
+      let j = i;
+      while (j < text.length && !tagged[j]) j++;
+      result.push({ text: text.slice(i, j) });
+      i = j;
+    } else {
+      const tag = tagged[i];
+      let j = i;
+      while (j < text.length && tagged[j] === tag) j++;
+      result.push({ text: text.slice(i, j), label: tag!.label, color: tag!.color, bg: tag!.bg });
+      i = j;
+    }
+  }
+  return result;
+}
+
+function InferenceTagger({ setPage }: { setPage?: (p: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-5%' });
+  const [input, setInput] = useState('');
+  const [activePhrase, setActivePhrase] = useState(0);
+  const [showCustom, setShowCustom] = useState(false);
+
+  const displayText = showCustom ? input : SAMPLE_PHRASES[activePhrase];
+  const tagged = displayText ? tagPhrase(displayText) : [];
+  const detectedLabels = [...new Set(tagged.filter(t => t.label).map(t => t.label!))];
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 16 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.9 }}
+      style={{
+        background: C.panel, border: `1px solid ${C.border}`,
+        padding: 'clamp(2rem, 4vw, 3rem)',
+        marginBottom: 'clamp(3rem, 6vw, 5rem)',
+      }}
+    >
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: 'rgba(190,40,30,0.7)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+        Live inference demo
+      </p>
+      <h3 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: C.text, letterSpacing: '-0.02em', marginBottom: '0.75rem', lineHeight: 1.25 }}>
+        What does the model see in your writing?
+      </h3>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.7, maxWidth: 520, marginBottom: '2rem' }}>
+        Select a phrase below — or type your own. Watch the inference categories appear in real time.
+        This is what happens to every message you send, automatically, at scale.
+      </p>
+
+      {/* Sample selector */}
+      {!showCustom && (
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+          {SAMPLE_PHRASES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setActivePhrase(i)}
+              style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                background: activePhrase === i ? C.text : 'none',
+                color: activePhrase === i ? C.bg : C.textFaint,
+                border: `1px solid ${activePhrase === i ? C.text : C.border}`,
+                padding: '0.35rem 0.75rem', cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+            >
+              Sample {i + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => setShowCustom(true)}
+            style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em',
+              textTransform: 'uppercase', background: 'none',
+              color: 'rgba(190,40,30,0.7)', border: `1px solid rgba(190,40,30,0.3)`,
+              padding: '0.35rem 0.75rem', cursor: 'pointer',
+            }}
+          >
+            Try your own →
+          </button>
+        </div>
+      )}
+
+      {/* Custom input */}
+      {showCustom && (
+        <div style={{ marginBottom: '1.5rem' }}>
+          <textarea
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            placeholder="Type anything you might say to an AI..."
+            style={{
+              width: '100%', background: 'rgba(26,24,20,0.03)',
+              border: `1px solid ${C.border}`, borderRadius: 0,
+              padding: '1rem', fontFamily: TYPE.serif, fontSize: '1rem',
+              color: C.text, lineHeight: 1.7, resize: 'vertical',
+              minHeight: '80px', outline: 'none',
+            }}
+          />
+          <button onClick={() => { setShowCustom(false); setInput(''); }}
+            style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', textTransform: 'uppercase', background: 'none', border: 'none', color: C.textFaint, cursor: 'pointer', marginTop: '0.4rem' }}>
+            ← back to samples
+          </button>
+        </div>
+      )}
+
+      {/* Tagged text display */}
+      {displayText && (
+        <div style={{
+          background: 'rgba(26,24,20,0.02)',
+          border: `1px solid ${C.border}`,
+          padding: '1.5rem',
+          marginBottom: '1.5rem',
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
+          lineHeight: 2, color: C.text,
+        }}>
+          {tagged.map((seg, i) =>
+            seg.label ? (
+              <span
+                key={i}
+                title={seg.label}
+                style={{
+                  background: seg.bg, color: seg.color,
+                  borderBottom: `1.5px solid ${seg.color}`,
+                  padding: '0 2px', borderRadius: '2px',
+                }}
+              >{seg.text}</span>
+            ) : (
+              <span key={i}>{seg.text}</span>
+            )
+          )}
+        </div>
+      )}
+
+      {/* Detected labels */}
+      {detectedLabels.length > 0 ? (
+        <div>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+            Inference output — {detectedLabels.length} categor{detectedLabels.length === 1 ? 'y' : 'ies'} detected:
+          </p>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {INFERENCE_RULES.filter(r => detectedLabels.includes(r.label)).map(rule => (
+              <span
+                key={rule.label}
+                style={{
+                  fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em',
+                  color: rule.color, background: rule.bg,
+                  border: `1px solid ${rule.color}`,
+                  padding: '0.3rem 0.7rem', textTransform: 'uppercase',
+                }}
+              >
+                {rule.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : displayText ? (
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: C.textFaint, letterSpacing: '0.1em' }}>
+          No categories detected in this phrase.
+        </p>
+      ) : null}
+
+      {detectedLabels.length > 0 && (
+        <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: C.textFaint, marginTop: '1.25rem', lineHeight: 1.6, fontStyle: 'italic', maxWidth: 480 }}>
+          This classification happened in under 1 millisecond. At scale, across millions of users, it runs continuously.
+        </p>
+      )}
+    </motion.div>
+  );
+}
 
 const MODULES = [
   { id: 1, label: 'The leap', short: 'Inference' },
@@ -340,7 +553,8 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
         {/* Progress indicator */}
         {hasStarted && <ProgressBar current={currentModule} completed={completed} onJump={goToModule} />}
 
-        {/* Module content */}
+        <InferenceTagger setPage={setPage} />
+      {/* Module content */}
         <AnimatePresence mode="wait">
           {!hasStarted ? (
             <CourseIntro key="intro" onStart={() => setHasStarted(true)} />

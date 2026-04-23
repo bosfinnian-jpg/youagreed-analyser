@@ -822,6 +822,135 @@ function CommercialTargetsSection({ targets }: { targets: any[] }) {
 }
 
 
+// ── EXTRACTION WAFFLE ─────────────────────────────────────────────────────
+// Pudding principle: one unit = one data point.
+// A proportional grid of coloured squares showing what was pulled from the corpus.
+// The shape of what was taken — before you read the detail of each category.
+
+const WAFFLE_COLORS: Record<string, string> = {
+  'Names identified':        'rgba(255,107,107,0.82)',  // coral
+  'Locations mapped':         'rgba(255,183,77,0.82)',   // gold
+  'Health disclosures':       'rgba(255,100,72,0.82)',   // ember
+  'Life events':              'rgba(187,134,252,0.82)',  // violet
+  'Recurring themes':         'rgba(78,205,196,0.82)',   // teal
+  'Relationships':            'rgba(107,203,119,0.82)',  // sage
+  'Sensitive disclosures':    'rgba(190,40,30,0.75)',    // red
+};
+
+function ExtractionWaffle({ results }: { results: AnalysisResult }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-8%' });
+  const [hovered, setHovered] = useState<string | null>(null);
+
+  const healthTopics = results.findings.sensitiveTopics?.filter(
+    t => ['mental_health','anxiety','depression','therapy','medical','health'].some(k => (t.category||''). toLowerCase().includes(k))
+  ).length || 0;
+  const otherSensitive = (results.findings.sensitiveTopics?.length || 0) - healthTopics;
+
+  const categories: { label: string; count: number }[] = [
+    { label: 'Sensitive disclosures', count: healthTopics + otherSensitive },
+    { label: 'Recurring themes',      count: results.findings.repetitiveThemes?.length || 0 },
+    { label: 'Life events',           count: results.lifeEvents?.length || 0 },
+    { label: 'Names identified',      count: results.findings.personalInfo?.names?.length || 0 },
+    { label: 'Locations mapped',      count: results.findings.personalInfo?.locations?.length || 0 },
+    { label: 'Relationships',         count: (results.findings.personalInfo?.relationships?.length || 0) },
+  ].filter(c => c.count > 0).sort((a, b) => b.count - a.count);
+
+  const total = categories.reduce((s, c) => s + c.count, 0);
+  if (total === 0) return null;
+
+  // Build array of cells capped at 120 for visual cleanliness
+  const CAP = 120;
+  const scale = total > CAP ? CAP / total : 1;
+  const cells: { cat: string; color: string }[] = [];
+  for (const cat of categories) {
+    const n = Math.max(1, Math.round(cat.count * scale));
+    for (let i = 0; i < n; i++) cells.push({ cat: cat.label, color: WAFFLE_COLORS[cat.label] || PALETTE.red });
+  }
+
+  return (
+    <div ref={ref} style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+        What was extracted
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint, lineHeight: 1.6, maxWidth: 480, marginBottom: '2rem' }}>
+        Each square is one data point pulled from your conversations.
+        {total > CAP && <> (Showing {CAP} of {total} items at scale.)</>}
+      </p>
+
+      {/* The grid */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ duration: 0.5 }}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(12, 1fr)',
+          gap: '3px',
+          maxWidth: 480,
+          marginBottom: '1.75rem',
+        }}
+      >
+        {cells.map((cell, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.01 + i * 0.008, duration: 0.25, type: 'spring', stiffness: 400 }}
+            onMouseEnter={() => setHovered(cell.cat)}
+            onMouseLeave={() => setHovered(null)}
+            style={{
+              aspectRatio: '1',
+              background: hovered && hovered !== cell.cat ? cell.color.replace(/[0-9.]+\)$/, '0.2)') : cell.color,
+              borderRadius: '2px',
+              cursor: 'default',
+              transition: 'background 0.2s',
+              boxShadow: hovered === cell.cat ? `0 0 0 1px ${cell.color}` : 'none',
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem 2rem' }}>
+        {categories.map(cat => (
+          <div
+            key={cat.label}
+            onMouseEnter={() => setHovered(cat.label)}
+            onMouseLeave={() => setHovered(null)}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'default' }}
+          >
+            <div style={{
+              width: 10, height: 10, borderRadius: '2px',
+              background: WAFFLE_COLORS[cat.label] || PALETTE.red,
+              opacity: hovered && hovered !== cat.label ? 0.3 : 1,
+              transition: 'opacity 0.2s',
+            }} />
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em',
+              color: hovered === cat.label ? PALETTE.ink : PALETTE.inkFaint,
+              textTransform: 'uppercase', transition: 'color 0.2s',
+            }}>
+              {cat.label} — {cat.count}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {hovered && (
+        <motion.p
+          key={hovered}
+          initial={{ opacity: 0, y: 4 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, marginTop: '1rem', fontStyle: 'italic' }}
+        >
+          {hovered} — {categories.find(c => c.label === hovered)?.count} instances extracted from your conversations.
+        </motion.p>
+      )}
+    </div>
+  );
+}
+
 export default function ProfilePage({ results, setPage }: { results: AnalysisResult; setPage?: (p: any) => void }) {
   const heroRef = useRef<HTMLDivElement>(null);
   const heroInView = useInView(heroRef, { once: true });
@@ -887,6 +1016,9 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           Together they constitute the kind of profile that circulates across the data broker ecosystem — built from writing patterns, not from a form you filled in.
         </motion.p>
       </div>
+
+
+      <ExtractionWaffle results={results} />
 
       {/* ================================================================
           SYNTHESIS — intelligence briefing sections (00–07)

@@ -636,6 +636,174 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
 // MAIN RISK PAGE
 // ============================================================================
 
+// ── BREACH HISTORY TIMELINE ──────────────────────────────────────────────
+// Pudding principle: make the threat feel regular, not exceptional.
+// Real incidents. Real scales. The question is not IF — it is when.
+
+const BREACHES = [
+  { year: 2021, month: 4,  name: 'Facebook',   records: 533, detail: 'Phone numbers, names, locations of 533M users published' },
+  { year: 2021, month: 6,  name: 'LinkedIn',    records: 700, detail: '700M user profiles scraped and listed for sale' },
+  { year: 2021, month: 10, name: 'Twitch',      records: 0.5, detail: '125GB of source code, creator revenue data' },
+  { year: 2022, month: 8,  name: 'Twitter/X',   records: 400, detail: '400M unique user records including private emails' },
+  { year: 2023, month: 3,  name: 'OpenAI',      records: 0.1, detail: 'Bug exposed conversation titles and payment info of active users' },
+  { year: 2023, month: 6,  name: 'MOVEit',      records: 60,  detail: '60M+ affected across hundreds of organisations via file transfer software' },
+  { year: 2024, month: 2,  name: 'Change Health',records: 190, detail: '190M patient healthcare records — largest US medical breach' },
+  { year: 2024, month: 5,  name: 'Snowflake',   records: 50,  detail: 'Ticketmaster, Santander, AT&T data via cloud storage credentials' },
+  { year: 2025, month: 1,  name: 'DeepSeek',    records: 1,   detail: 'AI chat logs, API keys, backend data exposed in open database' },
+];
+
+function BreachTimeline() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-5%' });
+  const [tooltip, setTooltip] = useState<typeof BREACHES[number] | null>(null);
+
+  const maxR  = Math.max(...BREACHES.map(b => b.records));
+  const minYear = 2021; const maxYear = 2025;
+  const W = 100; // percentage units for positioning
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 12 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
+      style={{
+        borderTop: `1px solid ${PALETTE.border}`,
+        paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
+        marginTop:  'clamp(2.5rem, 5vw, 4rem)',
+        marginBottom: 'clamp(3rem, 7vw, 6rem)',
+      }}
+    >
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+        Major data incidents — 2021–2025
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint, lineHeight: 1.7, maxWidth: 520, marginBottom: '2.5rem' }}>
+        Circle size = records exposed (millions). Breach is not exceptional. Hover each incident.
+      </p>
+
+      {/* Timeline SVG */}
+      <div style={{ position: 'relative', overflowX: 'auto' }}>
+        <svg
+          viewBox="0 0 900 180"
+          style={{ width: '100%', minWidth: 600, overflow: 'visible' }}
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {/* Baseline */}
+          <line x1={40} y1={110} x2={860} y2={110} stroke={PALETTE.border} strokeWidth={1} />
+
+          {/* Year labels */}
+          {[2021,2022,2023,2024,2025].map(yr => {
+            const x = 40 + ((yr - minYear) / (maxYear - minYear)) * 820;
+            return (
+              <g key={yr}>
+                <line x1={x} y1={105} x2={x} y2={115} stroke={PALETTE.border} strokeWidth={1} />
+                <text x={x} y={132} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize={10} fill={'rgba(26,24,20,0.3)'} letterSpacing="1">
+                  {yr}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Breach circles */}
+          {BREACHES.map((b, i) => {
+            const x = 40 + ((b.year - minYear + (b.month - 1) / 12) / (maxYear - minYear)) * 820;
+            const maxRadius = 50;
+            const minRadius = 8;
+            const r = minRadius + (b.records / maxR) * (maxRadius - minRadius);
+            const isOpenAI = b.name === 'OpenAI' || b.name === 'DeepSeek';
+            const baseColor = isOpenAI ? '190,40,30' : '255,100,72';
+            const delay = 0.1 + i * 0.08;
+
+            return (
+              <motion.g
+                key={i}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay, type: 'spring', stiffness: 200, damping: 18 }}
+                style={{ transformOrigin: `${x}px 110px`, cursor: 'pointer' }}
+                onMouseEnter={() => setTooltip(b)}
+                onMouseLeave={() => setTooltip(null)}
+              >
+                <circle
+                  cx={x} cy={110 - r * 0.5}
+                  r={r}
+                  fill={`rgba(${baseColor},0.12)`}
+                  stroke={`rgba(${baseColor},0.5)`}
+                  strokeWidth={isOpenAI ? 1.5 : 1}
+                />
+                {isOpenAI && (
+                  <circle cx={x} cy={110 - r * 0.5} r={3} fill={`rgba(${baseColor},0.8)`} />
+                )}
+                {r > 24 && (
+                  <text x={x} y={110 - r * 0.5 + 4} textAnchor="middle"
+                    fontFamily="'Courier Prime', monospace" fontSize={9}
+                    fill={`rgba(${baseColor},0.8)`} letterSpacing="0.5"
+                  >
+                    {b.name}
+                  </text>
+                )}
+              </motion.g>
+            );
+          })}
+
+          {/* Annotation arrow for OpenAI */}
+          {(() => {
+            const oai = BREACHES.find(b => b.name === 'OpenAI');
+            if (!oai) return null;
+            const x = 40 + ((oai.year - minYear + (oai.month - 1) / 12) / (maxYear - minYear)) * 820;
+            return (
+              <motion.g initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 1.2 }}>
+                <line x1={x} y1={95} x2={x - 60} y2={65} stroke={'rgba(190,40,30,0.3)'} strokeWidth={0.75} strokeDasharray="3,3" />
+                <text x={x - 65} y={60} textAnchor="end" fontFamily="'Courier Prime', monospace" fontSize={9} fill={'rgba(190,40,30,0.6)'} letterSpacing="0.5">
+                  OpenAI, 2023
+                </text>
+              </motion.g>
+            );
+          })()}
+        </svg>
+
+        {/* Tooltip */}
+        {tooltip && (
+          <motion.div
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)',
+              background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`,
+              padding: '1rem 1.25rem', maxWidth: 320, zIndex: 20,
+              pointerEvents: 'none',
+            }}
+          >
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+              {tooltip.name} — {tooltip.month}/{tooltip.year}
+            </p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
+              {tooltip.detail}
+            </p>
+            {tooltip.records >= 1 && (
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.4rem' }}>
+                {tooltip.records}M records
+              </p>
+            )}
+          </motion.div>
+        )}
+      </div>
+
+      <p style={{
+        fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted,
+        lineHeight: 1.7, maxWidth: 560, marginTop: '1.5rem',
+        fontStyle: 'italic', borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1rem',
+      }}>
+        The question is not whether a breach will expose AI conversation data. It is
+        which breach, and when. Your conversations exist on servers. Servers get breached.
+        The pattern is consistent.
+      </p>
+    </motion.div>
+  );
+}
+
+
+
 export default function RiskPage({ results, setPage }: { results: AnalysisResult; setPage?: (p: string) => void }) {
   const scenarios = useMemo(() => generateScenarios(results), [results]);
   const stats = results.stats || results.rawStats;
@@ -757,6 +925,10 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
 
       {/* RTB AUCTION */}
       <RTBAuction results={results} />
+
+
+      {/* BREACH TIMELINE */}
+      <BreachTimeline />
 
       {/* CLOSING */}
       <div>

@@ -27,13 +27,30 @@ function normaliseToGPTFormat(jsonData: any[], sourceType: SourceType): any[] {
   return jsonData; // ChatGPT is already the native format
 }
 
+export interface RevealData {
+  name?: string;
+  location?: string;
+  vulnerabilityWindow?: string;
+  emotionalTone?: string;
+  revealingMoment?: { timestamp: string; content: string };
+  messageCount: number;
+  topTopic?: string;
+  lateNightCount: number;
+  lifeEventCount: number;
+  crisisPeriods: number;
+  dependencyScore: number;
+  topSegment?: string;
+  firstMessageDate: string;
+  confessionalCount: number;
+}
+
 export async function analyzeExport(
   jsonData: any[],
   onProgress?: (p: AnalyzeProgress) => void,
   sourceType?: SourceType
 ): Promise<{
   analysis: DeepAnalysis;
-  revealData: import('./CountdownReveal').RevealData;
+  revealData: RevealData;
 }> {
   const detectedType = sourceType ?? detectSourceType(jsonData);
   const normalised = normaliseToGPTFormat(jsonData, detectedType);
@@ -77,7 +94,7 @@ export async function mergeAndReanalyze(
   onProgress?: (p: AnalyzeProgress) => void
 ): Promise<{
   analysis: DeepAnalysis;
-  revealData: import('./CountdownReveal').RevealData;
+  revealData: RevealData;
 }> {
   // Get the raw JSON for the existing source if stored
   const existingRaw = sessionStorage.getItem('rawJson_' + existingJsonKey);
@@ -153,7 +170,7 @@ function storeAnalysis(analysis: DeepAnalysis): void {
 // REVEAL DATA
 // ============================================================================
 
-function buildRevealData(analysis: DeepAnalysis): import('./CountdownReveal').RevealData {
+function buildRevealData(analysis: DeepAnalysis): RevealData {
   const topSegment = analysis.commercialProfile.segments[0];
   const firstDate = analysis.timespan.first.toLocaleDateString('en-GB', {
     month: 'long',

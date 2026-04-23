@@ -57,8 +57,8 @@ export default function ResultsPage() {
   const [sources, setSources] = useState(DEFAULT_SOURCES);
   const router = useRouter();
 
-  const handleSetPage = useCallback((p: DashPage) => {
-    setPage(p);
+  const handleSetPage = useCallback((p: string) => {
+    setPage(p as DashPage);
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
@@ -97,7 +97,7 @@ export default function ResultsPage() {
       {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={handleSetPage} />}
       {page === 'profile' && <ProfilePage results={results} setPage={handleSetPage} />}
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} />}
-      {page === 'risk' && <RiskPage results={results} />}
+      {page === 'risk' && <RiskPage results={results} setPage={handleSetPage} />}
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
       {page === 'permanent' && <CannotBeDeletedPage results={results} setPage={handleSetPage} />}
       {page === 'resist' && <ResistPage analysis={results as any} />}

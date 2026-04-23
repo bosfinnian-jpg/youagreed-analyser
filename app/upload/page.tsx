@@ -158,7 +158,7 @@ export default function UploadPage() {
               setProgress(92); setStage('Synthesising profile'); setDetail('');
             }
           }
-        } else if (p.phase === 'complete') {
+        } else if (p.phase === 'done') {
           setProgress(100); setStage('Analysis complete'); setDetail('');
         }
       });

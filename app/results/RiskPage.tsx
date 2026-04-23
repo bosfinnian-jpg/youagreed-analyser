@@ -636,7 +636,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
 // MAIN RISK PAGE
 // ============================================================================
 
-export default function RiskPage({ results }: { results: AnalysisResult }) {
+export default function RiskPage({ results, setPage }: { results: AnalysisResult; setPage?: (p: string) => void }) {
   const scenarios = useMemo(() => generateScenarios(results), [results]);
   const stats = results.stats || results.rawStats;
   const totalMsgs = results.totalUserMessages || stats?.userMessages || 0;
@@ -820,7 +820,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button
-              onClick={() => setPage('permanent')}
+              onClick={() => setPage?.('permanent')}
               style={{
                 fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
                 letterSpacing: '-0.01em', color: PALETTE.ink,
@@ -835,7 +835,7 @@ export default function RiskPage({ results }: { results: AnalysisResult }) {
               Why it cannot be removed →
             </button>
             <button
-              onClick={() => setPage('understand')}
+              onClick={() => setPage?.('understand')}
               style={{
                 fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
                 color: PALETTE.inkFaint, background: 'none', border: 'none',

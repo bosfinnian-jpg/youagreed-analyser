@@ -35,28 +35,51 @@ export const TYPE = {
 export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'permanent' | 'resist' | 'sources-detail';
 
 // ============================================================================
-// NAV
+// FOUR-ACT STRUCTURE
 // ============================================================================
-const NAV_ITEMS: { id: DashPage; label: string; short: string }[] = [
-  { id: 'overview',  label: 'Overview',   short: '01' },
-  { id: 'profile',   label: 'Profile',    short: '02' },
-  { id: 'risk',      label: 'Risk',       short: '04' },
-  { id: 'understand',label: 'Understand', short: '05' },
-  { id: 'permanent', label: 'Permanent',  short: '06' },
-  { id: 'resist',    label: 'Resist',     short: '07' },
-  { id: 'sources',   label: 'Sources',   short: '03' },
-];
-
-// Four-act structure for the hamburger drawer
-const ACT_STRUCTURE = [
-  { roman: 'I',   label: 'The Record',      ids: ['overview'] as DashPage[] },
-  { roman: 'II',  label: 'The Inference',   ids: ['profile', 'risk', 'understand'] as DashPage[] },
-  { roman: 'III', label: 'The Permanence',  ids: ['permanent'] as DashPage[] },
-  { roman: 'IV',  label: 'After',           ids: ['resist'] as DashPage[] },
+const ACTS = [
+  {
+    id: 'record',
+    label: 'Record',
+    roman: 'I',
+    title: 'The Record',
+    pages: [
+      { id: 'overview' as DashPage, label: 'Overview', short: '01', desc: 'What was extracted' },
+    ],
+  },
+  {
+    id: 'infer',
+    label: 'Infer',
+    roman: 'II',
+    title: 'The Inference',
+    pages: [
+      { id: 'profile' as DashPage, label: 'Profile', short: '02', desc: 'What the patterns reveal' },
+      { id: 'risk' as DashPage, label: 'Risk', short: '04', desc: 'What the record enables' },
+      { id: 'understand' as DashPage, label: 'Understand', short: '05', desc: 'How inference works' },
+    ],
+  },
+  {
+    id: 'delete',
+    label: 'Delete',
+    roman: 'III',
+    title: 'The Permanence',
+    pages: [
+      { id: 'permanent' as DashPage, label: 'Permanent', short: '06', desc: 'Why it cannot be removed' },
+    ],
+  },
+  {
+    id: 'resist',
+    label: 'Resist',
+    roman: 'IV',
+    title: 'After',
+    pages: [
+      { id: 'resist' as DashPage, label: 'Resist', short: '07', desc: 'What remains possible' },
+    ],
+  },
 ] as const;
 
 // ============================================================================
-// SHARED NARRATIVE COMPONENTS — exported for use across all result pages
+// SHARED NARRATIVE COMPONENTS
 // ============================================================================
 export function ActLabel({ roman, title, pageLabel }: { roman: string; title: string; pageLabel: string }) {
   return (
@@ -99,12 +122,15 @@ export function ThreadSentence({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ============================================================================
+// HAMBURGER ICON
+// ============================================================================
 function HamburgerIcon({ open }: { open: boolean }) {
   return (
     <svg width="20" height="14" viewBox="0 0 20 14" fill="none" style={{ display: 'block' }}>
       <motion.line
         x1="0" y1="1" x2="20" y2="1" stroke={PALETTE.ink} strokeWidth="1.2"
-        animate={open ? { y1: 7, y2: 7, rotate: 45, originX: '50%', originY: '50%' } : { y1: 1, y2: 1, rotate: 0 }}
+        animate={open ? { y1: 7, y2: 7, rotate: 45 } : { y1: 1, y2: 1, rotate: 0 }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
       />
@@ -116,7 +142,7 @@ function HamburgerIcon({ open }: { open: boolean }) {
       />
       <motion.line
         x1="0" y1="13" x2="20" y2="13" stroke={PALETTE.ink} strokeWidth="1.2"
-        animate={open ? { y1: 7, y2: 7, rotate: -45, originX: '50%', originY: '50%' } : { y1: 13, y2: 13, rotate: 0 }}
+        animate={open ? { y1: 7, y2: 7, rotate: -45 } : { y1: 13, y2: 13, rotate: 0 }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         style={{ transformBox: 'fill-box', transformOrigin: 'center' }}
       />
@@ -124,6 +150,114 @@ function HamburgerIcon({ open }: { open: boolean }) {
   );
 }
 
+// ============================================================================
+// ACT DROPDOWN — hover panel beneath each act label
+// ============================================================================
+function ActDropdown({ act, currentPage, onNav, visible }: {
+  act: typeof ACTS[number];
+  currentPage: DashPage;
+  onNav: (id: DashPage) => void;
+  visible: boolean;
+}) {
+  return (
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+          style={{
+            position: 'absolute',
+            top: '100%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            marginTop: '0px',
+            background: PALETTE.bgPanel,
+            border: `1px solid ${PALETTE.border}`,
+            minWidth: act.pages.length === 1 ? '180px' : '220px',
+            zIndex: 300,
+            boxShadow: '0 8px 24px rgba(26,24,20,0.08)',
+          }}
+        >
+          {/* Act header */}
+          <div style={{
+            padding: '0.6rem 1rem 0.5rem',
+            borderBottom: `1px solid ${PALETTE.border}`,
+            display: 'flex', alignItems: 'center', gap: '0.6rem',
+          }}>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.35em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
+              ACT {act.roman}
+            </span>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+              {act.title}
+            </span>
+          </div>
+          {/* Pages */}
+          {act.pages.map(p => {
+            const isActive = currentPage === p.id;
+            return (
+              <button
+                key={p.id}
+                onClick={() => onNav(p.id)}
+                style={{
+                  width: '100%', background: isActive ? PALETTE.bgElevated : 'none',
+                  border: 'none', cursor: 'pointer', textAlign: 'left',
+                  padding: '0.7rem 1rem',
+                  display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+                  gap: '1rem',
+                  transition: 'background 0.12s',
+                  borderBottom: `1px solid ${PALETTE.border}`,
+                }}
+                onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
+                onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'none'; }}
+              >
+                <div>
+                  <span style={{
+                    display: 'block',
+                    fontFamily: TYPE.serif,
+                    fontSize: '1rem',
+                    color: isActive ? PALETTE.ink : PALETTE.inkMuted,
+                    letterSpacing: '-0.01em',
+                    lineHeight: 1.2,
+                  }}>
+                    {p.label}
+                    {isActive && (
+                      <span style={{
+                        display: 'inline-block', width: '4px', height: '4px',
+                        borderRadius: '50%', background: PALETTE.red,
+                        marginLeft: '0.5rem', verticalAlign: 'middle',
+                      }} />
+                    )}
+                  </span>
+                  <span style={{
+                    display: 'block',
+                    fontFamily: TYPE.mono, fontSize: '9px',
+                    color: PALETTE.inkFaint, letterSpacing: '0.06em',
+                    marginTop: '2px',
+                  }}>
+                    {p.desc}
+                  </span>
+                </div>
+                <span style={{
+                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
+                  color: isActive ? PALETTE.redMuted : PALETTE.inkGhost,
+                  textTransform: 'uppercase', flexShrink: 0,
+                }}>
+                  {p.short}
+                </span>
+              </button>
+            );
+          })}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// ============================================================================
+// NAV
+// ============================================================================
 function Nav({ page, setPage, results, exposureScore }: {
   page: DashPage;
   setPage: (p: DashPage) => void;
@@ -133,6 +267,8 @@ function Nav({ page, setPage, results, exposureScore }: {
   const [scrolled, setScrolled] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hoveredAct, setHoveredAct] = useState<string | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -145,10 +281,8 @@ function Nav({ page, setPage, results, exposureScore }: {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close menu on page change
   useEffect(() => { setMenuOpen(false); }, [page]);
 
-  // Lock body scroll when menu open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -160,7 +294,19 @@ function Nav({ page, setPage, results, exposureScore }: {
   const handleNav = (id: DashPage) => {
     setPage(id);
     setMenuOpen(false);
+    setHoveredAct(null);
     window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const currentAct = ACTS.find(a => a.pages.some(p => p.id === page));
+
+  const handleActEnter = (actId: string) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoveredAct(actId);
+  };
+
+  const handleActLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => setHoveredAct(null), 120);
   };
 
   return (
@@ -174,7 +320,7 @@ function Nav({ page, setPage, results, exposureScore }: {
           background: menuOpen ? PALETTE.bgPanel : scrolled ? 'rgba(238,236,229,0.96)' : PALETTE.bg,
           backdropFilter: scrolled && !menuOpen ? 'blur(16px)' : 'none',
           transition: 'background 0.3s',
-          borderBottom: `1px solid ${menuOpen ? PALETTE.border : scrolled ? PALETTE.border : 'transparent'}`,
+          borderBottom: `1px solid ${menuOpen || scrolled ? PALETTE.border : 'transparent'}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -187,42 +333,71 @@ function Nav({ page, setPage, results, exposureScore }: {
           onClick={() => handleNav('overview')}
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0 }}
         >
-          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.ink }}>trace</span>
-          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.red }}>.ai</span>
+          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.ink }}>you</span>
+          <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.red }}>agreed</span>
         </button>
 
-        {/* Desktop nav items — hidden on mobile */}
-        <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', position: 'relative', flex: 1, justifyContent: 'center' }}>
-          {NAV_ITEMS.map(item => (
-            <button
-              key={item.id}
-              onClick={() => handleNav(item.id)}
-              style={{
-                background: 'none', border: 'none', cursor: 'pointer',
-                padding: '0 0.9rem', height: '56px',
-                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.11em',
-                textTransform: 'uppercase',
-                color: page === item.id ? PALETTE.ink : PALETTE.inkFaint,
-                transition: 'color 0.18s',
-                position: 'relative',
-                whiteSpace: 'nowrap',
-              }}
-              onMouseEnter={e => { if (page !== item.id) e.currentTarget.style.color = PALETTE.inkMuted; }}
-              onMouseLeave={e => { if (page !== item.id) e.currentTarget.style.color = PALETTE.inkFaint; }}
-            >
-              {item.label}
-              {page === item.id && (
-                <motion.div
-                  layoutId="nav-active"
-                  style={{ position: 'absolute', bottom: 0, left: '0.5rem', right: '0.5rem', height: '1px', background: PALETTE.ink, opacity: 0.4 }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+        {/* Desktop act nav — hover dropdowns */}
+        <div
+          className="nav-desktop"
+          style={{ display: 'flex', alignItems: 'center', position: 'relative', flex: 1, justifyContent: 'center', gap: '0' }}
+        >
+          {ACTS.map((act) => {
+            const isCurrentAct = currentAct?.id === act.id;
+            const isHovered = hoveredAct === act.id;
+
+            return (
+              <div
+                key={act.id}
+                style={{ position: 'relative' }}
+                onMouseEnter={() => handleActEnter(act.id)}
+                onMouseLeave={handleActLeave}
+              >
+                <button
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    padding: '0 1.1rem', height: '56px',
+                    fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
+                    textTransform: 'uppercase',
+                    color: isCurrentAct ? PALETTE.ink : isHovered ? PALETTE.inkMuted : PALETTE.inkFaint,
+                    transition: 'color 0.15s',
+                    position: 'relative',
+                    whiteSpace: 'nowrap',
+                    display: 'flex', alignItems: 'center', gap: '0.35rem',
+                  }}
+                >
+                  <span style={{
+                    fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em',
+                    color: isCurrentAct ? PALETTE.redMuted : PALETTE.inkGhost,
+                    transition: 'color 0.15s',
+                  }}>
+                    {act.roman}
+                  </span>
+                  {act.label}
+                  {isCurrentAct && (
+                    <motion.div
+                      layoutId="nav-active"
+                      style={{
+                        position: 'absolute', bottom: 0, left: '0.6rem', right: '0.6rem',
+                        height: '1px', background: PALETTE.ink, opacity: 0.35,
+                      }}
+                      transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                    />
+                  )}
+                </button>
+
+                <ActDropdown
+                  act={act}
+                  currentPage={page}
+                  onNav={handleNav}
+                  visible={isHovered}
                 />
-              )}
-            </button>
-          ))}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Right side — score (always) + hamburger (always) */}
+        {/* Right side */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.4rem', flexShrink: 0 }}>
           {/* Exposure score */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1px' }}>
@@ -234,7 +409,7 @@ function Nav({ page, setPage, results, exposureScore }: {
             </span>
           </div>
 
-          {/* Divider + name — desktop only */}
+          {/* Name — desktop only */}
           {userName && (
             <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: '1.4rem' }}>
               <div style={{ width: '1px', height: '16px', background: PALETTE.border }} />
@@ -244,21 +419,21 @@ function Nav({ page, setPage, results, exposureScore }: {
             </div>
           )}
 
-          {/* Hamburger — visible always, but especially useful on mobile */}
+          {/* Hamburger */}
           <button
             onClick={() => setMenuOpen(o => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
               padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              marginLeft: '0.4rem',
+              marginLeft: '0.2rem',
             }}
           >
             <HamburgerIcon open={menuOpen} />
           </button>
         </div>
 
-        {/* Scroll progress line */}
+        {/* Scroll progress */}
         <div style={{
           position: 'absolute', bottom: 0, left: 0,
           width: `${scrollPct * 100}%`, height: '1px',
@@ -269,11 +444,10 @@ function Nav({ page, setPage, results, exposureScore }: {
         }} />
       </motion.nav>
 
-      {/* DRAWER — full-screen overlay menu */}
+      {/* DRAWER */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -287,7 +461,6 @@ function Nav({ page, setPage, results, exposureScore }: {
               }}
             />
 
-            {/* Drawer panel — slides in from right */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
@@ -295,7 +468,7 @@ function Nav({ page, setPage, results, exposureScore }: {
               transition={{ type: 'tween', duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
               style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 190,
-                width: 'min(340px, 85vw)',
+                width: 'min(320px, 88vw)',
                 background: PALETTE.bgPanel,
                 borderLeft: `1px solid ${PALETTE.border}`,
                 display: 'flex', flexDirection: 'column',
@@ -304,19 +477,14 @@ function Nav({ page, setPage, results, exposureScore }: {
             >
               {/* Drawer header */}
               <div style={{
-                height: '56px', padding: '0 clamp(1.5rem, 4vw, 2.5rem)',
+                height: '56px', padding: '0 1.75rem',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                 borderBottom: `1px solid ${PALETTE.border}`,
                 flexShrink: 0,
               }}>
-                <div>
-                  <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block' }}>
-                    The argument
-                  </span>
-                  <span style={{ fontFamily: TYPE.serif, fontSize: '11px', color: PALETTE.inkFaint, fontStyle: 'italic', letterSpacing: '0.02em' }}>
-                    four acts
-                  </span>
-                </div>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+                  The argument
+                </span>
                 <button
                   onClick={() => setMenuOpen(false)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
@@ -325,128 +493,132 @@ function Nav({ page, setPage, results, exposureScore }: {
                 </button>
               </div>
 
-              {/* Nav — four acts */}
-              <div style={{ flex: 1, paddingTop: '0.5rem', paddingBottom: 'clamp(1rem, 3vw, 1.5rem)' }}>
-                {ACT_STRUCTURE.map((act, actIdx) => (
-                  <div key={act.roman}>
-                    {/* Act divider */}
+              {/* Acts */}
+              <div style={{ flex: 1, padding: '0.25rem 0 1.5rem' }}>
+                {ACTS.map((act, actIdx) => (
+                  <div key={act.id}>
+                    {/* Act label row */}
                     <div style={{
-                      padding: '0.85rem clamp(1.5rem, 4vw, 2.5rem) 0.4rem',
-                      display: 'flex', alignItems: 'center', gap: '0.75rem',
+                      padding: '1rem 1.75rem 0.3rem',
+                      display: 'flex', alignItems: 'center', gap: '0.65rem',
                     }}>
-                      <p style={{
-                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.35em',
-                        color: PALETTE.inkGhost, textTransform: 'uppercase', whiteSpace: 'nowrap',
-                      }}>ACT {act.roman}</p>
+                      <span style={{
+                        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.4em',
+                        color: PALETTE.redMuted, textTransform: 'uppercase', whiteSpace: 'nowrap',
+                      }}>
+                        {act.roman}
+                      </span>
                       <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
-                      <p style={{
-                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em',
+                      <span style={{
+                        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.25em',
                         color: PALETTE.inkFaint, textTransform: 'uppercase', whiteSpace: 'nowrap',
-                      }}>{act.label}</p>
+                      }}>
+                        {act.title}
+                      </span>
                     </div>
-                    {/* Act items */}
-                    {act.ids.map((id, i) => {
-                      const item = NAV_ITEMS.find(n => n.id === id)!;
-                      const isActive = page === item.id;
-                      const globalIdx = actIdx * 3 + i;
+
+                    {/* Pages */}
+                    {act.pages.map((p, i) => {
+                      const isActive = page === p.id;
                       return (
                         <motion.button
-                          key={item.id}
-                          initial={{ opacity: 0, x: 16 }}
+                          key={p.id}
+                          initial={{ opacity: 0, x: 14 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.05 + globalIdx * 0.05, duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                          onClick={() => handleNav(item.id)}
+                          transition={{ delay: 0.04 + actIdx * 0.06 + i * 0.04, duration: 0.28 }}
+                          onClick={() => handleNav(p.id)}
                           style={{
-                            width: '100%', background: 'none', border: 'none',
-                            cursor: 'pointer', textAlign: 'left',
-                            padding: '0.85rem clamp(1.5rem, 4vw, 2.5rem)',
-                            display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
-                            transition: 'background 0.15s',
+                            width: '100%', background: isActive ? PALETTE.bgElevated : 'none',
+                            border: 'none', cursor: 'pointer', textAlign: 'left',
+                            padding: '0.7rem 1.75rem',
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            transition: 'background 0.13s',
                           }}
-                          onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgElevated; }}
-                          onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+                          onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = PALETTE.bgElevated; }}
+                          onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = isActive ? PALETTE.bgElevated : 'none'; }}
                         >
+                          <div>
+                            <span style={{
+                              display: 'block',
+                              fontFamily: TYPE.serif,
+                              fontSize: 'clamp(1.15rem, 2.5vw, 1.45rem)',
+                              color: isActive ? PALETTE.ink : PALETTE.inkMuted,
+                              letterSpacing: '-0.02em', lineHeight: 1.2,
+                            }}>
+                              {p.label}
+                              {isActive && (
+                                <span style={{
+                                  display: 'inline-block', width: '4px', height: '4px',
+                                  borderRadius: '50%', background: PALETTE.red,
+                                  marginLeft: '0.5rem', verticalAlign: 'middle',
+                                }} />
+                              )}
+                            </span>
+                            <span style={{
+                              display: 'block',
+                              fontFamily: TYPE.mono, fontSize: '9px',
+                              color: PALETTE.inkFaint, letterSpacing: '0.05em',
+                              marginTop: '2px',
+                            }}>
+                              {p.desc}
+                            </span>
+                          </div>
                           <span style={{
-                            fontFamily: TYPE.serif,
-                            fontSize: 'clamp(1.25rem, 2.8vw, 1.6rem)',
-                            color: isActive ? PALETTE.ink : PALETTE.inkMuted,
-                            letterSpacing: '-0.02em',
-                          }}>
-                            {item.label}
-                            {isActive && (
-                              <span style={{
-                                display: 'inline-block', width: '4px', height: '4px',
-                                borderRadius: '50%', background: PALETTE.red,
-                                marginLeft: '0.6rem', verticalAlign: 'middle',
-                              }} />
-                            )}
-                          </span>
-                          <span style={{
-                            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-                            color: isActive ? PALETTE.redMuted : PALETTE.inkFaint,
+                            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
+                            color: isActive ? PALETTE.redMuted : PALETTE.inkGhost,
                             textTransform: 'uppercase',
                           }}>
-                            {item.short}
+                            {p.short}
                           </span>
                         </motion.button>
                       );
                     })}
                   </div>
                 ))}
+
                 {/* Sources — utility */}
-                <div style={{
-                  marginTop: '0.5rem',
-                  borderTop: `1px solid ${PALETTE.border}`,
-                  padding: '0.5rem 0 0',
-                }}>
-                  {(['sources'] as DashPage[]).map(id => {
-                    const item = NAV_ITEMS.find(n => n.id === id)!;
-                    const isActive = page === item.id;
-                    return (
-                      <button
-                        key={id}
-                        onClick={() => handleNav(item.id)}
-                        style={{
-                          width: '100%', background: 'none', border: 'none', cursor: 'pointer',
-                          textAlign: 'left', padding: '0.75rem clamp(1.5rem, 4vw, 2.5rem)',
-                          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
-                          transition: 'background 0.15s',
-                        }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
-                      >
-                        <span style={{
-                          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em',
-                          color: isActive ? PALETTE.ink : PALETTE.inkFaint, textTransform: 'uppercase',
-                        }}>
-                          {item.label}
-                          {isActive && <span style={{ display: 'inline-block', width: '4px', height: '4px', borderRadius: '50%', background: PALETTE.red, marginLeft: '0.5rem', verticalAlign: 'middle' }} />}
-                        </span>
-                        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{item.short}</span>
-                      </button>
-                    );
-                  })}
+                <div style={{ marginTop: '0.75rem', borderTop: `1px solid ${PALETTE.border}` }}>
+                  <button
+                    onClick={() => handleNav('sources')}
+                    style={{
+                      width: '100%', background: page === 'sources' ? PALETTE.bgElevated : 'none',
+                      border: 'none', cursor: 'pointer', textAlign: 'left',
+                      padding: '0.8rem 1.75rem',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      transition: 'background 0.13s',
+                    }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = page === 'sources' ? PALETTE.bgElevated : 'none'; }}
+                  >
+                    <span style={{
+                      fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
+                      color: PALETTE.inkFaint, textTransform: 'uppercase',
+                    }}>
+                      Sources
+                    </span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost }}>03</span>
+                  </button>
                 </div>
               </div>
 
-              {/* Drawer footer — score */}
+              {/* Footer score */}
               <div style={{
-                padding: 'clamp(1.5rem, 4vw, 2rem) clamp(1.5rem, 4vw, 2.5rem)',
+                padding: '1.5rem 1.75rem',
                 borderTop: `1px solid ${PALETTE.border}`,
                 flexShrink: 0,
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.35rem' }}>
                       Exposure index
                     </p>
                     <p style={{ fontFamily: TYPE.serif, fontSize: '2rem', color: scoreColor, letterSpacing: '-0.04em', lineHeight: 1 }}>
                       {exposureScore}
-                      <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, letterSpacing: '0.1em', marginLeft: '4px' }}>/100</span>
+                      <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, letterSpacing: '0.1em', marginLeft: '4px' }}>/100</span>
                     </p>
                   </div>
                   {userName && (
-                    <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
+                    <span style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
                       {userName}
                     </span>
                   )}
@@ -459,7 +631,6 @@ function Nav({ page, setPage, results, exposureScore }: {
     </>
   );
 }
-
 
 // ============================================================================
 // DASHBOARD LAYOUT WRAPPER
@@ -497,70 +668,34 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.15); border-radius: 2px; }
 
-        /* Nav desktop items — hide on mobile */
         .nav-desktop { display: flex !important; }
         @media (max-width: 700px) {
           .nav-desktop { display: none !important; }
         }
 
-        /* ── Mobile responsive overrides ── */
         @media (max-width: 640px) {
-          /* Page padding */
           .dash-page-inner {
             padding-left: 1.25rem !important;
             padding-right: 1.25rem !important;
           }
-
-          /* Two-column grids → single column */
           .ov-two-col { grid-template-columns: 1fr !important; }
           .mob-stack { grid-template-columns: 1fr !important; flex-direction: column !important; }
           .sources-header-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
-
-          /* Understand inference grid — 3col → stack */
-          .understand-inference-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .understand-inference-grid > *:nth-child(2) {
-            display: none !important;
-          }
-
-          /* Verbal tells — hide frequency badge, it crowds */
+          .understand-inference-grid { grid-template-columns: 1fr !important; }
+          .understand-inference-grid > *:nth-child(2) { display: none !important; }
           .tells-row { grid-template-columns: 1fr !important; }
           .tells-row > *:last-child { display: none !important; }
-
-          /* Demographic predictions — hide evidence expand, simplify grid */
-          .demo-grid {
-            grid-template-columns: 1fr auto !important;
-            gap: 0.8rem !important;
-          }
+          .demo-grid { grid-template-columns: 1fr auto !important; gap: 0.8rem !important; }
           .demo-grid > *:nth-child(3) { display: none !important; }
-
-          /* Nav strip cards — reduce padding */
           .nav-strip-card { padding: 1.4rem 1.2rem !important; }
-
-          /* Key findings row — tighter */
           .findings-row { gap: 1rem !important; }
-
-          /* RTB auction — hide segment label on bid rows */
           .bid-row-seg { display: none !important; }
-
-          /* Policy drift comparison — make scrollable rather than breaking */
-          .policy-drift-table {
-            min-width: 0;
-            overflow-x: auto;
-          }
-
-          /* Large serif numbers (score hero) — clamp aggressively */
+          .policy-drift-table { min-width: 0; overflow-x: auto; }
           .score-hero { font-size: clamp(3rem, 15vw, 5rem) !important; }
-
-          /* Remove decorative SVGs on very small screens */
           .deco-svg { display: none !important; }
-
-          /* Stat strip — wrap freely */
           .stat-strip { gap: 1.5rem !important; flex-wrap: wrap !important; }
         }
 
-        /* Section ghost numbers — hide on small screens */
         @media (max-width: 480px) {
           .section-ghost-num { display: none !important; }
         }

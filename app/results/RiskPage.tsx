@@ -681,18 +681,6 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
           marginBottom: 'clamp(3rem, 7vw, 5rem)',
         }}
       >
-        {/* Page label */}
-        <motion.p
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.7 }}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
-          }}
-        >
-04 / Risk
-        </motion.p>
         <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
         <ThreadSentence>What the record enables — if it ever leaves this system. And the technical reason it might not need to.</ThreadSentence>
         

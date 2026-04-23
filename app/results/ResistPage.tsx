@@ -860,17 +860,6 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
       </svg>
 
       {/* Label */}
-      <motion.p
-        initial={{ opacity: 0, y: 6 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.2, duration: 0.7 }}
-        style={{
-          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-          color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '2rem',
-        }}
-      >
-07 / Resist
-        </motion.p>
         <ActLabel roman="IV" title="After" pageLabel="07 / Resist" />
         <ThreadSentence>The extraction is complete. The argument is complete. This is what remains.</ThreadSentence>
       

@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PolicyDrift from './PolicyDrift';
+import { ActLabel, ThreadSentence } from './DashboardLayout';
 
 // ============================================================================
 // TYPOGRAPHY — local to this page, uses a dark palette distinct from the
@@ -475,29 +476,8 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
         transition={{ delay: 0.1, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
         style={{ height: '1px', background: C.text, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)', transformOrigin: 'left' }}
       />
-      <motion.p
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3, duration: 0.8 }}
-        style={{
-          fontFamily: TYPE.mono,
-          fontSize: '10px',
-          letterSpacing: '0.3em',
-          color: C.accent,
-          textTransform: 'uppercase',
-          marginBottom: '1.4rem',
-        }}
-      >
-05 / Understand
-      </motion.p>
-      <div style={{ marginBottom: '0.5rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.4em', color: 'rgba(26,24,20,0.07)', textTransform: 'uppercase', marginBottom: '0.15rem' }}>ACT II — The Inference</p>
-      </div>
-      <div style={{ borderLeft: '2px solid rgba(26,24,20,0.14)', paddingLeft: '1.25rem', marginTop: '0.75rem', marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-        <p style={{ fontFamily: 'EB Garamond, Georgia, serif', fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: 'rgba(26,24,20,0.58)', lineHeight: 1.75, maxWidth: 560, fontStyle: 'italic' }}>
-          How a conversation becomes a profile without anyone deciding to build one.
-        </p>
-      </div>
+      <ActLabel roman="II" title="The Inference" pageLabel="05 / Understand" />
+      <ThreadSentence>How a conversation becomes a profile without anyone deciding to build one.</ThreadSentence>
 
       <motion.h1
         initial={{ opacity: 0, y: 12 }}

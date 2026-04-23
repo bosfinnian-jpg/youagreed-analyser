@@ -306,10 +306,10 @@ function ClauseRow({ clause, index, isInView }: {
 
                     {cell === null ? (
                       <p style={{
-                        fontFamily: TYPE.serif,
-                        fontSize: '0.95rem',
+                        fontFamily: TYPE.mono,
+                        fontSize: '11px',
+                        letterSpacing: '0.1em',
                         color: PALETTE.inkFaint,
-                        fontStyle: 'italic',
                         lineHeight: 1.6,
                       }}>
                         {isNew ? 'Not present in this version.' : 'Not yet introduced.'}
@@ -494,7 +494,6 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
           fontSize: '1.1rem',
           color: PALETTE.inkMuted,
           lineHeight: 1.7,
-          fontStyle: 'italic',
           maxWidth: 600,
         }}>
           OpenAI's privacy policy has been updated multiple times since ChatGPT launched. Each update expanded what they collect, who they share it with, and how they use it. You were not asked to re-consent. The terms changed around you.

@@ -520,7 +520,6 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           lineHeight: 1.75,
           maxWidth: '48ch',
           marginBottom: '3.5rem',
-          fontStyle: 'italic',
         }}
       >
         Five modules. Each one ends with something you do, not something you read. Roughly twelve minutes, if you take it seriously.
@@ -1514,7 +1513,6 @@ function Module4({
               lineHeight: 1.7,
               maxWidth: '50ch',
               margin: '0 auto 2rem',
-              fontStyle: 'italic',
             }}
           >
             When you created your ChatGPT account, you agreed to terms that permit OpenAI to use your conversations to train its models — in roughly twelve seconds.
@@ -1713,7 +1711,6 @@ function Module4({
                     fontSize: '1.15rem',
                     color: C.textMuted,
                     lineHeight: 1.7,
-                    fontStyle: 'italic',
                   }}
                 >
                   This is not a failure of the user. It is deliberate legal architecture. Terms are written to secure consent while ensuring that the consent given will not meaningfully bind the party drafting them.
@@ -1799,10 +1796,9 @@ function Module5({
       <p
         style={{
           fontFamily: TYPE.serif,
-          fontSize: '1.15rem',
-          fontStyle: 'italic',
+          fontSize: '1.1rem',
           color: C.textMuted,
-          lineHeight: 1.65,
+          lineHeight: 1.7,
           marginBottom: '1.5rem',
         }}
       >
@@ -2100,7 +2096,6 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
           lineHeight: 1.7,
           maxWidth: '52ch',
           marginBottom: '3rem',
-          fontStyle: 'italic',
         }}
       >
         Your conversations are now part of a training corpus you cannot audit, correct, or withdraw from. That is not a flaw in the system. That is how the system was designed.

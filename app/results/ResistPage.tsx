@@ -427,7 +427,7 @@ function TierImmediate({ analysis }: { analysis: DeepAnalysis }) {
           <CoverageBar coverage={totalCoverage} label="Combined coverage across all steps" />
           <p style={{
             fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkFaint,
-            fontStyle: 'italic', marginTop: '1rem', lineHeight: 1.6,
+            lineHeight: 1.7, marginTop: '1rem',
           }}>
             Even completing every step above, the data already embedded in trained model weights remains. These actions only limit future exposure.
           </p>
@@ -514,8 +514,8 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
               }}>{right.title}</span>
             </div>
             <p style={{
-              fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkMuted,
-              lineHeight: 1.6, marginBottom: '1rem',
+              fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted,
+              lineHeight: 1.65, marginBottom: '1rem',
             }}>{right.description}</p>
             <div style={{
               background: PALETTE.bgPanel, padding: '0.8rem 1rem',
@@ -632,7 +632,7 @@ function TierLegal({ analysis }: { analysis: DeepAnalysis }) {
 
                 <p style={{
                   fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkFaint,
-                  fontStyle: 'italic', marginTop: '1.2rem', lineHeight: 1.6,
+                  lineHeight: 1.7, marginTop: '1.2rem',
                 }}>
                   Fill in the bracketed fields before sending. Send to privacy@openai.com with the subject line: "Subject Access Request — Article 15 UK GDPR". They have 30 days to respond.
                 </p>
@@ -926,7 +926,7 @@ function ResistHeader({ analysis }: { analysis: DeepAnalysis }) {
         style={{
           fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)',
           color: PALETTE.inkMuted, lineHeight: 1.8,
-          fontStyle: 'italic', maxWidth: 580,
+          maxWidth: 580,
         }}
       >
         Three tiers. Immediate actions that limit future exposure. Legal rights and how to exercise them. And the structural reality that no individual action can fix.
@@ -1014,7 +1014,7 @@ function ResistClosing() {
         transition={{ delay: 1.1, duration: 0.8 }}
         style={{
           fontFamily: TYPE.serif, fontSize: '1.1rem',
-          color: PALETTE.inkFaint, fontStyle: 'italic', lineHeight: 1.7,
+          color: PALETTE.inkMuted, lineHeight: 1.7,
         }}
       >
         The system was not designed to be reversible.

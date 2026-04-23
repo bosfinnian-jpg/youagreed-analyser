@@ -176,7 +176,7 @@ export default function ClosureSection({ analysis, setPage }: {
             style={{
               fontFamily: TYPE.serif,
               fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-              color: 'rgba(240,237,232,0.55)',
+              color: 'rgba(240,237,232,0.72)',
               lineHeight: 1.8,
               fontStyle: 'italic',
               marginBottom: 'clamp(3rem, 7vw, 5rem)',

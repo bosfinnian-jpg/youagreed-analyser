@@ -227,10 +227,9 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
 
       <p style={{
         fontFamily: TYPE.serif,
-        fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.8,
-        maxWidth: '55ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
-        fontStyle: 'italic',
+        fontSize: 'clamp(1.05rem, 1.6vw, 1.18rem)',
+        color: PALETTE.inkMuted, lineHeight: 1.75,
+        maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
       }}>
         {scenario.subtitle}
       </p>
@@ -279,7 +278,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         </p>
         <p style={{
           fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
-          fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.7,
+          color: PALETTE.inkMuted, lineHeight: 1.7,
         }}>
           {scenario.precedent.detail}
         </p>
@@ -359,9 +358,9 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
           >
             <p style={{
               fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
-              fontStyle: 'italic', color: PALETTE.inkMuted,
-              lineHeight: 1.8, marginTop: '1.2rem', marginBottom: '1.5rem',
-              maxWidth: '55ch',
+              color: PALETTE.inkMuted,
+              lineHeight: 1.75, marginTop: '1.2rem', marginBottom: '1.5rem',
+              maxWidth: '58ch',
             }}>
               {scenario.subtitle}
             </p>
@@ -492,10 +491,9 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       </h2>
 
       <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.85,
-        maxWidth: '55ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
-        fontStyle: 'italic',
+        fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.2rem)',
+        color: PALETTE.inkMuted, lineHeight: 1.75,
+        maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
       }}>
         Every time you load a webpage elsewhere on the internet, your behavioural profile enters a real-time auction. The data fuelling that auction is built from platforms like this one. Advertisers bid in under 100 milliseconds. The winner targets you. You are not notified.
       </p>

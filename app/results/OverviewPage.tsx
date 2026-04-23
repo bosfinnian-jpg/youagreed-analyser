@@ -137,9 +137,8 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         animate={isInView ? { opacity: 1 } : {}}
         transition={{ delay: 1, duration: 0.8 }}
         style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)',
-          color: PALETTE.inkMuted, lineHeight: 1.8,
-          fontStyle: 'italic', maxWidth: 580,
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+          color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 580,
         }}
       >
         Every conversation you have had with an AI system leaves a trace. Not just in logs — in the model itself. This report maps what has been extracted from you.
@@ -215,10 +214,9 @@ function MostExposingMoment({ results }: { results: any }) {
       </p>
       <blockquote style={{
         fontFamily: TYPE.serif,
-        fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)',
-        fontStyle: 'italic',
+        fontSize: 'clamp(1.15rem, 2.2vw, 1.45rem)',
         color: PALETTE.ink,
-        lineHeight: 1.7,
+        lineHeight: 1.75,
         marginBottom: '1.4rem',
         maxWidth: 700,
       }}>
@@ -229,7 +227,7 @@ function MostExposingMoment({ results }: { results: any }) {
           fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em',
           color: PALETTE.inkFaint, textTransform: 'uppercase',
         }}>
-          {date} / Retained permanently
+          {date} · Held in model weights permanently
         </p>
       )}
     </motion.div>
@@ -295,7 +293,7 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
             ))}
           </div>
         ) : (
-          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, lineHeight: 1.7 }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
             Insufficient data to generate findings.
           </p>
         )
@@ -333,7 +331,7 @@ function KeyFindings({ results, setPage }: { results: any; setPage: (p: DashPage
                   color: PALETTE.ink, letterSpacing: '-0.01em', marginBottom: '0.25rem',
                 }}>{finding.value}</p>
                 <p style={{
-                  fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint,
+                  fontFamily: TYPE.mono, fontSize: '12px', color: PALETTE.inkMuted,
                   textTransform: 'capitalize', lineHeight: 1.5,
                 }}>{finding.detail}</p>
               </div>
@@ -390,8 +388,8 @@ function ActiveRisks({ results, score, setPage }: { results: any; score: number;
               border: risk.active ? 'none' : `1px solid rgba(26,24,20,0.25)`,
             }} />
             <span style={{
-              fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.12em',
-              color: risk.active ? PALETTE.inkMuted : PALETTE.inkFaint,
+              fontFamily: TYPE.mono, fontSize: '12px', letterSpacing: '0.1em',
+              color: risk.active ? PALETTE.ink : PALETTE.inkMuted,
               textTransform: 'uppercase', flex: 1,
             }}>
               {risk.label}
@@ -489,8 +487,8 @@ function NavStrip({ setPage }: { setPage: (p: DashPage) => void }) {
             color: PALETTE.ink, marginBottom: '0.6rem', letterSpacing: '-0.01em',
           }}>{item.label} →</p>
           <p style={{
-            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.08em',
-            color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 1.7,
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.06em',
+            color: PALETTE.inkMuted, lineHeight: 1.65,
           }}>{item.sub}</p>
         </motion.button>
       ))}

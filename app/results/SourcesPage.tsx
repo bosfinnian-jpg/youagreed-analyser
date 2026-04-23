@@ -157,7 +157,7 @@ function ActiveSourceCard({
 
               {/* Export instructions */}
               <div style={{ borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.2rem', marginBottom: '2rem' }}>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
                   How to export
                 </p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '12px', color: PALETTE.inkMuted, lineHeight: 1.7, marginBottom: '0.8rem' }}>

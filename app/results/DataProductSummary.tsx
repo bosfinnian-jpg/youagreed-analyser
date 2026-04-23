@@ -10,23 +10,16 @@ interface DataProductSummaryProps {
 }
 
 // ============================================================================
-// CPM LOOKUP — real advertiser rates by segment
+// TRAINING VALUE — value of conversation data to the AI industry
 // ============================================================================
-const SEGMENT_CPM: Record<string, number> = {
-  mentally_vulnerable: 85,
-  financially_distressed: 120,
-  relationship_crisis: 64,
-  job_seeking: 78,
-  late_night_lonely: 42,
-  validation_seeking: 38,
-};
-
-function estimateCPM(segments: DeepAnalysis['commercialProfile']['segments']): number {
-  if (!segments.length) return 12;
-  const top = segments[0];
-  const base = SEGMENT_CPM[top.id] ?? 28;
-  const bonus = segments.length > 1 ? (SEGMENT_CPM[segments[1].id] ?? 0) * 0.3 : 0;
-  return Math.round(base + bonus);
+// OpenAI's valuation crossed $300bn in 2025. That valuation is built on
+// the model — which was trained on conversations like yours, for free.
+// This is illustrative: the economic argument, not a market rate for your data.
+function estimateTrainingValue(segments: DeepAnalysis['commercialProfile']['segments']): number {
+  // Returns an illustrative 'sensitivity index' (not a CPM or market price)
+  const base = segments.length > 0 ? 40 : 12;
+  const bonus = segments.filter(s => ['mentally_vulnerable','financially_distressed'].includes(s.id)).length * 20;
+  return Math.min(base + bonus, 100);
 }
 
 // ============================================================================
@@ -51,28 +44,27 @@ function useCounter(target: number, isInView: boolean, duration = 1600) {
 }
 
 // ============================================================================
-// CPM HERO — the number that lands
+// TRAINING VALUE HERO
 // ============================================================================
-function CPMHero({ cpm, isInView }: { cpm: number; isInView: boolean }) {
-  const count = useCounter(cpm, isInView, 2000);
+function TrainingValueHero({ sensitivityIndex, isInView }: { sensitivityIndex: number; isInView: boolean }) {
+  const count = useCounter(300, isInView, 2200);
 
   return (
     <div style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(2rem, 5vw, 3rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
-        Estimated advertiser value
+        The company your data helped build
       </p>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '1rem' }}>
         <span style={{ fontFamily: TYPE.mono, fontSize: 'clamp(1rem, 2vw, 1.2rem)', color: PALETTE.inkMuted, letterSpacing: '0.1em' }}>$</span>
         <span style={{ fontFamily: TYPE.serif, fontSize: 'clamp(3.5rem, 10vw, 7rem)', color: PALETTE.red, letterSpacing: '-0.04em', lineHeight: 1 }}>
-          {count}
+          {count}bn
         </span>
-        <div style={{ paddingBottom: '0.5rem' }}>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>per thousand</p>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>impressions</p>
-        </div>
       </div>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 560 }}>
-        This is what advertisers pay to show you a single ad — based on the emotional state and life circumstances your conversations reveal. The average internet user is worth $2–4 CPM. You are worth significantly more.
+        OpenAI’s valuation in 2025. That number is built on the model — which was trained on conversations like yours, without payment, and without the ability to remove your contribution. You cannot opt out retroactively. You cannot be compensated. The data is inside the weights now.
+      </p>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1rem', lineHeight: 1.6 }}>
+        Note: OpenAI does not sell your conversation data to advertisers. The risk is different — it is irreversibility, breach exposure, and the use of your disclosures to train commercial AI products.
       </p>
     </div>
   );
@@ -201,10 +193,10 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
   return (
     <div style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(2rem, 5vw, 3rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-        Assigned targeting segments
+        Inferred vulnerability categories
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.6, maxWidth: 560, marginBottom: '2rem' }}>
-        These are the audience categories you have been placed in. Advertisers buy access to people in these segments without knowing who you are — only what you reveal.
+        These are the vulnerability categories your conversations map onto. OpenAI does not sell this profile to advertisers — but these patterns exist in your data. If exposed through a breach or subpoena, they would fit directly into systems that do trade on them.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
@@ -326,7 +318,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
     <div ref={ref} style={{ marginBottom: 'clamp(2rem, 5vw, 3rem)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
-          Optimal targeting window
+          Disclosure pattern by hour
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted, letterSpacing: '0.1em' }}>
           Peak: {mostVulnerablePeriod} · {Math.round(nighttimeRatio * 100)}% late-night messages
@@ -385,7 +377,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
       </div>
 
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.red, marginTop: '0.75rem' }}>
-        ■ Late-night messages (12am–4am) command a premium. You are most emotionally unguarded — and most valuable — then.
+        ■ Late-night messages (12am–4am) carry the highest concentration of sensitive disclosure. This is when emotional defences are lowest — and when exposed data would be most revealing.
       </p>
     </div>
   );
@@ -399,7 +391,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
   const isInView = useInView(ref, { once: true, margin: '-5%' });
 
   const { commercialProfile, dependency, lifeEvents, nighttimeRatio, mostVulnerablePeriod, emotionalTimeline, hourDistribution } = analysis;
-  const cpm = estimateCPM(commercialProfile.segments);
+  const sensitivityIndex = estimateTrainingValue(commercialProfile.segments);
 
   return (
     <div ref={ref}>
@@ -415,11 +407,11 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           You, as a commercial product.
         </h2>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580 }}>
-          Every pattern extracted from your conversations has a market price. This is what the surveillance economy has decided you are worth — based not on who you are, but on what you have revealed about yourself in moments of vulnerability.
+          OpenAI does not sell your data to advertisers. The real problem is different: your conversations helped train a model worth hundreds of billions of dollars, and that contribution cannot be undone. What follows shows the patterns your data contains — and what would be exposed if that data were ever compromised.
         </p>
       </div>
 
-      <CPMHero cpm={cpm} isInView={isInView} />
+      <TrainingValueHero sensitivityIndex={sensitivityIndex} isInView={isInView} />
       <VulnerabilityPlot timeline={emotionalTimeline} />
       <SegmentCards segments={commercialProfile.segments} isInView={isInView} />
       <TargetingWindow

@@ -171,37 +171,37 @@ const INFERENCE_MAP: { pattern: string; label: string; segment: string; explanat
     pattern: 'financial distress signals',
     label: 'Financially distressed consumer',
     segment: 'PAYDAY LOANS / DEBT CONSOLIDATION',
-    explanation: 'Messages about money, debt, or affordability are read as commercial intent signals. In the data broker ecosystem, this segment is bid on by lenders.',
+    explanation: 'Messages about money, debt, or affordability map onto data broker categories used in financial targeting. OpenAI does not sell this to lenders — but a breach would expose a profile that fits directly into those systems.',
   },
   {
     pattern: 'relationship processing',
     label: 'Relationship instability signal',
     segment: 'DATING APPS / RELATIONSHIP COACHING',
-    explanation: 'Emotional language about partners, exes, or conflicts triggers classification. In the data broker ecosystem, this segment is bid on by relationship products.',
+    explanation: 'Emotional language about relationships maps onto vulnerability categories used in the broader data economy. The pattern exists in your data regardless of who currently holds it.',
   },
   {
     pattern: 'mental-health disclosure',
     label: 'Mental health help-seeker',
     segment: 'ONLINE THERAPY / PHARMACEUTICAL',
-    explanation: 'Expressions of distress, anxiety, or depression are classified as intent. In the data broker ecosystem, this segment is bid on by wellness and pharma companies.',
+    explanation: 'Mental health disclosures are among the most sensitive data a model can learn. They cannot be unlearned. If this data were exposed, it would map onto categories traded by wellness and pharmaceutical advertisers.',
   },
   {
     pattern: 'late-night activity',
     label: 'Late-night high-engagement user',
     segment: 'IMPULSE PURCHASE / GAMBLING',
-    explanation: 'Volume of activity between midnight and 5am correlates with reduced self-censorship. In the data broker ecosystem, this segment is bid on by subscription and gambling products.',
+    explanation: 'Late-night usage correlates with reduced self-censorship and higher emotional disclosure. This behavioural pattern maps onto categories associated with subscription, gambling, and addiction products in the data broker market.',
   },
   {
     pattern: 'validation-seeking',
     label: 'Validation-dependent personality',
     segment: 'INFLUENCER / SOCIAL PROOF MARKETING',
-    explanation: 'Repeated requests for reassurance are classified as susceptibility. In the data broker ecosystem, this segment is bid on by status and fashion brands.',
+    explanation: 'Patterns of validation-seeking are detectable from language alone. This maps onto susceptibility categories used in status and lifestyle targeting — the model has learned the pattern whether or not the data is ever sold.',
   },
   {
     pattern: 'career transition',
     label: 'Career transition / job seeker',
     segment: 'LINKEDIN PREMIUM / CAREER COACHING',
-    explanation: 'Job applications, rejections, and CV work trigger classification. In the data broker ecosystem, this segment is bid on by recruitment products.',
+    explanation: 'Career vulnerability is visible from conversation patterns. This maps onto data broker categories used by recruitment and financial services products — and would be immediately useful in a breach scenario.',
   },
 ];
 

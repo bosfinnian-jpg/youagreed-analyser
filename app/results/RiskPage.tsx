@@ -131,11 +131,11 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     id: 'targeting',
     severity: targetRelevance > 25 ? 'critical' : targetRelevance > 10 ? 'high' : 'medium',
     relevance: targetRelevance,
-    title: `Your data matches ${segments.length || 'multiple'} advertising segment${segments.length === 1 ? '' : 's'}. You did not consent to this classification.`,
+    title: `Your conversations map onto ${segments.length || 'multiple'} data broker category${segments.length === 1 ? '' : 'ies'}. If exposed, this profile is immediately usable.`,
     subtitle: segments.length > 0
-      ? `Segments: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
-      : 'Behavioural patterns are sufficient for segment assignment without explicit disclosures.',
-    body: `${nightPct > 5 ? 'You are most vulnerable between midnight and 5am (' + nightPct + '% of your messages). Data generated during these windows shows the highest concentration of sensitive disclosure. ' : ''}The patterns in your messages map onto ${segments.length > 0 ? segments.length + ' standard IAB advertising categories' : 'standard advertising categories'} used in real-time bidding across the web. OpenAI does not sell this data — but a breach, a legal order, or a future policy change could expose it to systems that do. The profile exists. That is the risk.`,
+      ? `Categories: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
+      : 'Behavioural patterns alone are sufficient for vulnerability classification.',
+    body: `${nightPct > 5 ? 'You are most emotionally unguarded between midnight and 5am (' + nightPct + '% of your messages). Data from these windows contains the highest concentration of sensitive disclosure. ' : ''}OpenAI does not sell your conversations to advertisers. But the patterns your messages contain — vulnerability indicators, life circumstances, emotional states — map directly onto categories that data brokers trade. A breach, a legal order, or a policy change would transfer this profile into systems where it has an immediate market price. The data exists. That is the risk.`,
     dataPoints: [
       { label: 'Assigned segments', value: String(segments.length), alarming: segments.length > 3 },
       { label: 'Vulnerability window', value: nightPct > 5 ? `00:00–05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
@@ -487,7 +487,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         letterSpacing: '-0.02em', lineHeight: 1.2,
         maxWidth: '24ch', marginBottom: '1.2rem',
       }}>
-        This is how data like yours gets used once it leaves a system.
+        This is what happens to a profile like yours if it ever leaves OpenAI’s servers.
       </h2>
 
       <p style={{
@@ -495,7 +495,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         color: PALETTE.inkMuted, lineHeight: 1.75,
         maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
       }}>
-        Every time you load a webpage elsewhere on the internet, your behavioural profile enters a real-time auction. The data fuelling that auction is built from platforms like this one. Advertisers bid in under 100 milliseconds. The winner targets you. You are not notified.
+        OpenAI does not sell your data. But every time you load a webpage, your behavioural profile — built from sources across the internet — enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, would slot directly into that system. This is what that would look like.
       </p>
 
       {/* Lot card */}
@@ -606,7 +606,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                 <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', color: PALETTE.ink, marginBottom: '0.3rem' }}>{winner.buyer}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '1.2rem', color: PALETTE.red, letterSpacing: '0.02em', marginBottom: '0.8rem' }}>£{winner.amount.toFixed(4)}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
-                  In a real auction, the winner receives: a behavioural profile, segment classifications, a vulnerability window{homeLoc ? `, your approximate location (${homeLoc.location})` : ''}, and your emotional pattern data. You were not consulted. This transaction is legal.
+                  In the real-time bidding ecosystem, a winner receives: a behavioural profile, vulnerability classifications, a targeting window{homeLoc ? `, and an approximate location (${homeLoc.location})` : ''}. OpenAI does not participate in this system. But a profile like yours — if exposed — would be immediately usable within it. You would not be notified.
                 </p>
               </motion.div>
             )}

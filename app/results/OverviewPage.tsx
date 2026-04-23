@@ -377,7 +377,7 @@ function ActiveRisks({ results, score, setPage }: { results: any; score: number;
   const risks = [
     { label: 'Insurance profiling', active: (results?.findings?.sensitiveTopics?.length || 0) > 0 },
     { label: 'Employment screening', active: (results?.totalUserMessages || results?.stats?.userMessages || 0) > 300 },
-    { label: 'Behavioural targeting', active: (results?.nighttimeRatio || 0) > 0.05 || (results?.findings?.vulnerabilityPatterns?.length || 0) > 0 },
+    { label: 'Breach exposure risk', active: (results?.nighttimeRatio || 0) > 0.05 || (results?.findings?.vulnerabilityPatterns?.length || 0) > 0 },
     { label: 'Data breach exposure', active: score > 40 },
   ];
 

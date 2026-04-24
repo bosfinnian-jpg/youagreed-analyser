@@ -505,6 +505,110 @@ export default function SourcesPage({
         ))}
       </div>
 
+      {/* ACADEMIC REFERENCES */}
+      <div style={{ marginBottom: 'clamp(3rem, 8vw, 6rem)', borderTop: `1px solid ${PALETTE.border}`, paddingTop: 'clamp(2rem, 5vw, 3.5rem)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>Academic references</p>
+          <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
+        </div>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '60ch', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)', fontStyle: 'italic' }}>
+          The claims made throughout this installation are grounded in published research. The argument about irreversibility is not rhetorical — it is technical.
+        </p>
+        {[
+          {
+            authors: 'Carlini, N., Tramèr, F., Wallace, E., Jagielski, M., Herbert-Voss, A., Lee, K., Roberts, A., Brown, T., Song, D., Erlingsson, Ú., & Oprea, A.',
+            year: '2021',
+            title: 'Extracting Training Data from Large Language Models',
+            venue: 'USENIX Security Symposium',
+            note: 'Demonstrates that verbatim text can be extracted from trained language models by probing outputs. The foundational paper on training data extraction attacks.',
+          },
+          {
+            authors: 'Cooper, A. F., Moss, E., Laufer, B., & De-Arteaga, M.',
+            year: '2024',
+            title: 'Arbitrariness and Social Prediction: The Confounding Role of Variance in Fair Classification',
+            venue: 'FAccT — ACM Conference on Fairness, Accountability, and Transparency',
+            note: 'Addresses the practical impossibility of machine unlearning in deployed systems — the technical basis for the irreversibility argument on the Permanent page.',
+          },
+          {
+            authors: 'Zuboff, S.',
+            year: '2019',
+            title: 'The Age of Surveillance Capitalism: The Fight for a Human Future at the New Frontier of Power',
+            venue: 'PublicAffairs',
+            note: 'The foundational theoretical framework for understanding behavioural data extraction as a mode of capital accumulation. "Surveillance capitalism unilaterally claims human experience as free raw material."',
+          },
+          {
+            authors: 'Foucault, M.',
+            year: '1977',
+            title: 'Discipline and Punish: The Birth of the Prison',
+            venue: 'Pantheon Books (trans. Alan Sheridan)',
+            note: 'The panopticon as a model of internalised surveillance. Applied here to the way conversational AI creates a continuous confessional record — visible to the system, invisible to the subject.',
+          },
+          {
+            authors: 'Dunne, A. & Raby, F.',
+            year: '2013',
+            title: 'Speculative Everything: Design, Fiction, and Social Dreaming',
+            venue: 'MIT Press',
+            note: 'The critical design methodology underpinning this installation. Design as a tool for making the invisible visible and the acceptable questionable.',
+          },
+          {
+            authors: 'Nissenbaum, H.',
+            year: '2010',
+            title: 'Privacy in Context: Technology, Policy, and the Integrity of Social Life',
+            venue: 'Stanford University Press',
+            note: 'Contextual integrity: information shared in one context (therapeutic disclosure to an AI) carries norms that are violated when it flows into another (training data, model weights). Disclosure without comprehension of context is not consent.',
+          },
+          {
+            authors: 'McDonald, A. M. & Cranor, L. F.',
+            year: '2008',
+            title: 'The Cost of Reading Privacy Policies',
+            venue: 'I/S: A Journal of Law and Policy for the Information Society, 4(3)',
+            note: 'Calculated that reading all privacy policies an average user encounters would require 76 work days per year. The empirical basis for the consent failure argument.',
+          },
+          {
+            authors: 'OpenAI',
+            year: '2024',
+            title: 'Privacy Policy',
+            venue: 'openai.com/policies/privacy-policy',
+            note: 'Cited directly throughout the site. Specifically: the training data provisions, the retention clauses, and the statement that technical limitations may prevent complete erasure of data used in training.',
+          },
+        ].map((ref, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-5%' }}
+            transition={{ delay: i * 0.05, duration: 0.5 }}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '2rem 1fr',
+              gap: '1.25rem',
+              paddingTop: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+              paddingBottom: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+              borderBottom: `1px solid ${PALETTE.border}`,
+              alignItems: 'start',
+            }}
+          >
+            <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkGhost, paddingTop: '3px' }}>
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+                {ref.authors} ({ref.year})
+              </p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)', color: PALETTE.ink, lineHeight: 1.4, marginBottom: '0.4rem', fontStyle: 'italic' }}>
+                {ref.title}
+              </p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em', color: PALETTE.inkFaint, marginBottom: '0.6rem' }}>
+                {ref.venue}
+              </p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
+                {ref.note}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
       {/* FOOTER */}
       <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '2rem' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.8rem' }}>About your data</p>

@@ -427,7 +427,8 @@ function Nav({ page, setPage, results, exposureScore }: {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
-              padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              minWidth: '44px', minHeight: '44px',
               marginLeft: '0.2rem',
             }}
           >
@@ -489,7 +490,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                 </span>
                 <button
                   onClick={() => setMenuOpen(false)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '12px', minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <HamburgerIcon open={true} />
                 </button>
@@ -533,6 +534,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                             width: '100%', background: isActive ? PALETTE.bgElevated : 'none',
                             border: 'none', cursor: 'pointer', textAlign: 'left',
                             padding: '0.7rem 1.75rem',
+                            minHeight: '44px',
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                             transition: 'background 0.13s',
                           }}

@@ -328,9 +328,11 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
       </div>
 
       {/* Bar chart */}
+      <div style={{ overflowX: 'auto', marginBottom: '4px' }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(24, 1fr)',
+        minWidth: '360px',
         gap: '2px',
         alignItems: 'flex-end',
         height: '64px',
@@ -364,9 +366,10 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
           );
         })}
       </div>
+      </div>
 
       {/* Hour labels — just key ones */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(24, 1fr)', gap: '2px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(24, 1fr)', gap: '2px', minWidth: '360px', overflowX: 'hidden' }}>
         {hours.map(h => (
           <p key={h} style={{
             fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.05em',

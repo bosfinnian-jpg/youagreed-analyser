@@ -428,7 +428,7 @@ const PRECEDENTS = [
     back: {
       title: 'FTC v. BetterHelp',
       mechanism: 'Shared sensitive mental health data with Facebook and Snapchat for advertising purposes.',
-      detail: 'BetterHelp had told every user in onboarding: "Rest assured — any information provided will stay private between you and your counsellor." The FTC found that at the same time, the company was sending the fact users had sought therapy to ad platforms for targeting.',
+      detail: 'BetterHelp told every user in onboarding: "Rest assured — any information provided will stay private between you and your counsellor." The FTC found the company was simultaneously sending therapy-seeking data to Facebook and Snapchat for targeting.',
       fine: '$7.8M settlement',
     },
   },
@@ -438,8 +438,8 @@ const PRECEDENTS = [
     headline: 'Workday',
     back: {
       title: 'Mobley v. Workday',
-      mechanism: 'AI screening tool detected anxiety and depression indicators in written materials and filtered applicants out before human review.',
-      detail: 'The plaintiff applied to over one hundred positions through employers using Workday. He was rejected from every single one. A federal court allowed the class-action to proceed in 2024. 83% of employers now use automated hiring tools.',
+      mechanism: 'AI screening tool detected mental health indicators in written materials and filtered applicants before human review.',
+      detail: 'The plaintiff applied to over 100 positions through employers using Workday. He was rejected every time. A federal court allowed the class-action to proceed in 2024. 83% of employers now use automated hiring tools.',
       fine: 'Case ongoing',
     },
   },

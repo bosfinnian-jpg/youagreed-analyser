@@ -251,7 +251,6 @@ const MODULES = [
   { id: 2, label: "It's already happening", short: 'Precedent' },
   { id: 3, label: 'You cannot take it back', short: 'Permanence' },
   { id: 4, label: 'You did not really consent', short: 'Consent' },
-  { id: 5, label: 'Read the terms', short: 'Terms' },
 ];
 
 // ============================================================================
@@ -522,15 +521,15 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
 
   const advance = () => {
     markComplete(currentModule);
-    if (currentModule < 6) {
+    if (currentModule < 4) {
       setCurrentModule(currentModule + 1);
     } else {
-      setCurrentModule(7); // completion screen
+      setCurrentModule(99); // completion screen
     }
   };
 
   const isComplete = completed.has(currentModule);
-  const canAdvance = isComplete || currentModule > 5;
+  const canAdvance = isComplete || currentModule > 4;
 
   return (
     <>
@@ -550,11 +549,10 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
           color: C.text,
         }}
       >
-        {/* Progress indicator */}
-        {hasStarted && <ProgressBar current={currentModule} completed={completed} onJump={goToModule} />}
+        {/* Progress indicator — only shown once modules have started */}
+        {hasStarted && currentModule < 99 && <ProgressBar current={currentModule} completed={completed} onJump={goToModule} />}
 
-        <InferenceTagger setPage={setPage} />
-      {/* Module content */}
+        {/* Module content */}
         <AnimatePresence mode="wait">
           {!hasStarted ? (
             <CourseIntro key="intro" onStart={() => setHasStarted(true)} />
@@ -566,11 +564,10 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
             <Module3 key="m3" onComplete={() => markComplete(3)} onAdvance={advance} completed={isComplete} />
           ) : currentModule === 4 ? (
             <Module4 key="m4" onComplete={() => markComplete(4)} onAdvance={advance} completed={isComplete} />
-          ) : currentModule === 5 ? (
-            <Module5 key="m5" onComplete={() => markComplete(5)} onAdvance={advance} completed={isComplete} />
           ) : (
             <CompletionScreen key="done" setPage={setPage} />
-          )}        </AnimatePresence>
+          )}
+        </AnimatePresence>
       </div>
     </>
   );
@@ -650,7 +647,7 @@ function ProgressBar({
           textTransform: 'uppercase',
         }}
       >
-        {current <= 6 ? `Module ${current} of 6 / ${MODULES[current - 1].label}` : 'Course complete'}
+        {current <= 4 ? `Module ${current} of 4 — ${MODULES[current - 1]?.label ?? ''}` : 'Course complete'}
       </p>
     </div>
   );
@@ -668,14 +665,9 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6 }}
       style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         maxWidth: 1000,
         margin: '0 auto',
-        padding: '0 clamp(2rem, 6vw, 5rem)',
-        paddingTop: 'clamp(3rem, 8vw, 6rem)',
+        padding: 'clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem) clamp(4rem, 10vw, 8rem)',
       }}
     >
       <motion.div
@@ -690,7 +682,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
       <motion.h1
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 1 }}
+        transition={{ delay: 0.4, duration: 1 }}
         style={{
           fontFamily: TYPE.serif,
           fontSize: 'clamp(2.4rem, 6vw, 4rem)',
@@ -699,7 +691,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           letterSpacing: '-0.02em',
           lineHeight: 1.1,
           maxWidth: '22ch',
-          marginBottom: '2rem',
+          marginBottom: '1.5rem',
         }}
       >
         Understand what just happened to you.
@@ -708,23 +700,33 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1 }}
+        transition={{ delay: 0.8, duration: 1 }}
         style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+          fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
           color: C.textMuted,
           lineHeight: 1.75,
-          maxWidth: '48ch',
-          marginBottom: '3.5rem',
+          maxWidth: '52ch',
+          marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
         }}
       >
-        Five modules. Each one ends with something you do, not something you read. Roughly twelve minutes, if you take it seriously.
+        Four modules. Each ends with something you do, not something you read. Before you begin — try the tool below. Type anything you might say to an AI.
       </motion.p>
+
+      {/* InferenceTagger embedded as the intro interactive */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.1, duration: 0.9 }}
+      >
+        <InferenceTagger />
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.8, duration: 0.8 }}
+        style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap', marginTop: 'clamp(2rem, 4vw, 3rem)' }}
       >
         <button
           onClick={onStart}
@@ -735,10 +737,11 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
             textTransform: 'uppercase',
             background: 'transparent',
             color: C.text,
-            border: `1px solid ${C.textMuted}`,
+            border: `1px solid ${C.text}`,
             padding: '1rem 2.5rem',
             cursor: 'pointer',
             transition: 'all 0.2s',
+            minHeight: '44px',
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = C.text;
@@ -749,8 +752,11 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
             e.currentTarget.style.color = C.text;
           }}
         >
-          Begin →
+          Begin the four modules →
         </button>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: C.textFaint, textTransform: 'uppercase' }}>
+          ~10 minutes
+        </p>
       </motion.div>
     </motion.div>
   );
@@ -807,7 +813,7 @@ function ModuleFrame({
             marginBottom: '0.6rem',
           }}
         >
-          Module {number} of 5
+          Module {number} of 4
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 8 }}
@@ -935,163 +941,95 @@ function Module1({
       onAdvance={onAdvance}
       canAdvance={revealed}
     >
-      <div
-        className="understand-inference-grid"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 120px 1fr',
-          gap: 0,
-          alignItems: 'start',
-          padding: 'clamp(1rem, 3vw, 2rem) 0',
-          position: 'relative',
-        }}
-      >
-        {/* Left column — what you wrote */}
-        <div>
-          <p
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.22em',
-              color: C.textFaint,
-              textTransform: 'uppercase',
-              marginBottom: '1rem',
-            }}
-          >
-            What you wrote
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-            {userInferences.map((inf, i) => (
-              <motion.div
-                key={inf.pattern}
-                id={`left-${i}`}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 + i * 0.15 }}
-                style={{
-                  padding: '0.9rem 1rem',
-                  background: C.panel,
-                  border: `1px solid ${C.border}`,
-                  fontFamily: TYPE.serif,
-                  fontSize: '1.15rem',
-                  color: C.textMuted,
-                  lineHeight: 1.6,
-                  fontStyle: 'italic',
-                }}
-              >
-                <span style={{ color: C.textFaint, fontFamily: TYPE.mono, fontSize: '11px' }}>
-                  [pattern detected: {inf.pattern}]
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+      {/* Column headers */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 80px 1fr',
+        gap: 0,
+        marginBottom: '0.75rem',
+        padding: 'clamp(1rem, 3vw, 2rem) 0 0',
+      }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: C.textFaint, textTransform: 'uppercase' }}>
+          What you wrote
+        </p>
+        <div />
+        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: C.textFaint, textTransform: 'uppercase' }}>
+          What was inferred
+        </p>
+      </div>
 
-        {/* Middle column — arrows / leap visualization */}
-        <div
-          style={{
-            position: 'relative',
-            height: '100%',
-            minHeight: 240,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <svg
-            width="100%"
-            height="100%"
-            viewBox="0 0 120 240"
-            preserveAspectRatio="none"
-            style={{ position: 'absolute', inset: 0 }}
-          >
-            {userInferences.map((_, i) => {
-              const y = 40 + i * 80;
-              return (
-                <motion.path
-                  key={i}
-                  d={`M 5 ${y} L 115 ${y}`}
+      {/* Per-row layout — line is inside each row so it always hits the vertical centre */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {userInferences.map((inf, i) => (
+          <div key={inf.pattern} style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', alignItems: 'center' }}>
+            {/* Left box */}
+            <motion.div
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 + i * 0.15 }}
+              style={{
+                padding: '0.9rem 1rem',
+                background: C.panel,
+                border: `1px solid ${C.border}`,
+                fontFamily: TYPE.serif,
+                fontSize: '1.05rem',
+                color: C.textMuted,
+                lineHeight: 1.5,
+                fontStyle: 'italic',
+              }}
+            >
+              <span style={{ color: C.textFaint, fontFamily: TYPE.mono, fontSize: '10px', display: 'block', marginBottom: '0.2rem', letterSpacing: '0.08em' }}>
+                pattern detected:
+              </span>
+              {inf.pattern}
+            </motion.div>
+
+            {/* Arrow — horizontally centred, always vertically centred because it's in a grid row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+              <svg width="100%" height="2" viewBox="0 0 80 2" preserveAspectRatio="none" overflow="visible">
+                <motion.line
+                  x1="4" y1="1" x2="72" y2="1"
                   stroke={C.accent}
                   strokeWidth={1}
-                  fill="none"
                   strokeDasharray="3 3"
                   initial={{ pathLength: 0, opacity: 0 }}
-                  animate={revealed ? { pathLength: 1, opacity: 0.7 } : { pathLength: 0, opacity: 0 }}
-                  transition={{ delay: 0.4 + i * 0.3, duration: 1 }}
+                  animate={revealed ? { pathLength: 1, opacity: 0.8 } : { pathLength: 0, opacity: 0 }}
+                  transition={{ delay: 0.5 + i * 0.25, duration: 0.8 }}
                 />
-              );
-            })}
-            {userInferences.map((_, i) => {
-              const y = 40 + i * 80;
-              return (
-                <motion.circle
-                  key={`dot-${i}`}
-                  cx={115}
-                  cy={y}
-                  r={3}
+                <motion.polygon
+                  points="72,1 64,-3 64,5"
                   fill={C.accent}
-                  initial={{ scale: 0 }}
-                  animate={revealed ? { scale: 1 } : { scale: 0 }}
-                  transition={{ delay: 1.1 + i * 0.3 }}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={revealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+                  transition={{ delay: 1.2 + i * 0.25 }}
+                  style={{ transformOrigin: '72px 1px' }}
                 />
-              );
-            })}
-          </svg>
-        </div>
+              </svg>
+            </div>
 
-        {/* Right column — what was inferred */}
-        <div>
-          <p
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.22em',
-              color: C.textFaint,
-              textTransform: 'uppercase',
-              marginBottom: '1rem',
-            }}
-          >
-            What was inferred
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-            {userInferences.map((inf, i) => (
-              <motion.div
-                key={inf.label}
-                initial={{ opacity: 0 }}
-                animate={revealed ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ delay: 0.8 + i * 0.3, duration: 0.8 }}
-                style={{
-                  padding: '0.9rem 1rem',
-                  background: C.panel,
-                  border: `1px solid ${revealed ? C.accentFaint : C.border}`,
-                  borderLeft: `2px solid ${C.accent}`,
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: TYPE.serif,
-                    fontSize: '1.15rem',
-                    color: C.text,
-                    marginBottom: '0.3rem',
-                  }}
-                >
-                  {inf.label}
-                </p>
-                <p
-                  style={{
-                    fontFamily: TYPE.mono,
-                    fontSize: '11px',
-                    letterSpacing: '0.16em',
-                    color: C.accent,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  {inf.segment}
-                </p>
-              </motion.div>
-            ))}
+            {/* Right box */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={revealed ? { opacity: 1 } : { opacity: 0.15 }}
+              transition={{ delay: 0.9 + i * 0.25, duration: 0.7 }}
+              style={{
+                padding: '0.9rem 1rem',
+                background: C.panel,
+                border: `1px solid ${revealed ? C.accentFaint : C.border}`,
+                borderLeft: `2px solid ${revealed ? C.accent : C.border}`,
+                filter: revealed ? 'none' : 'blur(3px)',
+                transition: 'filter 0.6s, border-color 0.4s',
+              }}
+            >
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: C.text, marginBottom: '0.25rem' }}>
+                {inf.label}
+              </p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: C.accent, textTransform: 'uppercase' }}>
+                {inf.segment}
+              </p>
+            </motion.div>
           </div>
-        </div>
+        ))}
       </div>
 
       {/* Reveal button + explanation */}
@@ -1260,7 +1198,7 @@ function PrecedentCard({
       style={{
         perspective: 1000,
         cursor: flipped ? 'default' : 'pointer',
-        height: 280,
+        height: 340,
       }}
     >
       <motion.div
@@ -1363,10 +1301,10 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '1.15rem',
+                fontSize: '1rem',
                 color: C.text,
-                lineHeight: 1.5,
-                marginBottom: '0.6rem',
+                lineHeight: 1.45,
+                marginBottom: '0.5rem',
               }}
             >
               {precedent.back.mechanism}
@@ -1374,10 +1312,10 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '1.15rem',
+                fontSize: '0.95rem',
                 color: C.textMuted,
                 fontStyle: 'italic',
-                lineHeight: 1.5,
+                lineHeight: 1.45,
               }}
             >
               {precedent.back.detail}
@@ -1860,8 +1798,35 @@ function Module4({
             <p style={{ marginBottom: '1rem' }}>
               <strong>4. Retention.</strong> We'll retain your Personal Data for only as long as we need in order to provide our Services to you, or for other legitimate business purposes such as resolving disputes, safety and security reasons, or complying with our legal obligations. How long we retain Personal Data depends on the type of data, how we use it, and in many cases your settings. Information we retain until you delete it: Some of our Services allow you to delete Personal Data stored in your account. Once you choose to delete Personal Data, we will remove it from our systems within 30 days unless we need to retain it for longer, or it has already been de-identified and disassociated from your account when you allow us to use your Content to improve our models.
             </p>
-            <p style={{ marginBottom: '1rem', fontStyle: 'italic', color: C.textFaint }}>
-              [...continues for another 1,800 words, covering data controls, your rights, security, children's privacy, US state disclosures, changes to the privacy policy, data controllers, and how to contact us.]
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>5. Data controls.</strong> We offer you certain choices about how we use your information. Where applicable, you can: opt out of having your Content used to train our models (Settings → Data Controls → Improve the model for everyone). For Free and Go users in the US, you can opt out of targeted advertising. You can disable memory (Settings → Personalization → Memory). You can export your data (Settings → Data Controls → Export data). You can request deletion of your account.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>6. Your rights.</strong> Depending on your location, you may have the right to: access your Personal Data; correct inaccuracies in your Personal Data; delete your Personal Data; object to or restrict our processing of your Personal Data; data portability; withdraw consent; and make complaints to supervisory authorities. To exercise these rights, please visit our Privacy Portal or contact us at privacy@openai.com. We will respond to your request in accordance with applicable law.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>7. Security and Retention.</strong> We implement commercially reasonable technical, administrative, and organizational measures to protect Personal Data. If you believe your account has been compromised, please contact us at support.openai.com. We'll retain your Personal Data for only as long as we need in order to provide our Services to you, or for other legitimate business purposes. How long we retain Personal Data depends on the type of data, how we use it, and your settings.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>8. Children.</strong> Our Service is not directed to children under 13 (or under 16 in the EEA, UK, and CH). We do not knowingly collect Personal Data from children under the applicable age without the consent of the child's parent or legal guardian. If we discover that we have inadvertently collected information from a child, we will delete it.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>9. Links to other websites.</strong> The Service may contain links to other websites not operated or controlled by OpenAI, including social media services. The information that you share with third-party sites will be governed by the specific privacy policies and terms of service of the third-party sites and not by this Privacy Policy.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>10. Changes to the privacy policy.</strong> We may update this Privacy Policy from time to time. When we do, we will post an updated version on this page, unless another type of notice is required by applicable law. If you have an account with us, we may also notify you through your account, or send an email letting you know that the Privacy Policy has been updated, and we will update the "Last updated" date below.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>11. How to contact us.</strong> Please contact us if you have any questions or concerns not already addressed in this Privacy Policy. You can reach our Privacy team by email at privacy@openai.com. You can reach our Data Protection Officer (EU/UK/CH) at dpo@openai.com. Our mailing address is: OpenAI L.L.C., 3180 18th Street, San Francisco, California 94110.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>12. US State Disclosures.</strong> We collect identifiers, commercial information, internet or electronic network activity, professional or employment information, education information, inferences, and sensitive personal information (including precise geolocation, financial data, health information, and racial or ethnic origin). We collect this data from you directly, from your use of our Services, from third parties, and from publicly available sources. We use and disclose this data for the business purposes described in this Privacy Policy. We do not sell your Personal Data as that term is traditionally understood, but we do share certain data with third parties for cross-context behavioural advertising.
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>13. Additional disclosures for EEA, UK, and Swiss residents.</strong> The data controller for EU/UK/CH users is OpenAI Ireland Limited (when providing services to EU/EEA/UK) or OpenAI, L.L.C. (for all other users). Where we process your Personal Data on the basis of your consent, you have the right to withdraw consent. We rely on the following legal bases: performance of a contract; legitimate interests (providing, improving, and promoting our services, and protecting against fraud and abuse); legal obligation; and consent (for certain categories of sensitive data and direct marketing).
+            </p>
+            <p style={{ marginBottom: '1rem' }}>
+              <strong>14. Data retention for trained models.</strong> When you allow us to use your Content to improve our models, your Content may be retained beyond the standard deletion window. Content incorporated into model training is processed as part of our machine learning pipeline. At this stage it is de-identified from your account — however, as acknowledged by researchers including Carlini et al. (2021), trained model weights may retain recoverable information from training data. We are unable to guarantee complete removal of any specific Content that has been used in training from the resulting models.
             </p>
           </div>
 
@@ -1921,274 +1886,6 @@ function Module4({
 }
 
 // ============================================================================
-// MODULE 5 — READ THE TERMS (find the artist-written clause)
-// ============================================================================
-
-function Module5({
-  onComplete,
-  onAdvance,
-  completed,
-}: {
-  onComplete: () => void;
-  onAdvance: () => void;
-  completed: boolean;
-}) {
-  const [versionIndex, setVersionIndex] = useState(2); // default to 2026
-  const [expanded, setExpanded] = useState<string | null>(null);
-  const [foundArtist, setFoundArtist] = useState(completed);
-  const [wrongAttempts, setWrongAttempts] = useState<string[]>([]);
-
-  const version = TOS_VERSIONS[versionIndex];
-
-  const handleFlagClause = (clauseNumber: string, severity: string) => {
-    if (severity === 'artist') {
-      setFoundArtist(true);
-      setExpanded(clauseNumber);
-      setTimeout(() => onComplete(), 500);
-    } else {
-      setWrongAttempts(prev => [...prev, `${version.year}-${clauseNumber}`]);
-    }
-  };
-
-  return (
-    <ModuleFrame
-      number={5}
-      title="Read the terms."
-      subtitle="One clause below does not exist in the real OpenAI Terms of Service. It was written by the artist. Find it and flag it."
-      onAdvance={onAdvance}
-      canAdvance={foundArtist}
-      advanceLabel="Finish course →"
-    >
-      {/* Version tabs */}
-      <div style={{ display: 'flex', gap: 0, marginBottom: '1.2rem' }}>
-        {TOS_VERSIONS.map((v, i) => (
-          <button
-            key={v.year}
-            onClick={() => {
-              setVersionIndex(i);
-              setExpanded(null);
-            }}
-            style={{
-              flex: 1,
-              fontFamily: TYPE.mono,
-              fontSize: '10px',
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase',
-              padding: '0.9rem 0.8rem',
-              background: versionIndex === i ? C.text : 'transparent',
-              color: versionIndex === i ? C.bg : C.textMuted,
-              border: `1px solid ${C.border}`,
-              borderLeft: i > 0 ? 'none' : `1px solid ${C.border}`,
-              cursor: 'pointer',
-              transition: 'all 0.15s',
-            }}
-          >
-            {v.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Version intro */}
-      <p
-        style={{
-          fontFamily: TYPE.serif,
-          fontSize: '1.1rem',
-          color: C.textMuted,
-          lineHeight: 1.7,
-          marginBottom: '1.5rem',
-        }}
-      >
-        {version.intro}
-      </p>
-
-      {/* Clauses */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {version.clauses.map(clause => {
-          const isExpanded = expanded === clause.number;
-          const isArtist = clause.severity === 'artist';
-          const wasWronglyFlagged = wrongAttempts.includes(`${version.year}-${clause.number}`);
-          const borderColor = isArtist && foundArtist ? C.accent : wasWronglyFlagged ? 'rgba(120,120,120,0.4)' : C.border;
-
-          return (
-            <div
-              key={clause.number}
-              style={{
-                background: C.panel,
-                border: `1px solid ${borderColor}`,
-                borderLeft: isArtist && foundArtist ? `3px solid ${C.accent}` : `1px solid ${borderColor}`,
-              }}
-            >
-              <button
-                onClick={() => setExpanded(isExpanded ? null : clause.number)}
-                style={{
-                  width: '100%',
-                  padding: '1rem 1.2rem',
-                  background: 'none',
-                  border: 'none',
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  display: 'grid',
-                  gridTemplateColumns: '60px 1fr 20px',
-                  gap: '1rem',
-                  alignItems: 'center',
-                  color: C.text,
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: TYPE.mono,
-                    fontSize: '10px',
-                    color: C.textFaint,
-                    letterSpacing: '0.08em',
-                  }}
-                >
-                  §{clause.number}
-                </p>
-                <p
-                  style={{
-                    fontFamily: TYPE.serif,
-                    fontSize: '1.15rem',
-                    color: C.text,
-                  }}
-                >
-                  {clause.title}
-                </p>
-                <p
-                  style={{
-                    fontFamily: TYPE.mono,
-                    fontSize: '14px',
-                    color: C.textFaint,
-                    lineHeight: 1,
-                  }}
-                >
-                  {isExpanded ? '−' : '+'}
-                </p>
-              </button>
-
-              <AnimatePresence>
-                {isExpanded && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: 'hidden' }}
-                  >
-                    <div
-                      style={{
-                        padding: '0 1.2rem 1.2rem 1.2rem',
-                      }}
-                    >
-                      <p
-                        style={{
-                          fontFamily: TYPE.serif,
-                          fontSize: '1.15rem',
-                          color: C.textMuted,
-                          lineHeight: 1.75,
-                          marginBottom: '1rem',
-                        }}
-                      >
-                        {clause.text}
-                      </p>
-                      {!foundArtist && !wasWronglyFlagged && (
-                        <button
-                          onClick={() => handleFlagClause(clause.number, clause.severity)}
-                          style={{
-                            fontFamily: TYPE.mono,
-                            fontSize: '11px',
-                            letterSpacing: '0.2em',
-                            textTransform: 'uppercase',
-                            background: 'transparent',
-                            color: C.textMuted,
-                            border: `1px solid ${C.border}`,
-                            padding: '0.6rem 1.2rem',
-                            cursor: 'pointer',
-                            transition: 'all 0.15s',
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = C.accent;
-                            e.currentTarget.style.color = C.accent;
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = C.border;
-                            e.currentTarget.style.color = C.textMuted;
-                          }}
-                        >
-                          Flag as artist-written
-                        </button>
-                      )}
-                      {wasWronglyFlagged && (
-                        <p
-                          style={{
-                            fontFamily: TYPE.mono,
-                            fontSize: '11px',
-                            letterSpacing: '0.16em',
-                            color: C.textFaint,
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          This clause is real. It appears in OpenAI's actual Terms of Service. Keep looking.
-                        </p>
-                      )}
-                      {isArtist && foundArtist && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 0.3, duration: 0.8 }}
-                        >
-                          <p
-                            style={{
-                              fontFamily: TYPE.mono,
-                              fontSize: '11px',
-                              letterSpacing: '0.2em',
-                              color: C.accent,
-                              textTransform: 'uppercase',
-                              marginBottom: '0.8rem',
-                            }}
-                          >
-                            You found it.
-                          </p>
-                          <p
-                            style={{
-                              fontFamily: TYPE.serif,
-                              fontSize: '1.15rem',
-                              color: C.text,
-                              lineHeight: 1.7,
-                            }}
-                          >
-                            Clause 19.2 does not exist in OpenAI's real Terms of Service. It was written by the artist and placed in this tool. Every other clause in this document is real — copied from the OpenAI Transparency Hub archive. The point is that it reads like the rest. That is the point.
-                          </p>
-                        </motion.div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          );
-        })}
-      </div>
-
-      {!foundArtist && wrongAttempts.length > 0 && (
-        <p
-          style={{
-            fontFamily: TYPE.mono,
-            fontSize: '11px',
-            letterSpacing: '0.18em',
-            color: C.textFaint,
-            textTransform: 'uppercase',
-            textAlign: 'center',
-            marginTop: '1.5rem',
-          }}
-        >
-          {wrongAttempts.length} wrong attempt{wrongAttempts.length > 1 ? 's' : ''}. Try a different version.
-        </p>
-      )}
-    </ModuleFrame>
-  );
-}
-
-// ============================================================================
 // COMPLETION SCREEN
 // ============================================================================
 
@@ -2199,7 +1896,7 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
   };
 
   const handleResist = () => {
-    if (setPage) setPage('terms');
+    if (setPage) setPage('permanent');
     else window.location.href = '/results';
   };
 

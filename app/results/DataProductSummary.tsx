@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
@@ -77,12 +77,25 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const weeks = timeline?.weeks ?? [];
-  if (weeks.length < 3) return null;
 
-  const maxMsgs = Math.max(...weeks.map(w => w.messageCount), 1);
-  const maxAnxiety = Math.max(...weeks.map(w => w.avgAnxiety), 1);
+  const plotData = useMemo(() => {
+    if (weeks.length < 3) return null;
+    const maxMsgs = Math.max(...weeks.map(w => w.messageCount), 1);
+    const maxAnxiety = Math.max(...weeks.map(w => w.avgAnxiety), 1);
+    const MAX_DOTS = 72;
+    const sample = weeks.length > MAX_DOTS
+      ? weeks.filter((_, i) => i % Math.ceil(weeks.length / MAX_DOTS) === 0)
+      : weeks;
+    const COLS = Math.min(sample.length, 24);
+    const DOT_SIZE = 10;
+    const DOT_GAP = 4;
+    const totalW = COLS * (DOT_SIZE + DOT_GAP);
+    return { maxMsgs, maxAnxiety, sample, DOT_SIZE, DOT_GAP, totalW };
+  }, [weeks]);
 
-  // Colour scale: low anxiety = warm paper, high = deep red
+  if (!plotData) return null;
+  const { maxMsgs, maxAnxiety, sample, DOT_SIZE, DOT_GAP, totalW } = plotData;
+
   function anxietyColor(score: number, max: number) {
     const t = Math.min(score / max, 1);
     if (t < 0.25) return 'rgba(26,24,20,0.12)';
@@ -90,17 +103,6 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
     if (t < 0.75) return 'rgba(190,40,30,0.55)';
     return 'rgba(190,40,30,0.90)';
   }
-
-  // Bucket into columns of ~6 weeks if many weeks
-  const MAX_DOTS = 72;
-  const sample = weeks.length > MAX_DOTS
-    ? weeks.filter((_, i) => i % Math.ceil(weeks.length / MAX_DOTS) === 0)
-    : weeks;
-
-  const COLS = Math.min(sample.length, 24);
-  const DOT_SIZE = 10;
-  const DOT_GAP = 4;
-  const totalW = COLS * (DOT_SIZE + DOT_GAP);
 
   return (
     <div ref={ref} style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(2rem, 5vw, 3rem)', borderBottom: `1px solid ${PALETTE.border}` }}>

@@ -284,12 +284,30 @@ export default function UploadPage() {
                       lineHeight: 1.6,
                       color: COLOR.inkMuted,
                       maxWidth: '480px',
-                      margin: '0 auto',
+                      margin: '0 auto 1.5rem',
                     }}
                   >
                     The file is called <span style={{ fontFamily: MONO, fontSize: '14px', color: COLOR.ink }}>conversations.json</span>.
                     Obtain it from ChatGPT under Settings &rarr; Data Controls &rarr; Export Data.
                   </p>
+                  <ol style={{
+                    fontFamily: MONO,
+                    fontSize: '12px',
+                    letterSpacing: '0.05em',
+                    color: COLOR.inkFaint,
+                    lineHeight: 1.9,
+                    maxWidth: '420px',
+                    margin: '0 auto',
+                    paddingLeft: '1.25rem',
+                    textAlign: 'left',
+                  }}>
+                    <li>Open ChatGPT and go to <span style={{ color: COLOR.ink }}>Settings</span></li>
+                    <li>Select <span style={{ color: COLOR.ink }}>Data Controls</span></li>
+                    <li>Click <span style={{ color: COLOR.ink }}>Export data</span> → Confirm</li>
+                    <li>Wait for the email from OpenAI (usually a few minutes)</li>
+                    <li>Download the zip file and unzip it</li>
+                    <li>Upload <span style={{ color: COLOR.ink }}>conversations.json</span> below</li>
+                  </ol>
                 </motion.div>
 
                 {/* Drop zone */}

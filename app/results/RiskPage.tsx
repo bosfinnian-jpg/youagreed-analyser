@@ -162,7 +162,11 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     precedent: { source: 'Equifax breach, 2017', detail: '148 million people exposed. Most did not know Equifax held their data. The company simply had it.' },
   });
 
-  return scenarios.sort((a, b) => b.relevance - a.relevance);
+  const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
+  return scenarios.sort((a, b) => {
+    const sevDiff = (SEV_ORDER[a.severity] ?? 3) - (SEV_ORDER[b.severity] ?? 3);
+    return sevDiff !== 0 ? sevDiff : b.relevance - a.relevance;
+  });
 }
 
 // ============================================================================
@@ -850,7 +854,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
         }}
       >
         <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
-        <ThreadSentence>What the record enables — if it ever leaves this system. And the technical reason it might not need to.</ThreadSentence>
+        <ThreadSentence>What the record enables — and the technical reason it may not need to leave the system to be used against you.</ThreadSentence>
         
 
         {/* Active count — the big number */}
@@ -907,7 +911,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
             fontStyle: 'italic', maxWidth: 560,
           }}
         >
-          Each scenario below uses your actual data. None is hypothetical. The systems described are running now, and the legal frameworks governing them permit what you are about to read.
+          Each scenario below is constructed from your actual data. The exposure they describe has not happened. The systems that would process it are running now, and the legal frameworks governing them permit what you are about to read. OpenAI does not sell your data. These scenarios describe what becomes possible if it is ever exposed.
         </motion.p>
       </motion.div>
 
@@ -980,7 +984,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button
-              onClick={() => setPage?.('terms')}
+              onClick={() => setPage?.('permanent')}
               style={{
                 fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
                 letterSpacing: '-0.01em', color: PALETTE.ink,
@@ -992,7 +996,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
               onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
             >
               <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT III</span>
-              Read the terms → →
+              Why it cannot be removed →
             </button>
             <button
               onClick={() => setPage?.('understand')}

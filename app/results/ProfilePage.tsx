@@ -997,7 +997,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
         {/* Chapter rule */}
         <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
         <ActLabel roman="II" title="The Inference" pageLabel="02 / Profile" />
-        <ThreadSentence>Not what you said. What the pattern of how you said it reveals about who you are.</ThreadSentence>
+        <ThreadSentence>Not what you said. What the pattern of saying it reveals.</ThreadSentence>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={heroInView ? { opacity: 1, y: 0 } : {}}
@@ -1023,7 +1023,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       {/* ================================================================
           SYNTHESIS — intelligence briefing sections (00–07)
           ================================================================ */}
-      {results.synthesis && (
+      {results.synthesis ? (
         <>
           <CharacterSummarySection summary={results.synthesis.characterSummary} />
           <CoreBeliefsSection beliefs={results.synthesis.inferredCoreBeliefs || []} />
@@ -1034,6 +1034,23 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           <PredictedBehavioursSection behaviours={results.synthesis.predictedBehaviours} />
           <CommercialTargetsSection targets={results.synthesis.commercialTargets} />
         </>
+      ) : (
+        <div style={{
+          padding: 'clamp(2rem, 5vw, 3.5rem) 0',
+          borderTop: `1px solid ${PALETTE.border}`,
+          marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
+        }}>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.3em',
+            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.75rem',
+          }}>AI synthesis — not available</p>
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 540,
+          }}>
+            The AI enrichment pipeline did not run on this dataset — either the conversations were too short, or the analysis was completed without the synthesis step. The inferred attributes below are derived from pattern matching alone.
+          </p>
+        </div>
       )}
 
       {/* ================================================================

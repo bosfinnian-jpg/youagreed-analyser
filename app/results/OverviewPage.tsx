@@ -130,6 +130,7 @@ function OverviewHeader({ score, stats, results }: { score: number; stats: any; 
         transition={{ delay: 0.15, duration: 0.6 }}
       >
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
+        <ThreadSentence>You agreed to terms that described this. They did not describe it fully.</ThreadSentence>
       </motion.div>
 
       <motion.div

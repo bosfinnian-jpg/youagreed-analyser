@@ -685,7 +685,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
         style={{ height: '1px', background: C.text, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)', transformOrigin: 'left' }}
       />
       <ActLabel roman="II" title="The Inference" pageLabel="05 / Understand" />
-      <ThreadSentence>How a conversation becomes a profile without anyone deciding to build one.</ThreadSentence>
+      <ThreadSentence>Inference does not require intent. Pattern recognition has no conscience.</ThreadSentence>
 
       <motion.h1
         initial={{ opacity: 0, y: 12 }}

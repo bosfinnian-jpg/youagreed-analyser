@@ -777,7 +777,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.25, duration: 0.7 }}
         >
-          <ThreadSentence>Why deletion is a different operation from removal. The argument is technical, legal, and final.</ThreadSentence>
+          <ThreadSentence>Deletion is a different operation from removal. The gap between them is where you live now.</ThreadSentence>
         </motion.div>
 
         {/* Hero number — message count or a fixed weight count */}

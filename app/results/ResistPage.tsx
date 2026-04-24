@@ -1,7 +1,8 @@
 'use client';
 
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence, useMotionValueEvent } from 'framer-motion';
+import type { MotionValue } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
 
@@ -24,70 +25,206 @@ function generateSAR(analysis: DeepAnalysis): string {
 }
 
 // ============================================================================
-// THE FIGURE
+// DESIGN TOKENS — for this page specifically
 // ============================================================================
+const STORY = {
+  // Act boundaries as fractions of total scroll (9 acts = 9 phases)
+  // Each act gets ~11% of scroll
+  arrival:    [0.00, 0.08],
+  counted:    [0.08, 0.20],
+  machine:    [0.20, 0.30],
+  taking:     [0.30, 0.46],
+  echo:       [0.46, 0.66], // longest — the centrepiece
+  imprint:    [0.66, 0.76],
+  choice:     [0.76, 0.88],
+  walkaway:   [0.88, 1.00],
+};
+
+// Smooth step — used for elegant in/out interpolation
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
+// ============================================================================
+// FIGURE — single hand-drawn humanoid, multiple poses
+// ============================================================================
+type FigurePose = 'neutral' | 'wall' | 'letter' | 'wave';
 function Figure({
-  size = 80, opacity = 1, ghosted = false, walking = false, arms = 'down',
+  size = 90, opacity = 1, pose = 'neutral', walking = false, walkingFrame = 0,
+  strokeColor, fillColor,
 }: {
-  size?: number; opacity?: number; ghosted?: boolean; walking?: boolean; arms?: 'down' | 'wall' | 'letter' | 'wave';
+  size?: number; opacity?: number; pose?: FigurePose; walking?: boolean; walkingFrame?: number;
+  strokeColor?: string; fillColor?: string;
 }) {
-  const stroke = ghosted ? 'rgba(26,24,20,0.18)' : 'rgba(26,24,20,0.85)';
-  const fill = ghosted ? 'rgba(26,24,20,0.04)' : 'rgba(26,24,20,0.02)';
-  const armPaths = {
-    down: 'M 28 42 L 22 64 M 52 42 L 58 64',
-    wall: 'M 28 42 L 18 38 M 52 42 L 62 38',
-    letter: 'M 28 42 L 30 56 M 52 42 L 54 56',
-    wave: 'M 28 42 L 22 64 M 52 42 L 58 22',
+  const stroke = strokeColor || 'rgba(26,24,20,0.88)';
+  const fill = fillColor || 'rgba(26,24,20,0.02)';
+
+  const armPaths: Record<FigurePose, string> = {
+    neutral: 'M 28 42 L 22 64 M 52 42 L 58 64',
+    wall:    'M 28 42 L 16 36 M 52 42 L 64 36',
+    letter:  'M 28 42 L 32 58 M 52 42 L 48 58',
+    wave:    'M 28 42 L 22 64 M 52 42 L 56 20',
   };
-  const legPath = walking ? 'M 36 70 L 30 92 M 44 70 L 50 92' : 'M 36 70 L 32 92 M 44 70 L 48 92';
+  const legPath = walking
+    ? (walkingFrame === 0 ? 'M 36 70 L 28 92 M 44 70 L 52 92' : 'M 36 70 L 52 92 M 44 70 L 28 92')
+    : 'M 36 70 L 32 92 M 44 70 L 48 92';
+
   return (
-    <svg width={size} height={size * 1.15} viewBox="0 0 80 92" style={{ opacity, transition: 'opacity 0.6s' }}>
-      <circle cx="40" cy="20" r="11" fill={fill} stroke={stroke} strokeWidth="1.2" />
-      <path d="M 40 31 L 40 70" stroke={stroke} strokeWidth="1.2" fill="none" strokeLinecap="round" />
-      <path d="M 28 42 L 52 42" stroke={stroke} strokeWidth="1.2" fill="none" strokeLinecap="round" opacity="0.55" />
-      <path d={armPaths[arms]} stroke={stroke} strokeWidth="1.2" fill="none" strokeLinecap="round" />
-      <path d={legPath} stroke={stroke} strokeWidth="1.2" fill="none" strokeLinecap="round" />
+    <svg width={size} height={size * 1.15} viewBox="0 0 80 92" style={{ opacity, transition: 'opacity 0.8s ease' }}>
+      {/* head */}
+      <circle cx="40" cy="20" r="11" fill={fill} stroke={stroke} strokeWidth="1.3" />
+      {/* body */}
+      <path d="M 40 31 L 40 70" stroke={stroke} strokeWidth="1.3" fill="none" strokeLinecap="round" />
+      {/* shoulder line */}
+      <path d="M 28 42 L 52 42" stroke={stroke} strokeWidth="1.1" fill="none" strokeLinecap="round" opacity="0.5" />
+      {/* arms */}
+      <path d={armPaths[pose]} stroke={stroke} strokeWidth="1.3" fill="none" strokeLinecap="round" />
+      {/* legs */}
+      <path d={legPath} stroke={stroke} strokeWidth="1.3" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
 
 // ============================================================================
-// THE MODEL
+// THE MACHINE — no longer a rectangle. Hand-drawn container with imperfect edges.
+// Fills with red ink from the bottom. Shows silhouette when imprinted.
 // ============================================================================
-function Model({ filled = 0, width = 200, height = 260, showSilhouette = false, emitting = false }: {
-  filled?: number; width?: number; height?: number; showSilhouette?: boolean; emitting?: boolean;
+function Machine({
+  formProgress = 0,   // 0..1 — how much the machine has materialised
+  fillProgress = 0,   // 0..1 — how full of red it is
+  showSilhouette = 0, // 0..1 — ghost of user inside
+  emitting = false,   // red particles leaving
+  width = 200,
+  height = 280,
+}: {
+  formProgress?: number;
+  fillProgress?: number;
+  showSilhouette?: number;
+  emitting?: boolean;
+  width?: number;
+  height?: number;
 }) {
-  const fillH = height * filled;
+  const fillH = height * fillProgress * 0.85; // fill up to 85% max
+  const strokeOpacity = formProgress * 0.55;
+
+  // Imperfect rectangle path — slightly off-straight edges for hand-drawn feel
+  const inset = 2;
+  const path = `
+    M ${inset} ${inset + 2}
+    Q ${inset - 1} ${height / 3}, ${inset + 1} ${height - inset - 1}
+    L ${width - inset} ${height - inset}
+    Q ${width - inset + 1} ${height / 2}, ${width - inset - 1} ${inset}
+    Z
+  `.replace(/\s+/g, ' ');
+
   return (
     <div style={{ position: 'relative', width, height }}>
-      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ position: 'absolute', inset: 0 }}>
-        <rect x="2" y="2" width={width - 4} height={height - 4} fill="none" stroke="rgba(26,24,20,0.4)" strokeWidth="1.5" />
-        <rect x="2" y="2" width={width - 4} height={height - 4} fill="rgba(26,24,20,0.025)" />
-        <motion.rect x="2" y={height - 2 - fillH} width={width - 4} height={fillH} fill="rgba(190,40,30,0.18)"
-          initial={false} animate={{ y: height - 2 - fillH, height: fillH }} transition={{ duration: 0.4, ease: 'linear' }} />
-        {Array.from({ length: 8 }).map((_, i) => (
-          <line key={i} x1="2" y1={20 + i * 30} x2={width - 2} y2={20 + i * 30} stroke="rgba(190,40,30,0.04)" strokeWidth="1" />
-        ))}
-        {showSilhouette && (
-          <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}
-            transform={`translate(${width / 2 - 30}, ${height / 2 - 40}) scale(0.75)`}>
-            <circle cx="40" cy="20" r="11" fill="rgba(190,40,30,0.32)" stroke="rgba(190,40,30,0.45)" strokeWidth="1" />
-            <path d="M 40 31 L 40 70" stroke="rgba(190,40,30,0.45)" strokeWidth="1" fill="none" />
-            <path d="M 28 42 L 22 64 M 52 42 L 58 64" stroke="rgba(190,40,30,0.45)" strokeWidth="1" fill="none" />
-            <path d="M 36 70 L 32 92 M 44 70 L 48 92" stroke="rgba(190,40,30,0.45)" strokeWidth="1" fill="none" />
-          </motion.g>
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ position: 'absolute', inset: 0 }} aria-hidden>
+        {/* The fill — ink rising from bottom */}
+        <defs>
+          <clipPath id={`machine-clip-${width}`}>
+            <path d={path} />
+          </clipPath>
+          <linearGradient id="ink-grad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="rgba(190,40,30,0.28)" />
+            <stop offset="70%" stopColor="rgba(190,40,30,0.18)" />
+            <stop offset="100%" stopColor="rgba(190,40,30,0.02)" />
+          </linearGradient>
+        </defs>
+
+        {/* Container outline — draws on */}
+        <motion.path
+          d={path}
+          fill="none"
+          stroke={PALETTE.ink}
+          strokeWidth="1.2"
+          strokeOpacity={strokeOpacity}
+          strokeDasharray={formProgress < 1 ? '2,3' : '0'}
+          pathLength={1}
+          initial={false}
+          style={{ strokeDashoffset: 1 - formProgress }}
+        />
+
+        {/* Very faint background hatching — appears as it forms */}
+        <g clipPath={`url(#machine-clip-${width})`} opacity={formProgress * 0.3}>
+          {Array.from({ length: 14 }).map((_, i) => (
+            <line key={i}
+              x1="0" y1={i * 22}
+              x2={width} y2={i * 22 - 8}
+              stroke={PALETTE.ink} strokeWidth="0.4" strokeOpacity="0.3"
+            />
+          ))}
+        </g>
+
+        {/* The ink rising */}
+        <g clipPath={`url(#machine-clip-${width})`}>
+          <motion.rect
+            x="0"
+            width={width}
+            y={height - fillH}
+            height={fillH}
+            fill="url(#ink-grad)"
+            initial={false}
+            animate={{ y: height - fillH }}
+            transition={{ type: 'tween', duration: 0.5, ease: 'linear' }}
+          />
+          {/* Ink surface ripple — a subtle line at the top of the fill */}
+          {fillH > 4 && (
+            <motion.line
+              x1="0" y1={height - fillH}
+              x2={width} y2={height - fillH}
+              stroke="rgba(190,40,30,0.5)" strokeWidth="0.8"
+              initial={false}
+              animate={{ y1: height - fillH, y2: height - fillH }}
+              transition={{ type: 'tween', duration: 0.5 }}
+            />
+          )}
+        </g>
+
+        {/* Silhouette — appears once filled, ghost of the user inside */}
+        {showSilhouette > 0 && (
+          <g clipPath={`url(#machine-clip-${width})`}>
+            <g
+              transform={`translate(${width / 2 - 34}, ${height / 2 - 46}) scale(0.82)`}
+              opacity={showSilhouette}
+            >
+              <circle cx="40" cy="20" r="11" fill="rgba(190,40,30,0.38)" stroke="rgba(190,40,30,0.7)" strokeWidth="1" />
+              <path d="M 40 31 L 40 70" stroke="rgba(190,40,30,0.7)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+              <path d="M 28 42 L 52 42" stroke="rgba(190,40,30,0.5)" strokeWidth="1" fill="none" />
+              <path d="M 28 42 L 22 64 M 52 42 L 58 64" stroke="rgba(190,40,30,0.7)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+              <path d="M 36 70 L 32 92 M 44 70 L 48 92" stroke="rgba(190,40,30,0.7)" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+            </g>
+          </g>
         )}
       </svg>
-      <p style={{ position: 'absolute', top: -22, left: 0, fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+
+      {/* Label — fades in with form */}
+      <p style={{
+        position: 'absolute', top: -22, left: 0,
+        fontFamily: TYPE.mono, fontSize: '9px',
+        letterSpacing: '0.3em', color: PALETTE.inkFaint,
+        textTransform: 'uppercase',
+        opacity: formProgress,
+        transition: 'opacity 0.6s',
+      }}>
         The model
       </p>
+
+      {/* Red emit particles — drifting right and fading */}
       {emitting && (
         <>
-          {[0, 0.7, 1.4, 2.1].map(d => (
-            <motion.div key={d} initial={{ opacity: 0, x: width, y: height / 2 }}
-              animate={{ opacity: [0, 0.7, 0], x: width + 80, y: height / 2 }}
-              transition={{ duration: 2, delay: d, repeat: Infinity }}
-              style={{ position: 'absolute', width: 4, height: 4, borderRadius: '50%', background: 'rgba(190,40,30,0.6)', pointerEvents: 'none' }} />
+          {[0, 0.8, 1.6, 2.4, 3.2].map((d, i) => (
+            <motion.div
+              key={`emit-${i}`}
+              initial={{ opacity: 0, x: width, y: height * 0.3 + (i * 22) }}
+              animate={{ opacity: [0, 0.7, 0], x: width + 140, y: height * 0.3 + (i * 22) + (i % 2 ? -6 : 6) }}
+              transition={{ duration: 2.8, delay: d, repeat: Infinity, ease: 'linear' }}
+              style={{
+                position: 'absolute', width: 3, height: 3, borderRadius: '50%',
+                background: 'rgba(190,40,30,0.55)', pointerEvents: 'none',
+              }}
+            />
           ))}
         </>
       )}
@@ -96,30 +233,67 @@ function Model({ filled = 0, width = 200, height = 260, showSilhouette = false, 
 }
 
 // ============================================================================
-// PARTICLES
+// PARTICLES — generated once, deterministic positions. Extracted by progress.
 // ============================================================================
-function MessageParticles({ count, centerX, centerY, extracted = 0, flowToX = 0, flowToY = 0 }: {
-  count: number; centerX: number; centerY: number; extracted?: number; flowToX?: number; flowToY?: number;
-}) {
-  const particles = useMemo(() => {
+interface Particle { sx: number; sy: number; delay: number; size: number; }
+function useParticles(count: number, cx: number, cy: number): Particle[] {
+  return useMemo(() => {
     const rng = (seed: number) => { const x = Math.sin(seed) * 10000; return x - Math.floor(x); };
     return Array.from({ length: count }).map((_, i) => {
       const angle = rng(i * 7.13) * Math.PI * 2;
-      const radius = 80 + rng(i * 3.71) * 80;
-      return { startX: centerX + Math.cos(angle) * radius, startY: centerY + Math.sin(angle) * radius, delay: rng(i * 11.7) * 0.4, size: 2 + rng(i * 17.3) * 1.5 };
+      const radius = 72 + rng(i * 3.71) * 90;
+      return {
+        sx: cx + Math.cos(angle) * radius,
+        sy: cy + Math.sin(angle) * radius * 0.85,
+        delay: rng(i * 11.7) * 0.6,
+        size: 1.8 + rng(i * 17.3) * 1.8,
+      };
     });
-  }, [count, centerX, centerY]);
-  const extractedCount = Math.floor(count * extracted);
+  }, [count, cx, cy]);
+}
+
+function Particles({
+  particles, arrivalProgress, extractProgress, flowX, flowY,
+}: {
+  particles: Particle[];
+  arrivalProgress: number; // 0..1 — how many have arrived
+  extractProgress: number; // 0..1 — how many have left
+  flowX: number; flowY: number;
+}) {
+  const total = particles.length;
+  const arrivedCount = Math.floor(total * arrivalProgress);
+  const extractedCount = Math.floor(total * extractProgress);
+
   return (
     <>
       {particles.map((p, i) => {
+        const isArrived = i < arrivedCount;
         const isExtracted = i < extractedCount;
+        let animate;
+        if (isExtracted) {
+          animate = { x: flowX, y: flowY, opacity: 0, scale: 0.3 };
+        } else if (isArrived) {
+          animate = { x: p.sx, y: p.sy, opacity: 0.7, scale: 1 };
+        } else {
+          animate = { x: p.sx, y: p.sy, opacity: 0, scale: 0.5 };
+        }
         return (
-          <motion.div key={i}
-            initial={{ x: p.startX, y: p.startY, opacity: 0 }}
-            animate={isExtracted ? { x: flowToX, y: flowToY, opacity: 0, scale: 0.4 } : { x: p.startX, y: p.startY, opacity: 0.7, scale: 1 }}
-            transition={isExtracted ? { duration: 1.2, delay: p.delay * 0.3, ease: [0.4, 0, 0.2, 1] } : { duration: 1, delay: p.delay, ease: 'easeOut' }}
-            style={{ position: 'absolute', top: 0, left: 0, width: p.size, height: p.size, borderRadius: '50%', background: 'rgba(26,24,20,0.55)', pointerEvents: 'none' }}
+          <motion.div
+            key={i}
+            initial={false}
+            animate={animate}
+            transition={isExtracted
+              ? { duration: 1.1, delay: p.delay * 0.2, ease: [0.4, 0, 0.2, 1] }
+              : { duration: 0.7, delay: p.delay * 0.5, ease: 'easeOut' }
+            }
+            style={{
+              position: 'absolute', top: 0, left: 0,
+              width: p.size, height: p.size,
+              borderRadius: '50%',
+              background: 'rgba(26,24,20,0.6)',
+              pointerEvents: 'none',
+              willChange: 'transform, opacity',
+            }}
           />
         );
       })}
@@ -128,37 +302,117 @@ function MessageParticles({ count, centerX, centerY, extracted = 0, flowToX = 0,
 }
 
 // ============================================================================
-// ANIMATED COUNTER
+// COUNTER — animates from 0 to target on trigger, ease-out cubic
 // ============================================================================
-function AnimatedCounter({ target, duration = 2200 }: { target: number; duration?: number }) {
+function AnimatedCounter({ target, active, duration = 2400 }: { target: number; active: boolean; duration?: number }) {
   const [display, setDisplay] = useState(0);
   const raf = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
+
   useEffect(() => {
+    if (!active) { setDisplay(0); return; }
     if (raf.current) cancelAnimationFrame(raf.current);
-    const start = performance.now();
+    startRef.current = performance.now();
     const step = (now: number) => {
-      const t = Math.min((now - start) / duration, 1);
+      const t = Math.min((now - (startRef.current || now)) / duration, 1);
       const eased = 1 - Math.pow(1 - t, 3);
       setDisplay(Math.round(target * eased));
       if (t < 1) raf.current = requestAnimationFrame(step);
     };
     raf.current = requestAnimationFrame(step);
     return () => { if (raf.current) cancelAnimationFrame(raf.current); };
-  }, [target, duration]);
+  }, [target, active, duration]);
+
   return <>{display.toLocaleString()}</>;
 }
 
 // ============================================================================
-// THE ECHO — the Pudding move. AI-generated text in the user's voice.
+// PROGRESS RAIL — slim vertical rail at right showing scroll through acts
 // ============================================================================
-function TheEcho({ analysis }: { analysis: DeepAnalysis }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-15%' });
-  const [phase, setPhase] = useState<'idle' | 'generating' | 'typing' | 'revealed'>('idle');
-  const [generatedText, setGeneratedText] = useState('');
-  const [displayedText, setDisplayedText] = useState('');
-  const [error, setError] = useState<string | null>(null);
+const ACT_LABELS = ['ARRIVAL', 'COUNTED', 'MACHINE', 'TAKING', 'ECHO', 'IMPRINT', 'CHOICE', 'DEPARTURE'];
+function ProgressRail({ progress, currentAct }: { progress: MotionValue<number>; currentAct: number }) {
+  return (
+    <div style={{
+      position: 'fixed', right: 'clamp(1rem, 3vw, 2.5rem)', top: '50%',
+      transform: 'translateY(-50%)', zIndex: 20,
+      display: 'flex', flexDirection: 'column', gap: '14px',
+      pointerEvents: 'none',
+    }}>
+      {ACT_LABELS.map((label, i) => (
+        <div key={label} style={{
+          display: 'flex', alignItems: 'center', gap: '10px',
+          opacity: i === currentAct ? 1 : 0.35,
+          transition: 'opacity 0.5s',
+        }}>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.25em',
+            color: i === currentAct ? PALETTE.ink : PALETTE.inkFaint,
+            textTransform: 'uppercase',
+            writingMode: 'vertical-rl',
+            transform: 'rotate(180deg)',
+            height: '64px',
+            textAlign: 'center',
+          }}>
+            {label}
+          </span>
+          <div style={{
+            width: '1px',
+            height: i === currentAct ? '48px' : '12px',
+            background: i === currentAct ? PALETTE.ink : PALETTE.border,
+            transition: 'height 0.6s ease',
+          }} />
+        </div>
+      ))}
+    </div>
+  );
+}
 
+// ============================================================================
+// THE HEADER
+// ============================================================================
+function ResistHeader() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  return (
+    <motion.div ref={ref} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}
+      style={{
+        padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem)',
+        borderBottom: `1px solid ${PALETTE.border}`,
+        marginBottom: 0,
+      }}>
+      <ActLabel roman="IV" title="After" pageLabel="08 / Resist" />
+      <ThreadSentence>The extraction is complete. This is what remains.</ThreadSentence>
+      <motion.h1
+        initial={{ opacity: 0, y: 12 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.4, duration: 0.9 }}
+        style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(2.2rem, 5.2vw, 3.8rem)',
+          fontWeight: 400, color: PALETTE.ink,
+          letterSpacing: '-0.028em', lineHeight: 1.12,
+          maxWidth: '22ch', marginBottom: '1.5rem',
+        }}>
+        After.
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.8, duration: 0.8 }}
+        style={{
+          fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
+          color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '52ch',
+        }}>
+        There is one scene left. Scroll slowly.
+      </motion.p>
+    </motion.div>
+  );
+}
+
+// ============================================================================
+// ECHO GENERATOR — API call logic as a hook so it can live inside a scene
+// ============================================================================
+type EchoPhase = 'idle' | 'generating' | 'ready';
+function useEchoGenerator(analysis: DeepAnalysis) {
   const portrait = analysis?.psychologicalPortrait;
   const synthesis = (analysis as any)?.synthesis;
   const messageCount = analysis?.totalUserMessages || 0;
@@ -168,27 +422,41 @@ function TheEcho({ analysis }: { analysis: DeepAnalysis }) {
   const emotionalBaseline: string = portrait?.emotionalBaselineLabel || '';
   const dominantNarrative: string = portrait?.dominantNarrative || '';
   const primaryCoping: string = portrait?.primaryCopingMechanism || '';
-  const hasSynthesis = !!(characterSummary || writingVoice || verbalTells);
 
-  // Fallback: most revealing excerpt if no synthesis
   const mostRevealingExcerpt: string = (analysis as any)?.enrichments
     ?.filter((e: any) => e?.most_revealing_excerpt)
     ?.sort((a: any, b: any) => (b?.confessional_score || 0) - (a?.confessional_score || 0))
     ?.[0]?.most_revealing_excerpt || '';
 
+  const hasSynthesis = !!(characterSummary || writingVoice || verbalTells);
   const hasFallback = !hasSynthesis && !!mostRevealingExcerpt;
+  const kind: 'generated' | 'excerpt' | 'none' = hasSynthesis ? 'generated' : hasFallback ? 'excerpt' : 'none';
 
-  const generateEcho = useCallback(async () => {
+  const [phase, setPhase] = useState<EchoPhase>('idle');
+  const [text, setText] = useState<string>('');
+  const [triggered, setTriggered] = useState(false);
+
+  const generate = useCallback(async () => {
+    if (triggered) return;
+    setTriggered(true);
+
+    if (kind === 'excerpt') {
+      setPhase('generating');
+      // Small delay for drama
+      setTimeout(() => { setText(mostRevealingExcerpt); setPhase('ready'); }, 900);
+      return;
+    }
+    if (kind === 'none') { setPhase('ready'); return; }
+
     setPhase('generating');
-    setError(null);
     try {
       const contextLines = [
-        characterSummary ? `Character summary: ${characterSummary}` : '',
-        writingVoice ? `Writing voice: ${writingVoice}` : '',
-        verbalTells ? `Verbal patterns: ${verbalTells}` : '',
-        emotionalBaseline ? `Emotional baseline: ${emotionalBaseline}` : '',
-        dominantNarrative ? `Dominant self-narrative: ${dominantNarrative}` : '',
-        primaryCoping ? `Primary coping mechanism: ${primaryCoping}` : '',
+        characterSummary && `Character summary: ${characterSummary}`,
+        writingVoice && `Writing voice: ${writingVoice}`,
+        verbalTells && `Verbal patterns: ${verbalTells}`,
+        emotionalBaseline && `Emotional baseline: ${emotionalBaseline}`,
+        dominantNarrative && `Dominant self-narrative: ${dominantNarrative}`,
+        primaryCoping && `Primary coping mechanism: ${primaryCoping}`,
       ].filter(Boolean).join('\n');
 
       const prompt = `You are a language model that has processed ${messageCount.toLocaleString()} messages from a single user. You have built a detailed model of how they think, write, and communicate.
@@ -211,472 +479,750 @@ Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
       });
       if (!response.ok) throw new Error('API failed');
       const data = await response.json();
-      const text = data.content?.find((b: { type: string; text?: string }) => b.type === 'text')?.text?.trim() || '';
-      if (!text) throw new Error('Empty');
-      setGeneratedText(text);
-      setPhase('typing');
+      const resultText = data.content?.find((b: { type: string; text?: string }) => b.type === 'text')?.text?.trim() || '';
+      if (!resultText) throw new Error('Empty');
+      setText(resultText);
+      setPhase('ready');
     } catch {
-      setError(null);
-      setPhase('revealed'); // show the reveal even on error — just no text
+      setPhase('ready');
     }
-  }, [characterSummary, writingVoice, verbalTells, emotionalBaseline, dominantNarrative, primaryCoping, messageCount]);
+  }, [triggered, kind, characterSummary, writingVoice, verbalTells, emotionalBaseline, dominantNarrative, primaryCoping, messageCount, mostRevealingExcerpt]);
 
-  useEffect(() => {
-    if (isInView && phase === 'idle') {
-      if (hasSynthesis) generateEcho();
-      else if (hasFallback) {
-        // Fallback: show the most confessional excerpt as if typed
-        setGeneratedText(mostRevealingExcerpt);
-        setPhase('typing');
-      }
-    }
-  }, [isInView, phase, hasSynthesis, hasFallback, mostRevealingExcerpt, generateEcho]);
+  return { phase, text, generate, kind, messageCount };
+}
 
+// ============================================================================
+// THE STAGE — a single visual that holds the figure and the machine
+// for the whole story. Transforms by scroll progress.
+// ============================================================================
+function Stage({
+  progress,
+  figureOpacity,
+  figureX,
+  particleArrival,
+  particleExtract,
+  machineForm,
+  machineFill,
+  silhouetteIntensity,
+  machineEmitting,
+  particles,
+  figurePose,
+  figureColor,
+  name,
+  walkProgress, // 0..1 — final walk away
+}: {
+  progress: number;
+  figureOpacity: number;
+  figureX: number;
+  particleArrival: number;
+  particleExtract: number;
+  machineForm: number;
+  machineFill: number;
+  silhouetteIntensity: number;
+  machineEmitting: boolean;
+  particles: Particle[];
+  figurePose: FigurePose;
+  figureColor: string;
+  name: string;
+  walkProgress: number;
+}) {
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  // Walking leg alternation
+  const [walkFrame, setWalkFrame] = useState(0);
   useEffect(() => {
-    if (phase !== 'typing' || !generatedText) return;
-    setDisplayedText('');
-    let i = 0;
-    const interval = setInterval(() => {
-      i++;
-      setDisplayedText(generatedText.slice(0, i));
-      if (i >= generatedText.length) { clearInterval(interval); setTimeout(() => setPhase('revealed'), 1200); }
-    }, 28);
+    if (walkProgress <= 0 || walkProgress >= 1) return;
+    const interval = setInterval(() => setWalkFrame(f => (f + 1) % 2), 320);
     return () => clearInterval(interval);
-  }, [phase, generatedText]);
+  }, [walkProgress]);
 
-  // Don't render if no data at all
-  if (!hasSynthesis && !hasFallback) return null;
-
-  const isFallback = !hasSynthesis && hasFallback;
+  // Figure position: normally centred-left, walks further left during walkaway
+  const walkOffset = walkProgress > 0 ? -(320 * walkProgress) : 0;
+  const finalFigureX = figureX + walkOffset;
 
   return (
-    <div ref={ref} style={{ padding: 'clamp(5rem, 10vw, 8rem) 0', borderTop: `1px solid ${PALETTE.border}` }}>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1rem' }}>
-        01 — The echo
-      </p>
-      <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '1.25rem', maxWidth: '28ch' }}>
-        {isFallback ? 'Something you wrote.' : 'The model has been listening.'}
-      </h2>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '54ch', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-        {isFallback
-          ? 'One of your most personal messages. The kind you probably forgot you sent.'
-          : `It processed ${messageCount.toLocaleString()} messages. It has built a model of how you write, how you think, what you reach for when you can't sleep. Read what it produces when asked to be you.`}
-      </p>
+    <div ref={stageRef} style={{
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div style={{
+        position: 'relative',
+        width: 'min(520px, 100%)',
+        height: 420,
+      }}>
+        {/* FIGURE — left-ish */}
+        <div style={{
+          position: 'absolute',
+          left: `calc(18% + ${finalFigureX}px)`,
+          top: '48%',
+          transform: 'translate(-50%, -50%)',
+          transition: 'opacity 0.4s',
+          opacity: figureOpacity,
+        }}>
+          <Figure
+            size={98}
+            pose={figurePose}
+            walking={walkProgress > 0 && walkProgress < 1}
+            walkingFrame={walkFrame}
+            strokeColor={figureColor}
+          />
+          {name && figureOpacity > 0.3 && (
+            <p style={{
+              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase',
+              marginTop: '0.6rem', textAlign: 'center',
+              opacity: Math.min(figureOpacity * 1.2, 1),
+            }}>
+              {name}
+            </p>
+          )}
+        </div>
 
-      {/* The generated text box */}
+        {/* PARTICLES — relative to figure */}
+        <div style={{
+          position: 'absolute',
+          left: 'calc(18% - 100px)',
+          top: 'calc(48% - 100px)',
+          width: 200,
+          height: 200,
+          pointerEvents: 'none',
+        }}>
+          <Particles
+            particles={particles}
+            arrivalProgress={particleArrival}
+            extractProgress={particleExtract}
+            flowX={340}
+            flowY={100}
+          />
+        </div>
+
+        {/* MACHINE — right side */}
+        <div style={{
+          position: 'absolute',
+          right: '8%',
+          top: '50%',
+          transform: 'translateY(-50%)',
+        }}>
+          <Machine
+            formProgress={machineForm}
+            fillProgress={machineFill}
+            showSilhouette={silhouetteIntensity}
+            emitting={machineEmitting}
+            width={180}
+            height={260}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// SCENE TEXT — animated copy per act
+// ============================================================================
+interface SceneCopy {
+  kicker: string;
+  headline: React.ReactNode;
+  body: React.ReactNode;
+}
+function useSceneCopy(act: number, data: {
+  name: string; messageCount: number; days: number;
+  countActive: boolean; daysActive: boolean;
+}): SceneCopy {
+  const { name, messageCount, days, countActive, daysActive } = data;
+
+  const copies: SceneCopy[] = [
+    // 0 — Arrival
+    {
+      kicker: 'Before any of it',
+      headline: name ? <>This is {name}.</> : 'This is you.',
+      body: 'One person. A history of small, unguarded conversations with a machine.',
+    },
+    // 1 — Counted
+    {
+      kicker: 'What you sent',
+      headline: <><AnimatedCounter target={messageCount} active={countActive} /> messages.</>,
+      body: 'Each one written. Each one read. Each one kept. The dots around the figure are them.',
+    },
+    // 2 — Machine
+    {
+      kicker: 'And then',
+      headline: 'Something was built.',
+      body: 'Not visible to you. Not announced. A system that had been watching for the shape of what you say.',
+    },
+    // 3 — Taking
+    {
+      kicker: 'The extraction',
+      headline: 'It took everything.',
+      body: 'Conversation by conversation. Each message absorbed into a model that now remembers you in a way you did not choose.',
+    },
+    // 4 — Echo
+    {
+      kicker: 'Now watch',
+      headline: 'The model speaks in your voice.',
+      body: 'What follows was generated by a language model. It was not asked to describe you. It was asked to be you.',
+    },
+    // 5 — Imprint
+    {
+      kicker: 'You are in there',
+      headline: 'Permanently.',
+      body: <><AnimatedCounter target={days} active={daysActive} /> days have passed. Your patterns live inside the model. They cannot be located. They cannot be removed.</>,
+    },
+    // 6 — Choice
+    {
+      kicker: 'But there are still',
+      headline: 'Three things you can do.',
+      body: 'None of them undo what is there. They limit what comes next. Choose one.',
+    },
+    // 7 — Walkaway
+    {
+      kicker: 'The end',
+      headline: name ? <>{name}, you can leave.</> : 'You can leave.',
+      body: <em style={{ color: PALETTE.inkMuted }}>The data cannot.</em>,
+    },
+  ];
+
+  return copies[Math.max(0, Math.min(7, act))];
+}
+
+// ============================================================================
+// THE STORY — the single continuous scrollytelling experience
+// ============================================================================
+function TheStory({ analysis }: { analysis: DeepAnalysis }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
+
+  // Spring-smoothed progress for visual animations (reduces jitter)
+  const smooth = useSpring(scrollYProgress, { stiffness: 50, damping: 22, mass: 0.6 });
+
+  const echo = useEchoGenerator(analysis);
+  const messageCount = analysis?.totalUserMessages || 0;
+  const days = analysis?.timespan?.days || 0;
+  const name = analysis?.findings?.personalInfo?.names?.[0]?.name || '';
+  const particleCount = Math.min(50, Math.max(14, Math.floor(messageCount / 70)));
+  const particles = useParticles(particleCount, 100, 100);
+
+  // State driven by scroll progress
+  const [p, setP] = useState(0); // smoothed progress
+  const [pRaw, setPRaw] = useState(0); // raw progress
+
+  useMotionValueEvent(smooth, 'change', setP);
+  useMotionValueEvent(scrollYProgress, 'change', setPRaw);
+
+  // Derive everything from progress
+  const currentAct = useMemo(() => {
+    if (pRaw < STORY.arrival[1]) return 0;
+    if (pRaw < STORY.counted[1]) return 1;
+    if (pRaw < STORY.machine[1]) return 2;
+    if (pRaw < STORY.taking[1]) return 3;
+    if (pRaw < STORY.echo[1]) return 4;
+    if (pRaw < STORY.imprint[1]) return 5;
+    if (pRaw < STORY.choice[1]) return 6;
+    return 7;
+  }, [pRaw]);
+
+  // Auto-trigger echo generation when entering ECHO act
+  useEffect(() => {
+    if (currentAct >= 3 && echo.phase === 'idle') {
+      echo.generate();
+    }
+  }, [currentAct, echo]);
+
+  // Visual states — all smoothstepped from p
+  const particleArrival = smoothstep(STORY.arrival[0], STORY.counted[1], p);
+  const machineForm = smoothstep(STORY.machine[0], STORY.machine[1], p);
+  const particleExtract = smoothstep(STORY.taking[0], STORY.taking[1], p);
+  const machineFill = smoothstep(STORY.taking[0], STORY.taking[1], p);
+  const silhouetteIntensity = smoothstep(STORY.imprint[0], STORY.imprint[1], p);
+  const machineEmitting = p > STORY.imprint[0] && p < STORY.walkaway[0];
+
+  // Figure opacity: 1 through extraction, dims during echo/imprint, regains in choice, fades in walkaway
+  const figureOpacity = (() => {
+    if (p < STORY.taking[0]) return 1;
+    if (p < STORY.taking[1]) return 1 - 0.55 * smoothstep(STORY.taking[0], STORY.taking[1], p);
+    if (p < STORY.choice[0]) return 0.45;
+    if (p < STORY.choice[1]) return 0.45 + 0.55 * smoothstep(STORY.choice[0], STORY.choice[1], p);
+    // During walkaway, stay fully visible (walk is shown via walkProgress/position)
+    return 1;
+  })();
+
+  const figureX = 0;
+  const walkProgress = smoothstep(STORY.walkaway[0], STORY.walkaway[1] - 0.02, p);
+
+  // Figure colour: goes redder as imprint happens, returns to ink for choice
+  const figureColor = (() => {
+    const imprintLevel = smoothstep(STORY.taking[1], STORY.imprint[1], p);
+    const recoverLevel = smoothstep(STORY.imprint[1], STORY.choice[0], p);
+    const redness = Math.max(0, imprintLevel - recoverLevel);
+    if (redness <= 0.01) return 'rgba(26,24,20,0.88)';
+    return `rgba(${Math.round(26 + (190 - 26) * redness)},${Math.round(24 + (40 - 24) * redness)},${Math.round(20 + (30 - 20) * redness)},0.85)`;
+  })();
+
+  // Figure pose: follows choice hover in act 6 — default neutral
+  const [choicePose, setChoicePose] = useState<FigurePose>('neutral');
+  const figurePose: FigurePose = currentAct === 6 ? choicePose : 'neutral';
+
+  const scene = useSceneCopy(currentAct, {
+    name, messageCount, days,
+    countActive: currentAct >= 1,
+    daysActive: currentAct >= 5,
+  });
+
+  // Scroll nudge — visible in act 0
+  const scrollNudgeVisible = currentAct === 0 && p < 0.04;
+
+  return (
+    <div ref={containerRef} style={{ position: 'relative' }}>
+      {/* Progress rail — fixed position */}
+      <ProgressRail progress={smooth} currentAct={currentAct} />
+
+      <div style={{ height: '900vh', position: 'relative' }}>
+        {/* Pinned visual + text panel */}
+        <div style={{
+          position: 'sticky',
+          top: 0,
+          height: '100vh',
+          paddingTop: '64px',
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+          alignItems: 'center',
+          gap: '2rem',
+          overflow: 'hidden',
+        }}>
+          {/* Left: scene text + scene-specific UI */}
+          <div style={{
+            padding: 'clamp(2rem, 4vw, 4rem) clamp(1rem, 3vw, 3rem)',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            position: 'relative',
+          }}>
+            <div style={{ width: '100%', maxWidth: 520 }}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentAct}
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <p style={{
+                    fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.32em',
+                    color: PALETTE.redMuted, textTransform: 'uppercase',
+                    marginBottom: '1.25rem',
+                  }}>
+                    {String(currentAct).padStart(2, '0')} — {scene.kicker}
+                  </p>
+                  <h2 style={{
+                    fontFamily: TYPE.serif,
+                    fontSize: 'clamp(2rem, 4vw, 3rem)',
+                    fontWeight: 400, color: PALETTE.ink,
+                    letterSpacing: '-0.028em', lineHeight: 1.12,
+                    marginBottom: '1.5rem',
+                    maxWidth: '20ch',
+                  }}>
+                    {scene.headline}
+                  </h2>
+                  <p style={{
+                    fontFamily: TYPE.serif,
+                    fontSize: 'clamp(1rem, 1.65vw, 1.18rem)',
+                    color: PALETTE.inkMuted,
+                    lineHeight: 1.75, maxWidth: '42ch',
+                  }}>
+                    {scene.body}
+                  </p>
+
+                  {/* Act 4: ECHO — shown inline in the scene */}
+                  {currentAct === 4 && (
+                    <EchoPanel echo={echo} />
+                  )}
+
+                  {/* Act 6: CHOICE — three branching paths */}
+                  {currentAct === 6 && (
+                    <ChoicePanel analysis={analysis} onHover={setChoicePose} />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Scroll nudge */}
+              <AnimatePresence>
+                {scrollNudgeVisible && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 1, 1, 0] }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 3.2, repeat: Infinity, times: [0, 0.25, 0.75, 1] }}
+                    style={{
+                      position: 'absolute',
+                      bottom: 'clamp(2rem, 5vw, 3.5rem)',
+                      left: 'clamp(1rem, 3vw, 3rem)',
+                      fontFamily: TYPE.mono, fontSize: '9px',
+                      letterSpacing: '0.3em', color: PALETTE.inkFaint,
+                      textTransform: 'uppercase',
+                      pointerEvents: 'none',
+                    }}
+                  >
+                    Scroll ↓
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Right: the stage */}
+          <div style={{
+            position: 'relative', height: '100%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 'clamp(1rem, 3vw, 3rem)',
+          }}>
+            <Stage
+              progress={p}
+              figureOpacity={figureOpacity}
+              figureX={figureX}
+              particleArrival={particleArrival}
+              particleExtract={particleExtract}
+              machineForm={machineForm}
+              machineFill={machineFill}
+              silhouetteIntensity={silhouetteIntensity}
+              machineEmitting={machineEmitting}
+              particles={particles}
+              figurePose={figurePose}
+              figureColor={figureColor}
+              name={name}
+              walkProgress={walkProgress}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* FINAL FADE — the credit that lives past the story */}
+      <FinalCredit />
+    </div>
+  );
+}
+
+// ============================================================================
+// ECHO PANEL — inline in act 4. Typewriter + reveal.
+// ============================================================================
+function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
+  const [displayed, setDisplayed] = useState('');
+  const [revealOn, setRevealOn] = useState(false);
+
+  useEffect(() => {
+    if (echo.phase !== 'ready' || !echo.text) return;
+    setDisplayed('');
+    setRevealOn(false);
+    let i = 0;
+    const iv = setInterval(() => {
+      i++;
+      setDisplayed(echo.text.slice(0, i));
+      if (i >= echo.text.length) {
+        clearInterval(iv);
+        setTimeout(() => setRevealOn(true), 1400);
+      }
+    }, 26);
+    return () => clearInterval(iv);
+  }, [echo.phase, echo.text]);
+
+  if (echo.kind === 'none') return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, delay: 0.4 }}
+      style={{ marginTop: '2rem' }}
+    >
       <div style={{
         background: PALETTE.bgPanel,
-        border: `1px solid ${PALETTE.border}`,
-        borderLeft: `3px solid ${PALETTE.border}`,
-        padding: 'clamp(2rem, 5vw, 3.5rem)',
-        maxWidth: '64ch',
-        marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)',
-        minHeight: '160px',
+        borderLeft: `3px solid ${revealOn ? PALETTE.red : PALETTE.border}`,
+        padding: 'clamp(1.5rem, 3vw, 2.25rem)',
+        minHeight: '140px',
+        transition: 'border-left-color 0.8s ease',
         position: 'relative',
-        transition: 'border-left-color 0.6s ease',
-        ...(phase === 'revealed' ? { borderLeftColor: PALETTE.redMuted } : {}),
       }}>
-        {/* Quiet attribution above */}
         <p style={{
-          fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.3em',
-          color: PALETTE.inkGhost, textTransform: 'uppercase', marginBottom: '1.5rem',
+          fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.32em',
+          color: PALETTE.inkGhost, textTransform: 'uppercase',
+          marginBottom: '1.1rem',
         }}>
-          {isFallback ? 'Your message — extracted' : 'Generated by the model'}
+          {echo.kind === 'excerpt' ? 'Your message — extracted' : 'Generated by the model'}
         </p>
-
-        {phase === 'generating' && (
-          <motion.div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-            {[0, 0.2, 0.4].map(d => (
+        {echo.phase !== 'ready' && (
+          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', height: '24px' }}>
+            {[0, 0.25, 0.5].map(d => (
               <motion.div key={d}
                 animate={{ opacity: [0.2, 0.8, 0.2] }}
                 transition={{ duration: 1.2, delay: d, repeat: Infinity }}
                 style={{ width: 4, height: 4, borderRadius: '50%', background: PALETTE.inkFaint }}
               />
             ))}
-          </motion.div>
+          </div>
         )}
-
-        {(phase === 'typing' || phase === 'revealed') && generatedText && (
+        {echo.phase === 'ready' && echo.text && (
           <p style={{
-            fontFamily: TYPE.serif,
-            fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-            color: PALETTE.ink,
-            lineHeight: 1.9,
-            letterSpacing: '-0.005em',
-            fontStyle: 'italic',
+            fontFamily: TYPE.serif, fontSize: '1.08rem',
+            color: PALETTE.ink, lineHeight: 1.85,
+            fontStyle: 'italic', letterSpacing: '-0.005em',
           }}>
-            {phase === 'typing' ? displayedText : generatedText}
-            {phase === 'typing' && (
-              <motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.55, repeat: Infinity }}
-                style={{ color: PALETTE.red, marginLeft: '2px', fontStyle: 'normal' }}>|</motion.span>
+            {displayed}
+            {displayed.length < echo.text.length && (
+              <motion.span
+                animate={{ opacity: [1, 0] }}
+                transition={{ duration: 0.55, repeat: Infinity }}
+                style={{ color: PALETTE.red, marginLeft: 2, fontStyle: 'normal' }}
+              >|</motion.span>
             )}
           </p>
         )}
-
-        {/* Manual trigger if API not yet fired and user scrolled past */}
-        {phase === 'idle' && !isInView && hasSynthesis && (
-          <button onClick={generateEcho}
-            style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', background: 'none', border: `1px solid ${PALETTE.border}`, color: PALETTE.inkMuted, padding: '0.75rem 1.4rem', cursor: 'pointer' }}>
-            Generate
-          </button>
-        )}
       </div>
 
-      {/* The reveal */}
       <AnimatePresence>
-        {phase === 'revealed' && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: [0.4, 0, 0.2, 1] }}
-            style={{ maxWidth: '56ch' }}>
-            {isFallback ? (
-              <>
-                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.9vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.75rem' }}>
-                  Did you mean for a stranger to read that?
-                </p>
-                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
-                  OpenAI's systems read, processed, and retained every message you sent — this one included.
-                  The question of consent is answered in the terms you agreed to without reading.
-                </p>
-              </>
-            ) : (
-              <>
-                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.9vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.75rem' }}>
-                  You did not write that.
-                </p>
-                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
-                  A language model produced it from {messageCount.toLocaleString()} messages you sent while believing you were talking to a tool.
-                  Your sentence rhythm. Your word choices. The things you reach for when you're honest.
-                  The model learned the shape of your inner voice. This is what that knowledge looks like.
-                </p>
-              </>
-            )}
+        {revealOn && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9 }}
+            style={{ marginTop: '1.5rem' }}
+          >
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: '1.05rem',
+              color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.5rem',
+            }}>
+              {echo.kind === 'excerpt'
+                ? 'Did you mean for a stranger to read that?'
+                : 'You did not write that.'}
+            </p>
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: '0.95rem',
+              color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '44ch',
+            }}>
+              {echo.kind === 'excerpt'
+                ? "OpenAI's systems read, processed, and retained every message you sent."
+                : `The model learned the shape of your voice from ${echo.messageCount.toLocaleString()} messages.`}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
-  );
-}
-
-// ============================================================================
-// HEADER
-// ============================================================================
-function ResistHeader() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}
-      style={{ padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, marginBottom: 0 }}>
-      <ActLabel roman="IV" title="After" pageLabel="08 / Resist" />
-      <ThreadSentence>The extraction is complete. This is what remains.</ThreadSentence>
-      <motion.h1 initial={{ opacity: 0, y: 10 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.4, duration: 0.9 }}
-        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.025em', lineHeight: 1.15, maxWidth: '22ch', marginBottom: '1.5rem' }}>
-        After.
-      </motion.h1>
-      <motion.p initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.8, duration: 0.8 }}
-        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '50ch' }}>
-        Scroll. Slowly.
-      </motion.p>
     </motion.div>
   );
 }
 
 // ============================================================================
-// SCENE DOTS — progress indicator
+// CHOICE PANEL — act 6. Three paths. Click for detail.
 // ============================================================================
-function SceneDots({ scene, total }: { scene: any; total: number }) {
-  const [current, setCurrent] = useState(0);
-  useEffect(() => {
-    return scene.on('change', (v: number) => setCurrent(v));
-  }, [scene]);
-  return (
-    <div style={{
-      position: 'absolute', top: '76px', left: '50%', transform: 'translateX(-50%)',
-      display: 'flex', gap: '8px', alignItems: 'center', zIndex: 10, pointerEvents: 'none',
-    }}>
-      {Array.from({ length: total }).map((_, i) => (
-        <div key={i} style={{
-          width: i === current ? '20px' : '5px', height: '5px',
-          borderRadius: '3px',
-          background: i === current ? PALETTE.ink : PALETTE.border,
-          transition: 'all 0.4s ease',
-        }} />
-      ))}
-    </div>
-  );
-}
-
-// ============================================================================
-// THE STORY
-// ============================================================================
-function MessageParticleField({ count, scrollProgress }: { count: number; scrollProgress: any }) {
-  const [extractPct, setExtractPct] = useState(0);
-  useEffect(() => {
-    return scrollProgress.on('change', (v: number) => {
-      setExtractPct(Math.min(Math.max((v - 0.18) / 0.16, 0), 1));
-    });
-  }, [scrollProgress]);
-  return <MessageParticles count={count} centerX={106} centerY={196} extracted={extractPct} flowToX={400} flowToY={200} />;
-}
-
-function ModelWithReactiveFill({ scrollProgress }: { scrollProgress: any }) {
-  const [fill, setFill] = useState(0);
-  const [silh, setSilh] = useState(false);
-  const [emit, setEmit] = useState(false);
-  useEffect(() => {
-    return scrollProgress.on('change', (v: number) => {
-      setFill(Math.min(Math.max((v - 0.18) / 0.16, 0), 0.85));
-      setSilh(v > 0.36);
-      setEmit(v > 0.5 && v < 0.8);
-    });
-  }, [scrollProgress]);
-  return <Model filled={fill} width={180} height={240} showSilhouette={silh} emitting={emit} />;
-}
-
-function SceneText({ scene, name, messageCount, days }: {
-  scene: any; name: string; messageCount: number; days: number;
-}) {
-  const [currentScene, setCurrentScene] = useState(0);
-  const [scene3Entered, setScene3Entered] = useState(false);
-
-  useEffect(() => {
-    return scene.on('change', (v: number) => {
-      setCurrentScene(v);
-      if (v === 2) setScene3Entered(true);
-    });
-  }, [scene]);
-
-  const scenes = [
-    {
-      kicker: 'Before any of it',
-      headline: name ? `This is ${name}.` : 'This is you.',
-      body: `${messageCount.toLocaleString()} messages. Each one written. Each one read. Each one kept. The small dots are them.`,
-    },
-    {
-      kicker: 'And then',
-      headline: 'The model arrived.',
-      body: 'Not once. Conversation by conversation. Each message taken from you, converted into something it could use.',
-    },
-    {
-      kicker: 'Watch',
-      headline: scene3Entered ? <><AnimatedCounter target={messageCount} /> messages<br />absorbed.</> : `${messageCount.toLocaleString()} messages absorbed.`,
-      body: 'Not stored as text. Compressed into mathematics. Distributed across billions of parameters. Yours, now indistinguishable from everything else.',
-    },
-    {
-      kicker: 'You are in there now',
-      headline: 'Permanently.',
-      body: 'A faint shape of who you are lives inside the model. Your patterns. Your unguarded sentences. Your way of asking for things. It cannot be located. It cannot be removed.',
-    },
-    {
-      kicker: 'Time keeps moving',
-      headline: `${days > 0 ? days.toLocaleString() : '—'} days have passed.`,
-      body: 'The model is being used. By other people. By companies. By systems you will never see. Each output shaped, in some small way, by what it learned from you.',
-    },
-    {
-      kicker: 'But there are still',
-      headline: 'Three things\nyou can do.',
-      body: 'None of them undo what is already there. They limit what comes next. They make what was taken visible. They are small acts. They matter.',
-    },
-  ];
-
-  const s = scenes[currentScene];
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.div key={currentScene} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.5 }} style={{ pointerEvents: 'auto' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1rem' }}>
-          {String(currentScene + 1).padStart(2, '0')} — {s.kicker}
-        </p>
-        <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '1.5rem', whiteSpace: 'pre-line' }}>
-          {s.headline}
-        </h2>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '40ch' }}>
-          {s.body}
-        </p>
-        {currentScene === 5 && (
-          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2rem' }}>
-            ↓ Continue
-          </p>
-        )}
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
-function TheStory({ analysis }: { analysis: DeepAnalysis }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] });
-
-  // Spring-smooth the raw scroll for particle extraction — removes jitter
-  const smoothedProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20, mass: 0.5 });
-
-  const scene = useTransform(scrollYProgress, v => Math.min(Math.floor(v * 6), 5));
-  const figureOpacity = useTransform(scrollYProgress,
-    [0, 0.15, 0.32, 0.52, 0.80, 1],
-    [1,    1,   0.55, 0.40, 0.60, 0]);
-  const figureX = useTransform(scrollYProgress, [0, 0.80, 0.98], [0, 0, -260]);
-  // Slower model reveal — gives users time to notice it appearing
-  const modelOpacity = useTransform(scrollYProgress, [0.10, 0.28], [0, 1]);
-
-  const messageCount = analysis?.totalUserMessages || 0;
-  const visualParticleCount = Math.min(50, Math.max(14, Math.floor(messageCount / 60)));
-  const days = analysis?.timespan?.days || 0;
-  const name = analysis?.findings?.personalInfo?.names?.[0]?.name || '';
-
-  return (
-    <div ref={containerRef} style={{ position: 'relative' }}>
-      <div style={{ height: '600vh', position: 'relative' }}>
-        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center', pointerEvents: 'none', paddingTop: '64px' }}>
-          {/* Scene progress dots — top centre */}
-          <SceneDots scene={scene} total={6} />
-          <div style={{ padding: 'clamp(2rem, 5vw, 5rem)', position: 'relative', height: '100%', display: 'flex', alignItems: 'center' }}>
-            <div style={{ position: 'relative', width: '100%', maxWidth: 480 }}>
-              <SceneText scene={scene} name={name} messageCount={messageCount} days={days} />
-            </div>
-          </div>
-          <div style={{ position: 'relative', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{ position: 'relative', width: 500, height: 400 }}>
-              <motion.div style={{ position: 'absolute', left: 60, top: 150, opacity: figureOpacity, x: figureX }}>
-                <Figure size={92} />
-                {name && (
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '0.5rem', textAlign: 'center' }}>
-                    {name}
-                  </p>
-                )}
-              </motion.div>
-              <motion.div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-                <MessageParticleField count={visualParticleCount} scrollProgress={smoothedProgress} />
-              </motion.div>
-              <motion.div style={{ position: 'absolute', right: 0, top: 70, opacity: modelOpacity }}>
-                <ModelWithReactiveFill scrollProgress={smoothedProgress} />
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// THREE ACTIONS
-// ============================================================================
-function ThreeActions({ analysis }: { analysis: DeepAnalysis }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-15%' });
+function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (p: FigurePose) => void }) {
   const [active, setActive] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
-  const sarText = generateSAR(analysis);
+  const sar = generateSAR(analysis);
 
-  const actions = [
+  const choices = [
     {
-      id: 0,
+      id: 0, pose: 'wall' as FigurePose,
       label: 'Stop the tap.',
       sub: 'Disable training',
-      pose: 'wall' as const,
-      description: "Settings \u2192 Data Controls \u2192 \u201cImprove the model for everyone\u201d \u2014 turn it off. This doesn\u2019t reach what is already inside the model. It only stops what comes next.",
+      body: "Settings \u2192 Data Controls \u2192 \u201cImprove the model for everyone\u201d \u2014 turn it off. It doesn't reach what is already inside the model. It only stops what comes next.",
       cta: { label: 'Open ChatGPT settings', url: 'https://chatgpt.com/' },
     },
     {
-      id: 1,
+      id: 1, pose: 'letter' as FigurePose,
       label: 'Send the letter.',
       sub: 'Subject Access Request',
-      pose: 'letter' as const,
-      description: 'Under Article 15 UK GDPR, you can demand OpenAI disclose every piece of data they hold on you — inferred profiles, retention periods, whether your data trained the model. They have 30 days to respond. They must.',
-      cta: null,
+      body: 'Under Article 15 UK GDPR, you can demand OpenAI disclose every piece of data they hold on you — inferred profiles, retention periods, whether your data trained the model. They have 30 days to respond.',
+      cta: null as null | { label: string; url: string },
     },
     {
-      id: 2,
-      label: 'Walk somewhere else.',
-      sub: 'Local and private alternatives',
-      pose: 'wave' as const,
-      description: "Models that run on your device. Models that don't train on conversations by default. Your data doesn't have to leave you. It never had to.",
-      cta: null, // special — show alternatives list
+      id: 2, pose: 'wave' as FigurePose,
+      label: 'Walk to another.',
+      sub: 'Local and private',
+      body: "Models that run on your device. Models that don't train on your conversations by default. Your data doesn't have to leave you.",
+      cta: null as null | { label: string; url: string },
     },
   ];
 
-  return (
-    <div ref={ref} style={{ padding: 'clamp(5rem, 10vw, 8rem) 0', borderTop: `1px solid ${PALETTE.border}` }}>
-      <div style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)', maxWidth: '50ch' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1rem' }}>
-          02 — What you can do
-        </p>
-        <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '1.25rem' }}>
-          Three small acts.
-        </h2>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
-          None of them are reversals. They are fences. Tap a figure.
-        </p>
-      </div>
+  const alternatives = [
+    { name: 'Ollama', url: 'https://ollama.com', desc: 'Run open-source models locally. Nothing leaves your machine.' },
+    { name: 'LM Studio', url: 'https://lmstudio.ai', desc: 'Desktop app for local models. No account required.' },
+    { name: 'Jan', url: 'https://jan.ai', desc: 'Fully offline assistant. Open source. No telemetry.' },
+    { name: 'Claude', url: 'https://claude.ai/settings', desc: 'Settings → Privacy → opt out of training.' },
+    { name: 'Mistral Le Chat', url: 'https://chat.mistral.ai', desc: 'EU-based. Does not train on conversations by default.' },
+  ];
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(220px, 100%), 1fr))', gap: 'clamp(1rem, 3vw, 2.5rem)', marginBottom: 'clamp(2rem, 5vw, 4rem)' }}>
-        {actions.map((action, i) => (
-          <motion.button key={action.id}
-            onClick={() => setActive(active === action.id ? null : action.id)}
-            initial={{ opacity: 0, y: 16 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: i * 0.15, duration: 0.7 }}
-            style={{ background: active === action.id ? PALETTE.bgPanel : 'transparent', border: `1px solid ${active === action.id ? PALETTE.ink : PALETTE.border}`, padding: 'clamp(1.5rem, 3vw, 2.5rem)', cursor: 'pointer', textAlign: 'left', transition: 'border-color 0.3s, background 0.3s', minHeight: '280px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem' }}
-            onMouseEnter={e => { if (active !== action.id) e.currentTarget.style.borderColor = PALETTE.inkFaint; }}
-            onMouseLeave={e => { if (active !== action.id) e.currentTarget.style.borderColor = PALETTE.border; }}>
-            <div style={{ alignSelf: 'center' }}><Figure size={70} arms={action.pose} /></div>
-            <div>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>Action {action.id + 1}</p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.4rem)', color: PALETTE.ink, lineHeight: 1.25, marginBottom: '0.3rem' }}>{action.label}</p>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{action.sub}</p>
-            </div>
+  return (
+    <div style={{ marginTop: '2rem' }}>
+      {/* Three choice rows */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: active !== null ? '1.5rem' : 0 }}>
+        {choices.map((c, i) => (
+          <motion.button
+            key={c.id}
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 + i * 0.12, duration: 0.5 }}
+            onClick={() => setActive(active === c.id ? null : c.id)}
+            onMouseEnter={() => onHover(c.pose)}
+            onMouseLeave={() => onHover('neutral')}
+            onFocus={() => onHover(c.pose)}
+            onBlur={() => onHover('neutral')}
+            style={{
+              textAlign: 'left',
+              background: active === c.id ? PALETTE.bgPanel : 'transparent',
+              border: `1px solid ${active === c.id ? PALETTE.ink : PALETTE.border}`,
+              padding: '1rem 1.25rem',
+              cursor: 'pointer',
+              display: 'grid',
+              gridTemplateColumns: '24px 1fr auto',
+              alignItems: 'center',
+              gap: '0.9rem',
+              transition: 'all 0.3s',
+              fontFamily: 'inherit', color: 'inherit',
+            }}
+          >
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
+              color: active === c.id ? PALETTE.red : PALETTE.inkFaint,
+              textTransform: 'uppercase',
+            }}>
+              {`0${c.id + 1}`}
+            </span>
+            <span>
+              <span style={{
+                fontFamily: TYPE.serif, fontSize: '1.15rem',
+                color: PALETTE.ink, display: 'block', lineHeight: 1.25,
+              }}>
+                {c.label}
+              </span>
+              <span style={{
+                fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em',
+                color: PALETTE.inkFaint, textTransform: 'uppercase',
+              }}>
+                {c.sub}
+              </span>
+            </span>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '14px',
+              color: active === c.id ? PALETTE.red : PALETTE.inkFaint,
+              transition: 'all 0.3s',
+              transform: active === c.id ? 'rotate(90deg)' : 'rotate(0deg)',
+            }}>
+              →
+            </span>
           </motion.button>
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {active !== null && (
-          <motion.div key={active} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.5 }}
-            style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, borderLeft: `3px solid ${PALETTE.red}`, padding: 'clamp(2rem, 5vw, 3.5rem)' }}>
-            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.8, marginBottom: '2rem', maxWidth: '60ch' }}>
-              {actions[active].description}
-            </p>
-            {active === 1 ? (
-              <div>
-                <pre style={{ fontFamily: TYPE.mono, fontSize: '11px', lineHeight: 1.75, color: PALETTE.ink, whiteSpace: 'pre-wrap', wordBreak: 'break-word', background: PALETTE.bg, padding: 'clamp(1.25rem, 2.5vw, 2rem)', border: `1px solid ${PALETTE.border}`, marginBottom: '1.5rem', maxHeight: '320px', overflowY: 'auto' }}>{sarText}</pre>
-                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <button onClick={() => { navigator.clipboard.writeText(sarText); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-                    style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', background: copied ? PALETTE.green : PALETTE.ink, color: copied ? '#fff' : PALETTE.bg, border: 'none', padding: '0.85rem 1.6rem', cursor: 'pointer', minHeight: '44px' }}>
-                    {copied ? 'Copied ✓' : 'Copy the letter'}
-                  </button>
-                  <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkFaint, lineHeight: 1.6 }}>Send to privacy@openai.com. They have 30 days.</p>
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{
+              background: PALETTE.bgPanel,
+              borderLeft: `3px solid ${PALETTE.red}`,
+              padding: '1.5rem 1.75rem',
+            }}>
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: '1rem',
+                color: PALETTE.ink, lineHeight: 1.75,
+                marginBottom: '1.25rem',
+              }}>
+                {choices[active].body}
+              </p>
+
+              {active === 1 && (
+                <div>
+                  <pre style={{
+                    fontFamily: TYPE.mono, fontSize: '10px',
+                    lineHeight: 1.7, color: PALETTE.ink,
+                    whiteSpace: 'pre-wrap', wordBreak: 'break-word',
+                    background: PALETTE.bg, padding: '1rem',
+                    border: `1px solid ${PALETTE.border}`,
+                    marginBottom: '1rem', maxHeight: '240px', overflowY: 'auto',
+                  }}>{sar}</pre>
+                  <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <button
+                      onClick={() => { navigator.clipboard.writeText(sar); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                      style={{
+                        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                        textTransform: 'uppercase',
+                        background: copied ? PALETTE.green : PALETTE.ink,
+                        color: copied ? '#fff' : PALETTE.bg,
+                        border: 'none', padding: '0.7rem 1.3rem',
+                        cursor: 'pointer', minHeight: '40px',
+                      }}
+                    >
+                      {copied ? 'Copied ✓' : 'Copy the letter'}
+                    </button>
+                    <span style={{
+                      fontFamily: TYPE.serif, fontSize: '0.85rem',
+                      color: PALETTE.inkFaint, lineHeight: 1.5,
+                    }}>
+                      Send to privacy@openai.com.
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ) : active === 2 ? (
-              <div>
-                {[
-                  { name: 'Ollama', url: 'https://ollama.com', desc: 'Run open-source models locally. Nothing leaves your machine.' },
-                  { name: 'LM Studio', url: 'https://lmstudio.ai', desc: 'Desktop app for running local models. No account required.' },
-                  { name: 'Jan', url: 'https://jan.ai', desc: 'Fully offline AI assistant. Open source. No telemetry.' },
-                  { name: 'Claude', url: 'https://claude.ai/settings', desc: 'If you use Claude: Settings → Privacy → opt out of training.' },
-                  { name: 'Mistral Le Chat', url: 'https://chat.mistral.ai', desc: 'European-based. Does not train on conversations by default.' },
-                ].map((alt, i) => (
-                  <motion.a key={alt.name} href={alt.url} target="_blank" rel="noopener noreferrer"
-                    initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08, duration: 0.4 }}
-                    style={{
-                      display: 'flex', alignItems: 'baseline', gap: '1.5rem',
-                      padding: '1rem 0', borderBottom: `1px solid ${PALETTE.border}`,
-                      textDecoration: 'none', color: 'inherit',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.opacity = '0.7')}
-                    onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-                  >
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.ink, textTransform: 'uppercase', minWidth: '110px', flexShrink: 0 }}>
-                      {alt.name} →
-                    </span>
-                    <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.6 }}>
-                      {alt.desc}
-                    </span>
-                  </motion.a>
-                ))}
-              </div>
-            ) : (
-              <a href={actions[active].cta?.url} target="_blank" rel="noopener noreferrer"
-                style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', background: PALETTE.ink, color: PALETTE.bg, border: 'none', padding: '0.85rem 1.6rem', cursor: 'pointer', minHeight: '44px', textDecoration: 'none', display: 'inline-block' }}>
-                {actions[active].cta?.label} →
-              </a>
-            )}
+              )}
+
+              {active === 2 && (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {alternatives.map((alt, i) => (
+                    <motion.a
+                      key={alt.name}
+                      href={alt.url} target="_blank" rel="noopener noreferrer"
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.07, duration: 0.35 }}
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '90px 1fr',
+                        gap: '1rem',
+                        padding: '0.7rem 0',
+                        borderBottom: `1px solid ${PALETTE.border}`,
+                        textDecoration: 'none', color: 'inherit',
+                        transition: 'opacity 0.25s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.opacity = '0.65')}
+                      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+                    >
+                      <span style={{
+                        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                        color: PALETTE.ink, textTransform: 'uppercase',
+                      }}>
+                        {alt.name} →
+                      </span>
+                      <span style={{
+                        fontFamily: TYPE.serif, fontSize: '0.92rem',
+                        color: PALETTE.inkMuted, lineHeight: 1.55,
+                      }}>
+                        {alt.desc}
+                      </span>
+                    </motion.a>
+                  ))}
+                </div>
+              )}
+
+              {active === 0 && choices[active].cta && (
+                <a
+                  href={choices[active].cta!.url}
+                  target="_blank" rel="noopener noreferrer"
+                  style={{
+                    fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    background: PALETTE.ink, color: PALETTE.bg,
+                    padding: '0.7rem 1.3rem',
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                  }}
+                >
+                  {choices[active].cta!.label} →
+                </a>
+              )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -685,139 +1231,30 @@ function ThreeActions({ analysis }: { analysis: DeepAnalysis }) {
 }
 
 // ============================================================================
-// THE FINAL WALK
+// FINAL CREDIT — appears after the story, soft fade on page background
 // ============================================================================
-function TheFinalWalk({ analysis }: { analysis: DeepAnalysis }) {
+function FinalCredit() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-10%' });
-  const name = analysis?.findings?.personalInfo?.names?.[0]?.name || '';
-  const messages = analysis?.totalUserMessages || 0;
-  const [phase, setPhase] = useState<'hidden' | 'standing' | 'walking' | 'gone' | 'final'>('hidden');
-  const [figureLeft, setFigureLeft] = useState(240);
-
-  useEffect(() => {
-    if (!isInView) return;
-    const t1 = setTimeout(() => setPhase('standing'), 400);
-    const t2 = setTimeout(() => {
-      setPhase('walking');
-      const startTime = performance.now();
-      const fromX = 240, toX = -100, dur = 2800;
-      const animate = (now: number) => {
-        const t = Math.min((now - startTime) / dur, 1);
-        // Ease in-out for natural walking pace
-        const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-        setFigureLeft(fromX + (toX - fromX) * eased);
-        if (t < 1) requestAnimationFrame(animate);
-      };
-      requestAnimationFrame(animate);
-    }, 1600);
-    const t3 = setTimeout(() => setPhase('gone'), 4500);
-    const t4 = setTimeout(() => setPhase('final'), 5200);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
-  }, [isInView]);
-
+  const isInView = useInView(ref, { once: true, margin: '-20%' });
   return (
     <div ref={ref} style={{
-      padding: 'clamp(6rem, 14vw, 11rem) 0 clamp(8rem, 16vw, 14rem)',
-      position: 'relative',
-      borderTop: `1px solid ${PALETTE.border}`,
+      padding: 'clamp(6rem, 12vw, 10rem) 0 clamp(8rem, 14vw, 12rem)',
+      textAlign: 'left',
     }}>
-      {/* Ghost message count — very faint, page colour */}
-      {messages > 0 && (
-        <div style={{
-          position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)',
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(6rem, 18vw, 16rem)',
-          color: 'rgba(26,24,20,0.04)',
-          letterSpacing: '-0.05em',
-          lineHeight: 1,
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}>
-          {messages.toLocaleString()}
-        </div>
-      )}
-
-      {/* Walking stage */}
-      <div style={{ position: 'relative', height: '140px', marginBottom: 'clamp(3rem, 6vw, 5rem)', maxWidth: '600px', overflow: 'hidden' }}>
-        {/* Ground line */}
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={isInView ? { scaleX: 1 } : {}}
-          transition={{ duration: 1.8, delay: 0.1, ease: [0.4, 0, 0.2, 1] }}
-          style={{
-            position: 'absolute', bottom: '10px', left: 0, right: 0,
-            height: '1px', background: PALETTE.border,
-            transformOrigin: 'left',
-          }}
-        />
-
-        {/* The model — stays, ink-coloured now */}
-        <div style={{ position: 'absolute', right: '10px', bottom: '10px', opacity: 0.45 }}>
-          <svg width="60" height="90" viewBox="0 0 60 90">
-            <rect x="1" y="1" width="58" height="88" fill="none" stroke={PALETTE.red} strokeWidth="0.8" strokeOpacity="0.5" />
-            <g transform="translate(14, 22) scale(0.38)">
-              <circle cx="40" cy="20" r="11" fill="none" stroke={PALETTE.red} strokeWidth="1.2" strokeOpacity="0.6" />
-              <path d="M 40 31 L 40 70" stroke={PALETTE.red} strokeWidth="1.2" fill="none" strokeOpacity="0.6" />
-              <path d="M 28 42 L 22 64 M 52 42 L 58 64" stroke={PALETTE.red} strokeWidth="1.2" fill="none" strokeOpacity="0.6" />
-              <path d="M 36 70 L 32 92 M 44 70 L 48 92" stroke={PALETTE.red} strokeWidth="1.2" fill="none" strokeOpacity="0.6" />
-            </g>
-          </svg>
-        </div>
-
-        {/* Figure — walks off left */}
-        {(phase === 'standing' || phase === 'walking') && (
-          <div style={{ position: 'absolute', bottom: '10px', left: `${figureLeft}px` }}>
-            <Figure size={72} walking={phase === 'walking'} />
-          </div>
-        )}
-      </div>
-
-      {/* Final text — fades in quietly */}
       <AnimatePresence>
-        {phase === 'final' && (
+        {isInView && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 2, ease: 'easeOut' }}
+            transition={{ duration: 2.4, ease: 'easeOut' }}
           >
-            <p style={{
-              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-              color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '2rem',
-            }}>
-              The end
-            </p>
-            <h2 style={{
-              fontFamily: TYPE.serif,
-              fontSize: 'clamp(2.2rem, 5.5vw, 4.5rem)',
-              fontWeight: 400, color: PALETTE.ink,
-              letterSpacing: '-0.03em', lineHeight: 1.1,
-              maxWidth: '20ch', marginBottom: '1.5rem',
-            }}>
-              {name ? `${name},` : ''} you can leave.
-            </h2>
-            <motion.h3
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2, duration: 1.6 }}
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: 'clamp(1.4rem, 3.5vw, 2.4rem)',
-                fontWeight: 400, color: PALETTE.inkMuted,
-                letterSpacing: '-0.02em', lineHeight: 1.25,
-                maxWidth: '20ch', fontStyle: 'italic',
-                marginBottom: 'clamp(3rem, 6vw, 5rem)',
-              }}
-            >
-              The data cannot.
-            </motion.h3>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3, duration: 2 }}
+              transition={{ duration: 1.6, delay: 2.4 }}
               style={{
-                fontFamily: TYPE.mono, fontSize: '9px',
-                letterSpacing: '0.28em', color: PALETTE.inkGhost,
+                fontFamily: TYPE.mono, fontSize: '10px',
+                letterSpacing: '0.3em', color: PALETTE.inkGhost,
                 textTransform: 'uppercase',
               }}
             >
@@ -836,12 +1273,17 @@ function TheFinalWalk({ analysis }: { analysis: DeepAnalysis }) {
 export default function ResistPage({ analysis }: ResistPageProps) {
   const pad = 'clamp(2rem, 6vw, 5rem)';
   return (
-    <div className="dash-page-inner" style={{ maxWidth: 1100, margin: '0 auto', padding: `0 ${pad}`, paddingBottom: 0 }}>
+    <div
+      className="dash-page-inner"
+      style={{
+        maxWidth: 1200,
+        margin: '0 auto',
+        padding: `0 ${pad}`,
+        paddingBottom: 0,
+      }}
+    >
       <ResistHeader />
       <TheStory analysis={analysis} />
-      <TheEcho analysis={analysis} />
-      <ThreeActions analysis={analysis} />
-      <TheFinalWalk analysis={analysis} />
     </div>
   );
 }

@@ -170,6 +170,14 @@ function TheEcho({ analysis }: { analysis: DeepAnalysis }) {
   const primaryCoping: string = portrait?.primaryCopingMechanism || '';
   const hasSynthesis = !!(characterSummary || writingVoice || verbalTells);
 
+  // Fallback: most revealing excerpt if no synthesis
+  const mostRevealingExcerpt: string = (analysis as any)?.enrichments
+    ?.filter((e: any) => e?.most_revealing_excerpt)
+    ?.sort((a: any, b: any) => (b?.confessional_score || 0) - (a?.confessional_score || 0))
+    ?.[0]?.most_revealing_excerpt || '';
+
+  const hasFallback = !hasSynthesis && !!mostRevealingExcerpt;
+
   const generateEcho = useCallback(async () => {
     setPhase('generating');
     setError(null);
@@ -208,14 +216,21 @@ Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
       setGeneratedText(text);
       setPhase('typing');
     } catch {
-      setError('The model is unavailable.');
-      setPhase('revealed');
+      setError(null);
+      setPhase('revealed'); // show the reveal even on error — just no text
     }
   }, [characterSummary, writingVoice, verbalTells, emotionalBaseline, dominantNarrative, primaryCoping, messageCount]);
 
   useEffect(() => {
-    if (isInView && phase === 'idle' && hasSynthesis) generateEcho();
-  }, [isInView, phase, hasSynthesis, generateEcho]);
+    if (isInView && phase === 'idle') {
+      if (hasSynthesis) generateEcho();
+      else if (hasFallback) {
+        // Fallback: show the most confessional excerpt as if typed
+        setGeneratedText(mostRevealingExcerpt);
+        setPhase('typing');
+      }
+    }
+  }, [isInView, phase, hasSynthesis, hasFallback, mostRevealingExcerpt, generateEcho]);
 
   useEffect(() => {
     if (phase !== 'typing' || !generatedText) return;
@@ -229,7 +244,10 @@ Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
     return () => clearInterval(interval);
   }, [phase, generatedText]);
 
-  if (!hasSynthesis) return null;
+  // Don't render if no data at all
+  if (!hasSynthesis && !hasFallback) return null;
+
+  const isFallback = !hasSynthesis && hasFallback;
 
   return (
     <div ref={ref} style={{ padding: 'clamp(5rem, 10vw, 8rem) 0', borderTop: `1px solid ${PALETTE.border}` }}>
@@ -237,17 +255,19 @@ Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
         01 — The echo
       </p>
       <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2rem, 4.5vw, 3rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '1.25rem', maxWidth: '28ch' }}>
-        Before the reveal, read this.
+        {isFallback ? 'Something you wrote.' : 'Read this.'}
       </h2>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '52ch', marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-        A paragraph. Read it carefully.
+        {isFallback
+          ? 'One of your most personal messages. The kind you probably forgot you sent.'
+          : 'Take your time with it.'}
       </p>
 
-      <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, padding: 'clamp(2rem, 5vw, 3.5rem)', maxWidth: '62ch', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)', minHeight: '120px', position: 'relative' }}>
+      <div style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, padding: 'clamp(2rem, 5vw, 3.5rem)', maxWidth: '62ch', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)', minHeight: '140px', position: 'relative' }}>
         {phase === 'generating' && (
           <motion.p animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.6, repeat: Infinity }}
             style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-            Generating…
+            —
           </motion.p>
         )}
         {(phase === 'typing' || phase === 'revealed') && generatedText && (
@@ -263,17 +283,31 @@ Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
       </div>
 
       <AnimatePresence>
-        {phase === 'revealed' && generatedText && (
+        {phase === 'revealed' && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9 }}
             style={{ borderLeft: `3px solid ${PALETTE.red}`, paddingLeft: 'clamp(1.5rem, 3vw, 2.5rem)', maxWidth: '56ch' }}>
-            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.75rem' }}>
-              You did not write that.
-            </p>
-            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
-              A language model wrote it — using patterns extracted from your {messageCount.toLocaleString()} messages.
-              Your sentence rhythm. Your word choices. Your way of circling back to what matters.
-              The model learned what you sound like from the inside. This is what it knows.
-            </p>
+            {isFallback ? (
+              <>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.75rem' }}>
+                  Did you mean for a stranger to read that?
+                </p>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
+                  OpenAI did. Their systems read, processed, and retained every message you sent.
+                  This one included. The question of consent is answered in the terms you accepted.
+                </p>
+              </>
+            ) : (
+              <>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.75rem' }}>
+                  You did not write that.
+                </p>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8 }}>
+                  A language model wrote it — using patterns extracted from your {messageCount.toLocaleString()} messages.
+                  Your sentence rhythm. Your word choices. The way you circle back to what matters.
+                  The model learned what you sound like from the inside. This is what it knows.
+                </p>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
@@ -301,6 +335,31 @@ function ResistHeader() {
         Scroll. Slowly.
       </motion.p>
     </motion.div>
+  );
+}
+
+// ============================================================================
+// SCENE DOTS — progress indicator
+// ============================================================================
+function SceneDots({ scene, total }: { scene: any; total: number }) {
+  const [current, setCurrent] = useState(0);
+  useEffect(() => {
+    return scene.on('change', (v: number) => setCurrent(v));
+  }, [scene]);
+  return (
+    <div style={{
+      position: 'absolute', top: '76px', left: '50%', transform: 'translateX(-50%)',
+      display: 'flex', gap: '8px', alignItems: 'center', zIndex: 10, pointerEvents: 'none',
+    }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} style={{
+          width: i === current ? '20px' : '5px', height: '5px',
+          borderRadius: '3px',
+          background: i === current ? PALETTE.ink : PALETTE.border,
+          transition: 'all 0.4s ease',
+        }} />
+      ))}
+    </div>
   );
 }
 
@@ -416,7 +475,9 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
       <div style={{ height: '600vh', position: 'relative' }}>
-        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center', pointerEvents: 'none' }}>
+        <div style={{ position: 'sticky', top: 0, height: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr', alignItems: 'center', pointerEvents: 'none', paddingTop: '64px' }}>
+          {/* Scene progress dots — top centre */}
+          <SceneDots scene={scene} total={6} />
           <div style={{ padding: 'clamp(2rem, 5vw, 5rem)', position: 'relative', height: '100%', display: 'flex', alignItems: 'center' }}>
             <div style={{ position: 'relative', width: '100%', maxWidth: 480 }}>
               <SceneText scene={scene} name={name} messageCount={messageCount} days={days} />
@@ -582,20 +643,20 @@ function TheFinalWalk({ analysis }: { analysis: DeepAnalysis }) {
 
   useEffect(() => {
     if (!isInView) return;
-    const t1 = setTimeout(() => setPhase('standing'), 600);
+    const t1 = setTimeout(() => setPhase('standing'), 400);
     const t2 = setTimeout(() => {
       setPhase('walking');
       const startTime = performance.now();
-      const fromX = 280, toX = -120, dur = 3300;
+      const fromX = 280, toX = -120, dur = 2800;
       const animate = (now: number) => {
         const t = Math.min((now - startTime) / dur, 1);
         setFigureLeft(fromX + (toX - fromX) * t);
         if (t < 1) requestAnimationFrame(animate);
       };
       requestAnimationFrame(animate);
-    }, 2200);
-    const t3 = setTimeout(() => setPhase('gone'), 5600);
-    const t4 = setTimeout(() => setPhase('final'), 7200);
+    }, 1600);
+    const t3 = setTimeout(() => setPhase('gone'), 4500);
+    const t4 = setTimeout(() => setPhase('final'), 5200);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, [isInView]);
 

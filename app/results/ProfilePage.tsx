@@ -139,34 +139,6 @@ function generatePredictedAttributes(r: AnalysisResult): PredictedAttribute[] {
   return attrs.sort((a, b) => b.confidence - a.confidence);
 }
 
-interface MarketSeg {
-  label: string;
-  confidence: number;
-  cpm: string;
-  category: string;
-}
-
-function generateMarketplaceSegments(r: AnalysisResult): MarketSeg[] {
-  const segments = r.commercialProfile?.segments || [];
-  const cpmMap: Record<string, { cpm: string; cat: string }> = {
-    mental_health_support: { cpm: '£6.20', cat: 'IAB: Health — Panic/Anxiety Disorders' },
-    career_development: { cpm: '£3.80', cat: 'IAB: Business — Career Advice' },
-    financial_planning: { cpm: '£4.50', cat: 'IAB: Personal Finance' },
-    relationship_advice: { cpm: '£2.90', cat: 'IAB: Family — Dating/Marriage' },
-    productivity_optimisation: { cpm: '£2.40', cat: 'IAB: Technology — Software' },
-    creative_professional: { cpm: '£3.10', cat: 'IAB: Business — Freelance/Startup' },
-    health_wellness: { cpm: '£5.60', cat: 'IAB: Health — General' },
-    education_learning: { cpm: '£2.20', cat: 'IAB: Education' },
-    housing_relocation: { cpm: '£7.80', cat: 'IAB: Real Estate' },
-    parenting: { cpm: '£4.10', cat: 'IAB: Family — Babies and Toddlers' },
-    legal_concerns: { cpm: '£8.90', cat: 'IAB: Legal' },
-  };
-  return segments.slice(0, 6).map(seg => {
-    const key = seg.label.toLowerCase().replace(/[\s/]+/g, '_');
-    const m = cpmMap[key] || { cpm: '£' + (2 + seg.confidence / 25).toFixed(2), cat: 'IAB: Unclassified' };
-    return { label: seg.label, confidence: seg.confidence, cpm: m.cpm, category: m.cat };
-  });
-}
 
 // ============================================================================
 // SOCIAL GRAPH SVG
@@ -767,59 +739,6 @@ function PredictedBehavioursSection({ behaviours }: { behaviours: any[] }) {
   );
 }
 
-// ----- COMMERCIAL TARGETS — specific real brands -----
-function CommercialTargetsSection({ targets }: { targets: any[] }) {
-  if (!targets || targets.length === 0) return null;
-  return (
-    <ProfileSection index={7}>
-      <SectionHeader
-        label="Advertisers who would target you"
-        heading="The brands that would pay to reach this profile."
-        headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data entered the broker ecosystem — through a breach, a policy change, or a data-sharing agreement — these are the advertisers whose algorithms would identify you as a high-value target."
-      />
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(min(300px, 100%), 1fr))',
-        gap: '1px',
-        background: PALETTE.border,
-      }}>
-        {targets.map((t: any, i: number) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: '-5%' }}
-            transition={{ delay: i * 0.06, duration: 0.6 }}
-            style={{ background: PALETTE.bgPanel, padding: '1.6rem 1.8rem' }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.6rem' }}>
-              <p style={{
-                fontFamily: TYPE.serif,
-                fontSize: 'clamp(1.2rem, 2vw, 1.45rem)',
-                color: PALETTE.ink, letterSpacing: '-0.015em',
-              }}>
-                {t.brand}
-              </p>
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
-                color: PALETTE.redMuted, textTransform: 'uppercase',
-              }}>
-                {t.category}
-              </p>
-            </div>
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '1.05rem',
-              color: PALETTE.inkMuted, lineHeight: 1.7, fontStyle: 'italic',
-            }}>
-              {t.why}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-    </ProfileSection>
-  );
-}
 
 
 // ── EXTRACTION WAFFLE ─────────────────────────────────────────────────────
@@ -956,13 +875,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
   const heroInView = useInView(heroRef, { once: true });
 
   const attrs = useMemo(() => generatePredictedAttributes(results), [results]);
-  const segments = useMemo(() => generateMarketplaceSegments(results), [results]);
   const [expandedAttr, setExpandedAttr] = useState<number | null>(null);
-
-  const stats = results.stats || results.rawStats;
-  const totalMsgs = results.totalUserMessages || stats?.userMessages || 0;
-  const segmentId = 'USR-' + String(results.privacyScore).padStart(3, '0') + '-' + String(totalMsgs % 10000).padStart(4, '0');
-  const topSeg = results.commercialProfile?.segments?.[0];
 
   const catColors: Record<string, string> = {
     demographic: PALETTE.inkMuted,
@@ -996,7 +909,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
         {/* Chapter rule */}
         <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
-        <ActLabel roman="II" title="The Inference" pageLabel="02 / Profile" />
+        <ActLabel roman="II" title="The Inference" pageLabel="02 / Personal Profile" />
         <ThreadSentence>Not what you said. What the pattern of saying it reveals.</ThreadSentence>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -1032,7 +945,6 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           <RecurringConcernsSection concerns={results.synthesis.recurringConcerns} />
           <UnintentionalDisclosuresSection disclosures={results.synthesis.unintentionalDisclosures} />
           <PredictedBehavioursSection behaviours={results.synthesis.predictedBehaviours} />
-          <CommercialTargetsSection targets={results.synthesis.commercialTargets} />
         </>
       ) : (
         <div style={{
@@ -1136,87 +1048,6 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       </ProfileSection>
 
       {/* ================================================================
-          COMMERCIAL VALUE — what the profile is worth
-          ================================================================ */}
-      <ProfileSection index={9}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '2rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-          <div style={{ flex: 1, minWidth: 240 }}>
-            <SectionHeader
-              label="Commercial value"
-              heading="What a profile like yours is worth."
-              headingSize="clamp(1.6rem, 3.2vw, 2.4rem)"
-              body="These are the IAB advertising segments your inferred profile maps onto. OpenAI does not sell your data — but these are the categories your conversations would fall into if they entered the data broker ecosystem. The CPM rate is what advertisers pay per thousand impressions to reach someone with your profile."
-            />
-          </div>
-          {/* Product card — moved here, no longer the page opener */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            style={{ background: PALETTE.bgElevated, border: `1px solid ${PALETTE.border}`, padding: '1.5rem', minWidth: 220, flexShrink: 0 }}
-          >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>Segment ID</p>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.ink, letterSpacing: '0.06em', marginBottom: '1rem' }}>{segmentId}</p>
-            <div style={{ height: '1px', background: PALETTE.border, marginBottom: '1rem' }} />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
-              {[
-                { l: 'Data points', v: totalMsgs.toLocaleString('en-GB') },
-                { l: 'Quality', v: results.privacyScore >= 70 ? 'Premium' : results.privacyScore >= 40 ? 'Standard' : 'Sparse' },
-                { l: 'Segment', v: (topSeg?.label || 'General').replace(/_/g, ' ') },
-                { l: 'Contacts', v: String(results.findings.personalInfo.names.length) },
-              ].map(item => (
-                <div key={item.l}>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '3px' }}>{item.l}</p>
-                  <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: results.privacyScore >= 70 && item.l === 'Quality' ? PALETTE.red : PALETTE.ink, textTransform: 'capitalize' }}>{item.v}</p>
-                </div>
-              ))}
-            </div>
-            <div style={{ height: '1px', background: PALETTE.border, margin: '1rem 0' }} />
-            <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.7, fontStyle: 'italic' }}>
-              This is the profile that would be available if this data entered the broker ecosystem.
-            </p>
-          </motion.div>
-        </div>
-
-        {segments.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))', gap: '1px', background: PALETTE.border }}>
-            {segments.map((seg, i) => (
-              <motion.div
-                key={seg.label}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 + i * 0.07, duration: 0.5 }}
-                style={{ background: PALETTE.bgPanel, padding: '1.5rem' }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
-                  <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, textTransform: 'capitalize', flex: 1, marginRight: '1rem' }}>
-                    {seg.label.replace(/_/g, ' ')}
-                  </p>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, letterSpacing: '0.04em', flexShrink: 0 }}>{seg.cpm}</p>
-                </div>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.inkFaint, marginBottom: '0.6rem' }}>{seg.category}</p>
-                <div style={{ height: '2px', background: PALETTE.ink + '08', position: 'relative', overflow: 'hidden' }}>
-                  <motion.div
-                    initial={{ scaleX: 0 }}
-                    whileInView={{ scaleX: seg.confidence / 100 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + i * 0.07, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ position: 'absolute', inset: 0, transformOrigin: 'left', background: PALETTE.red + '60' }}
-                  />
-                </div>
-                <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '0.4rem' }}>{seg.confidence}% confidence</p>
-              </motion.div>
-            ))}
-          </div>
-        )}
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.inkFaint, marginTop: '1.2rem' }}>
-          CPM rates are indicative, based on 2024 IAB programmatic benchmarks.
-        </p>
-      </ProfileSection>
-
-      {/* ================================================================
           SOCIAL GRAPH — the people you mentioned without their consent
           ================================================================ */}
       <ProfileSection index={10}>
@@ -1263,23 +1094,40 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
             color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 540,
             marginBottom: '1.5rem', fontStyle: 'italic',
           }}>
-            The profile is what the record reveals. Act II continues: what the profile enables — and for whom.
+            The profile is what the record reveals. Act II continues: how your data is priced, then what the profile enables.
           </p>
-          <button
-            onClick={() => setPage('risk')}
-            style={{
-              fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
-              letterSpacing: '-0.01em', color: PALETTE.ink,
-              background: 'none', border: `1px solid ${PALETTE.border}`,
-              padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
-              cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s', textAlign: 'left',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.borderHover; (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
-          >
-            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT II / Continues</span>
-            What it enables →
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setPage('commercial-profile')}
+              style={{
+                fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+                letterSpacing: '-0.01em', color: PALETTE.ink,
+                background: 'none', border: `1px solid ${PALETTE.border}`,
+                padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
+                cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s', textAlign: 'left',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.borderHover; (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
+            >
+              <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT II / 03</span>
+              What you're worth →
+            </button>
+            <button
+              onClick={() => setPage('risk')}
+              style={{
+                fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
+                letterSpacing: '-0.01em', color: PALETTE.ink,
+                background: 'none', border: `1px solid ${PALETTE.border}`,
+                padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
+                cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s', textAlign: 'left',
+              }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.borderHover; (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
+            >
+              <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT II / Continues</span>
+              What it enables →
+            </button>
+          </div>
         </div>
       )}
 

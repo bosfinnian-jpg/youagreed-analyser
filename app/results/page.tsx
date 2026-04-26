@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import DashboardLayout, { PALETTE, TYPE, type DashPage } from './DashboardLayout';
 import OverviewPage from './OverviewPage';
 import ProfilePage from './ProfilePage';
+import CommercialProfilePage from './[id]/commercial-profile/page';
 import RiskPage from './RiskPage';
 import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
@@ -97,6 +98,7 @@ export default function ResultsPage() {
     <DashboardLayout results={results} page={page} setPage={handleSetPage}>
       {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={handleSetPage} />}
       {page === 'profile' && <ProfilePage results={results} setPage={handleSetPage} />}
+      {page === 'commercial-profile' && <CommercialProfilePage results={results} setPage={handleSetPage} />}
       {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} />}
       {page === 'risk' && <RiskPage results={results} setPage={handleSetPage} />}
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}

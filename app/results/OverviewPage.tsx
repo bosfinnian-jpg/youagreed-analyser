@@ -23,10 +23,6 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { animate, stagger, onScroll, createDrawable, createSpring, createTimeline } from 'animejs';
 import { PALETTE, TYPE, type DashPage, ActLabel, ThreadSentence } from './DashboardLayout';
-import DataProductSummary from './DataProductSummary';
-import EmotionalTimelineChart from './EmotionalTimelineChart';
-import { ConfidenceLimitations } from './EmptyStatesAndLimitations';
-import ClosureSection from './ClosureSection';
 
 // ── Chapters ────────────────────────────────────────────────────────────────
 const CHAPTERS = [
@@ -147,6 +143,31 @@ function ScrollRail() {
   );
 }
 
+// ── Chapter Dots — Spotify Wrapped progress indicator ───────────────────────
+function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof CHAPTERS[number][] }) {
+  return (
+    <div style={{
+      position: 'fixed', bottom: '2rem', left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: 50, pointerEvents: 'none',
+      display: 'flex', gap: '6px', alignItems: 'center',
+    }}>
+      {chapters.map(c => {
+        const isActive = c.id === active;
+        return (
+          <div key={c.id} style={{
+            height: 6,
+            width: isActive ? 24 : 6,
+            borderRadius: 3,
+            background: isActive ? PALETTE.ink : 'rgba(26,24,20,0.22)',
+            transition: 'width 0.4s cubic-bezier(0.4,0,0.2,1), background 0.3s',
+          }} />
+        );
+      })}
+    </div>
+  );
+}
+
 // ════════════════════════════════════════════════════════════════════════════
 // CHAPTER SHELL — consistent layout for every chapter
 // ════════════════════════════════════════════════════════════════════════════
@@ -177,6 +198,7 @@ function ChapterShell({
     <section
       ref={ref}
       id={`chapter-${id}`}
+      className="chapter-snap"
       style={{
         minHeight: '100vh',
         padding: 'clamp(5rem,12vw,10rem) clamp(2rem,6vw,5rem)',
@@ -185,9 +207,28 @@ function ChapterShell({
         justifyContent: 'center',
         position: 'relative',
         borderBottom: last ? 'none' : `1px solid ${PALETTE.border}`,
+        overflow: 'hidden',
       }}
     >
-      <div style={{ maxWidth: 880, margin: '0 auto', width: '100%' }}>
+      {/* Ghost chapter number */}
+      {num && (
+        <div aria-hidden="true" style={{
+          position: 'absolute',
+          right: '-0.05em',
+          top: '50%',
+          transform: 'translateY(-50%)',
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(12rem, 30vw, 28rem)',
+          fontWeight: 400,
+          color: 'rgba(26,24,20,0.035)',
+          lineHeight: 1,
+          letterSpacing: '-0.05em',
+          userSelect: 'none',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}>{num}</div>
+      )}
+      <div style={{ maxWidth: 880, margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
         {(num || label) && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(2.5rem,5vw,4rem)' }}>
             {num && (
@@ -222,6 +263,10 @@ function ArrivalChapter({ name, date, onActive }: {
 }) {
   return (
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
+      <div style={{ marginBottom: '2.5rem' }}>
+        <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
+        <ThreadSentence>You agreed to terms that described this. They did not describe it fully.</ThreadSentence>
+      </div>
       <motion.p
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
         transition={{ duration: 1.2, delay: 0.2 }}
@@ -874,11 +919,12 @@ function ScoreChapter({ score, onActive }: {
   score: number;
   onActive: (id: ChapterId) => void;
 }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const ringRef    = useRef<SVGCircleElement>(null);
-  const numRef     = useRef<HTMLSpanElement>(null);
-  const labelRef   = useRef<HTMLSpanElement>(null);
-  const ticksRef   = useRef<SVGGElement>(null);
+  const sectionRef   = useRef<HTMLDivElement>(null);
+  const ringRef      = useRef<SVGCircleElement>(null);
+  const numRef       = useRef<HTMLSpanElement>(null);
+  const labelRef     = useRef<HTMLSpanElement>(null);
+  const ticksRef     = useRef<SVGGElement>(null);
+  const particlesRef = useRef<HTMLDivElement>(null);
 
   const color = score >= 70 ? PALETTE.red : score >= 40 ? PALETTE.amber : PALETTE.green;
   const label = score >= 70 ? 'Severe' : score >= 40 ? 'Moderate' : 'Limited';
@@ -939,6 +985,28 @@ function ScoreChapter({ score, onActive }: {
         ease: 'outQuint',
       }, '-=300');
     }
+
+    // Particle burst when score settles
+    setTimeout(() => {
+      const container = particlesRef.current;
+      if (!container) return;
+      const dots = Array.from(container.children) as HTMLElement[];
+      animate(dots, {
+        opacity: [0.9, 0],
+        translateX: (_el: any, i: number) => {
+          const angle = (i / 24) * Math.PI * 2;
+          return [0, Math.cos(angle) * (70 + (i % 4) * 22)];
+        },
+        translateY: (_el: any, i: number) => {
+          const angle = (i / 24) * Math.PI * 2;
+          return [0, Math.sin(angle) * (70 + (i % 4) * 22)];
+        },
+        scale: [1, 0],
+        delay: stagger(18),
+        duration: 750,
+        ease: 'outQuart',
+      });
+    }, 1800);
   }, [score]);
 
   return (
@@ -1053,6 +1121,22 @@ function ScoreChapter({ score, onActive }: {
                 letterSpacing: '0.24em', color, textTransform: 'uppercase',
                 marginTop: '0.4rem',
               }}>{label}</span>
+            </div>
+
+            {/* Particle burst */}
+            <div ref={particlesRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+              {Array.from({ length: 24 }).map((_, i) => (
+                <div key={i} style={{
+                  position: 'absolute',
+                  left: '50%', top: '50%',
+                  width: i % 3 === 0 ? 7 : i % 3 === 1 ? 5 : 3,
+                  height: i % 3 === 0 ? 7 : i % 3 === 1 ? 5 : 3,
+                  borderRadius: '50%',
+                  background: color,
+                  opacity: 0,
+                  transform: 'translate(-50%, -50%)',
+                }} />
+              ))}
             </div>
           </div>
         </div>
@@ -1345,6 +1429,12 @@ export default function OverviewPage({ results, sources, setPage }: {
   const [active, setActive] = useState<ChapterId>('arrival');
   const handleActive = useCallback((id: ChapterId) => setActive(id), []);
 
+  // Snap scroll — on while overview is mounted, removed on unmount
+  useEffect(() => {
+    document.documentElement.style.scrollSnapType = 'y proximity';
+    return () => { document.documentElement.style.scrollSnapType = ''; };
+  }, []);
+
   // ── Derive content from results ─────────────────────────────────────────
   const score        = results?.privacyScore ?? 0;
   const messageCount = results?.totalUserMessages || results?.rawStats?.userMessages || 0;
@@ -1400,9 +1490,8 @@ export default function OverviewPage({ results, sources, setPage }: {
     'permanence',
   ];
 
-  const hasDeepData = !!(results?.emotionalTimeline && results?.commercialProfile);
-  const connected   = sources.filter((s: any) => s.connected).length;
-  const pad         = 'clamp(2rem,6vw,5rem)';
+  const connected = sources.filter((s: any) => s.connected).length;
+  const pad       = 'clamp(2rem,6vw,5rem)';
 
   return (
     <>
@@ -1415,6 +1504,7 @@ export default function OverviewPage({ results, sources, setPage }: {
 
       <ScrollRail />
       <RightRail active={active} visible={visibleChapters} />
+      <ChapterDots active={active} chapters={CHAPTERS.filter(c => visibleChapters.includes(c.id))} />
 
       {/* Source banner */}
       {connected < sources.length && (
@@ -1448,12 +1538,6 @@ export default function OverviewPage({ results, sources, setPage }: {
         </div>
       )}
 
-      {/* Act header — only at the very top */}
-      <div style={{ padding: `clamp(2rem,4vw,3rem) ${pad} 0`, maxWidth: 880, margin: '0 auto' }}>
-        <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
-        <ThreadSentence>You agreed to terms that described this. They did not describe it fully.</ThreadSentence>
-      </div>
-
       {/* Chapters */}
       <main>
         <ArrivalChapter name={primaryName} date={today} onActive={handleActive} />
@@ -1466,40 +1550,6 @@ export default function OverviewPage({ results, sources, setPage }: {
         <ContinueChapter setPage={setPage} />
       </main>
 
-      {/* Below the fold: deep data + closure */}
-      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        {hasDeepData && results.emotionalTimeline?.weeks?.length > 2 && (
-          <div style={{ padding: `clamp(4rem,8vw,6rem) ${pad}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: 'clamp(2rem,4vw,3rem)' }}>
-              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>Appendix A</span>
-              <div style={{ flex: 1, height: 1, background: PALETTE.border }} />
-              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>Emotional pattern</span>
-            </div>
-            <EmotionalTimelineChart timeline={results.emotionalTimeline} totalMessages={messageCount} />
-          </div>
-        )}
-
-        {hasDeepData && (
-          <div style={{ padding: `clamp(4rem,8vw,6rem) ${pad}` }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: 'clamp(2rem,4vw,3rem)' }}>
-              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>Appendix B</span>
-              <div style={{ flex: 1, height: 1, background: PALETTE.border }} />
-              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>Commercial profile</span>
-            </div>
-            <DataProductSummary analysis={results} />
-          </div>
-        )}
-
-        <div style={{ padding: `clamp(2rem,5vw,4rem) ${pad}`, borderTop: `1px solid ${PALETTE.border}` }}>
-          <ConfidenceLimitations />
-        </div>
-
-        {hasDeepData && (
-          <div style={{ padding: `0 ${pad}` }}>
-            <ClosureSection analysis={results} setPage={setPage} />
-          </div>
-        )}
-      </div>
     </>
   );
 }

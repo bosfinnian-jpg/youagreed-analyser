@@ -910,8 +910,6 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           OPENING — full-width statement that sets up everything below
           ================================================================ */}
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
-        {/* Chapter rule */}
-        <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
         <ActLabel roman="II" title="The Inference" pageLabel="02 / Personal Profile" />
         <ThreadSentence>Not what you said. What the pattern of saying it reveals.</ThreadSentence>
         <motion.h1

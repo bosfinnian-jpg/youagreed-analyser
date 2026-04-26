@@ -190,7 +190,6 @@ export default function CommercialProfilePage({ results, setPage }: {
         padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)',
         borderBottom: `1px solid ${PALETTE.border}`,
       }}>
-        <div style={{ height: '1px', background: PALETTE.ink, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)' }} />
         <ActLabel roman="II" title="The Inference" pageLabel="03 / Commercial Profile" />
         <ThreadSentence>The product version of you — built without permission, priced without your knowledge.</ThreadSentence>
 

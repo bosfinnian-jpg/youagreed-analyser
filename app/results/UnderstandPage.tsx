@@ -670,12 +670,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
         padding: 'clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem) clamp(4rem, 10vw, 8rem)',
       }}
     >
-      <motion.div
-        initial={{ scaleX: 0, opacity: 0 }}
-        animate={{ scaleX: 1, opacity: 1 }}
-        transition={{ delay: 0.1, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-        style={{ height: '1px', background: C.text, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)', transformOrigin: 'left' }}
-      />
+
       <ActLabel roman="IV" title="After" pageLabel="07 / Understand" />
       <ThreadSentence>Inference does not require intent. Pattern recognition has no conscience.</ThreadSentence>
 

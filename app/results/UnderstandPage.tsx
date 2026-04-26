@@ -676,7 +676,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
         transition={{ delay: 0.1, duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
         style={{ height: '1px', background: C.text, opacity: 0.10, marginBottom: 'clamp(2rem, 5vw, 3rem)', transformOrigin: 'left' }}
       />
-      <ActLabel roman="II" title="The Inference" pageLabel="05 / Understand" />
+      <ActLabel roman="IV" title="After" pageLabel="07 / Understand" />
       <ThreadSentence>Inference does not require intent. Pattern recognition has no conscience.</ThreadSentence>
 
       <motion.h1

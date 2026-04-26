@@ -877,6 +877,9 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
   const attrs = useMemo(() => generatePredictedAttributes(results), [results]);
   const [expandedAttr, setExpandedAttr] = useState<number | null>(null);
 
+  const totalMsgs = results.totalUserMessages || results.stats?.userMessages || 0;
+  const segmentId = 'USR-' + String(results.privacyScore).padStart(3, '0') + '-' + String(totalMsgs % 10000).padStart(4, '0');
+
   const catColors: Record<string, string> = {
     demographic: PALETTE.inkMuted,
     psychographic: PALETTE.red + '90',

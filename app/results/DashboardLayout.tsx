@@ -57,8 +57,6 @@ const ACTS = [
       { id: 'profile' as DashPage, label: 'Personal Profile', short: '02', desc: 'What the patterns reveal about you' },
       { id: 'commercial-profile' as DashPage, label: 'Commercial Profile', short: '03', desc: 'How your data is valued' },
       { id: 'risk' as DashPage, label: 'Risk', short: '04', desc: 'What the record enables' },
-      { id: 'understand' as DashPage, label: 'Understand', short: '05', desc: 'How inference works' },
-      { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to' },
     ],
   },
   {
@@ -67,7 +65,8 @@ const ACTS = [
     roman: 'III',
     title: 'The Permanence',
     pages: [
-      { id: 'permanent' as DashPage, label: 'Permanent', short: '07', desc: 'Why it cannot be removed' },
+      { id: 'permanent' as DashPage, label: 'Permanent', short: '05', desc: 'Why it cannot be removed' },
+      { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to' },
     ],
   },
   {
@@ -76,6 +75,7 @@ const ACTS = [
     roman: 'IV',
     title: 'After',
     pages: [
+      { id: 'understand' as DashPage, label: 'Understand', short: '07', desc: 'How inference works' },
       { id: 'resist' as DashPage, label: 'Resist', short: '08', desc: 'What remains possible' },
     ],
   },

@@ -978,7 +978,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.15, duration: 0.6 }}
         >
-          <ActLabel roman="II" title="The Inference" pageLabel="06 / Terms" />
+          <ActLabel roman="III" title="The Permanence" pageLabel="06 / Terms" />
         </motion.div>
 
         <ThreadSentence>

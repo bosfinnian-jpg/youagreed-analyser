@@ -59,6 +59,7 @@ function Figure({
 }) {
   const stroke = strokeColor || 'rgba(26,24,20,0.88)';
   const fill = fillColor || 'rgba(26,24,20,0.02)';
+  const idle = !walking;
 
   const armPaths: Record<FigurePose, string> = {
     neutral: 'M 28 42 L 22 64 M 52 42 L 58 64',
@@ -71,18 +72,31 @@ function Figure({
     : 'M 36 70 L 32 92 M 44 70 L 48 92';
 
   return (
-    <svg width={size} height={size * 1.15} viewBox="0 0 80 92" style={{ opacity, transition: 'opacity 0.8s ease' }}>
+    <motion.svg
+      width={size} height={size * 1.15} viewBox="0 0 80 92"
+      style={{ opacity, transition: 'opacity 0.8s ease', transformOrigin: '40px 70px' }}
+      animate={idle ? { rotate: [0, 2.5, 0, -2.5, 0] } : { rotate: 0 }}
+      transition={idle
+        ? { duration: 4, repeat: Infinity, ease: 'easeInOut' }
+        : { duration: 0.3 }
+      }
+    >
       {/* head */}
-      <circle cx="40" cy="20" r="11" fill={fill} stroke={stroke} strokeWidth="1.3" />
+      <circle cx="40" cy="20" r="11" fill={fill} stroke={stroke} strokeWidth="2" />
+      {/* eyes */}
+      <circle cx="36.5" cy="18.5" r="1.2" fill={stroke} opacity={0.75} />
+      <circle cx="43.5" cy="18.5" r="1.2" fill={stroke} opacity={0.75} />
+      {/* mouth — faint gentle curve */}
+      <path d="M 36.5 23.5 Q 40 25.5 43.5 23.5" stroke={stroke} strokeWidth="1" fill="none" strokeLinecap="round" opacity={0.4} />
       {/* body */}
-      <path d="M 40 31 L 40 70" stroke={stroke} strokeWidth="1.3" fill="none" strokeLinecap="round" />
+      <path d="M 40 31 L 40 70" stroke={stroke} strokeWidth="2" fill="none" strokeLinecap="round" />
       {/* shoulder line */}
-      <path d="M 28 42 L 52 42" stroke={stroke} strokeWidth="1.1" fill="none" strokeLinecap="round" opacity="0.5" />
+      <path d="M 28 42 L 52 42" stroke={stroke} strokeWidth="1.6" fill="none" strokeLinecap="round" opacity={0.5} />
       {/* arms */}
-      <path d={armPaths[pose]} stroke={stroke} strokeWidth="1.3" fill="none" strokeLinecap="round" />
+      <path d={armPaths[pose]} stroke={stroke} strokeWidth="2" fill="none" strokeLinecap="round" />
       {/* legs */}
-      <path d={legPath} stroke={stroke} strokeWidth="1.3" fill="none" strokeLinecap="round" />
-    </svg>
+      <path d={legPath} stroke={stroke} strokeWidth="2" fill="none" strokeLinecap="round" />
+    </motion.svg>
   );
 }
 
@@ -105,10 +119,10 @@ function Machine({
   width?: number;
   height?: number;
 }) {
-  const fillH = height * fillProgress * 0.85; // fill up to 85% max
+  const fillH = height * fillProgress * 0.85;
   const strokeOpacity = formProgress * 0.55;
+  const noiseFilterId = `machine-noise-${width}`;
 
-  // Imperfect rectangle path — slightly off-straight edges for hand-drawn feel
   const inset = 2;
   const path = `
     M ${inset} ${inset + 2}
@@ -121,7 +135,6 @@ function Machine({
   return (
     <div style={{ position: 'relative', width, height }}>
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} style={{ position: 'absolute', inset: 0 }} aria-hidden>
-        {/* The fill — ink rising from bottom */}
         <defs>
           <clipPath id={`machine-clip-${width}`}>
             <path d={path} />
@@ -131,6 +144,11 @@ function Machine({
             <stop offset="70%" stopColor="rgba(190,40,30,0.18)" />
             <stop offset="100%" stopColor="rgba(190,40,30,0.02)" />
           </linearGradient>
+          {/* Low-frequency noise texture */}
+          <filter id={noiseFilterId} x="0%" y="0%" width="100%" height="100%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch" />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
         </defs>
 
         {/* Container outline — draws on */}
@@ -145,6 +163,15 @@ function Machine({
           initial={false}
           style={{ strokeDashoffset: 1 - formProgress }}
         />
+
+        {/* Noise texture — faint grain over machine body */}
+        <g clipPath={`url(#machine-clip-${width})`}>
+          <rect
+            width={width} height={height}
+            filter={`url(#${noiseFilterId})`}
+            opacity={formProgress * 0.055}
+          />
+        </g>
 
         {/* Very faint background hatching — appears as it forms */}
         <g clipPath={`url(#machine-clip-${width})`} opacity={formProgress * 0.3}>
@@ -169,7 +196,6 @@ function Machine({
             animate={{ y: height - fillH }}
             transition={{ type: 'tween', duration: 0.5, ease: 'linear' }}
           />
-          {/* Ink surface ripple — a subtle line at the top of the fill */}
           {fillH > 4 && (
             <motion.line
               x1="0" y1={height - fillH}
@@ -199,6 +225,18 @@ function Machine({
         )}
       </svg>
 
+      {/* Interior pulse — slow breathing dark red radial gradient when machine is present */}
+      {formProgress > 0.3 && (
+        <motion.div
+          style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: 'radial-gradient(ellipse at 50% 60%, rgba(120,0,0,0.9) 0%, rgba(120,0,0,0) 65%)',
+          }}
+          animate={{ opacity: [0.05, 0.15, 0.05] }}
+          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        />
+      )}
+
       {/* Label — fades in with form */}
       <p style={{
         position: 'absolute', top: -22, left: 0,
@@ -211,7 +249,7 @@ function Machine({
         The model
       </p>
 
-      {/* Red emit particles — drifting right and fading */}
+      {/* Emit particles — trailing horizontal lines, data bleeding out */}
       {emitting && (
         <>
           {[0, 0.8, 1.6, 2.4, 3.2].map((d, i) => (
@@ -221,7 +259,7 @@ function Machine({
               animate={{ opacity: [0, 0.7, 0], x: width + 140, y: height * 0.3 + (i * 22) + (i % 2 ? -6 : 6) }}
               transition={{ duration: 2.8, delay: d, repeat: Infinity, ease: 'linear' }}
               style={{
-                position: 'absolute', width: 3, height: 3, borderRadius: '50%',
+                position: 'absolute', width: 4, height: 1, borderRadius: 0,
                 background: 'rgba(190,40,30,0.55)', pointerEvents: 'none',
               }}
             />
@@ -680,7 +718,7 @@ function useSceneCopy(act: number, data: {
     {
       kicker: 'The end',
       headline: name ? <>{name}, you can leave.</> : 'You can leave.',
-      body: <em style={{ color: PALETTE.inkMuted }}>The data cannot.</em>,
+      body: null,
     },
   ];
 
@@ -803,9 +841,9 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentAct}
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -12 }}
+                  initial={{ opacity: 0, y: 24, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -8, filter: 'blur(2px)' }}
                   transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
                 >
                   <p style={{
@@ -825,14 +863,16 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
                   }}>
                     {scene.headline}
                   </h2>
-                  <p style={{
-                    fontFamily: TYPE.serif,
-                    fontSize: 'clamp(1rem, 1.65vw, 1.18rem)',
-                    color: PALETTE.inkMuted,
-                    lineHeight: 1.75, maxWidth: '42ch',
-                  }}>
-                    {scene.body}
-                  </p>
+                  {scene.body && (
+                    <p style={{
+                      fontFamily: TYPE.serif,
+                      fontSize: 'clamp(1rem, 1.65vw, 1.18rem)',
+                      color: PALETTE.inkMuted,
+                      lineHeight: 1.75, maxWidth: '42ch',
+                    }}>
+                      {scene.body}
+                    </p>
+                  )}
 
                   {/* Act 4: ECHO — shown inline in the scene */}
                   {currentAct === 4 && (
@@ -842,6 +882,11 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
                   {/* Act 6: CHOICE — three branching paths */}
                   {currentAct === 6 && (
                     <ChoicePanel analysis={analysis} onHover={setChoicePose} />
+                  )}
+
+                  {/* Act 7: WALKAWAY — monument line */}
+                  {currentAct === 7 && (
+                    <WalkawayMonument />
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -893,12 +938,17 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
               name={name}
               walkProgress={walkProgress}
             />
+            {/* Ambient vignette — watched-from-outside feeling */}
+            <div style={{
+              position: 'absolute', inset: 0, pointerEvents: 'none',
+              background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.06) 100%)',
+            }} />
           </div>
         </div>
       </div>
 
       {/* FINAL FADE — the credit that lives past the story */}
-      <FinalCredit />
+      <FinalCredit messageCount={messageCount} />
     </div>
   );
 }
@@ -909,104 +959,181 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
 function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
   const [displayed, setDisplayed] = useState('');
   const [revealOn, setRevealOn] = useState(false);
+  const [flashVisible, setFlashVisible] = useState(false);
+  const [borderWidth, setBorderWidth] = useState(3);
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Black screen flash when phase first becomes ready — before typewriter starts
+  useEffect(() => {
+    if (echo.phase !== 'ready') return;
+    setFlashVisible(true);
+    const t = setTimeout(() => setFlashVisible(false), 1500);
+    return () => clearTimeout(t);
+  }, [echo.phase]);
+
+  // Typewriter with 0.8s start delay (flash is underway)
   useEffect(() => {
     if (echo.phase !== 'ready' || !echo.text) return;
     setDisplayed('');
     setRevealOn(false);
-    let i = 0;
-    const iv = setInterval(() => {
-      i++;
-      setDisplayed(echo.text.slice(0, i));
-      if (i >= echo.text.length) {
-        clearInterval(iv);
-        setTimeout(() => setRevealOn(true), 1400);
-      }
-    }, 26);
-    return () => clearInterval(iv);
+    let iv: ReturnType<typeof setInterval> | null = null;
+    const startDelay = setTimeout(() => {
+      let i = 0;
+      iv = setInterval(() => {
+        i++;
+        setDisplayed(echo.text.slice(0, i));
+        if (i >= echo.text.length) {
+          if (iv) clearInterval(iv);
+          revealTimerRef.current = setTimeout(() => setRevealOn(true), 1400);
+        }
+      }, 26);
+    }, 800);
+    return () => {
+      clearTimeout(startDelay);
+      if (iv) clearInterval(iv);
+      if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
+    };
   }, [echo.phase, echo.text]);
+
+  // Border pulse when typing reveal activates
+  useEffect(() => {
+    if (!revealOn) return;
+    setBorderWidth(6);
+    const t = setTimeout(() => setBorderWidth(3), 200);
+    return () => clearTimeout(t);
+  }, [revealOn]);
 
   if (echo.kind === 'none') return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.9, delay: 0.4 }}
-      style={{ marginTop: '2rem' }}
-    >
-      <div style={{
-        background: PALETTE.bgPanel,
-        borderLeft: `3px solid ${revealOn ? PALETTE.red : PALETTE.border}`,
-        padding: 'clamp(1.5rem, 3vw, 2.25rem)',
-        minHeight: '140px',
-        transition: 'border-left-color 0.8s ease',
-        position: 'relative',
-      }}>
-        <p style={{
-          fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.32em',
-          color: PALETTE.inkGhost, textTransform: 'uppercase',
-          marginBottom: '1.1rem',
-        }}>
-          {echo.kind === 'excerpt' ? 'Your message — extracted' : 'Generated by the model'}
-        </p>
-        {echo.phase !== 'ready' && (
-          <div style={{ display: 'flex', gap: '6px', alignItems: 'center', height: '24px' }}>
-            {[0, 0.25, 0.5].map(d => (
-              <motion.div key={d}
-                animate={{ opacity: [0.2, 0.8, 0.2] }}
-                transition={{ duration: 1.2, delay: d, repeat: Infinity }}
-                style={{ width: 4, height: 4, borderRadius: '50%', background: PALETTE.inkFaint }}
-              />
-            ))}
-          </div>
-        )}
-        {echo.phase === 'ready' && echo.text && (
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: '1.08rem',
-            color: PALETTE.ink, lineHeight: 1.85,
-            fontStyle: 'italic', letterSpacing: '-0.005em',
-          }}>
-            {displayed}
-            {displayed.length < echo.text.length && (
-              <motion.span
-                animate={{ opacity: [1, 0] }}
-                transition={{ duration: 0.55, repeat: Infinity }}
-                style={{ color: PALETTE.red, marginLeft: 2, fontStyle: 'normal' }}
-              >|</motion.span>
-            )}
-          </p>
-        )}
-      </div>
-
+    <>
+      {/* Full-page flash overlay — fades 0 → 0.12 → 0 over 1.5s */}
       <AnimatePresence>
-        {revealOn && (
+        {flashVisible && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9 }}
-            style={{ marginTop: '1.5rem' }}
-          >
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '1.05rem',
-              color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.5rem',
-            }}>
-              {echo.kind === 'excerpt'
-                ? 'Did you mean for a stranger to read that?'
-                : 'You did not write that.'}
-            </p>
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '0.95rem',
-              color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '44ch',
-            }}>
-              {echo.kind === 'excerpt'
-                ? "OpenAI's systems read, processed, and retained every message you sent."
-                : `The model learned the shape of your voice from ${echo.messageCount.toLocaleString()} messages.`}
-            </p>
-          </motion.div>
+            key="echo-flash"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.12, 0] }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.5, ease: 'easeInOut', times: [0, 0.5, 1] }}
+            style={{
+              position: 'fixed', inset: 0, background: '#000',
+              pointerEvents: 'none', zIndex: 50,
+            }}
+          />
         )}
       </AnimatePresence>
-    </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 0.4 }}
+        style={{ marginTop: '2rem' }}
+      >
+        <div style={{
+          background: PALETTE.bgPanel,
+          borderLeft: `${borderWidth}px solid ${revealOn ? PALETTE.red : PALETTE.border}`,
+          padding: 'clamp(1.5rem, 3vw, 2.25rem)',
+          minHeight: '140px',
+          transition: 'border-left-color 0.8s ease, border-left-width 0.2s ease',
+          position: 'relative',
+        }}>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.32em',
+            color: PALETTE.inkGhost, textTransform: 'uppercase',
+            marginBottom: '1.1rem',
+          }}>
+            {echo.kind === 'excerpt' ? 'Your message — extracted' : 'Generated by the model'}
+          </p>
+          {echo.phase !== 'ready' && (
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', height: '24px' }}>
+              {[0, 0.25, 0.5].map(d => (
+                <motion.div key={d}
+                  animate={{ opacity: [0.2, 0.8, 0.2] }}
+                  transition={{ duration: 1.2, delay: d, repeat: Infinity }}
+                  style={{ width: 4, height: 4, borderRadius: '50%', background: PALETTE.inkFaint }}
+                />
+              ))}
+            </div>
+          )}
+          {echo.phase === 'ready' && echo.text && (
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: '1.08rem',
+              color: PALETTE.ink, lineHeight: 1.85,
+              fontStyle: 'italic', letterSpacing: '-0.005em',
+            }}>
+              {displayed}
+              {displayed.length < echo.text.length && (
+                <motion.span
+                  animate={{ opacity: [1, 0] }}
+                  transition={{ duration: 0.55, repeat: Infinity }}
+                  style={{ color: PALETTE.red, marginLeft: 2, fontStyle: 'normal' }}
+                >|</motion.span>
+              )}
+            </p>
+          )}
+        </div>
+
+        <AnimatePresence>
+          {revealOn && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.8 }}
+              style={{ marginTop: '1.5rem' }}
+            >
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: '1.4rem',
+                color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.5rem',
+              }}>
+                {echo.kind === 'excerpt'
+                  ? 'Did you mean for a stranger to read that?'
+                  : 'You did not write that.'}
+              </p>
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: '0.95rem',
+                color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '44ch',
+              }}>
+                {echo.kind === 'excerpt'
+                  ? "OpenAI's systems read, processed, and retained every message you sent."
+                  : `The model learned the shape of your voice from ${echo.messageCount.toLocaleString()} messages.`}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </>
+  );
+}
+
+// ============================================================================
+// WALKAWAY MONUMENT — act 7. "The data cannot." as its own reckoning.
+// ============================================================================
+function WalkawayMonument() {
+  return (
+    <>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 1.0 }}
+        style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(2.2rem, 4vw, 3rem)',
+          color: PALETTE.red,
+          lineHeight: 1.15,
+          marginTop: '0.5rem',
+          marginBottom: '1.25rem',
+        }}
+      >
+        The data cannot.
+      </motion.p>
+      <motion.div
+        initial={{ width: 0 }}
+        animate={{ width: 60 }}
+        transition={{ delay: 1.4, duration: 1.4, ease: 'linear' }}
+        style={{ height: '1px', background: PALETTE.red }}
+      />
+    </>
   );
 }
 
@@ -1231,9 +1358,9 @@ function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (
 }
 
 // ============================================================================
-// FINAL CREDIT — appears after the story, soft fade on page background
+// FINAL CREDIT — appears after the story. A reckoning, not a footnote.
 // ============================================================================
-function FinalCredit() {
+function FinalCredit({ messageCount }: { messageCount: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-20%' });
   return (
@@ -1241,28 +1368,58 @@ function FinalCredit() {
       padding: 'clamp(6rem, 12vw, 10rem) 0 clamp(8rem, 14vw, 12rem)',
       textAlign: 'left',
     }}>
-      <AnimatePresence>
-        {isInView && (
+      {isInView && (
+        <>
+          {/* Large count — slow count-up from 0 */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 2.4, ease: 'easeOut' }}
+            transition={{ duration: 1.2, delay: 0.8 }}
           >
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.6, delay: 2.4 }}
-              style={{
-                fontFamily: TYPE.mono, fontSize: '10px',
-                letterSpacing: '0.3em', color: PALETTE.inkGhost,
-                textTransform: 'uppercase',
-              }}
-            >
-              YOU AGREED  /  TRACE.AI  /  2026
-            </motion.p>
+            <p style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(4rem, 8vw, 7rem)',
+              color: PALETTE.inkGhost,
+              lineHeight: 1,
+              marginBottom: '0.75rem',
+              fontWeight: 400,
+            }}>
+              <AnimatedCounter target={messageCount} active={isInView} duration={3000} />
+            </p>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          {/* Descriptor */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.0, delay: 2.2 }}
+            style={{
+              fontFamily: TYPE.mono,
+              fontSize: '11px',
+              letterSpacing: '0.3em',
+              color: PALETTE.inkFaint,
+              textTransform: 'lowercase',
+              marginBottom: '2rem',
+            }}
+          >
+            messages. stored. not yours anymore.
+          </motion.p>
+
+          {/* Existing credit line */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.6, delay: 3.8 }}
+            style={{
+              fontFamily: TYPE.mono, fontSize: '10px',
+              letterSpacing: '0.3em', color: PALETTE.inkGhost,
+              textTransform: 'uppercase',
+            }}
+          >
+            YOU AGREED  /  TRACE.AI  /  2026
+          </motion.p>
+        </>
+      )}
     </div>
   );
 }

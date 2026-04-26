@@ -80,9 +80,9 @@ function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[
           <div key={c.id} style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
-            opacity: isActive ? 1 : 0.30,
-            transition: 'opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1)',
+            gap: '8px',
+            opacity: isActive ? 1 : 0.25,
+            transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
           }}>
             <span style={{
               fontFamily: TYPE.mono,
@@ -92,18 +92,18 @@ function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[
               textTransform: 'uppercase',
               writingMode: 'vertical-rl',
               transform: 'rotate(180deg)',
-              height: isActive ? '76px' : '52px',
+              height: isActive ? '80px' : '48px',
               textAlign: 'center',
-              transition: 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s',
+              transition: 'height 0.65s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s',
               overflow: 'hidden',
             }}>
               {c.label}
             </span>
             <div style={{
-              width: '1px',
-              height: isActive ? '60px' : '10px',
-              background: isActive ? PALETTE.ink : PALETTE.border,
-              transition: 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s',
+              width: isActive ? '2px' : '1px',
+              height: isActive ? '64px' : '8px',
+              background: isActive ? PALETTE.red : PALETTE.border,
+              transition: 'height 0.65s cubic-bezier(0.4, 0, 0.2, 1), background 0.4s, width 0.3s',
             }} />
           </div>
         );
@@ -112,58 +112,37 @@ function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[
   );
 }
 
-// ── Scroll progress rail (left edge) ────────────────────────────────────────
-function ScrollRail() {
-  const fillRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const fill = fillRef.current;
-    if (!fill) return;
-    const tick = () => {
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - doc.clientHeight;
-      fill.style.transform = `scaleY(${max > 0 ? window.scrollY / max : 0})`;
-    };
-    window.addEventListener('scroll', tick, { passive: true });
-    tick();
-    return () => window.removeEventListener('scroll', tick);
-  }, []);
-  return (
-    <div className="ov-left-rail" style={{
-      position: 'fixed', left: 'clamp(10px,1.8vw,20px)',
-      top: 0, bottom: 0, width: 1, zIndex: 40, pointerEvents: 'none',
-    }}>
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(26,24,20,0.07)' }} />
-      <div ref={fillRef} style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: '100%',
-        background: 'rgba(190,40,30,0.55)',
-        transformOrigin: 'top center',
-        transform: 'scaleY(0)',
-      }} />
-    </div>
-  );
-}
-
 // ── Chapter Dots — Spotify Wrapped progress indicator ───────────────────────
 function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof CHAPTERS[number][] }) {
+  const activeLabel = chapters.find(c => c.id === active)?.label ?? '';
   return (
     <div style={{
       position: 'fixed', bottom: '2rem', left: '50%',
       transform: 'translateX(-50%)',
       zIndex: 50, pointerEvents: 'none',
-      display: 'flex', gap: '6px', alignItems: 'center',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'center', gap: '7px',
     }}>
-      {chapters.map(c => {
-        const isActive = c.id === active;
-        return (
-          <div key={c.id} style={{
-            height: 6,
-            width: isActive ? 24 : 6,
-            borderRadius: 3,
-            background: isActive ? PALETTE.ink : 'rgba(26,24,20,0.22)',
-            transition: 'width 0.4s cubic-bezier(0.4,0,0.2,1), background 0.3s',
-          }} />
-        );
-      })}
+      <span style={{
+        fontFamily: TYPE.mono, fontSize: '8px',
+        letterSpacing: '0.28em', color: PALETTE.inkFaint,
+        textTransform: 'uppercase',
+        transition: 'opacity 0.4s',
+      }}>{activeLabel}</span>
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+        {chapters.map(c => {
+          const isActive = c.id === active;
+          return (
+            <div key={c.id} style={{
+              height: 5,
+              width: isActive ? 22 : 5,
+              borderRadius: 3,
+              background: isActive ? PALETTE.ink : 'rgba(26,24,20,0.20)',
+              transition: 'width 0.45s cubic-bezier(0.4,0,0.2,1), background 0.3s',
+            }} />
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -182,12 +161,17 @@ function ChapterShell({
   last?: boolean;
 }) {
   const ref = useRef<HTMLElement>(null);
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const io = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) onActive(id); },
+      ([entry]) => {
+        const active = entry.isIntersecting;
+        if (active) onActive(id);
+        setIsActive(active);
+      },
       { rootMargin: '-40% 0px -40% 0px' }
     );
     io.observe(el);
@@ -210,27 +194,33 @@ function ChapterShell({
         overflow: 'hidden',
       }}
     >
-      {/* Ghost chapter number */}
+      {/* Ghost chapter number — fades + scales up as chapter enters view */}
       {num && (
         <div aria-hidden="true" style={{
           position: 'absolute',
           right: '-0.05em',
           top: '50%',
-          transform: 'translateY(-50%)',
+          transform: `translateY(-50%) scale(${isActive ? 1 : 0.96})`,
           fontFamily: TYPE.serif,
           fontSize: 'clamp(12rem, 30vw, 28rem)',
           fontWeight: 400,
-          color: 'rgba(26,24,20,0.035)',
+          color: `rgba(26,24,20,${isActive ? 0.042 : 0.008})`,
           lineHeight: 1,
           letterSpacing: '-0.05em',
           userSelect: 'none',
           pointerEvents: 'none',
           zIndex: 0,
+          transition: 'color 1.4s ease, transform 1.6s cubic-bezier(0.25, 0.1, 0.25, 1)',
         }}>{num}</div>
       )}
       <div style={{ maxWidth: 880, margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
         {(num || label) && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(2.5rem,5vw,4rem)' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(2.5rem,5vw,4rem)',
+            opacity: isActive ? 1 : 0.3,
+            transform: `translateX(${isActive ? 0 : -10}px)`,
+            transition: 'opacity 0.9s ease, transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)',
+          }}>
             {num && (
               <span style={{
                 fontFamily: TYPE.mono, fontSize: '10px',
@@ -1344,7 +1334,7 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 // ════════════════════════════════════════════════════════════════════════════
 function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
   return (
-    <section style={{
+    <section className="chapter-snap" style={{
       padding: 'clamp(5rem,10vw,8rem) clamp(2rem,6vw,5rem) clamp(4rem,8vw,6rem)',
       borderTop: `1px solid ${PALETTE.border}`,
     }}>
@@ -1498,11 +1488,10 @@ export default function OverviewPage({ results, sources, setPage }: {
       <style>{`
         @media (max-width: 768px) {
           .ov-right-rail { display: none !important; }
-          .ov-left-rail  { display: none !important; }
         }
+        .chapter-snap { scroll-snap-align: start; }
       `}</style>
 
-      <ScrollRail />
       <RightRail active={active} visible={visibleChapters} />
       <ChapterDots active={active} chapters={CHAPTERS.filter(c => visibleChapters.includes(c.id))} />
 

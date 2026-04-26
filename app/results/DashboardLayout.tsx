@@ -706,7 +706,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
       `}</style>
 
-      <DataThread page={page} />
+      {page !== 'overview' && <DataThread page={page} />}
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />
 
       <main style={{ paddingTop: '64px', position: 'relative', zIndex: 1 }}>

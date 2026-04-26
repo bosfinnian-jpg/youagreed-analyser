@@ -19,6 +19,7 @@ import type { DashPage } from './DashboardLayout';
 export const PAGE_COLORS: Record<DashPage, { r: number; g: number; b: number; name: string }> = {
   overview:        { r: 255, g: 107, b: 107, name: 'coral' },       // coral red
   profile:         { r: 255, g: 183, b: 77,  name: 'gold' },        // warm gold
+  'commercial-profile': { r: 255, g: 147, b: 51, name: 'amber' },   // deep amber
   risk:            { r: 255, g: 100, b: 72,  name: 'ember' },       // ember orange
   understand:      { r: 78,  g: 205, b: 196, name: 'teal' },        // mint teal
   terms:           { r: 187, g: 134, b: 252, name: 'violet' },      // lavender
@@ -32,6 +33,7 @@ export const PAGE_COLORS: Record<DashPage, { r: number; g: number; b: number; na
 const PACKET_LABELS: Record<string, string[]> = {
   overview:   ['msg', 'loc', 'name', 'date', 'topic', 'mood'],
   profile:    ['inference', 'pattern', 'belief', 'trait', 'tell'],
+  'commercial-profile': ['CPM', 'IAB', 'segment', 'value', 'bid'],
   risk:       ['breach', 'exposure', 'target', 'profile', 'risk'],
   understand: ['signal', 'vector', 'weight', 'token', 'embed'],
   terms:      ['§1.2', '§4.3', '§19', 'consent', 'waiver'],

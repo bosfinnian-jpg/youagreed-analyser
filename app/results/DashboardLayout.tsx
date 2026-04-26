@@ -33,7 +33,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'resist' | 'sources-detail';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'resist' | 'sources-detail';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -54,7 +54,8 @@ const ACTS = [
     roman: 'II',
     title: 'The Inference',
     pages: [
-      { id: 'profile' as DashPage, label: 'Profile', short: '02', desc: 'What the patterns reveal' },
+      { id: 'profile' as DashPage, label: 'Personal Profile', short: '02', desc: 'What the patterns reveal about you' },
+      { id: 'commercial-profile' as DashPage, label: 'Commercial Profile', short: '03', desc: 'How your data is valued' },
       { id: 'risk' as DashPage, label: 'Risk', short: '04', desc: 'What the record enables' },
       { id: 'understand' as DashPage, label: 'Understand', short: '05', desc: 'How inference works' },
       { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to' },

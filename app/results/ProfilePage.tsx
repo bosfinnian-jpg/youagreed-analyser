@@ -458,6 +458,7 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
               viewport={{ once: true, margin: '-5%' }}
               transition={{ delay: i * 0.06, duration: 0.5 }}
               onClick={() => setExpanded(isExp ? null : i)}
+              className="prof-demo-row"
               style={{
                 background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
                 padding: '1.3rem 0',
@@ -469,13 +470,13 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
                 width: '100%',
               }}
             >
-              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+              <span className="prof-demo-attr" style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
                 {pred.attribute}
               </span>
-              <span style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)', color: PALETTE.ink, letterSpacing: '-0.01em' }}>
+              <span className="prof-demo-val" style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)', color: PALETTE.ink, letterSpacing: '-0.01em' }}>
                 {pred.value}
               </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <div className="prof-demo-conf" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                 <div style={{ flex: 1, height: '1px', background: PALETTE.border, position: 'relative', overflow: 'hidden' }}>
                   <motion.div
                     initial={{ scaleX: 0 }}
@@ -489,7 +490,7 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
                   {pred.confidence}%
                 </span>
               </div>
-              <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, transition: 'transform 0.2s', transform: isExp ? 'rotate(45deg)' : 'none', textAlign: 'right' }}>
+              <span className="prof-demo-plus" style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, transition: 'transform 0.2s', transform: isExp ? 'rotate(45deg)' : 'none', textAlign: 'right' }}>
                 +
               </span>
               <AnimatePresence>

@@ -115,13 +115,18 @@ function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[
 // ── Chapter Dots — Spotify Wrapped progress indicator ───────────────────────
 function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof CHAPTERS[number][] }) {
   const activeLabel = chapters.find(c => c.id === active)?.label ?? '';
+  const handleJump = (id: ChapterId) => {
+    const el = document.getElementById(`chapter-${id}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   return (
-    <div style={{
-      position: 'fixed', bottom: '2rem', left: '50%',
+    <div className="ov-chapter-dots" style={{
+      position: 'fixed', bottom: 0, left: '50%',
       transform: 'translateX(-50%)',
       zIndex: 50, pointerEvents: 'none',
       display: 'flex', flexDirection: 'column',
-      alignItems: 'center', gap: '7px',
+      alignItems: 'center', gap: '8px',
+      paddingTop: '0.75rem',
     }}>
       <span style={{
         fontFamily: TYPE.mono, fontSize: '8px',
@@ -129,17 +134,31 @@ function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof
         textTransform: 'uppercase',
         transition: 'opacity 0.4s',
       }}>{activeLabel}</span>
-      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: '6px', alignItems: 'center', pointerEvents: 'auto' }}>
         {chapters.map(c => {
           const isActive = c.id === active;
           return (
-            <div key={c.id} style={{
-              height: 5,
-              width: isActive ? 22 : 5,
-              borderRadius: 3,
-              background: isActive ? PALETTE.ink : 'rgba(26,24,20,0.20)',
-              transition: 'width 0.45s cubic-bezier(0.4,0,0.2,1), background 0.3s',
-            }} />
+            <button
+              key={c.id}
+              onClick={() => handleJump(c.id)}
+              aria-label={`Jump to chapter: ${c.label}`}
+              className="inline-tight"
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: '14px 4px',  // touch-friendly hit area, visual bar within
+                margin: 0,
+                display: 'flex', alignItems: 'center',
+              }}
+            >
+              <span style={{
+                display: 'block',
+                height: 5,
+                width: isActive ? 22 : 5,
+                borderRadius: 3,
+                background: isActive ? PALETTE.ink : 'rgba(26,24,20,0.20)',
+                transition: 'width 0.45s cubic-bezier(0.4,0,0.2,1), background 0.3s',
+              }} />
+            </button>
           );
         })}
       </div>
@@ -182,10 +201,9 @@ function ChapterShell({
     <section
       ref={ref}
       id={`chapter-${id}`}
-      className="chapter-snap"
+      className="chapter-snap chapter-shell"
       style={{
-        minHeight: '100vh',
-        padding: 'clamp(5rem,12vw,10rem) clamp(2rem,6vw,5rem)',
+        padding: 'clamp(3rem,10vw,10rem) clamp(1.25rem,6vw,5rem)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -196,7 +214,7 @@ function ChapterShell({
     >
       {/* Ghost chapter number — fades + scales up as chapter enters view */}
       {num && (
-        <div aria-hidden="true" style={{
+        <div aria-hidden="true" className="chapter-ghost-num" style={{
           position: 'absolute',
           right: '-0.05em',
           top: '50%',
@@ -275,12 +293,12 @@ function ArrivalChapter({ name, date, onActive }: {
         transition={{ duration: 1.4, delay: 0.5, ease: [0.2, 0, 0.2, 1] }}
         style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(3rem, 9vw, 7.5rem)',
+          fontSize: 'clamp(3.6rem, 13vw, 8rem)',
           fontWeight: 400,
           color: PALETTE.ink,
           letterSpacing: '-0.04em',
-          lineHeight: 0.98,
-          marginBottom: '2.5rem',
+          lineHeight: 0.96,
+          marginBottom: 'clamp(1.5rem,5vw,2.5rem)',
         }}
       >
         The Record<br/>of {name ? <span style={{ color: PALETTE.red }}>{name}</span> : 'You'}.
@@ -291,11 +309,11 @@ function ArrivalChapter({ name, date, onActive }: {
         transition={{ duration: 1, delay: 1.2 }}
         style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
+          fontSize: 'clamp(1.15rem, 1.9vw, 1.3rem)',
           color: PALETTE.inkMuted,
-          lineHeight: 1.78,
+          lineHeight: 1.72,
           maxWidth: '46ch',
-          marginBottom: '4rem',
+          marginBottom: 'clamp(2.5rem,8vw,4rem)',
         }}
       >
         What follows was extracted from your conversations.
@@ -377,10 +395,10 @@ function VolumeChapter({ count, days, onActive }: {
   return (
     <div ref={sectionRef}>
       <ChapterShell id="volume" num="01" label="Volume" onActive={onActive}>
-        <div style={{ marginBottom: 'clamp(3rem,7vw,5rem)' }}>
+        <div style={{ marginBottom: 'clamp(2.5rem,7vw,5rem)' }}>
           <h2 style={{
             fontFamily: TYPE.serif,
-            fontSize: 'clamp(5rem,16vw,12rem)',
+            fontSize: 'clamp(5.5rem,22vw,12rem)',
             fontWeight: 400, color: PALETTE.ink,
             letterSpacing: '-0.05em', lineHeight: 0.92,
             marginBottom: '0.5rem',
@@ -389,16 +407,17 @@ function VolumeChapter({ count, days, onActive }: {
           </h2>
           <p style={{
             fontFamily: TYPE.serif,
-            fontSize: 'clamp(1.4rem,3vw,2rem)',
+            fontSize: 'clamp(1.3rem,4vw,2rem)',
             color: PALETTE.inkMuted,
             letterSpacing: '-0.02em',
             fontStyle: 'italic',
+            lineHeight: 1.3,
           }}>
             messages, processed{days > 0 ? ` across ${days} days` : ''}.
           </p>
         </div>
 
-        <div ref={gridRef} style={{
+        <div ref={gridRef} className="v-grid" style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${COLS}, 1fr)`,
           gap: 'clamp(4px, 0.7vw, 8px)',
@@ -506,10 +525,10 @@ function InferenceChapter({ inferences, onActive }: {
           From these messages, the model learned:
         </h2>
 
-        <div ref={stampsRef} style={{
+        <div ref={stampsRef} className="inf-grid" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 'clamp(1rem, 2vw, 1.5rem)',
+          gap: 'clamp(0.85rem, 2vw, 1.5rem)',
           marginBottom: 'clamp(3rem,5vw,4rem)',
         }}>
           {inferences.map((inf, i) => (
@@ -671,9 +690,9 @@ function DisclosureChapter({ excerpt, date, onActive }: {
 
           <div ref={wordsRef} style={{
             fontFamily: TYPE.serif,
-            fontSize: 'clamp(1.4rem, 3vw, 2.1rem)',
+            fontSize: 'clamp(1.55rem, 5vw, 2.1rem)',
             color: PALETTE.ink,
-            lineHeight: 1.55,
+            lineHeight: 1.5,
             fontStyle: 'italic',
             letterSpacing: '-0.012em',
           }}>
@@ -686,21 +705,23 @@ function DisclosureChapter({ excerpt, date, onActive }: {
             <span>&rdquo;</span>
           </div>
 
-          <div ref={stampRef} style={{
+          <div ref={stampRef} className="disclosure-stamp" style={{
             display: 'inline-flex', alignItems: 'center', gap: '0.6rem',
             marginTop: '2rem',
-            padding: '0.5rem 0.85rem',
+            padding: '0.55rem 0.9rem',
             border: `1.5px solid ${PALETTE.red}`,
             transformOrigin: 'left center',
+            maxWidth: '100%',
           }}>
             <span style={{
               width: 6, height: 6, borderRadius: '50%',
               background: PALETTE.red, flexShrink: 0,
             }} />
             <span style={{
-              fontFamily: TYPE.mono, fontSize: '9px',
+              fontFamily: TYPE.mono, fontSize: 'clamp(8px, 2.4vw, 9px)',
               letterSpacing: '0.32em', color: PALETTE.red,
               textTransform: 'uppercase', fontWeight: 700,
+              whiteSpace: 'nowrap',
             }}>
               Retained in model weights
             </span>
@@ -743,14 +764,37 @@ function NetworkChapter({ names, onActive }: {
 }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const svgRef     = useRef<SVGSVGElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
   // Compute positions for up to 8 names in a constellation
   const displayed = names.slice(0, 8);
-  const cx = 400, cy = 250;
+
+  // Mobile: tighter portrait layout (taller viewBox, smaller orbit, larger nodes/text)
+  // Desktop: landscape constellation (wide viewBox)
+  const cx = isMobile ? 250 : 400;
+  const cy = isMobile ? 320 : 250;
+  const orbitR = isMobile ? 130 : 170;
+  const orbitVar = isMobile ? 22 : 30;
+  const labelOffset = isMobile ? 36 : 28;
+  const labelOffsetUp = isMobile ? 22 : 16;
+  const fontSize = isMobile ? 17 : 13;
+  const nodeR = isMobile ? 7 : 5.5;
+  const nodeRingR = isMobile ? 14 : 11;
+  const viewBox = isMobile ? '0 0 500 640' : '0 0 800 500';
+  const aspectRatio = isMobile ? '5 / 6.4' : '8 / 5';
+
   const positions = displayed.map((_, i) => {
     if (displayed.length === 1) return { x: cx, y: cy };
     const angle = (i / displayed.length) * Math.PI * 2 - Math.PI / 2;
-    const r = 170 + (i % 2) * 30;
+    const r = orbitR + (i % 2) * orbitVar;
     return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
   });
 
@@ -803,7 +847,7 @@ function NetworkChapter({ names, onActive }: {
         ease:     'outQuart',
       });
     }
-  }, [names]);
+  }, [names, isMobile]);
 
   if (!displayed.length) {
     return (
@@ -823,7 +867,7 @@ function NetworkChapter({ names, onActive }: {
           fontSize: 'clamp(2.2rem,5vw,3.6rem)',
           fontWeight: 400, color: PALETTE.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 'clamp(2.5rem,5vw,4rem)',
+          marginBottom: 'clamp(2rem,5vw,4rem)',
           maxWidth: '22ch',
         }}>
           The {displayed.length} {displayed.length === 1 ? 'person' : 'people'} you named:
@@ -831,46 +875,46 @@ function NetworkChapter({ names, onActive }: {
 
         <div style={{
           width: '100%',
-          maxWidth: 720,
-          aspectRatio: '8 / 5',
-          marginBottom: 'clamp(3rem,5vw,4rem)',
+          maxWidth: isMobile ? 420 : 720,
+          aspectRatio: aspectRatio,
+          marginBottom: 'clamp(2.5rem,5vw,4rem)',
           marginInline: 'auto',
         }}>
-          <svg ref={svgRef} viewBox="0 0 800 500" style={{ width: '100%', height: '100%' }}>
+          <svg ref={svgRef} viewBox={viewBox} style={{ width: '100%', height: '100%' }}>
             {/* Connecting lines — fully connected graph for small N */}
             {positions.map((p1, i) =>
               positions.slice(i + 1).map((p2, j) => (
                 <line key={`${i}-${j}`} className="n-line"
                   x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
                   stroke="rgba(26,24,20,0.18)"
-                  strokeWidth={0.75}
+                  strokeWidth={isMobile ? 1 : 0.75}
                 />
               ))
             )}
             {/* Center node */}
-            <circle cx={cx} cy={cy} r={4} fill={PALETTE.red} opacity={0.6} />
-            <circle cx={cx} cy={cy} r={10} fill="none" stroke={PALETTE.red} strokeOpacity={0.20} strokeWidth={0.75} />
+            <circle cx={cx} cy={cy} r={isMobile ? 5 : 4} fill={PALETTE.red} opacity={0.6} />
+            <circle cx={cx} cy={cy} r={isMobile ? 13 : 10} fill="none" stroke={PALETTE.red} strokeOpacity={0.20} strokeWidth={isMobile ? 1 : 0.75} />
 
             {/* Name nodes */}
             {positions.map((p, i) => (
               <g key={i}>
                 <circle className="n-node"
                   data-cx={p.x} data-cy={p.y}
-                  cx={p.x} cy={p.y} r={5.5}
+                  cx={p.x} cy={p.y} r={nodeR}
                   fill={PALETTE.ink}
                 />
                 <circle className="n-node"
                   data-cx={p.x} data-cy={p.y}
-                  cx={p.x} cy={p.y} r={11}
+                  cx={p.x} cy={p.y} r={nodeRingR}
                   fill="none"
                   stroke="rgba(26,24,20,0.20)"
-                  strokeWidth={0.75}
+                  strokeWidth={isMobile ? 1 : 0.75}
                 />
                 <text className="n-label"
                   x={p.x}
-                  y={p.y + (p.y > cy ? 28 : -16)}
+                  y={p.y + (p.y > cy ? labelOffset : -labelOffsetUp)}
                   textAnchor="middle"
-                  fontSize="13"
+                  fontSize={fontSize}
                   fill={PALETTE.ink}
                   fontFamily="EB Garamond, Georgia, serif"
                   fontStyle="italic"
@@ -1021,7 +1065,7 @@ function ScoreChapter({ score, onActive }: {
         }}>
           <div style={{
             position: 'relative',
-            width: 'clamp(280px, 40vw, 420px)',
+            width: 'min(85vw, clamp(300px, 45vw, 460px))',
             aspectRatio: '1',
           }}>
             <svg viewBox="0 0 360 360" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
@@ -1221,7 +1265,7 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
       <ChapterShell id="permanence" num="06" label="Permanence" onActive={onActive}>
         <div style={{ position: 'relative', minHeight: 'clamp(360px, 56vh, 520px)' }}>
           {/* RETAINED massive watermark */}
-          <div ref={wmRef} style={{
+          <div ref={wmRef} className="permanence-watermark" style={{
             position: 'absolute',
             inset: 0,
             display: 'flex',
@@ -1232,7 +1276,7 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
           }}>
             <span style={{
               fontFamily: TYPE.serif,
-              fontSize: 'clamp(5rem, 18vw, 16rem)',
+              fontSize: 'clamp(5rem, 22vw, 16rem)',
               fontWeight: 400,
               color: 'rgba(190,40,30,0.07)',
               letterSpacing: '-0.05em',
@@ -1245,11 +1289,11 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
           </div>
 
           {/* Seal in upper right */}
-          <div style={{
+          <div className="permanence-seal" style={{
             position: 'absolute',
             top: 'clamp(0.5rem, 2vw, 1.5rem)',
             right: 'clamp(1rem, 4vw, 3rem)',
-            width: 'clamp(120px, 18vw, 180px)',
+            width: 'clamp(110px, 18vw, 180px)',
             aspectRatio: '1',
             zIndex: 1,
           }}>
@@ -1294,9 +1338,9 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
           <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(2rem, 5vw, 4rem) 0' }}>
             <h2 ref={headlineRef} style={{
               fontFamily: TYPE.serif,
-              fontSize: 'clamp(2.5rem,6vw,4.2rem)',
+              fontSize: 'clamp(2.6rem,8vw,4.2rem)',
               fontWeight: 400, color: PALETTE.ink,
-              letterSpacing: '-0.035em', lineHeight: 1.06,
+              letterSpacing: '-0.035em', lineHeight: 1.04,
               marginBottom: 'clamp(2rem,4vw,3rem)',
               maxWidth: '14ch',
             }}>
@@ -1366,8 +1410,9 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
             That was the record. What follows is what the record reveals about who you are.
           </p>
 
-          <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div className="continue-cta-row" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
             <button onClick={() => setPage('profile')}
+              className="continue-cta-primary"
               style={{
                 fontFamily: TYPE.serif,
                 fontSize: 'clamp(1.05rem, 2vw, 1.2rem)',
@@ -1486,10 +1531,56 @@ export default function OverviewPage({ results, sources, setPage }: {
   return (
     <>
       <style>{`
+        /* Chapter shell uses dvh so iOS Safari URL bar collapse doesn't break layout */
+        .chapter-shell {
+          min-height: 100vh;
+          min-height: 100dvh;
+        }
         @media (max-width: 768px) {
           .ov-right-rail { display: none !important; }
         }
         .chapter-snap { scroll-snap-align: start; }
+
+        /* Bottom chapter indicator — sits above home indicator on iOS */
+        .ov-chapter-dots {
+          padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+        }
+
+        /* Volume chapter — phone-portrait grid (denser, taller) */
+        @media (max-width: 640px) {
+          .v-grid {
+            grid-template-columns: repeat(14, 1fr) !important;
+            gap: 5px !important;
+            max-width: 100% !important;
+          }
+          /* Hide ghost chapter number on smaller screens to free up space */
+          .chapter-ghost-num { font-size: clamp(10rem, 36vw, 18rem) !important; }
+
+          /* Permanence chapter — keep seal small + tucked, watermark dominates */
+          .permanence-seal {
+            width: clamp(86px, 22vw, 120px) !important;
+            top: 0 !important;
+            right: 0 !important;
+          }
+
+          /* Continue chapter — primary CTA full width, secondary stacks */
+          .continue-cta-row {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0.75rem !important;
+          }
+          .continue-cta-primary {
+            width: 100% !important;
+            font-size: 1.05rem !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .v-grid {
+            grid-template-columns: repeat(12, 1fr) !important;
+            gap: 4px !important;
+          }
+          .chapter-ghost-num { display: none !important; }
+        }
       `}</style>
 
       <RightRail active={active} visible={visibleChapters} />

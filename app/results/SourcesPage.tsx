@@ -98,6 +98,7 @@ function ActiveSourceCard({
       {/* Header row */}
       <button
         onClick={() => setOpen(o => !o)}
+        className="source-row"
         style={{
           width: '100%', background: 'none', border: 'none',
           cursor: 'pointer', textAlign: 'left',
@@ -282,6 +283,7 @@ function ComingSoonRow({ source, index }: { source: typeof COMING_SOON[0]; index
         alignItems: 'center',
         gap: '2rem',
       }}
+      className="source-row-coming"
     >
       <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.8rem', flexWrap: 'wrap' }}>
         <span style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.2rem)', color: PALETTE.ink }}>{source.label}</span>
@@ -415,6 +417,36 @@ export default function SourcesPage({
 
   return (
     <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', padding: `0 ${pad}`, paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
+      <style>{`
+        @media (max-width: 640px) {
+          /* Source row: label + plus on top, severity left + status right beneath */
+          .source-row {
+            grid-template-columns: 1fr 24px !important;
+            grid-template-areas:
+              "label plus"
+              "sev   stat" !important;
+            row-gap: 0.65rem !important;
+            column-gap: 0.75rem !important;
+          }
+          .source-row > *:nth-child(1) { grid-area: label; }
+          .source-row > *:nth-child(2) { grid-area: sev;  justify-self: start; }
+          .source-row > *:nth-child(3) { grid-area: stat; justify-self: end; }
+          .source-row > *:nth-child(4) { grid-area: plus; align-self: start; padding-top: 0.1rem; }
+
+          /* Coming-soon row: label on top, badges side-by-side beneath */
+          .source-row-coming {
+            grid-template-columns: 1fr 1fr !important;
+            grid-template-areas:
+              "label label"
+              "sev   stat" !important;
+            row-gap: 0.5rem !important;
+            column-gap: 0.75rem !important;
+          }
+          .source-row-coming > *:nth-child(1) { grid-area: label; }
+          .source-row-coming > *:nth-child(2) { grid-area: sev;  justify-self: start; }
+          .source-row-coming > *:nth-child(3) { grid-area: stat; justify-self: end; }
+        }
+      `}</style>
 
       {/* HEADER */}
       <motion.div

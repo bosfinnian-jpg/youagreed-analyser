@@ -73,8 +73,15 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
 
   return (
     <div ref={containerRef}>
+      <style>{`
+        @media (max-width: 640px) {
+          .etl-stats-grid { grid-template-columns: 1fr 1fr !important; }
+          .etl-header { flex-direction: column !important; gap: 0.85rem !important; }
+          .etl-legend { flex-wrap: wrap !important; gap: 0.75rem !important; }
+        }
+      `}</style>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+      <div className="etl-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
         <div>
           <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>
             Emotional timeline
@@ -83,7 +90,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
             {weeks.length} weeks of recorded activity
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
+        <div className="etl-legend" style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <div style={{ width: 20, height: 2, background: 'rgba(26,24,20,0.2)' }} />
             <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Volume</span>
@@ -291,7 +298,7 @@ export default function EmotionalTimelineChart({ timeline, totalMessages }: Emot
       </div>
 
       {/* Summary stats below chart */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.border, marginTop: '1px' }}>
+      <div className="etl-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1px', background: PALETTE.border, marginTop: '1px' }}>
         {[
           {
             label: 'Emotional trend',

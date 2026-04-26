@@ -601,7 +601,7 @@ function ClauseRow({ clause, index, isInView }: {
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             style={{ overflow: 'hidden' }}
           >
-            <div style={{
+            <div className="policy-drift-3col" style={{
               display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
               gap: '1px', background: PALETTE.border,
             }}>
@@ -814,6 +814,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
               gap: '2rem',
               alignItems: 'start',
             }}
+            className="policy-claim-row"
           >
             <div>
               <p style={{
@@ -951,6 +952,17 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
         paddingBottom: 'clamp(4rem, 10vw, 8rem)',
       }}
     >
+      <style>{`
+        @media (max-width: 640px) {
+          .policy-drift-3col {
+            grid-template-columns: 1fr !important;
+          }
+          .policy-claim-row {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+          }
+        }
+      `}</style>
       {/* Hero */}
       <div ref={ref} style={{
         padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem)',

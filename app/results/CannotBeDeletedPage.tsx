@@ -75,6 +75,10 @@ function OneWayFlow() {
           .flow-row { flex-direction: column !important; }
           .flow-arrow { transform: rotate(90deg); }
           .flow-final-arrow { flex-direction: column !important; align-items: center !important; }
+          .cbd-2col { grid-template-columns: 1fr !important; }
+          .cbd-3col { grid-template-columns: 1fr !important; }
+          .cbd-table-3col { grid-template-columns: 1fr !important; }
+          .cbd-table-3col > div + div { border-top: 1px dashed ${PALETTE.border}; }
         }
       `}</style>
 
@@ -253,7 +257,7 @@ function MachineUnlearning() {
       </p>
 
       {/* Two approaches */}
-      <div style={{
+      <div className="cbd-2col" style={{
         display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1px',
         background: PALETTE.border, marginBottom: '2rem',
       }}>
@@ -631,7 +635,7 @@ function RetrainingBar() {
         The only way to guarantee removal of your data is to retrain the model from scratch — excluding your conversations. For GPT-4, that takes approximately 90 days of continuous compute. If OpenAI began retraining at the exact moment you started reading this page, this is how far along they would be.
       </p>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.border, marginBottom: '2rem' }}>
+      <div className="cbd-3col" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.border, marginBottom: '2rem' }}>
         {facts.map((f, i) => (
           <motion.div key={i} initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.2 + i * 0.1 }} style={{ background: PALETTE.bgPanel, padding: '1.4rem' }}>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.6rem, 3.5vw, 2.4rem)', color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '0.4rem' }}>{f.value}</p>

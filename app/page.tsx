@@ -197,15 +197,19 @@ export default function Home() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
         html, body { background: ${COLOR.bg}; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        body { -webkit-tap-highlight-color: rgba(190,40,30,0.12); -webkit-text-size-adjust: 100%; }
         ::selection { background: ${COLOR.accent}; color: ${COLOR.bg}; }
         @media (max-width: 640px) {
           .ya-header, .ya-footer { padding-left: 24px !important; padding-right: 24px !important; font-size: 10px !important; }
-          .ya-hero { padding: 48px 24px !important; }
+          .ya-header .ya-header-meta { display: none !important; }
+          .ya-hero { padding: 32px 20px !important; }
+          .ya-corner-meta { display: none !important; }
         }
+        .ya-page { min-height: 100vh; min-height: 100dvh; }
       `}</style>
 
-      <main style={{
-        minHeight: '100vh', background: COLOR.bg, color: COLOR.ink,
+      <main className="ya-page" style={{
+        background: COLOR.bg, color: COLOR.ink,
         fontFamily: SERIF, display: 'flex', flexDirection: 'column',
         position: 'relative', overflow: 'hidden',
       }}>
@@ -237,6 +241,7 @@ export default function Home() {
           { style: { bottom: 60, right: 40 }, text: 'TRACE.AI / 2026' },
         ].map((m, i) => (
           <motion.div key={i}
+            className="ya-corner-meta"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ delay: 2.2 + i * 0.1, duration: 1 }}
             style={{
@@ -264,7 +269,7 @@ export default function Home() {
           </span>
 
           {/* Right — minimal classification meta */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="ya-header-meta" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: COLOR.inkFaint }}>
               Critical web tool
             </span>

@@ -401,13 +401,13 @@ function Nav({ page, setPage, results, exposureScore }: {
         </div>
 
         {/* Right side */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.4rem', flexShrink: 0 }}>
+        <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: 'clamp(0.6rem, 2.5vw, 1.4rem)', flexShrink: 0 }}>
           {/* Exposure score */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1px' }}>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '13px', color: scoreColor, fontWeight: 600, lineHeight: 1 }}>
+            <span className="nav-exposure-score" style={{ fontFamily: TYPE.mono, fontSize: '13px', color: scoreColor, fontWeight: 600, lineHeight: 1 }}>
               {exposureScore}<span style={{ fontSize: '10px', opacity: 0.5, fontWeight: 400 }}>/100</span>
             </span>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 1 }}>
+            <span className="nav-exposure-label" style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 1 }}>
               exposure
             </span>
           </div>
@@ -653,8 +653,31 @@ export default function DashboardLayout({ results, children, page, setPage }: {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { background: ${PALETTE.bg}; color: ${PALETTE.ink}; margin: 0; }
+        html {
+          scroll-behavior: smooth;
+          /* Prevent horizontal scroll surprises from oversized SVG/text */
+          overflow-x: hidden;
+          /* Better text rendering on mobile */
+          -webkit-text-size-adjust: 100%;
+          text-size-adjust: 100%;
+        }
+        body {
+          background: ${PALETTE.bg};
+          color: ${PALETTE.ink};
+          margin: 0;
+          overflow-x: hidden;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          /* Better tap highlight for buttons */
+          -webkit-tap-highlight-color: rgba(190,40,30,0.12);
+        }
+
+        /* Improve interactive element feedback on touch */
+        button, a, [role="button"] {
+          -webkit-tap-highlight-color: rgba(190,40,30,0.12);
+          touch-action: manipulation;
+        }
+
         body::before {
           content:''; position:fixed; inset:0; z-index:0;
           background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -673,11 +696,49 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.15); border-radius: 2px; }
 
+        /* On mobile, hide native scrollbar entirely — visual chrome handles it */
+        @media (max-width: 768px) {
+          ::-webkit-scrollbar { display: none; }
+          html { scrollbar-width: none; }
+        }
+
         .nav-desktop { display: flex !important; }
         @media (max-width: 700px) {
           .nav-desktop { display: none !important; }
         }
 
+        /* ────────────────────────────────────────────────────────
+           DYNAMIC VIEWPORT HEIGHT — fixes iOS Safari URL bar collapse
+           Use .full-height-screen instead of minHeight: 100vh.
+           ──────────────────────────────────────────────────────── */
+        .full-height-screen {
+          min-height: 100vh;
+          min-height: 100dvh;
+        }
+        .full-height-fixed {
+          height: 100vh;
+          height: 100dvh;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           MOBILE NAV — name hidden, exposure score compacted
+           ──────────────────────────────────────────────────────── */
+        @media (max-width: 700px) {
+          .nav-exposure-label { display: none !important; }
+          .nav-exposure-score { font-size: 12px !important; }
+        }
+
+        /* ────────────────────────────────────────────────────────
+           TABLET / SMALL DESKTOP (640–768px)
+           ──────────────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+          /* Hide all desktop-only side rails on smaller screens */
+          .ov-right-rail, .resist-right-rail { display: none !important; }
+        }
+
+        /* ────────────────────────────────────────────────────────
+           MOBILE BREAKPOINT (≤640px)
+           ──────────────────────────────────────────────────────── */
         @media (max-width: 640px) {
           .dash-page-inner {
             padding-left: 1.25rem !important;
@@ -686,12 +747,28 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           .ov-two-col { grid-template-columns: 1fr !important; }
           .mob-stack { grid-template-columns: 1fr !important; flex-direction: column !important; }
           .sources-header-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+          .etl-stats-grid { grid-template-columns: 1fr 1fr !important; }
           .understand-inference-grid { grid-template-columns: 1fr !important; }
           .understand-inference-grid > *:nth-child(2) { display: none !important; }
           .tells-row { grid-template-columns: 1fr !important; }
           .tells-row > *:last-child { display: none !important; }
           .demo-grid { grid-template-columns: 1fr auto !important; gap: 0.8rem !important; }
           .demo-grid > *:nth-child(3) { display: none !important; }
+
+          /* ProfilePage demographic predictions: stack attribute + value + bar across full row width */
+          .prof-demo-row {
+            grid-template-columns: 1fr 24px !important;
+            grid-template-areas:
+              "attr  plus"
+              "value plus"
+              "conf  conf" !important;
+            gap: 0.4rem 0.75rem !important;
+            row-gap: 0.55rem !important;
+          }
+          .prof-demo-row .prof-demo-attr { grid-area: attr; }
+          .prof-demo-row .prof-demo-val  { grid-area: value; font-size: 1.15rem !important; }
+          .prof-demo-row .prof-demo-conf { grid-area: conf; }
+          .prof-demo-row .prof-demo-plus { grid-area: plus; align-self: center; text-align: right; }
           .nav-strip-card { padding: 1.4rem 1.2rem !important; }
           .findings-row { gap: 1rem !important; }
           .bid-row-seg { display: none !important; }
@@ -699,10 +776,51 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           .score-hero { font-size: clamp(3rem, 15vw, 5rem) !important; }
           .deco-svg { display: none !important; }
           .stat-strip { gap: 1.5rem !important; flex-wrap: wrap !important; }
+
+          /* Touch-friendly tap target sizing */
+          button, a {
+            min-height: 44px;
+          }
+          /* But not for tiny inline elements */
+          button.inline-tight, a.inline-tight {
+            min-height: 0;
+          }
+
+          /* Inference module 2 grid (UnderstandPage 1fr/80px/1fr) becomes a stack */
+          .understand-inference-headers {
+            grid-template-columns: 1fr !important;
+          }
+          .understand-inference-headers > *:nth-child(2) { display: none !important; }
+          .understand-inference-header-right { display: none !important; }
+          .understand-inference-row {
+            grid-template-columns: 1fr !important;
+            gap: 0.5rem !important;
+          }
+          .understand-inference-arrow {
+            justify-content: flex-start !important;
+            padding: 0.4rem 0 !important;
+            height: 28px;
+          }
+          .understand-inference-arrow svg {
+            width: 28px !important;
+            height: 28px !important;
+            transform: rotate(90deg);
+          }
         }
 
         @media (max-width: 480px) {
           .section-ghost-num { display: none !important; }
+        }
+
+        /* ────────────────────────────────────────────────────────
+           SAFE AREA INSET helpers — for notch / home indicator
+           Used by sticky bottom bars across pages
+           ──────────────────────────────────────────────────────── */
+        .safe-pb {
+          padding-bottom: max(1rem, env(safe-area-inset-bottom));
+        }
+        .safe-bottom-nav {
+          padding-bottom: max(1rem, env(safe-area-inset-bottom));
         }
       `}</style>
 

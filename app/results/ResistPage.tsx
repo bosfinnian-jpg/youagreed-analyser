@@ -370,7 +370,7 @@ function AnimatedCounter({ target, active, duration = 2400 }: { target: number; 
 const ACT_LABELS = ['ARRIVAL', 'COUNTED', 'MACHINE', 'TAKING', 'ECHO', 'IMPRINT', 'CHOICE', 'DEPARTURE'];
 function ProgressRail({ progress, currentAct }: { progress: MotionValue<number>; currentAct: number }) {
   return (
-    <div style={{
+    <div className="resist-right-rail" style={{
       position: 'fixed', right: 'clamp(1rem, 3vw, 2.5rem)', top: '50%',
       transform: 'translateY(-50%)', zIndex: 20,
       display: 'flex', flexDirection: 'column', gap: '14px',
@@ -585,7 +585,7 @@ function Stage({
       height: '100%',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
-      <div style={{
+      <div className="resist-stage-inner" style={{
         position: 'relative',
         width: 'min(520px, 100%)',
         height: 420,
@@ -813,12 +813,96 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
 
   return (
     <div ref={containerRef} style={{ position: 'relative' }}>
-      {/* Progress rail — fixed position */}
+      <style>{`
+        /* ResistPage mobile: flip the [text | stage] columns into [stage / text] rows.
+           Stage takes top half (visual evolves with scroll), text takes bottom half. */
+        @media (max-width: 768px) {
+          .resist-right-rail { display: none !important; }
+          .resist-pinned-panel {
+            grid-template-columns: 1fr !important;
+            grid-template-rows: 42% 1fr !important;
+            gap: 0 !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            padding-top: 64px !important;
+            padding-bottom: max(4.5rem, env(safe-area-inset-bottom)) !important;
+            align-items: stretch !important;
+          }
+          /* Stage on TOP via order */
+          .resist-stage-col {
+            order: 0 !important;
+            padding: 0.75rem !important;
+            border-bottom: 1px solid rgba(26,24,20,0.10);
+          }
+          .resist-text-col {
+            order: 1 !important;
+            padding: 1.5rem 1.25rem !important;
+            align-items: flex-start !important;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+          }
+          .resist-stage-inner {
+            height: 100% !important;
+            max-height: 100% !important;
+          }
+          /* Tighter typography for the smaller text panel */
+          .resist-text-col h2 {
+            font-size: clamp(1.6rem, 6vw, 2.2rem) !important;
+            margin-bottom: 0.85rem !important;
+          }
+          .resist-text-col p {
+            font-size: 1rem !important;
+          }
+        }
+        /* Bottom act-dot indicator for mobile, mirrors OverviewPage pattern */
+        .resist-act-dots {
+          position: fixed;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 50;
+          display: none;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          padding: 0.6rem 0 max(0.75rem, env(safe-area-inset-bottom));
+          pointer-events: none;
+        }
+        @media (max-width: 768px) {
+          .resist-act-dots { display: flex; }
+        }
+      `}</style>
+
+      {/* Progress rail — fixed position (desktop only via CSS) */}
       <ProgressRail progress={smooth} currentAct={currentAct} />
+
+      {/* Bottom act dots — mobile only */}
+      <div className="resist-act-dots">
+        <span style={{
+          fontFamily: TYPE.mono, fontSize: '8px',
+          letterSpacing: '0.28em', color: PALETTE.inkFaint,
+          textTransform: 'uppercase',
+        }}>{ACT_LABELS[currentAct] || ''}</span>
+        <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
+          {ACT_LABELS.map((_, i) => {
+            const isActive = i === currentAct;
+            return (
+              <span key={i} style={{
+                display: 'block',
+                height: 4,
+                width: isActive ? 18 : 4,
+                borderRadius: 2,
+                background: isActive ? PALETTE.ink : 'rgba(26,24,20,0.20)',
+                transition: 'width 0.45s cubic-bezier(0.4,0,0.2,1), background 0.3s',
+              }} />
+            );
+          })}
+        </div>
+      </div>
 
       <div style={{ height: '900vh', position: 'relative' }}>
         {/* Pinned visual + text panel */}
-        <div style={{
+        <div className="resist-pinned-panel" style={{
           position: 'sticky',
           top: 0,
           height: '100vh',
@@ -830,7 +914,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
           overflow: 'hidden',
         }}>
           {/* Left: scene text + scene-specific UI */}
-          <div style={{
+          <div className="resist-text-col" style={{
             padding: 'clamp(2rem, 4vw, 4rem) clamp(1rem, 3vw, 3rem)',
             height: '100%',
             display: 'flex',
@@ -917,7 +1001,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
           </div>
 
           {/* Right: the stage */}
-          <div style={{
+          <div className="resist-stage-col" style={{
             position: 'relative', height: '100%',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: 'clamp(1rem, 3vw, 3rem)',

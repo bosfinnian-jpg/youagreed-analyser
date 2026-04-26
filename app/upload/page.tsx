@@ -200,11 +200,15 @@ export default function UploadPage() {
             padding: 56px 24px !important;
           }
         }
+        .ya-upload-page {
+          min-height: 100vh;
+          min-height: 100dvh;
+        }
       `}</style>
 
       <main
+        className="ya-upload-page"
         style={{
-          minHeight: '100vh',
           background: COLOR.bg,
           color: COLOR.ink,
           fontFamily: SERIF,

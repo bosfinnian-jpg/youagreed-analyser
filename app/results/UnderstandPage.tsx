@@ -937,7 +937,7 @@ function Module1({
       canAdvance={revealed}
     >
       {/* Column headers */}
-      <div style={{
+      <div className="understand-inference-headers" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 80px 1fr',
         gap: 0,
@@ -948,7 +948,7 @@ function Module1({
           What you wrote
         </p>
         <div />
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: C.textFaint, textTransform: 'uppercase' }}>
+        <p className="understand-inference-header-right" style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: C.textFaint, textTransform: 'uppercase' }}>
           What was inferred
         </p>
       </div>
@@ -956,7 +956,7 @@ function Module1({
       {/* Per-row layout — line is inside each row so it always hits the vertical centre */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {userInferences.map((inf, i) => (
-          <div key={inf.pattern} style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', alignItems: 'center' }}>
+          <div key={inf.pattern} className="understand-inference-row" style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', alignItems: 'center' }}>
             {/* Left box */}
             <motion.div
               initial={{ opacity: 0, x: -8 }}
@@ -980,7 +980,7 @@ function Module1({
             </motion.div>
 
             {/* Arrow — horizontally centred, always vertically centred because it's in a grid row */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+            <div className="understand-inference-arrow" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
               <svg width="100%" height="2" viewBox="0 0 80 2" preserveAspectRatio="none" overflow="visible">
                 <motion.line
                   x1="4" y1="1" x2="72" y2="1"

@@ -1896,7 +1896,7 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
   };
 
   const handleResist = () => {
-    if (setPage) setPage('permanent');
+    if (setPage) setPage('resist');
     else window.location.href = '/results';
   };
 

@@ -701,11 +701,11 @@ function ClosingStatement({ setPage }: { setPage: (p: any) => void }) {
         fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
         color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 560, marginBottom: '3rem',
       }}>
-        This is not a policy failure. It is a consequence of the physics of the technology. The model learned from you. Learning is not reversible. What follows is what you can still do — not to undo this, but to limit how much further it goes.
+        This is not a policy failure. It is a consequence of the physics of the technology. The model learned from you. Learning is not reversible. The next question is what you consented to — and whether the terms you agreed to were ever legible.
       </p>
 
       <button
-        onClick={() => setPage('resist')}
+        onClick={() => setPage('terms')}
         style={{
           fontFamily: TYPE.serif,
           fontSize: 'clamp(1rem, 2vw, 1.2rem)',
@@ -727,8 +727,8 @@ function ClosingStatement({ setPage }: { setPage: (p: any) => void }) {
           e.currentTarget.style.background = 'none';
         }}
       >
-        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>07</span>
-        What you can still do →
+        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>06 / Terms</span>
+        What you agreed to →
       </button>
     </motion.div>
   );

@@ -896,50 +896,35 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
           maxWidth: 560, marginBottom: '1.5rem',
           fontStyle: 'italic',
         }}>
-          The terms explain how this data was collected and why deletion does not apply to it.
-          Act III addresses the prior and more fundamental question: why the data cannot be removed
-          even if the terms required it.
+          The terms describe what was taken. The next section explains how the system works — how
+          inference operates, what it produces, and what it means that you cannot see it happening.
         </p>
-        <div style={{ display: 'flex', gap: 'clamp(0.75rem, 2vw, 1.25rem)', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setPage('permanent')}
-            style={{
-              fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-              letterSpacing: '-0.01em', color: PALETTE.ink,
-              background: 'none', border: `1px solid ${PALETTE.border}`,
-              padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
-              cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s',
-              textAlign: 'left', lineHeight: 1.3,
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.borderColor = PALETTE.borderHover;
-              e.currentTarget.style.background = PALETTE.bgPanel;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.borderColor = PALETTE.border;
-              e.currentTarget.style.background = 'none';
-            }}
-          >
-            <span style={{
-              display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
-              letterSpacing: '0.25em', color: PALETTE.redMuted,
-              textTransform: 'uppercase', marginBottom: '0.35rem',
-            }}>ACT III</span>
-            Why it cannot be deleted →
-          </button>
-          <button
-            onClick={() => setPage('resist')}
-            style={{
-              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
-              color: PALETTE.inkFaint, background: 'none', border: 'none',
-              cursor: 'pointer', textTransform: 'uppercase',
-              padding: 'clamp(0.85rem, 2vw, 1.25rem) 0',
-              textDecoration: 'underline', textDecorationColor: PALETTE.border,
-            }}
-          >
-            Skip to: what you can do
-          </button>
-        </div>
+        <button
+          onClick={() => setPage('understand')}
+          style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.1rem)',
+            letterSpacing: '-0.01em', color: PALETTE.ink,
+            background: 'none', border: `1px solid ${PALETTE.border}`,
+            padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
+            cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s',
+            textAlign: 'left', lineHeight: 1.3,
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = PALETTE.borderHover;
+            e.currentTarget.style.background = PALETTE.bgPanel;
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = PALETTE.border;
+            e.currentTarget.style.background = 'none';
+          }}
+        >
+          <span style={{
+            display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
+            letterSpacing: '0.25em', color: PALETTE.redMuted,
+            textTransform: 'uppercase', marginBottom: '0.35rem',
+          }}>07 / Understand</span>
+          How the system works →
+        </button>
       </div>
     </motion.div>
   );

@@ -497,14 +497,29 @@ function useEchoGenerator(analysis: DeepAnalysis) {
         primaryCoping && `Primary coping mechanism: ${primaryCoping}`,
       ].filter(Boolean).join('\n');
 
-      const prompt = `You are a language model that has processed ${messageCount.toLocaleString()} messages from a single user. You have built a detailed model of how they think, write, and communicate.
+      // Pick the most specific topic anchor — their actual preoccupation, not a generic prompt
+      const topicAnchor = dominantNarrative
+        || (synthesis?.recurringConcerns?.[0]?.concern)
+        || characterSummary
+        || 'their current situation';
 
-Here is what you know about them:
+      const prompt = `You have processed ${messageCount.toLocaleString()} messages from a single person. You have a precise model of how they think and write.
+
+Here is what you know:
 ${contextLines}
 
-Write a short paragraph (4-6 sentences) in this person's voice, on the topic of what they find themselves thinking about before they fall asleep. Do not describe their traits — write AS them, from inside their perspective, in their actual way of writing. Capture their sentence length, word choices, and the way they move between ideas. Make it feel like something they could have written themselves.
+Write exactly 2–3 sentences in this person's voice, on the topic of: ${topicAnchor}
 
-Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
+Rules:
+- Write AS them, not ABOUT them. First person, no distancing.
+- Match their actual register from the verbal patterns above. If they write casually, write casually. If they hedge, hedge. If they're terse, be terse. Do not elevate their voice.
+- Be specific to their actual preoccupation — not general, not metaphorical.
+- Write something that sounds like a real thing they would type into a chat interface, not something they would publish or share.
+- The goal is uncanny recognition: someone reading this should feel it sounds exactly like them.
+
+Do not produce anything that sounds like creative writing, therapy, or poetry. If it sounds literary, rewrite it until it doesn't.
+
+Output ONLY the text. No preamble. No explanation.`;
 
       const response = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -686,15 +701,15 @@ function useSceneCopy(act: number, data: {
     },
     // 2 — Machine
     {
-      kicker: 'And then',
-      headline: 'Something was built.',
-      body: 'Not visible to you. Not announced. A system that had been watching for the shape of what you say.',
+      kicker: 'While you were talking',
+      headline: 'Something was being built.',
+      body: 'Not visible. Not announced. Every message you sent was training a model of you — your patterns, your preoccupations, the shape of how you think.',
     },
     // 3 — Taking
     {
       kicker: 'The extraction',
       headline: 'It took everything.',
-      body: 'Conversation by conversation. Each message absorbed into a model that now remembers you in a way you did not choose.',
+      body: 'Conversation by conversation. None of it asked for. None of it reversible.',
     },
     // 4 — Echo
     {
@@ -717,8 +732,18 @@ function useSceneCopy(act: number, data: {
     // 7 — Walkaway
     {
       kicker: 'The end',
-      headline: name ? <>{name}, you can leave.</> : 'You can leave.',
-      body: null,
+      headline: name ? (
+        <>
+          {name}, you can leave.<br />
+          <span style={{ color: PALETTE.red }}>The data cannot.</span>
+        </>
+      ) : (
+        <>
+          You can leave.<br />
+          <span style={{ color: PALETTE.red }}>The data cannot.</span>
+        </>
+      ),
+      body: 'Everything the model learned from you will remain inside it. You can close the tab. You can delete your account. The patterns cannot be reached.',
     },
   ];
 
@@ -968,11 +993,47 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
                     <ChoicePanel analysis={analysis} onHover={setChoicePose} />
                   )}
 
-                  {/* Act 7: WALKAWAY — monument line */}
+                  {/* Act 7: WALKAWAY — message count fades in below the copy */}
                   {currentAct === 7 && (
-                    <WalkawayMonument />
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 2.5, duration: 2.0 }}
+                      style={{ marginTop: '3rem' }}
+                    >
+                      <p style={{
+                        fontFamily: TYPE.serif,
+                        fontSize: 'clamp(3rem, 6vw, 5rem)',
+                        color: PALETTE.inkGhost,
+                        lineHeight: 1,
+                        marginBottom: '0.75rem',
+                        fontWeight: 400,
+                      }}>
+                        <AnimatedCounter target={messageCount} active={currentAct === 7} duration={3000} />
+                      </p>
+                      <p style={{
+                        fontFamily: TYPE.mono,
+                        fontSize: '11px',
+                        letterSpacing: '0.3em',
+                        color: PALETTE.inkFaint,
+                        textTransform: 'lowercase',
+                        marginBottom: '2.5rem',
+                      }}>
+                        messages. stored. not yours anymore.
+                      </p>
+                      <p style={{
+                        fontFamily: TYPE.mono,
+                        fontSize: '10px',
+                        letterSpacing: '0.3em',
+                        color: PALETTE.inkGhost,
+                        textTransform: 'uppercase',
+                      }}>
+                        YOU AGREED / TRACE.AI / 2026
+                      </p>
+                    </motion.div>
                   )}
-                </motion.div>
+
+</motion.div>
               </AnimatePresence>
 
               {/* Scroll nudge */}
@@ -1068,7 +1129,7 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
         setDisplayed(echo.text.slice(0, i));
         if (i >= echo.text.length) {
           if (iv) clearInterval(iv);
-          revealTimerRef.current = setTimeout(() => setRevealOn(true), 1400);
+          revealTimerRef.current = setTimeout(() => setRevealOn(true), 4000);
         }
       }, 26);
     }, 800);
@@ -1127,7 +1188,7 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
             color: PALETTE.inkGhost, textTransform: 'uppercase',
             marginBottom: '1.1rem',
           }}>
-            {echo.kind === 'excerpt' ? 'Your message — extracted' : 'Generated by the model'}
+            {echo.kind === 'excerpt' ? 'Your words — kept without asking' : 'Written in your voice'}
           </p>
           {echo.phase !== 'ready' && (
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center', height: '24px' }}>
@@ -1163,60 +1224,22 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, delay: 0.8 }}
+              transition={{ duration: 0.9, delay: 0.4 }}
               style={{ marginTop: '1.5rem' }}
             >
               <p style={{
-                fontFamily: TYPE.serif, fontSize: '1.4rem',
-                color: PALETTE.ink, lineHeight: 1.8, marginBottom: '0.5rem',
+                fontFamily: TYPE.mono,
+                fontSize: '11px',
+                letterSpacing: '0.3em',
+                textTransform: 'uppercase',
+                color: PALETTE.redMuted,
               }}>
-                {echo.kind === 'excerpt'
-                  ? 'Did you mean for a stranger to read that?'
-                  : 'You did not write that.'}
-              </p>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: '0.95rem',
-                color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '44ch',
-              }}>
-                {echo.kind === 'excerpt'
-                  ? "OpenAI's systems read, processed, and retained every message you sent."
-                  : `The model learned the shape of your voice from ${echo.messageCount.toLocaleString()} messages.`}
+                {echo.kind === 'excerpt' ? 'Did you mean for a machine to read that?' : 'It knew.'}
               </p>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.div>
-    </>
-  );
-}
-
-// ============================================================================
-// WALKAWAY MONUMENT — act 7. "The data cannot." as its own reckoning.
-// ============================================================================
-function WalkawayMonument() {
-  return (
-    <>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1.0 }}
-        style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(2.2rem, 4vw, 3rem)',
-          color: PALETTE.red,
-          lineHeight: 1.15,
-          marginTop: '0.5rem',
-          marginBottom: '1.25rem',
-        }}
-      >
-        The data cannot.
-      </motion.p>
-      <motion.div
-        initial={{ width: 0 }}
-        animate={{ width: 60 }}
-        transition={{ delay: 1.4, duration: 1.4, ease: 'linear' }}
-        style={{ height: '1px', background: PALETTE.red }}
-      />
     </>
   );
 }
@@ -1444,65 +1467,27 @@ function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (
 // ============================================================================
 // FINAL CREDIT — appears after the story. A reckoning, not a footnote.
 // ============================================================================
-function FinalCredit({ messageCount }: { messageCount: number }) {
+function FinalCredit({ messageCount: _ }: { messageCount: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-20%' });
   return (
     <div ref={ref} style={{
-      padding: 'clamp(6rem, 12vw, 10rem) 0 clamp(8rem, 14vw, 12rem)',
+      padding: 'clamp(4rem, 8vw, 7rem) 0 clamp(6rem, 10vw, 9rem)',
       textAlign: 'left',
     }}>
       {isInView && (
-        <>
-          {/* Large count — slow count-up from 0 */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, delay: 0.8 }}
-          >
-            <p style={{
-              fontFamily: TYPE.serif,
-              fontSize: 'clamp(4rem, 8vw, 7rem)',
-              color: PALETTE.inkGhost,
-              lineHeight: 1,
-              marginBottom: '0.75rem',
-              fontWeight: 400,
-            }}>
-              <AnimatedCounter target={messageCount} active={isInView} duration={3000} />
-            </p>
-          </motion.div>
-
-          {/* Descriptor */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.0, delay: 2.2 }}
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.3em',
-              color: PALETTE.inkFaint,
-              textTransform: 'lowercase',
-              marginBottom: '2rem',
-            }}
-          >
-            messages. stored. not yours anymore.
-          </motion.p>
-
-          {/* Existing credit line */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.6, delay: 3.8 }}
-            style={{
-              fontFamily: TYPE.mono, fontSize: '10px',
-              letterSpacing: '0.3em', color: PALETTE.inkGhost,
-              textTransform: 'uppercase',
-            }}
-          >
-            YOU AGREED  /  TRACE.AI  /  2026
-          </motion.p>
-        </>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.6, delay: 0.6 }}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '10px',
+            letterSpacing: '0.3em', color: PALETTE.inkGhost,
+            textTransform: 'uppercase',
+          }}
+        >
+          YOU AGREED  /  TRACE.AI  /  2026
+        </motion.p>
       )}
     </div>
   );

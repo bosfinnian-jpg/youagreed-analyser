@@ -273,7 +273,7 @@ function ArrivalChapter({ name, date, onActive }: {
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
       <div style={{ marginBottom: '2.5rem' }}>
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
-        <ThreadSentence>You agreed to terms that described this. They did not describe it fully.</ThreadSentence>
+        <ThreadSentence>You typed. The model learned. This is what it found.</ThreadSentence>
       </div>
       <motion.p
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}

@@ -122,7 +122,7 @@ function InferenceTagger({ setPage }: { setPage?: (p: string) => void }) {
       </h3>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.7, maxWidth: 520, marginBottom: '2rem' }}>
         Select a phrase below — or type your own. Watch the inference categories appear in real time.
-        This is what happens to every message you send, automatically, at scale.
+        This is the kind of classification that language-based inference systems apply to messages of this type — automatically, at scale.
       </p>
 
       {/* Sample selector */}

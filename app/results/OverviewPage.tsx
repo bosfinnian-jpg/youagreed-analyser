@@ -317,7 +317,7 @@ function ArrivalChapter({ name, date, onActive }: {
         }}
       >
         What follows was extracted from your conversations.
-        Each item is permanent. None of it can be returned.
+        Each item has entered systems that have no reverse function.
       </motion.p>
 
       <motion.div
@@ -440,9 +440,9 @@ function VolumeChapter({ count, days, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          Each one a permanent fixture in a model that does not forget.
+          Each one potentially embedded in a model with no reverse function.
           The terms you agreed to do not specify which conversations
-          were used to train it.
+          may have been used to train it, or whether removal is possible.
         </p>
       </ChapterShell>
     </div>
@@ -1407,7 +1407,7 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
             marginBottom: 'clamp(2.5rem,5vw,4rem)',
             fontStyle: 'italic',
           }}>
-            That was the record. What follows is what the record reveals about who you are.
+            That was the record. What follows is what patterns in the record suggest about how profiling systems would classify you.
           </p>
 
           <div className="continue-cta-row" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>

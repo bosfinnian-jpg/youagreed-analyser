@@ -334,8 +334,8 @@ export default function Home() {
                 lineHeight: 1.75, color: 'rgba(26,24,20,0.78)',
                 margin: '0 0 1.6rem',
               }}>
-                This is a critical web tool. It takes your exported
-                ChatGPT history and produces the dossier a data broker would build from it.
+                This is a critical media artefact. It takes your exported
+                ChatGPT history and demonstrates the kind of profile a data broker could construct from language patterns like these.
               </p>
               <p style={{
                 fontFamily: SERIF, fontSize: 'clamp(1rem, 1.7vw, 1.2rem)',

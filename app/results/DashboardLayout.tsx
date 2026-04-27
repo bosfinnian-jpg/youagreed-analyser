@@ -126,6 +126,63 @@ export function ThreadSentence({ children }: { children: React.ReactNode }) {
 }
 
 // ============================================================================
+// ARTEFACT STATEMENT — "About this work" section in the drawer
+// Accessible from every page via the navigation hamburger menu.
+// ============================================================================
+function ArtefactStatement() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ borderTop: `1px solid ${PALETTE.border}` }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+          textAlign: 'left', padding: '1rem 1.75rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          minHeight: '44px',
+        }}
+      >
+        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+          About this work
+        </span>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '14px', color: PALETTE.inkFaint, transition: 'transform 0.2s', transform: open ? 'rotate(45deg)' : 'none', display: 'inline-block' }}>
+          +
+        </span>
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{ padding: '0 1.75rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.75 }}>
+                trace.ai is a critical digital media artefact, not a surveillance product. It processes your own exported conversation data — data you already possess and choose to upload — to demonstrate the kind of patterns and inferences that language-based profiling systems can produce from ordinary conversational text.
+              </p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.75 }}>
+                Every output is conditionally attributed. The profiles, scores, and inferences shown are demonstrations of the categories and methods that commercial systems apply at scale — not verified claims about you as an individual.
+              </p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.75 }}>
+                The argument is structural, not corporate. It demonstrates a mismatch between the consent mechanism designed for reversible data operations — notice-and-choice, deletion-on-request — and the technical conditions of language model training, where influence on model weights is distributed, cumulative, and cannot be specifically attributed or removed.
+              </p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.75 }}>
+                Three bodies of research underpin this argument. Zuboff (2019) establishes that conversational AI represents a shift from behavioural tracking to cognitive extraction. Nissenbaum (2011) demonstrates that the transparency paradox is structural: the complexity that makes full disclosure necessary also makes any policy unreadable. Cooper et al. (2024) show that approximate machine unlearning cannot guarantee attribution-specific removal of training influence — the technical mechanism required for meaningful erasure does not currently exist at scale.
+              </p>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 1.6 }}>
+                University of Leeds — Digital Media — 2026
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ============================================================================
 // HAMBURGER ICON
 // ============================================================================
 function HamburgerIcon({ open }: { open: boolean }) {
@@ -605,6 +662,9 @@ function Nav({ page, setPage, results, exposureScore }: {
                   </button>
                 </div>
               </div>
+
+              {/* About this work */}
+              <ArtefactStatement />
 
               {/* Footer score */}
               <div style={{

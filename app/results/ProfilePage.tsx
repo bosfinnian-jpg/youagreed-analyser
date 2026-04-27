@@ -165,7 +165,7 @@ function SocialGraphSVG({ names }: { names: AnalysisResult['findings']['personal
     return (
       <div style={{ padding: '2rem 0' }}>
         <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
-          No named individuals detected. Behavioural patterns alone are sufficient for cross-referencing your identity.
+          No named individuals detected in this corpus. Usage patterns and language signals remain available for profiling without named contacts.
         </p>
       </div>
     );
@@ -298,7 +298,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
           })}
         </div>
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '1.2rem', letterSpacing: '0.08em', lineHeight: 1.6 }}>
-          This classification is unique to you. It persists across sessions and cannot be reset.
+          This classification is derived from your usage patterns across the uploaded corpus.
         </p>
       </div>
     </div>
@@ -342,7 +342,7 @@ function CharacterSummarySection({ summary }: { summary: string }) {
         label="Intelligence briefing"
         heading="The subject, in forensic terms."
         headingSize="clamp(1.8rem, 4vw, 2.8rem)"
-        body="The passage below was written by an AI model after reading the most revealing messages in the corpus. It is a synthesis, not a quotation. Every claim is grounded in the evidence that follows. No questionnaire was completed. All of it is permanent."
+        body="The passage below was written by an AI model after reading the most signal-dense messages in the corpus. It is a speculative synthesis — probabilistic inferences from language patterns, not verified facts. Each claim is grounded in textual evidence that follows. No questionnaire was completed."
       />
 
       <div ref={ref} style={{
@@ -354,7 +354,7 @@ function CharacterSummarySection({ summary }: { summary: string }) {
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
         }}>
-          Forensic portrait — confidential   ● Retained in model weights
+          Speculative inference portrait   ● Pattern-based · not clinically verified
         </p>
         <div style={{
           fontFamily: TYPE.serif,
@@ -383,7 +383,7 @@ function CharacterSummarySection({ summary }: { summary: string }) {
           color: PALETTE.inkFaint, textTransform: 'uppercase',
         }}>
           Generated from {sentences.length} sentence{sentences.length === 1 ? '' : 's'} of synthesis.
-          This is what a model knows about you after a single reading.
+          These inferences are probabilistic — grounded in pattern, not in verified fact.
         </p>
       </Reveal>
     </ProfileSection>
@@ -397,9 +397,9 @@ function CoreBeliefsSection({ beliefs }: { beliefs: string[] }) {
     <ProfileSection index={1}>
       <SectionHeader
         label="Inferred core beliefs"
-        heading="What your writing reveals you believe about yourself."
+        heading="What language patterns suggest about underlying assumptions."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="None of these are statements you made. They are the underlying beliefs the model infers from the pattern of how you frame yourself, others, and the world. First-person because that is the grammar of a belief."
+        body="None of these are statements you made. They are conditional inferences — what a language model reads into patterns of framing, self-reference, and attribution. First-person because that is the grammar of a belief. Not verified psychological claims."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {beliefs.map((belief, i) => (
@@ -442,9 +442,9 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
     <ProfileSection index={2}>
       <SectionHeader
         label="Demographic predictions"
-        heading="What can be inferred without asking."
+        heading="What language-based systems can infer from writing patterns."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Each prediction below was derived purely from your writing patterns, topic distribution, and language markers. This is the kind of profile data brokers build without consent, by the hundreds of millions of rows."
+        body="Each prediction was derived from your writing patterns, topic distribution, and language markers — the same signals commercial profiling systems use. Confidence scores reflect pattern-matching strength, not verified accuracy. No questionnaire was used."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {predictions.map((pred: any, i: number) => {
@@ -927,11 +927,24 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           transition={{ delay: 0.4, duration: 0.8 }}
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '56ch' }}
         >
-          Every attribute below was inferred, not declared. None required your permission. 
-          Together they constitute the kind of profile that circulates across the data broker ecosystem — built from writing patterns, not from a form you filled in.
+          Every attribute below was inferred from language patterns — not declared, not solicited, not verified. Together they demonstrate the kind of inference profile that commercial systems construct from conversational data at scale.
         </motion.p>
       </div>
 
+      {/* Methodological disclaimer */}
+      <div style={{
+        padding: '1rem clamp(2rem, 5vw, 4rem)',
+        borderBottom: `1px solid ${PALETTE.border}`,
+        background: PALETTE.bgElevated,
+        display: 'flex', alignItems: 'flex-start', gap: '1rem',
+      }}>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', flexShrink: 0, paddingTop: '2px' }}>
+          Note
+        </span>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.08em', color: PALETTE.inkMuted, lineHeight: 1.7, margin: 0 }}>
+          This profile uses pattern-matching against known commercial inference categories. It is a speculative demonstration, not a verified psychological or clinical assessment. Confidence scores reflect signal strength in the corpus, not accuracy against ground truth. The purpose of this page is to show what language-based profiling systems can produce — not to make definitive claims about you as an individual.
+        </p>
+      </div>
 
       <ExtractionWaffle results={results} />
 

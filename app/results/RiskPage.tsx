@@ -95,8 +95,8 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       ? `You made ${sensitiveCount} sensitive disclosure${sensitiveCount > 1 ? 's' : ''}${topCats.length > 0 ? '. Categories include: ' + topCats.join(', ') : ''}.`
       : 'Your behavioural patterns alone are sufficient for risk modelling.',
     body: anxietyScore > 3
-      ? `Your average anxiety score across all messages is ${anxietyScore.toFixed(1)}/10. Underwriting algorithms treat sustained anxiety indicators as a predictor of future claims. Combined with ${nightPct > 5 ? nightPct + '% late-night usage (a secondary stress marker)' : 'your disclosure frequency'}, your profile would trigger elevated risk classification in automated systems.`
-      : `Even without direct mental health disclosures, your usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers — but data brokers compile similar profiles from dozens of sources. If this data were ever exposed, it would fit directly into those systems. Insurers do not require a diagnosis. They require a probability.`,
+      ? `The average anxiety signal across this corpus is ${anxietyScore.toFixed(1)}/10. Underwriting algorithms treat sustained anxiety indicators as a predictor of future claims. Combined with ${nightPct > 5 ? nightPct + '% late-night usage (a secondary stress signal)' : 'this disclosure frequency'}, a profile of this type would trigger elevated risk classification in automated actuarial systems.`
+      : `Even without direct mental health disclosures, usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers — but data brokers compile equivalent profiles from multiple sources. If this corpus were ever exposed, its signals would map directly into those systems. Insurers do not require a diagnosis. They require a probability.`,
     dataPoints: [
       { label: 'Sensitive disclosures', value: String(sensitiveCount), alarming: sensitiveCount > 5 },
       { label: 'Anxiety indicator', value: anxietyScore > 0 ? anxietyScore.toFixed(1) + '/10' : 'Not scored', alarming: anxietyScore > 4 },
@@ -131,11 +131,11 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     id: 'targeting',
     severity: targetRelevance > 25 ? 'critical' : targetRelevance > 10 ? 'high' : 'medium',
     relevance: targetRelevance,
-    title: `Your conversations map onto ${segments.length || 'multiple'} data broker category${segments.length === 1 ? '' : 'ies'}. If exposed, this profile is immediately usable.`,
+    title: `The patterns in your conversations correspond to ${segments.length || 'multiple'} data broker category${segments.length === 1 ? '' : 'ies'}. If exposed, this profile would be immediately usable.`,
     subtitle: segments.length > 0
       ? `Categories: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
       : 'Behavioural patterns alone are sufficient for vulnerability classification.',
-    body: `${nightPct > 5 ? 'You are most emotionally unguarded between midnight and 5am (' + nightPct + '% of your messages). Data from these windows contains the highest concentration of sensitive disclosure. ' : ''}OpenAI does not sell your conversations to advertisers. But the patterns your messages contain — vulnerability indicators, life circumstances, emotional states — map directly onto categories that data brokers trade. A breach, a legal order, or a policy change would transfer this profile into systems where it has an immediate market price. The data exists. That is the risk.`,
+    body: `${nightPct > 5 ? 'The highest concentration of sensitive disclosure in this corpus falls between midnight and 5am (' + nightPct + '% of messages). ' : ''}OpenAI does not sell your conversations to advertisers. But the patterns these messages contain — vulnerability signals, life circumstances, emotional states — correspond to categories that data brokers trade. A breach, a legal order, or a policy change would transfer a profile of this type into systems where it has an immediate market price. The structural conditions for that transfer already exist.`,
     dataPoints: [
       { label: 'Assigned segments', value: String(segments.length), alarming: segments.length > 3 },
       { label: 'Vulnerability window', value: nightPct > 5 ? `00:00–05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
@@ -152,7 +152,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     relevance: breachRelevance,
     title: 'None of this requires intent. One breach is enough.',
     subtitle: `Your profile contains ${nameCount} named individual${nameCount === 1 ? '' : 's'}, ${locCount} location${locCount === 1 ? '' : 's'}, and ${sensitiveCount} sensitive disclosure${sensitiveCount === 1 ? '' : 's'}. All would be exposed.`,
-    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure — none of which can be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named are also exposed. Their records are now linked to yours. ' : ''}${r.privacyScore >= 60 ? 'Your exposure index (' + r.privacyScore + '/100) places you in the highest-risk category for identity reconstruction from leaked behavioural data.' : 'Even partial exposure of your behavioural patterns is sufficient for re-identification.'}`,
+    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure — none of which can be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people named in this corpus would also be exposed. Their data is associated with yours in this record. ' : ''}${r.privacyScore >= 60 ? 'An exposure index of ' + r.privacyScore + '/100 places this profile in the highest-risk category for identity reconstruction from leaked behavioural data.' : 'Even partial exposure of these behavioural patterns would be sufficient for re-identification.'}`,
     dataPoints: [
       { label: 'Exposure index', value: r.privacyScore + '/100', alarming: r.privacyScore >= 60 },
       { label: 'People exposed', value: String(nameCount), alarming: nameCount > 0 },
@@ -855,7 +855,21 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
       >
         <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
         <ThreadSentence>What the record enables — and the technical reason it may not need to leave the system to be used against you.</ThreadSentence>
-        
+
+        {/* Framing note */}
+        <div style={{
+          borderLeft: `2px solid ${PALETTE.border}`,
+          paddingLeft: '1.25rem',
+          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+          marginTop: '0.5rem',
+        }}>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em',
+            color: PALETTE.inkFaint, lineHeight: 1.7,
+          }}>
+            These scenarios demonstrate enabling conditions — structural situations in which data of this type could be used. They are not claims that these outcomes have occurred or will occur. Each scenario is grounded in documented real-world precedent from verified legal proceedings and regulatory actions.
+          </p>
+        </div>
 
         {/* Active count — the big number */}
         <motion.div

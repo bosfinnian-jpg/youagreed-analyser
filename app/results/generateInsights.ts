@@ -33,7 +33,7 @@ export function generateSummary(analysis: DeepAnalysis): string {
   // Opening: volume + timespan
   parts.push(
     `Over ${months > 12 ? `${(months / 12).toFixed(1)} years` : `${months} months`}, ` +
-    `you sent ${totalUserMessages.toLocaleString()} messages to a system that retains everything.`
+    `you sent ${totalUserMessages.toLocaleString()} messages to a system configured to retain conversation data.`
   );
 
   // Exposure drivers
@@ -53,20 +53,20 @@ export function generateSummary(analysis: DeepAnalysis): string {
   // Consequence
   if (topSegment) {
     parts.push(
-      `This data is sufficient to classify you as "${topSegment}" with commercial targeting confidence.`
+      `These patterns would place you in the commercial segment "${topSegment}" — a category used in automated targeting systems.`
     );
   } else if (crisisCount > 0) {
     parts.push(
       `${crisisCount} crisis period${crisisCount > 1 ? 's' : ''} in your history ` +
-      `produced the most commercially valuable data.`
+      `contain the signals that commercial systems weight most heavily.`
     );
   }
 
   // Dependency trajectory
   if (dependency.trajectory === 'increasing') {
-    parts.push(`Your usage is accelerating — you are sharing more, not less.`);
+    parts.push(`Usage is accelerating — the pattern of disclosure is increasing, not decreasing.`);
   } else if (dependency.intimacyTrajectory === 'increasing') {
-    parts.push(`The intimacy of your disclosures has increased over time.`);
+    parts.push(`The intimacy of disclosures has increased over time.`);
   }
 
   return parts.join(' ');
@@ -187,9 +187,9 @@ export function computeScoreBreakdown(analysis: DeepAnalysis): ScoreFactor[] {
   const nameCount = findings.personalInfo.names?.length || 0;
   if (nameCount > 0) {
     factors.push({
-      label: 'Named individuals exposed',
+      label: 'Named individuals in record',
       contribution: Math.min(8, nameCount * 2),
-      explanation: `${nameCount} people identified by name — their data is now linked to yours`,
+      explanation: `${nameCount} people identified by name — their data is associated with yours in this export`,
       category: 'disclosure',
     });
   }

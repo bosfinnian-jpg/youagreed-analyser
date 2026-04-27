@@ -1083,6 +1083,40 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
         <ConsentFailure isInView={closingInView} />
         <ClosingArgument isInView={closingInView} setPage={setPage} />
       </div>
+
+      {/* Source attribution */}
+      <div style={{
+        borderTop: `1px solid ${PALETTE.border}`,
+        paddingTop: 'clamp(2rem, 4vw, 3rem)',
+        marginTop: 'clamp(2rem, 4vw, 3rem)',
+      }}>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.3em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem',
+        }}>
+          Primary sources
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {[
+            { label: 'OpenAI Privacy Policy (June 2023)', note: 'openai.com/policies — archived version' },
+            { label: 'OpenAI Privacy Policy (June 2025)', note: 'openai.com/policies — archived version' },
+            { label: 'OpenAI Privacy Policy (April 2026, US)', note: 'openai.com/policies — current US version at time of publication' },
+            { label: 'Nissenbaum, H. (2011)', note: '"A Contextual Approach to Privacy Online." Dædalus 140(4): 32–48.' },
+            { label: 'McDonald, A.M. & Cranor, L.F. (2008)', note: '"The Cost of Reading Privacy Policies." ISJLP 4(3): 543–568.' },
+            { label: 'Cooper, A.F. et al. (2024)', note: '"Machine Unlearning for Large Language Models." Preprint. See also: Cao & Yang (2015) "Towards Making Systems Forget."' },
+            { label: 'Zuboff, S. (2019)', note: 'The Age of Surveillance Capitalism. PublicAffairs, New York.' },
+          ].map((src, i) => (
+            <div key={i} style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 280px) 1fr', gap: '1rem', alignItems: 'baseline' }}>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkMuted, letterSpacing: '0.04em' }}>
+                {src.label}
+              </span>
+              <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, letterSpacing: '0.04em' }}>
+                {src.note}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

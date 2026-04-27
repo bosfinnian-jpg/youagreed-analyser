@@ -23,7 +23,7 @@ export function RetainedTag({ variant = 'inline' }: { variant?: 'inline' | 'bloc
         color: PALETTE.redMuted, textTransform: 'uppercase',
         display: 'block', marginTop: '0.35rem',
       }}>
-        ● Retained in model weights
+        ● Condition: potentially embedded in model weights
       </span>
     );
   }
@@ -33,7 +33,7 @@ export function RetainedTag({ variant = 'inline' }: { variant?: 'inline' | 'bloc
       color: PALETTE.redMuted, textTransform: 'uppercase',
       marginLeft: '0.75rem', verticalAlign: 'middle', whiteSpace: 'nowrap',
     }}>
-      ● Retained
+      ● Potentially retained
     </span>
   );
 }
@@ -66,7 +66,7 @@ function OneWayFlow() {
         color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 540,
         marginBottom: 'clamp(2rem, 5vw, 3rem)',
       }}>
-        Every conversation you had followed this sequence. It had no reverse function built into it.
+        Any conversation used for model training would have followed this sequence. The pipeline has no reverse function built into it.
       </p>
 
       {/* Flow — horizontal on desktop, vertical on mobile */}
@@ -208,19 +208,19 @@ function WhatWeightsAre() {
         fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
         color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
       }}>
-        A model weight is a number. GPT-4 has hundreds of billions of them. When your conversations were processed, those numbers shifted — fractionally, across all of them simultaneously. Your data did not go into a box labelled with your name.
+        A model weight is a number. GPT-4 has hundreds of billions of them. In the event your conversations were used for model training, those numbers would have shifted — fractionally, across all of them simultaneously. Your data would not have gone into a box labelled with your name.
       </p>
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
         color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
       }}>
-        It dissolved into the mathematics of the system.
+        It would have dissolved into the mathematics of the system.
       </p>
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
         color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 660,
       }}>
-        There is no box to open. There is no row to delete. There is no "Finn-shaped" region of the model. Your influence is distributed across every parameter — everywhere and nowhere — and that distribution is mathematically indistinguishable from the influence of every other conversation the model processed.
+        There is no box to open. There is no row to delete. There is no single-user region of the model. Any training influence would be distributed across every parameter — everywhere and nowhere — and that distribution would be mathematically indistinguishable from the influence of every other conversation the model processed.
       </p>
     </motion.div>
   );
@@ -803,7 +803,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
               </span>
               <div>
                 <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block' }}>messages</span>
-                <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.red, textTransform: 'uppercase', display: 'block', marginTop: '3px' }}>all permanent</span>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.red, textTransform: 'uppercase', display: 'block', marginTop: '3px' }}>no reverse function</span>
               </div>
             </div>
           ) : (
@@ -833,7 +833,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
             maxWidth: 700, marginBottom: '1.25rem',
           }}
         >
-          Your conversations cannot be unlearned.
+          There is currently no mechanism to unlearn your conversations from a deployed language model.
         </motion.h1>
 
         <motion.p
@@ -845,7 +845,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
             color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580,
           }}
         >
-          Not because OpenAI will not remove them. Because the process by which AI models learn — gradient descent across billions of parameters — has no reverse function. Deletion of your account is a different operation from removal from the model. This page explains the difference, and why it matters.
+          Not because OpenAI will not remove them. Because the process by which AI models learn — gradient descent across billions of parameters — has no reverse function. Deletion of your account is a different operation from removal from the model. Cooper et al. (2024) demonstrate that no currently available method can guarantee attribution-specific removal of training influence from a deployed LLM. This page explains the technical and legal dimensions of that gap.
         </motion.p>
       </motion.div>
 

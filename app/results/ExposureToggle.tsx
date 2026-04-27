@@ -98,8 +98,8 @@ function buildProfileComparison(analysis: DeepAnalysis): ProfileField[] {
   if (nighttimeRatio > 0.05) {
     fields.push({
       label: 'Late-night exposure',
-      fullValue: `${Math.round(nighttimeRatio * 100)}% midnight–5am`,
-      redactedValue: `${Math.round(nighttimeRatio * 100)}% midnight–5am`,
+      fullValue: `${Math.round(nighttimeRatio * 100)}% midnight-5am`,
+      redactedValue: `${Math.round(nighttimeRatio * 100)}% midnight-5am`,
       isHighSeverity: false,
     });
   }

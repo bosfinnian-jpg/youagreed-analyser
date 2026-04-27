@@ -21,25 +21,25 @@ export function getActiveEmptyStates(analysis: DeepAnalysis): EmptyStateConfig[]
       condition: analysis.totalUserMessages < 50,
       key: 'low-volume',
       label: 'Limited data sample',
-      message: `${analysis.totalUserMessages} messages is a small sample. The patterns identified here are preliminary — but they demonstrate what becomes possible at scale.`,
+      message: `${analysis.totalUserMessages} messages is a small sample. The patterns identified here are preliminary - but they demonstrate what becomes possible at scale.`,
     },
     {
       condition: (analysis.findings.personalInfo.names?.length || 0) === 0,
       key: 'no-names',
       label: 'No names detected',
-      message: 'No identifiable names were found in your messages. This does not mean you are anonymous — behavioural patterns, temporal signatures, and topic clusters are sufficient for identification without a name.',
+      message: 'No identifiable names were found in your messages. This does not mean you are anonymous - behavioural patterns, temporal signatures, and topic clusters are sufficient for identification without a name.',
     },
     {
       condition: (analysis.findings.personalInfo.locations?.length || 0) === 0,
       key: 'no-locations',
       label: 'No locations detected',
-      message: 'No explicit locations were identified. Geographic inference remains possible through contextual signals — timezone patterns, local references, cultural markers.',
+      message: 'No explicit locations were identified. Geographic inference remains possible through contextual signals - timezone patterns, local references, cultural markers.',
     },
     {
       condition: (analysis.findings.sensitiveTopics?.length || 0) === 0 && analysis.lifeEvents.length === 0,
       key: 'no-sensitive',
       label: 'No sensitive disclosures flagged',
-      message: 'No high-sensitivity disclosures were detected by this analysis. This tool scans for a limited set of patterns — the absence of flags does not indicate the absence of exploitable data.',
+      message: 'No high-sensitivity disclosures were detected by this analysis. This tool scans for a limited set of patterns - the absence of flags does not indicate the absence of exploitable data.',
     },
     {
       condition: !analysis.timespan || analysis.timespan.days < 7,
@@ -98,7 +98,7 @@ export function ConfidenceLimitations() {
     },
     {
       can: false,
-      text: 'Access the responses you received. This analysis is based solely on what you wrote — not what was returned to you.',
+      text: 'Access the responses you received. This analysis is based solely on what you wrote - not what was returned to you.',
     },
     {
       can: false,
@@ -146,7 +146,7 @@ export function ConfidenceLimitations() {
               color: item.can ? PALETTE.green : PALETTE.inkFaint,
               fontWeight: 600,
             }}>
-              {item.can ? 'CAN' : '—'}
+              {item.can ? 'CAN' : '-'}
             </span>
             <p style={{
               fontFamily: TYPE.serif, fontSize: '1rem',

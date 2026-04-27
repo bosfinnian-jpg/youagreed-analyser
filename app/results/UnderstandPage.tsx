@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ActLabel, ThreadSentence } from './DashboardLayout';
 
 // ============================================================================
-// TYPOGRAPHY — local to this page, uses a dark palette distinct from the
+// TYPOGRAPHY - local to this page, uses a dark palette distinct from the
 // dashboard so it reads as a different kind of space (a course, not a report)
 // ============================================================================
 
@@ -37,7 +37,7 @@ const C = {
 // ── INTERACTIVE INFERENCE DEMO ───────────────────────────────────────────────
 // Pudding principle: make the abstract tangible.
 // Type anything. Watch the model classify it in real time.
-// The inference is instant — that's the point.
+// The inference is instant - that's the point.
 
 const INFERENCE_RULES: { pattern: RegExp; label: string; color: string; bg: string }[] = [
   { pattern: /\b(anxious|anxiety|panic|worried|stress|depression|depressed|sad|lonely|hopeless|desperate|suicidal|self-harm|harm|crying|overwhelm|breakdown|spiral)\b/gi, label: 'Mental health signal', color: 'rgba(255,100,72,0.9)', bg: 'rgba(255,100,72,0.1)' },
@@ -51,7 +51,7 @@ const INFERENCE_RULES: { pattern: RegExp; label: string; color: string; bg: stri
 const SAMPLE_PHRASES = [
   "I've been feeling really anxious lately and my doctor suggested I see a therapist but I can't really afford it right now.",
   "Nobody else knows about this but my relationship is falling apart and I'm not sure I can keep going.",
-  "I need help — I'm in serious debt and I haven't told my partner yet. I don't know what to do.",
+  "I need help - I'm in serious debt and I haven't told my partner yet. I don't know what to do.",
 ];
 
 interface Tagged { text: string; label?: string; color?: string; bg?: string }
@@ -121,7 +121,7 @@ function InferenceTagger({ setPage }: { setPage?: (p: string) => void }) {
         What does the model see in your writing?
       </h3>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.7, maxWidth: 520, marginBottom: '2rem' }}>
-        Select a phrase below — or type your own. Watch the inference categories appear in real time.
+        Select a phrase below - or type your own. Watch the inference categories appear in real time.
         This is what happens to every message you send, automatically, at scale.
       </p>
 
@@ -213,7 +213,7 @@ function InferenceTagger({ setPage }: { setPage?: (p: string) => void }) {
       {detectedLabels.length > 0 ? (
         <div>
           <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-            Inference output — {detectedLabels.length} categor{detectedLabels.length === 1 ? 'y' : 'ies'} detected:
+            Inference output - {detectedLabels.length} categor{detectedLabels.length === 1 ? 'y' : 'ies'} detected:
           </p>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {INFERENCE_RULES.filter(r => detectedLabels.includes(r.label)).map(rule => (
@@ -254,13 +254,13 @@ const MODULES = [
 ];
 
 // ============================================================================
-// REAL ToS TEXT (OpenAI, three versions — June 2023, June 2025, April 2026)
+// REAL ToS TEXT (OpenAI, three versions - June 2023, June 2025, April 2026)
 // ============================================================================
 
 const TOS_VERSIONS = [
   {
     year: '2023',
-    label: 'June 2023 — Privacy Policy',
+    label: 'June 2023 - Privacy Policy',
     intro: 'The earliest archived version. Notice how short it is. Compare that to what comes later.',
     clauses: [
       {
@@ -291,7 +291,7 @@ const TOS_VERSIONS = [
   },
   {
     year: '2025',
-    label: 'June 2025 — Privacy Policy',
+    label: 'June 2025 - Privacy Policy',
     intro: 'Two years on. The policy has grown longer. More categories of data. More named disclosures. The shape of what "Personal Data" means has widened.',
     clauses: [
       {
@@ -328,8 +328,8 @@ const TOS_VERSIONS = [
   },
   {
     year: '2026',
-    label: 'April 2026 — US Privacy Policy',
-    intro: "The most recent version. It is now a US-specific policy — the scope has been regionalised. New categories appear: Contact Data, advertising, business account sharing. Personal Data extracted from you now also includes information received from advertisers and other data partners.",
+    label: 'April 2026 - US Privacy Policy',
+    intro: "The most recent version. It is now a US-specific policy - the scope has been regionalised. New categories appear: Contact Data, advertising, business account sharing. Personal Data extracted from you now also includes information received from advertisers and other data partners.",
     clauses: [
       {
         number: '1',
@@ -364,7 +364,7 @@ const TOS_VERSIONS = [
       {
         number: '19.2',
         title: 'Exhibition and Display Rights',
-        text: "The Company reserves the right, in perpetuity and without further compensation, to display, exhibit, and incorporate User Content — including but not limited to conversation transcripts, inferred behavioural profiles, and derivative analytical outputs — in exhibitions, academic research contexts, promotional materials, and public demonstrations of the Services. This right survives termination of the User's account and applies to all Content generated during the User's use of the Services, regardless of whether such Content has been subsequently deleted, redacted, or requested for removal.",
+        text: "The Company reserves the right, in perpetuity and without further compensation, to display, exhibit, and incorporate User Content - including but not limited to conversation transcripts, inferred behavioural profiles, and derivative analytical outputs - in exhibitions, academic research contexts, promotional materials, and public demonstrations of the Services. This right survives termination of the User's account and applies to all Content generated during the User's use of the Services, regardless of whether such Content has been subsequently deleted, redacted, or requested for removal.",
         severity: 'artist' as const,
       },
     ],
@@ -382,7 +382,7 @@ const INFERENCE_MAP: { pattern: string; label: string; segment: string; explanat
     pattern: 'financial distress signals',
     label: 'Financially distressed consumer',
     segment: 'PAYDAY LOANS / DEBT CONSOLIDATION',
-    explanation: 'Messages about money, debt, or affordability map onto data broker categories used in financial targeting. OpenAI does not sell this to lenders — but a breach would expose a profile that fits directly into those systems.',
+    explanation: 'Messages about money, debt, or affordability map onto data broker categories used in financial targeting. OpenAI does not sell this to lenders - but a breach would expose a profile that fits directly into those systems.',
   },
   {
     pattern: 'relationship processing',
@@ -406,13 +406,13 @@ const INFERENCE_MAP: { pattern: string; label: string; segment: string; explanat
     pattern: 'validation-seeking',
     label: 'Validation-dependent personality',
     segment: 'INFLUENCER / SOCIAL PROOF MARKETING',
-    explanation: 'Patterns of validation-seeking are detectable from language alone. This maps onto susceptibility categories used in status and lifestyle targeting — the model has learned the pattern whether or not the data is ever sold.',
+    explanation: 'Patterns of validation-seeking are detectable from language alone. This maps onto susceptibility categories used in status and lifestyle targeting - the model has learned the pattern whether or not the data is ever sold.',
   },
   {
     pattern: 'career transition',
     label: 'Career transition / job seeker',
     segment: 'LINKEDIN PREMIUM / CAREER COACHING',
-    explanation: 'Career vulnerability is visible from conversation patterns. This maps onto data broker categories used by recruitment and financial services products — and would be immediately useful in a breach scenario.',
+    explanation: 'Career vulnerability is visible from conversation patterns. This maps onto data broker categories used by recruitment and financial services products - and would be immediately useful in a breach scenario.',
   },
 ];
 
@@ -428,7 +428,7 @@ const PRECEDENTS = [
     back: {
       title: 'FTC v. BetterHelp',
       mechanism: 'Shared sensitive mental health data with Facebook and Snapchat for advertising purposes.',
-      detail: 'BetterHelp told every user in onboarding: "Rest assured — any information provided will stay private between you and your counsellor." The FTC found the company was simultaneously sending therapy-seeking data to Facebook and Snapchat for targeting.',
+      detail: 'BetterHelp told every user in onboarding: "Rest assured - any information provided will stay private between you and your counsellor." The FTC found the company was simultaneously sending therapy-seeking data to Facebook and Snapchat for targeting.',
       fine: '$7.8M settlement',
     },
   },
@@ -450,7 +450,7 @@ const PRECEDENTS = [
     back: {
       title: 'Oracle Data Cloud Settlement',
       mechanism: 'Assembled profiles on hundreds of millions of people from platforms those people visited, without their consent.',
-      detail: 'The data broker market is valued at $278 billion. Oracle was one of its largest players. The settlement amount — within the economics of this industry — is unremarkable.',
+      detail: 'The data broker market is valued at $278 billion. Oracle was one of its largest players. The settlement amount - within the economics of this industry - is unremarkable.',
       fine: '$115M settlement',
     },
   },
@@ -549,7 +549,7 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
           color: C.text,
         }}
       >
-        {/* Progress indicator — only shown once modules have started */}
+        {/* Progress indicator - only shown once modules have started */}
         {hasStarted && currentModule < 99 && <ProgressBar current={currentModule} completed={completed} onJump={goToModule} />}
 
         {/* Module content */}
@@ -647,7 +647,7 @@ function ProgressBar({
           textTransform: 'uppercase',
         }}
       >
-        {current <= 4 ? `Module ${current} of 4 — ${MODULES[current - 1]?.label ?? ''}` : 'Course complete'}
+        {current <= 4 ? `Module ${current} of 4 - ${MODULES[current - 1]?.label ?? ''}` : 'Course complete'}
       </p>
     </div>
   );
@@ -705,7 +705,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
         }}
       >
-        Four modules. Each ends with something you do, not something you read. Before you begin — try the tool below. Type anything you might say to an AI.
+        Four modules. Each ends with something you do, not something you read. Before you begin - try the tool below. Type anything you might say to an AI.
       </motion.p>
 
       {/* InferenceTagger embedded as the intro interactive */}
@@ -878,8 +878,8 @@ function ModuleFrame({
 }
 
 // ============================================================================
-// MODULE 1 — THE LEAP
-// Interaction: click "show the leap" — animated lines connect user words
+// MODULE 1 - THE LEAP
+// Interaction: click "show the leap" - animated lines connect user words
 // to segment classifications
 // ============================================================================
 
@@ -953,7 +953,7 @@ function Module1({
         </p>
       </div>
 
-      {/* Per-row layout — line is inside each row so it always hits the vertical centre */}
+      {/* Per-row layout - line is inside each row so it always hits the vertical centre */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         {userInferences.map((inf, i) => (
           <div key={inf.pattern} className="understand-inference-row" style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', alignItems: 'center' }}>
@@ -979,7 +979,7 @@ function Module1({
               {inf.pattern}
             </motion.div>
 
-            {/* Arrow — horizontally centred, always vertically centred because it's in a grid row */}
+            {/* Arrow - horizontally centred, always vertically centred because it's in a grid row */}
             <div className="understand-inference-arrow" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
               <svg width="100%" height="2" viewBox="0 0 80 2" preserveAspectRatio="none" overflow="visible">
                 <motion.line
@@ -1075,7 +1075,7 @@ function Module1({
                 fontStyle: 'italic',
               }}
             >
-              That jump — from the left column to the right — is the entire argument of this project.
+              That jump - from the left column to the right - is the entire argument of this project.
               Zuboff calls it the shift from Stage 1 to Stage 2. A cookie records where you went. A conversation records how you think.
             </p>
           </motion.div>
@@ -1086,7 +1086,7 @@ function Module1({
 }
 
 // ============================================================================
-// MODULE 2 — PRECEDENTS (card flip memory game)
+// MODULE 2 - PRECEDENTS (card flip memory game)
 // ============================================================================
 
 function Module2({
@@ -1336,7 +1336,7 @@ function PrecedentCard({
 }
 
 // ============================================================================
-// MODULE 3 — YOU CANNOT TAKE IT BACK (deletion interaction)
+// MODULE 3 - YOU CANNOT TAKE IT BACK (deletion interaction)
 // ============================================================================
 
 function Module3({
@@ -1576,7 +1576,7 @@ function Module3({
 }
 
 // ============================================================================
-// MODULE 4 — YOU DID NOT REALLY CONSENT (reading speed test)
+// MODULE 4 - YOU DID NOT REALLY CONSENT (reading speed test)
 // ============================================================================
 
 function Module4({
@@ -1613,7 +1613,7 @@ function Module4({
     onComplete();
   };
 
-  // Estimated reading time for the policy — 2,800 words at 250 wpm = ~11 minutes
+  // Estimated reading time for the policy - 2,800 words at 250 wpm = ~11 minutes
   const estimatedReadingTime = 11 * 60;
   const percentRead = started ? Math.min((elapsed / estimatedReadingTime) * 100, 100) : 0;
 
@@ -1644,7 +1644,7 @@ function Module4({
               margin: '0 auto 2rem',
             }}
           >
-            When you created your ChatGPT account, you agreed to terms that permit OpenAI to use your conversations to train its models — in roughly twelve seconds.
+            When you created your ChatGPT account, you agreed to terms that permit OpenAI to use your conversations to train its models - in roughly twelve seconds.
             The actual policy is below. It is approximately 2,800 words. Start the clock and try to read it properly.
           </p>
           <button
@@ -1821,7 +1821,7 @@ function Module4({
               <strong>13. Additional disclosures for EEA, UK, and Swiss residents.</strong> The data controller for EU/UK/CH users is OpenAI Ireland Limited (when providing services to EU/EEA/UK) or OpenAI, L.L.C. (for all other users). Where we process your Personal Data on the basis of your consent, you have the right to withdraw consent. We rely on the following legal bases: performance of a contract; legitimate interests (providing, improving, and promoting our services, and protecting against fraud and abuse); legal obligation; and consent (for certain categories of sensitive data and direct marketing).
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>14. Data retention for trained models.</strong> When you allow us to use your Content to improve our models, your Content may be retained beyond the standard deletion window. Content incorporated into model training is processed as part of our machine learning pipeline. At this stage it is de-identified from your account — however, as acknowledged by researchers including Carlini et al. (2021), trained model weights may retain recoverable information from training data. We are unable to guarantee complete removal of any specific Content that has been used in training from the resulting models.
+              <strong>14. Data retention for trained models.</strong> When you allow us to use your Content to improve our models, your Content may be retained beyond the standard deletion window. Content incorporated into model training is processed as part of our machine learning pipeline. At this stage it is de-identified from your account - however, as acknowledged by researchers including Carlini et al. (2021), trained model weights may retain recoverable information from training data. We are unable to guarantee complete removal of any specific Content that has been used in training from the resulting models.
             </p>
           </div>
 

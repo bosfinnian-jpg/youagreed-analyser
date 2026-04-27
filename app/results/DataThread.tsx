@@ -4,18 +4,18 @@ import { useEffect, useRef } from 'react';
 import type { DashPage } from './DashboardLayout';
 
 // ============================================================================
-// DATA THREAD — the living element on every page
+// DATA THREAD - the living element on every page
 //
 // A sinuous double-helix on the right edge. Two strands: what you typed,
 // what was inferred. Coloured data packets travel downward continuously.
-// The snake only exists in a band around your scroll position — it emerges
+// The snake only exists in a band around your scroll position - it emerges
 // ahead of you, dissolves above. Something is always watching you read.
 //
-// Each page has its own jewel tone — colours that don't exist elsewhere
+// Each page has its own jewel tone - colours that don't exist elsewhere
 // in the palette, vivid against the paper.
 // ============================================================================
 
-// Jewel tones — distinct from the site's existing red/amber/green
+// Jewel tones - distinct from the site's existing red/amber/green
 export const PAGE_COLORS: Record<DashPage, { r: number; g: number; b: number; name: string }> = {
   overview:        { r: 255, g: 107, b: 107, name: 'coral' },       // coral red
   profile:         { r: 255, g: 183, b: 77,  name: 'gold' },        // warm gold
@@ -29,7 +29,7 @@ export const PAGE_COLORS: Record<DashPage, { r: number; g: number; b: number; na
   'sources-detail':{ r: 168, g: 218, b: 220, name: 'ice' },
 };
 
-// Data packet labels — tiny text labels that travel down the strand
+// Data packet labels - tiny text labels that travel down the strand
 const PACKET_LABELS: Record<string, string[]> = {
   overview:   ['msg', 'loc', 'name', 'date', 'topic', 'mood'],
   profile:    ['inference', 'pattern', 'belief', 'trait', 'tell'],
@@ -125,7 +125,7 @@ export default function DataThread({ page }: { page: DashPage }) {
       const cxBase  = W / 2;
       const amp     = 10; // wave amplitude
       const freq    = 0.028; // wave frequency (cycles per pixel)
-      // Phase advances with time — makes the wave crawl downward
+      // Phase advances with time - makes the wave crawl downward
       const phase1  = t * 1.1;
       const phase2  = t * 1.1 + Math.PI; // opposite strand
 
@@ -221,7 +221,7 @@ export default function DataThread({ page }: { page: DashPage }) {
         ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${a})`;
         ctx.fill();
 
-        // Label — only draw when large enough to read
+        // Label - only draw when large enough to read
         if (edgeFade > 0.5) {
           ctx.font = `7px "Courier Prime", monospace`;
           ctx.fillStyle = `rgba(${color.r},${color.g},${color.b},${a * 0.75})`;
@@ -230,7 +230,7 @@ export default function DataThread({ page }: { page: DashPage }) {
         }
       }
 
-      // ── Head pip — a brighter node that floats at mid-viewport ──────────
+      // ── Head pip - a brighter node that floats at mid-viewport ──────────
       const headY   = H * 0.5 + Math.sin(t * 0.7) * H * 0.04;
       const headX   = cxBase + Math.sin(phase1 + headY * freq) * amp;
       const headGrd = ctx.createRadialGradient(headX, headY, 0, headX, headY, 12);

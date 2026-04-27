@@ -1,5 +1,5 @@
 // ============================================================================
-// aiEnrichment.ts — v3
+// aiEnrichment.ts - v3
 // Merges AI enrichment into the deep analysis.
 // Now handles psychological_signals and inferred_beliefs.
 // ============================================================================
@@ -326,7 +326,7 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
   const existingCategories = new Set(analysis.findings.sensitiveTopics.map((t: any) => t.category));
   const newSensitiveTopics = [...analysis.findings.sensitiveTopics, ...aiSensitiveTopics.filter(t => !existingCategories.has(t.category))];
 
-  // Psychological signals — aggregate across all enriched messages
+  // Psychological signals - aggregate across all enriched messages
   const psychSignalCounts: Record<string, number> = {};
   for (const e of enrichments) {
     if (!e.is_personal || e.is_template_or_script) continue;
@@ -335,7 +335,7 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
     }
   }
 
-  // Inferred beliefs — collect unique ones, ranked by frequency
+  // Inferred beliefs - collect unique ones, ranked by frequency
   const beliefCounts: Record<string, number> = {};
   for (const e of enrichments) {
     if (!e.is_personal || e.is_template_or_script) continue;
@@ -360,9 +360,9 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
 
   // Override attachment style with AI signals if stronger evidence
   if (psychSignalCounts['attachment_anxiety'] >= 3 && (!updatedPortrait.attachmentStyle || !updatedPortrait.attachmentStyle.includes('Anxious'))) {
-    updatedPortrait.attachmentStyle = 'Anxious attachment pattern — preoccupied with others\' responses and availability';
+    updatedPortrait.attachmentStyle = 'Anxious attachment pattern - preoccupied with others\' responses and availability';
   } else if (psychSignalCounts['attachment_avoidant'] >= 2 && (!updatedPortrait.attachmentStyle || !updatedPortrait.attachmentStyle.includes('Avoidant'))) {
-    updatedPortrait.attachmentStyle = 'Avoidant attachment pattern — discomfort with emotional closeness';
+    updatedPortrait.attachmentStyle = 'Avoidant attachment pattern - discomfort with emotional closeness';
   }
 
   // Add inferred beliefs to portrait
@@ -467,7 +467,7 @@ export async function enrichAnalysisWithAI(analysis: DeepAnalysis, onProgress?: 
     onProgress?.({ stage: 'merging', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
     const merged = mergeEnrichments(analysis, enrichments);
 
-    // Synthesis pass — one final call reading the top excerpts together
+    // Synthesis pass - one final call reading the top excerpts together
     onProgress?.({ stage: 'synthesizing', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
     try {
       const synthesis = await runSynthesis(merged, enrichments);

@@ -5,7 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE } from './DashboardLayout';
 import type { EmotionalTimeline, WeekStats } from './deepParser';
 
-// Dates lose their type through sessionStorage — reconvert
+// Dates lose their type through sessionStorage - reconvert
 const toDate = (d: any): Date => d instanceof Date ? d : new Date(d);
 
 interface EmotionalTimelineChartProps {

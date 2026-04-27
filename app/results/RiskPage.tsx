@@ -96,7 +96,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       : 'Your behavioural patterns alone are sufficient for risk modelling.',
     body: anxietyScore > 3
       ? `Your average anxiety score across all messages is ${anxietyScore.toFixed(1)}/10. Underwriting algorithms treat sustained anxiety indicators as a predictor of future claims. Combined with ${nightPct > 5 ? nightPct + '% late-night usage (a secondary stress marker)' : 'your disclosure frequency'}, your profile would trigger elevated risk classification in automated systems.`
-      : `Even without direct mental health disclosures, your usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers — but data brokers compile similar profiles from dozens of sources. If this data were ever exposed, it would fit directly into those systems. Insurers do not require a diagnosis. They require a probability.`,
+      : `Even without direct mental health disclosures, your usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers - but data brokers compile similar profiles from dozens of sources. If this data were ever exposed, it would fit directly into those systems. Insurers do not require a diagnosis. They require a probability.`,
     dataPoints: [
       { label: 'Sensitive disclosures', value: String(sensitiveCount), alarming: sensitiveCount > 5 },
       { label: 'Anxiety indicator', value: anxietyScore > 0 ? anxietyScore.toFixed(1) + '/10' : 'Not scored', alarming: anxietyScore > 4 },
@@ -116,7 +116,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     subtitle: careerEvents.length > 0
       ? `${careerEvents.length} career-related life event${careerEvents.length > 1 ? 's' : ''} detected. AI screening tools flag this as instability.`
       : 'Your writing patterns are sufficient for personality inference. No interview required.',
-    body: `You submitted ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution '}form a personality signature. Companies like Humantic AI claim 78–85% accuracy in personality profiling from text alone. ${anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.'}${depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage — a flag for productivity screening.' : ''}`,
+    body: `You submitted ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Your dominant topics (' + themes.join(', ') + ') ' : 'Your topic distribution '}form a personality signature. Companies like Humantic AI claim 78-85% accuracy in personality profiling from text alone. ${anxietyScore > 3 ? 'Your anxiety indicators (avg ' + anxietyScore.toFixed(1) + '/10) would flag as emotional volatility in screening models.' : 'Volume and consistency patterns alone indicate work habits and reliability.'}${depScore > 60 ? ' Your dependency score (' + depScore + '/100) suggests compulsive tool usage - a flag for productivity screening.' : ''}`,
     dataPoints: [
       { label: 'Messages analysed', value: totalMsgs.toLocaleString('en-GB'), alarming: totalMsgs > 2000 },
       { label: 'Career events', value: String(careerEvents.length), alarming: careerEvents.length > 0 },
@@ -135,10 +135,10 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     subtitle: segments.length > 0
       ? `Categories: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
       : 'Behavioural patterns alone are sufficient for vulnerability classification.',
-    body: `${nightPct > 5 ? 'You are most emotionally unguarded between midnight and 5am (' + nightPct + '% of your messages). Data from these windows contains the highest concentration of sensitive disclosure. ' : ''}OpenAI does not sell your conversations to advertisers. But the patterns your messages contain — vulnerability indicators, life circumstances, emotional states — map directly onto categories that data brokers trade. A breach, a legal order, or a policy change would transfer this profile into systems where it has an immediate market price. The data exists. That is the risk.`,
+    body: `${nightPct > 5 ? 'You are most emotionally unguarded between midnight and 5am (' + nightPct + '% of your messages). Data from these windows contains the highest concentration of sensitive disclosure. ' : ''}OpenAI does not sell your conversations to advertisers. But the patterns your messages contain - vulnerability indicators, life circumstances, emotional states - map directly onto categories that data brokers trade. A breach, a legal order, or a policy change would transfer this profile into systems where it has an immediate market price. The data exists. That is the risk.`,
     dataPoints: [
       { label: 'Assigned segments', value: String(segments.length), alarming: segments.length > 3 },
-      { label: 'Vulnerability window', value: nightPct > 5 ? `00:00–05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
+      { label: 'Vulnerability window', value: nightPct > 5 ? `00:00-05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
       { label: 'Location exposed', value: homeLoc ? homeLoc.location : 'Not detected', alarming: !!homeLoc },
       { label: 'Named contacts', value: String(nameCount), alarming: nameCount > 3 },
     ],
@@ -152,7 +152,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     relevance: breachRelevance,
     title: 'None of this requires intent. One breach is enough.',
     subtitle: `Your profile contains ${nameCount} named individual${nameCount === 1 ? '' : 's'}, ${locCount} location${locCount === 1 ? '' : 's'}, and ${sensitiveCount} sensitive disclosure${sensitiveCount === 1 ? '' : 's'}. All would be exposed.`,
-    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure — none of which can be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named are also exposed. Their records are now linked to yours. ' : ''}${r.privacyScore >= 60 ? 'Your exposure index (' + r.privacyScore + '/100) places you in the highest-risk category for identity reconstruction from leaked behavioural data.' : 'Even partial exposure of your behavioural patterns is sufficient for re-identification.'}`,
+    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure - none of which can be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named are also exposed. Their records are now linked to yours. ' : ''}${r.privacyScore >= 60 ? 'Your exposure index (' + r.privacyScore + '/100) places you in the highest-risk category for identity reconstruction from leaked behavioural data.' : 'Even partial exposure of your behavioural patterns is sufficient for re-identification.'}`,
     dataPoints: [
       { label: 'Exposure index', value: r.privacyScore + '/100', alarming: r.privacyScore >= 60 },
       { label: 'People exposed', value: String(nameCount), alarming: nameCount > 0 },
@@ -181,7 +181,7 @@ function sevColor(severity: string) {
 }
 
 // ============================================================================
-// HERO SCENARIO — full-width, unboxed, Resist-pattern
+// HERO SCENARIO - full-width, unboxed, Resist-pattern
 // ============================================================================
 
 function HeroScenario({ scenario }: { scenario: RiskScenario }) {
@@ -218,7 +218,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         </span>
       </div>
 
-      {/* Title — large, declarative */}
+      {/* Title - large, declarative */}
       <h2 style={{
         fontFamily: TYPE.serif,
         fontSize: 'clamp(1.8rem, 4vw, 3rem)',
@@ -238,7 +238,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         {scenario.subtitle}
       </p>
 
-      {/* Data points — horizontal strip, no box around them */}
+      {/* Data points - horizontal strip, no box around them */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
@@ -269,7 +269,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         {scenario.body}
       </p>
 
-      {/* Precedent — left-bordered, no heavy box */}
+      {/* Precedent - left-bordered, no heavy box */}
       <div style={{
         borderLeft: `2px solid ${PALETTE.border}`,
         paddingLeft: '1.5rem',
@@ -292,7 +292,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
 }
 
 // ============================================================================
-// SECONDARY SCENARIO — accordion, clean
+// SECONDARY SCENARIO - accordion, clean
 // ============================================================================
 
 function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: number }) {
@@ -499,7 +499,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         color: PALETTE.inkMuted, lineHeight: 1.75,
         maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
       }}>
-        OpenAI does not sell your data. But every time you load a webpage, your behavioural profile — built from sources across the internet — enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, would slot directly into that system. This is what that would look like.
+        OpenAI does not sell your data. But every time you load a webpage, your behavioural profile - built from sources across the internet - enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, would slot directly into that system. This is what that would look like.
       </p>
 
       {/* Lot card */}
@@ -610,7 +610,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                 <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', color: PALETTE.ink, marginBottom: '0.3rem' }}>{winner.buyer}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '1.2rem', color: PALETTE.red, letterSpacing: '0.02em', marginBottom: '0.8rem' }}>£{winner.amount.toFixed(4)}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
-                  In the real-time bidding ecosystem, a winner receives: a behavioural profile, vulnerability classifications, a targeting window{homeLoc ? `, and an approximate location (${homeLoc.location})` : ''}. OpenAI does not participate in this system. But a profile like yours — if exposed — would be immediately usable within it. You would not be notified.
+                  In the real-time bidding ecosystem, a winner receives: a behavioural profile, vulnerability classifications, a targeting window{homeLoc ? `, and an approximate location (${homeLoc.location})` : ''}. OpenAI does not participate in this system. But a profile like yours - if exposed - would be immediately usable within it. You would not be notified.
                 </p>
               </motion.div>
             )}
@@ -642,7 +642,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
 
 // ── BREACH HISTORY TIMELINE ──────────────────────────────────────────────
 // Pudding principle: make the threat feel regular, not exceptional.
-// Real incidents. Real scales. The question is not IF — it is when.
+// Real incidents. Real scales. The question is not IF - it is when.
 
 const BREACHES = [
   { year: 2021, month: 4,  name: 'Facebook',   records: 533, detail: 'Phone numbers, names, locations of 533M users published' },
@@ -651,7 +651,7 @@ const BREACHES = [
   { year: 2022, month: 8,  name: 'Twitter/X',   records: 400, detail: '400M unique user records including private emails' },
   { year: 2023, month: 3,  name: 'OpenAI',      records: 0.1, detail: 'Bug exposed conversation titles and payment info of active users' },
   { year: 2023, month: 6,  name: 'MOVEit',      records: 60,  detail: '60M+ affected across hundreds of organisations via file transfer software' },
-  { year: 2024, month: 2,  name: 'Change Health',records: 190, detail: '190M patient healthcare records — largest US medical breach' },
+  { year: 2024, month: 2,  name: 'Change Health',records: 190, detail: '190M patient healthcare records - largest US medical breach' },
   { year: 2024, month: 5,  name: 'Snowflake',   records: 50,  detail: 'Ticketmaster, Santander, AT&T data via cloud storage credentials' },
   { year: 2025, month: 1,  name: 'DeepSeek',    records: 1,   detail: 'AI chat logs, API keys, backend data exposed in open database' },
 ];
@@ -679,7 +679,7 @@ function BreachTimeline() {
       }}
     >
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-        Major data incidents — 2021–2025
+        Major data incidents - 2021-2025
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint, lineHeight: 1.7, maxWidth: 520, marginBottom: '2.5rem' }}>
         Circle size = records exposed (millions). Breach is not exceptional. Hover each incident.
@@ -779,7 +779,7 @@ function BreachTimeline() {
             }}
           >
             <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-              {tooltip.name} — {tooltip.month}/{tooltip.year}
+              {tooltip.name} - {tooltip.month}/{tooltip.year}
             </p>
             <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
               {tooltip.detail}
@@ -825,7 +825,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
       position: 'relative',
     }}>
 
-      {/* Background geometry — top right, faint crosshair */}
+      {/* Background geometry - top right, faint crosshair */}
       <svg className="deco-svg" style={{
         position: 'absolute', top: 0, right: 0,
         width: '260px', height: '260px',
@@ -842,7 +842,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
         </g>
       </svg>
 
-      {/* HEADER — Resist pattern */}
+      {/* HEADER - Resist pattern */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -854,10 +854,10 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
         }}
       >
         <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
-        <ThreadSentence>What the record enables — and the technical reason it may not need to leave the system to be used against you.</ThreadSentence>
+        <ThreadSentence>What the record enables - and the technical reason it may not need to leave the system to be used against you.</ThreadSentence>
         
 
-        {/* Active count — the big number */}
+        {/* Active count - the big number */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -980,7 +980,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
             color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 540,
             marginBottom: '1.5rem', fontStyle: 'italic',
           }}>
-            These scenarios depend on the record leaving the system. Act III addresses the prior question: why the record can never be fully removed — even by those who hold it.
+            These scenarios depend on the record leaving the system. Act III addresses the prior question: why the record can never be fully removed - even by those who hold it.
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <button

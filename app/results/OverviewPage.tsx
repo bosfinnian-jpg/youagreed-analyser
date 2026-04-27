@@ -1,20 +1,20 @@
 'use client';
 
 // ============================================================================
-// OVERVIEW PAGE — Act I: The Record
+// OVERVIEW PAGE - Act I: The Record
 // ============================================================================
 // Architecture: linear single-column scroll, eight chapters, fixed right rail.
-// Each chapter is its own moment of demonstration — anime.js earns its place
+// Each chapter is its own moment of demonstration - anime.js earns its place
 // by embodying the argument, not decorating it.
 //
 // ┌──────────────────────────────────────────────────────────────────────┐
-// │ 00 ARRIVAL    confident silence — type alone, almost no animation    │
+// │ 00 ARRIVAL    confident silence - type alone, almost no animation    │
 // │ 01 VOLUME     the count, then a field of dots, stagger from random   │
-// │ 02 INFERENCE  attributes stamped onto the page — spring scale+rotate │
-// │ 03 DISCLOSURE the most exposing excerpt — createDrawable + words     │
+// │ 02 INFERENCE  attributes stamped onto the page - spring scale+rotate │
+// │ 03 DISCLOSURE the most exposing excerpt - createDrawable + words     │
 // │ 04 NETWORK    named people connected by SVG paths drawing in         │
-// │ 05 SCORE      the climax ring — createTimeline + spring counter      │
-// │ 06 PERMANENCE the gut-punch — RETAINED watermark + sealed mass       │
+// │ 05 SCORE      the climax ring - createTimeline + spring counter      │
+// │ 06 PERMANENCE the gut-punch - RETAINED watermark + sealed mass       │
 // │ 07 CONTINUE   navigation onward                                      │
 // └──────────────────────────────────────────────────────────────────────┘
 // ============================================================================
@@ -56,10 +56,10 @@ function useScrollTrigger(ref: React.RefObject<HTMLElement | null>, fn: () => vo
 }
 
 const fmt = (n: number | null | undefined) =>
-  typeof n === 'number' ? n.toLocaleString('en-GB') : '—';
+  typeof n === 'number' ? n.toLocaleString('en-GB') : '-';
 
 // ════════════════════════════════════════════════════════════════════════════
-// RIGHT RAIL — fixed chapter index
+// RIGHT RAIL - fixed chapter index
 // ════════════════════════════════════════════════════════════════════════════
 function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[] }) {
   return (
@@ -112,7 +112,7 @@ function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[
   );
 }
 
-// ── Chapter Dots — Spotify Wrapped progress indicator ───────────────────────
+// ── Chapter Dots - Spotify Wrapped progress indicator ───────────────────────
 function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof CHAPTERS[number][] }) {
   const activeLabel = chapters.find(c => c.id === active)?.label ?? '';
   const handleJump = (id: ChapterId) => {
@@ -167,7 +167,7 @@ function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER SHELL — consistent layout for every chapter
+// CHAPTER SHELL - consistent layout for every chapter
 // ════════════════════════════════════════════════════════════════════════════
 function ChapterShell({
   id, num, label, children, onActive, last = false,
@@ -212,7 +212,7 @@ function ChapterShell({
         overflow: 'hidden',
       }}
     >
-      {/* Ghost chapter number — fades + scales up as chapter enters view */}
+      {/* Ghost chapter number - fades + scales up as chapter enters view */}
       {num && (
         <div aria-hidden="true" className="chapter-ghost-num" style={{
           position: 'absolute',
@@ -261,7 +261,7 @@ function ChapterShell({
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 00 — ARRIVAL
+// CHAPTER 00 - ARRIVAL
 // Confident silence. Almost no animation. Just the type.
 // ════════════════════════════════════════════════════════════════════════════
 function ArrivalChapter({ name, date, onActive }: {
@@ -343,7 +343,7 @@ function ArrivalChapter({ name, date, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 01 — VOLUME
+// CHAPTER 01 - VOLUME
 // A massive number counts up. Then a field of dots stagger-blooms in.
 // ════════════════════════════════════════════════════════════════════════════
 function VolumeChapter({ count, days, onActive }: {
@@ -450,7 +450,7 @@ function VolumeChapter({ count, days, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 02 — INFERENCE
+// CHAPTER 02 - INFERENCE
 // Attributes stamped onto the page with spring-scale + slight rotation.
 // Each one feels like a rubber stamp on a dossier.
 // ════════════════════════════════════════════════════════════════════════════
@@ -587,7 +587,7 @@ function InferenceChapter({ inferences, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          None of these attributes were stated. They were inferred —
+          None of these attributes were stated. They were inferred -
           and the inference process is not described in the terms you agreed to.
         </p>
       </ChapterShell>
@@ -596,7 +596,7 @@ function InferenceChapter({ inferences, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 03 — DISCLOSURE
+// CHAPTER 03 - DISCLOSURE
 // Most exposing excerpt. Red border draws down, words appear sequentially.
 // ════════════════════════════════════════════════════════════════════════════
 function DisclosureChapter({ excerpt, date, onActive }: {
@@ -734,7 +734,7 @@ function DisclosureChapter({ excerpt, date, onActive }: {
             letterSpacing: '0.2em', color: PALETTE.inkFaint,
             textTransform: 'uppercase', marginBottom: '2.5rem',
           }}>
-            — {date}
+            - {date}
           </p>
         )}
 
@@ -755,8 +755,8 @@ function DisclosureChapter({ excerpt, date, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 04 — NETWORK
-// SVG constellation — names appear, then paths draw between them.
+// CHAPTER 04 - NETWORK
+// SVG constellation - names appear, then paths draw between them.
 // ════════════════════════════════════════════════════════════════════════════
 function NetworkChapter({ names, onActive }: {
   names: string[];
@@ -881,7 +881,7 @@ function NetworkChapter({ names, onActive }: {
           marginInline: 'auto',
         }}>
           <svg ref={svgRef} viewBox={viewBox} style={{ width: '100%', height: '100%' }}>
-            {/* Connecting lines — fully connected graph for small N */}
+            {/* Connecting lines - fully connected graph for small N */}
             {positions.map((p1, i) =>
               positions.slice(i + 1).map((p2, j) => (
                 <line key={`${i}-${j}`} className="n-line"
@@ -933,8 +933,8 @@ function NetworkChapter({ names, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          These individuals did not consent. Their names —
-          and the contexts in which you mentioned them —
+          These individuals did not consent. Their names -
+          and the contexts in which you mentioned them -
           have been retained.
         </p>
       </ChapterShell>
@@ -943,7 +943,7 @@ function NetworkChapter({ names, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 05 — SCORE
+// CHAPTER 05 - SCORE
 // The climax. Big ring draws in, number counts up with spring overshoot.
 // ════════════════════════════════════════════════════════════════════════════
 const RING_R = 130;
@@ -1193,7 +1193,7 @@ function ScoreChapter({ score, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 06 — PERMANENCE
+// CHAPTER 06 - PERMANENCE
 // The gut-punch. A massive RETAINED watermark fades in. A seal SVG draws.
 // ════════════════════════════════════════════════════════════════════════════
 function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) {
@@ -1373,8 +1373,8 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 07 — CONTINUE
-// Onward navigation. No special anime.js — this is the breath after.
+// CHAPTER 07 - CONTINUE
+// Onward navigation. No special anime.js - this is the breath after.
 // ════════════════════════════════════════════════════════════════════════════
 function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
   return (
@@ -1431,7 +1431,7 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
                 display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
                 letterSpacing: '0.28em', color: PALETTE.redMuted,
                 textTransform: 'uppercase', marginBottom: '0.4rem',
-              }}>ACT II — Inference</span>
+              }}>ACT II - Inference</span>
               The profile they built →
             </button>
             <button onClick={() => setPage('terms')}
@@ -1464,7 +1464,7 @@ export default function OverviewPage({ results, sources, setPage }: {
   const [active, setActive] = useState<ChapterId>('arrival');
   const handleActive = useCallback((id: ChapterId) => setActive(id), []);
 
-  // Snap scroll — on while overview is mounted, removed on unmount
+  // Snap scroll - on while overview is mounted, removed on unmount
   useEffect(() => {
     document.documentElement.style.scrollSnapType = 'y proximity';
     return () => { document.documentElement.style.scrollSnapType = ''; };
@@ -1481,7 +1481,7 @@ export default function OverviewPage({ results, sources, setPage }: {
     day: 'numeric', month: 'long', year: 'numeric',
   });
 
-  // Build inference list — prefer synthesis demographicPredictions, fall back to portrait
+  // Build inference list - prefer synthesis demographicPredictions, fall back to portrait
   let inferences: { attribute: string; value: string; confidence: number }[] = [];
   const synth = results?.synthesis;
   const portrait = results?.psychologicalPortrait;
@@ -1489,7 +1489,7 @@ export default function OverviewPage({ results, sources, setPage }: {
   if (synth?.demographicPredictions?.length) {
     inferences = synth.demographicPredictions.slice(0, 6).map((d: any) => ({
       attribute:  d.attribute || 'Attribute',
-      value:      d.value || '—',
+      value:      d.value || '-',
       confidence: typeof d.confidence === 'number' ? d.confidence : 0.7,
     }));
   } else if (portrait) {
@@ -1541,12 +1541,12 @@ export default function OverviewPage({ results, sources, setPage }: {
         }
         .chapter-snap { scroll-snap-align: start; }
 
-        /* Bottom chapter indicator — sits above home indicator on iOS */
+        /* Bottom chapter indicator - sits above home indicator on iOS */
         .ov-chapter-dots {
           padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
         }
 
-        /* Volume chapter — phone-portrait grid (denser, taller) */
+        /* Volume chapter - phone-portrait grid (denser, taller) */
         @media (max-width: 640px) {
           .v-grid {
             grid-template-columns: repeat(14, 1fr) !important;
@@ -1556,14 +1556,14 @@ export default function OverviewPage({ results, sources, setPage }: {
           /* Hide ghost chapter number on smaller screens to free up space */
           .chapter-ghost-num { font-size: clamp(10rem, 36vw, 18rem) !important; }
 
-          /* Permanence chapter — keep seal small + tucked, watermark dominates */
+          /* Permanence chapter - keep seal small + tucked, watermark dominates */
           .permanence-seal {
             width: clamp(86px, 22vw, 120px) !important;
             top: 0 !important;
             right: 0 !important;
           }
 
-          /* Continue chapter — primary CTA full width, secondary stacks */
+          /* Continue chapter - primary CTA full width, secondary stacks */
           .continue-cta-row {
             flex-direction: column !important;
             align-items: stretch !important;

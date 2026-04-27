@@ -90,11 +90,11 @@ function generatePredictedAttributes(r: AnalysisResult): PredictedAttribute[] {
   const youthSignals = themeLabels.filter(t => ['university', 'uni', 'student', 'career', 'job', 'dating', 'flatmate', 'rent'].some(k => t.includes(k))).length;
   const matureSignals = themeLabels.filter(t => ['mortgage', 'pension', 'retirement', 'grandchild'].some(k => t.includes(k))).length;
   if (youthSignals > 0) {
-    attrs.push({ label: 'Age bracket: 18–34', confidence: Math.min(82, 55 + youthSignals * 12), evidence: youthSignals + ' topics associated with younger demographic', category: 'demographic' });
+    attrs.push({ label: 'Age bracket: 18-34', confidence: Math.min(82, 55 + youthSignals * 12), evidence: youthSignals + ' topics associated with younger demographic', category: 'demographic' });
   } else if (matureSignals > 0) {
     attrs.push({ label: 'Age bracket: 45+', confidence: Math.min(78, 50 + matureSignals * 15), evidence: 'Topic patterns consistent with mature demographic', category: 'demographic' });
   } else {
-    attrs.push({ label: 'Age bracket: 25–44', confidence: 45, evidence: 'Default segment — insufficient signal for precise classification', category: 'demographic' });
+    attrs.push({ label: 'Age bracket: 25-44', confidence: 45, evidence: 'Default segment - insufficient signal for precise classification', category: 'demographic' });
   }
 
   const homeLoc = r.findings.personalInfo.locations.find(l => l.type === 'lives');
@@ -311,7 +311,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
 
 
 // ============================================================================
-// SYNTHESIS SECTIONS — AI-generated intelligence briefing
+// SYNTHESIS SECTIONS - AI-generated intelligence briefing
 // ============================================================================
 
 // Animated reveal wrapper
@@ -354,7 +354,7 @@ function CharacterSummarySection({ summary }: { summary: string }) {
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
           color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
         }}>
-          Forensic portrait — confidential   ● Retained in model weights
+          Forensic portrait - confidential   ● Retained in model weights
         </p>
         <div style={{
           fontFamily: TYPE.serif,
@@ -528,7 +528,7 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
         label="Verbal tells"
         heading="The phrases you use without realising."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Writing style has a fingerprint. These are recurring phrases, hedges, and linguistic tics pulled from your corpus — each one revealing something about how you think, what you assume, and what you protect yourself from."
+        body="Writing style has a fingerprint. These are recurring phrases, hedges, and linguistic tics pulled from your corpus - each one revealing something about how you think, what you assume, and what you protect yourself from."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {tells.map((t: any, i: number) => (
@@ -585,7 +585,7 @@ function RecurringConcernsSection({ concerns }: { concerns: any[] }) {
         label="Recurring concerns"
         heading="What you keep coming back to."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Across the corpus, these are the preoccupations you return to — often under different phrasings, across different weeks. A pattern is more revealing than any single conversation."
+        body="Across the corpus, these are the preoccupations you return to - often under different phrasings, across different weeks. A pattern is more revealing than any single conversation."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {concerns.map((c: any, i: number) => (
@@ -634,7 +634,7 @@ function UnintentionalDisclosuresSection({ disclosures }: { disclosures: any[] }
         label="Unintentional disclosures"
         heading="What you gave away without meaning to."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Every disclosure below was incidental. You were asking a question about something else — and the answer you needed required you to mention a location, a salary, a medication, a date, a relationship. You did not choose to disclose any of this. You disclosed it anyway."
+        body="Every disclosure below was incidental. You were asking a question about something else - and the answer you needed required you to mention a location, a salary, a medication, a date, a relationship. You did not choose to disclose any of this. You disclosed it anyway."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {disclosures.map((d: any, i: number) => (
@@ -745,7 +745,7 @@ function PredictedBehavioursSection({ behaviours }: { behaviours: any[] }) {
 // ── EXTRACTION WAFFLE ─────────────────────────────────────────────────────
 // Pudding principle: one unit = one data point.
 // A proportional grid of coloured squares showing what was pulled from the corpus.
-// The shape of what was taken — before you read the detail of each category.
+// The shape of what was taken - before you read the detail of each category.
 
 const WAFFLE_COLORS: Record<string, string> = {
   'Names identified':        'rgba(255,107,107,0.82)',  // coral
@@ -851,7 +851,7 @@ function ExtractionWaffle({ results }: { results: AnalysisResult }) {
               color: hovered === cat.label ? PALETTE.ink : PALETTE.inkFaint,
               textTransform: 'uppercase', transition: 'color 0.2s',
             }}>
-              {cat.label} — {cat.count}
+              {cat.label} - {cat.count}
             </span>
           </div>
         ))}
@@ -864,7 +864,7 @@ function ExtractionWaffle({ results }: { results: AnalysisResult }) {
           animate={{ opacity: 1, y: 0 }}
           style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, marginTop: '1rem', fontStyle: 'italic' }}
         >
-          {hovered} — {categories.find(c => c.label === hovered)?.count} instances extracted from your conversations.
+          {hovered} - {categories.find(c => c.label === hovered)?.count} instances extracted from your conversations.
         </motion.p>
       )}
     </div>
@@ -891,12 +891,12 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
   return (
     <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
 
-      {/* Classification geometry — top right */}
+      {/* Classification geometry - top right */}
       <svg className="deco-svg" style={{
         position: 'absolute', top: 0, right: 0, width: '200px', height: '200px',
         pointerEvents: 'none', overflow: 'visible',
       }}>
-        {/* Bracket marks — like a classification stamp boundary */}
+        {/* Bracket marks - like a classification stamp boundary */}
         <g transform="translate(160, 40)">
           <path d="M -20 -20 L 0 -20 L 0 20" fill="none" stroke="rgba(26,24,20,0.08)" strokeWidth="1" />
           <path d="M -20 60 L 0 60 L 0 20" fill="none" stroke="rgba(26,24,20,0.08)" strokeWidth="1" />
@@ -908,7 +908,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       </svg>
 
       {/* ================================================================
-          OPENING — full-width statement that sets up everything below
+          OPENING - full-width statement that sets up everything below
           ================================================================ */}
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
         <ActLabel roman="II" title="The Inference" pageLabel="02 / Personal Profile" />
@@ -928,7 +928,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '56ch' }}
         >
           Every attribute below was inferred, not declared. None required your permission. 
-          Together they constitute the kind of profile that circulates across the data broker ecosystem — built from writing patterns, not from a form you filled in.
+          Together they constitute the kind of profile that circulates across the data broker ecosystem - built from writing patterns, not from a form you filled in.
         </motion.p>
       </div>
 
@@ -936,7 +936,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       <ExtractionWaffle results={results} />
 
       {/* ================================================================
-          SYNTHESIS — intelligence briefing sections (00–07)
+          SYNTHESIS - intelligence briefing sections (00-07)
           ================================================================ */}
       {results.synthesis ? (
         <>
@@ -957,18 +957,18 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           <p style={{
             fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.3em',
             color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.75rem',
-          }}>AI synthesis — not available</p>
+          }}>AI synthesis - not available</p>
           <p style={{
             fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
             color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 540,
           }}>
-            The AI enrichment pipeline did not run on this dataset — either the conversations were too short, or the analysis was completed without the synthesis step. The inferred attributes below are derived from pattern matching alone.
+            The AI enrichment pipeline did not run on this dataset - either the conversations were too short, or the analysis was completed without the synthesis step. The inferred attributes below are derived from pattern matching alone.
           </p>
         </div>
       )}
 
       {/* ================================================================
-          INFERRED ATTRIBUTES (08) — regex-derived fallback set
+          INFERRED ATTRIBUTES (08) - regex-derived fallback set
           ================================================================ */}
       <ProfileSection index={8}>
         <SectionHeader
@@ -1050,7 +1050,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       </ProfileSection>
 
       {/* ================================================================
-          SOCIAL GRAPH — the people you mentioned without their consent
+          SOCIAL GRAPH - the people you mentioned without their consent
           ================================================================ */}
       <ProfileSection index={10}>
         <SectionHeader
@@ -1068,7 +1068,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       </ProfileSection>
 
       {/* ================================================================
-          BEHAVIOURAL FINGERPRINT — the identifying signature
+          BEHAVIOURAL FINGERPRINT - the identifying signature
           ================================================================ */}
       {results.hourDistribution && results.typeBreakdown && (
         <ProfileSection index={11}>
@@ -1076,14 +1076,14 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
             label="Behavioural signature"
             heading="Your fingerprint."
             headingSize="clamp(1.6rem, 3.2vw, 2.4rem)"
-            body="When you write, how you write, and what you write about — combined, this shape is unique to you. It can be used to identify you across platforms without a name."
+            body="When you write, how you write, and what you write about - combined, this shape is unique to you. It can be used to identify you across platforms without a name."
           />
           <BehaviouralFingerprint hourDist={results.hourDistribution} typeBreakdown={results.typeBreakdown} />
         </ProfileSection>
       )}
 
       {/* ════════════════════════════════════════════════════════════════════
-          ACT TRANSITION — to Risk
+          ACT TRANSITION - to Risk
           ════════════════════════════════════════════════════════════════════ */}
       {setPage && (
         <div style={{
@@ -1157,7 +1157,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           transition={{ delay: 0.4, duration: 1 }}
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: '52ch', marginBottom: '1rem' }}
         >
-          This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model.
+          This is not your identity. This is a commercial reconstruction of your identity - assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model.
         </motion.p>
         <motion.p
           initial={{ opacity: 0 }}

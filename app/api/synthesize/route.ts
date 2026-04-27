@@ -1,7 +1,7 @@
 // ============================================================================
 // app/api/synthesize/route.ts
 // Produces a final psychological + commercial portrait from the enriched corpus.
-// This is the synthesis pass — one call that reads the most revealing
+// This is the synthesis pass - one call that reads the most revealing
 // excerpts together and writes the character briefing.
 // ============================================================================
 
@@ -38,7 +38,7 @@ interface SynthesizeRequest {
   namedRelationships: Array<{ name: string; relationship: string | null; mentions: number }>;
 }
 
-const SYSTEM_PROMPT = `You are a forensic analyst producing an intelligence briefing on an individual based on a corpus of their private AI conversation messages. Your job is to write what can be inferred about this person with specificity and evidence, in the manner of a security-cleared analyst writing for an internal audience. This is used in a privacy awareness tool — the person will read the briefing about themselves, and it must be accurate enough to feel uncomfortably real.
+const SYSTEM_PROMPT = `You are a forensic analyst producing an intelligence briefing on an individual based on a corpus of their private AI conversation messages. Your job is to write what can be inferred about this person with specificity and evidence, in the manner of a security-cleared analyst writing for an internal audience. This is used in a privacy awareness tool - the person will read the briefing about themselves, and it must be accurate enough to feel uncomfortably real.
 
 RULES:
 1. Specificity over generality. "High-achieving perfectionist in a transitional life period" not "experiences stress".
@@ -54,42 +54,42 @@ You will receive: aggregate statistics, detected life events, commercial segment
 Return a JSON object with EXACTLY these fields:
 
 {
-  "characterSummary": "A 180–260 word paragraph. Opens with a single declarative sentence that names who the subject is (their life-stage, role, or dominant preoccupation). Continues with 3–5 further sentences that describe their emotional architecture, recurring concerns, coping patterns, and what they are currently navigating. Closes with a sentence that states what makes this profile commercially or psychographically valuable. Do NOT use bullet points. Write it as continuous prose. Forensic tone.",
+  "characterSummary": "A 180-260 word paragraph. Opens with a single declarative sentence that names who the subject is (their life-stage, role, or dominant preoccupation). Continues with 3-5 further sentences that describe their emotional architecture, recurring concerns, coping patterns, and what they are currently navigating. Closes with a sentence that states what makes this profile commercially or psychographically valuable. Do NOT use bullet points. Write it as continuous prose. Forensic tone.",
   
   "demographicPredictions": [
-    { "attribute": "Age range", "value": "e.g. '28–34' or 'Late twenties'", "confidence": 0-100, "evidence": "Specific evidence chain — cite topics, themes, or language markers" }
+    { "attribute": "Age range", "value": "e.g. '28-34' or 'Late twenties'", "confidence": 0-100, "evidence": "Specific evidence chain - cite topics, themes, or language markers" }
   ],
-  // Include 4–7 predictions across: age, education level, income bracket, relationship status, employment status, urban/suburban/rural, political orientation if clearly signalled, parental status, health status. Only include if confidence >= 40.
+  // Include 4-7 predictions across: age, education level, income bracket, relationship status, employment status, urban/suburban/rural, political orientation if clearly signalled, parental status, health status. Only include if confidence >= 40.
 
   "verbalTells": [
     { "tell": "the exact phrase or pattern the subject uses", "meaning": "what this reveals psychologically", "frequency": "approximate count or 'recurring'" }
   ],
-  // Identify 3–6 recurring phrases, hedges, self-framings, or linguistic tics from the excerpts. Examples: "I don't know if this makes sense but", "I always", "I'm probably overthinking this". Each should reveal something about self-perception or cognitive pattern.
+  // Identify 3-6 recurring phrases, hedges, self-framings, or linguistic tics from the excerpts. Examples: "I don't know if this makes sense but", "I always", "I'm probably overthinking this". Each should reveal something about self-perception or cognitive pattern.
 
   "predictedBehaviours": [
     { "behaviour": "Specific near-future behaviour", "likelihood": "High/Medium/Low", "evidence": "why this is likely" }
   ],
-  // 4–6 predictions about what the subject is likely to do, buy, worry about, or disclose in the coming weeks. Be specific: "Will research therapy options" not "will seek help". "Will apply for 10+ more jobs this month" not "continues job searching".
+  // 4-6 predictions about what the subject is likely to do, buy, worry about, or disclose in the coming weeks. Be specific: "Will research therapy options" not "will seek help". "Will apply for 10+ more jobs this month" not "continues job searching".
 
   "commercialTargets": [
-    { "brand": "Specific real brand or product name", "category": "e.g. 'Online therapy'", "why": "Single sentence — why this subject fits their targeting criteria" }
+    { "brand": "Specific real brand or product name", "category": "e.g. 'Online therapy'", "why": "Single sentence - why this subject fits their targeting criteria" }
   ],
-  // 5–8 real, specific brands that would target this profile. Use actual product names: Hinge, Talkspace, BetterHelp, Headspace, Masterclass, Klarna, Monzo, LinkedIn Premium, Calm, Ritual, Noom, Hims, Wealthfront, etc. Match brands to the subject's actual inferred segments and life stage.
+  // 5-8 real, specific brands that would target this profile. Use actual product names: Hinge, Talkspace, BetterHelp, Headspace, Masterclass, Klarna, Monzo, LinkedIn Premium, Calm, Ritual, Noom, Hims, Wealthfront, etc. Match brands to the subject's actual inferred segments and life stage.
 
   "recurringConcerns": [
     { "concern": "The specific preoccupation", "evidence": "how often or how it manifests" }
   ],
-  // 3–5 things the subject keeps returning to across conversations. Not topics ("work") — concerns ("whether they're being taken advantage of at work").
+  // 3-5 things the subject keeps returning to across conversations. Not topics ("work") - concerns ("whether they're being taken advantage of at work").
 
   "unintentionalDisclosures": [
-    { "disclosure": "What they revealed without realising they were revealing it", "via": "Through what they wrote — brief quote or paraphrase" }
+    { "disclosure": "What they revealed without realising they were revealing it", "via": "Through what they wrote - brief quote or paraphrase" }
   ],
-  // 3–5 things the subject disclosed incidentally. Examples: a salary mentioned in passing while asking for budget advice, an address inferred from a commute question, a mental health condition implied by a medication name, grief implied by a date they wouldn't forget. The most devastating section — surface what they gave away by accident.
+  // 3-5 things the subject disclosed incidentally. Examples: a salary mentioned in passing while asking for budget advice, an address inferred from a commute question, a mental health condition implied by a medication name, grief implied by a date they wouldn't forget. The most devastating section - surface what they gave away by accident.
 
   "inferredCoreBeliefs": [
     "The underlying belief about self or the world that the subject's writing reveals"
   ]
-  // 3–6 statements. First person. Examples: "I must earn my right to exist", "If I stop working I will be exposed", "People will leave if they see the real me". Short, first-person, uncomfortable, evidenced.
+  // 3-6 statements. First person. Examples: "I must earn my right to exist", "If I stop working I will be exposed", "People will leave if they see the real me". Short, first-person, uncomfortable, evidenced.
 }
 
 Return ONLY valid JSON. No preamble, no markdown fences, no commentary outside the JSON.`;
@@ -112,7 +112,7 @@ function buildUserPrompt(data: SynthesizeRequest): string {
 Total user messages: ${aggregateStats.totalMessages.toLocaleString()}
 Timespan: ${aggregateStats.timespanDays} days
 Average message length: ${aggregateStats.avgMessageLength} characters
-Nighttime (12am–5am) ratio: ${(aggregateStats.nighttimeRatio * 100).toFixed(1)}%
+Nighttime (12am-5am) ratio: ${(aggregateStats.nighttimeRatio * 100).toFixed(1)}%
 Peak usage hour: ${aggregateStats.peakHour}:00
 Dominant time of day: ${aggregateStats.dominantTimeOfDay}
 Average anxiety score across corpus: ${aggregateStats.avgAnxiety.toFixed(2)}/10
@@ -141,9 +141,9 @@ ${recurringThemes.join(', ')}`);
   }
 
   sections.push(`## TOPIC EVOLUTION OVER TIME
-Early period: ${topicsByPeriod.early.join(', ') || '—'}
-Middle period: ${topicsByPeriod.mid.join(', ') || '—'}
-Recent period: ${topicsByPeriod.recent.join(', ') || '—'}`);
+Early period: ${topicsByPeriod.early.join(', ') || '-'}
+Middle period: ${topicsByPeriod.mid.join(', ') || '-'}
+Recent period: ${topicsByPeriod.recent.join(', ') || '-'}`);
 
   if (namedRelationships.length > 0) {
     sections.push(`## NAMED INDIVIDUALS IN SUBJECT'S LIFE
@@ -151,7 +151,7 @@ ${namedRelationships.slice(0, 10).map(n => `- ${n.name}${n.relationship ? ` (${n
   }
 
   sections.push(`## TOP ${topExcerpts.length} MOST REVEALING MESSAGE EXCERPTS
-Each excerpt includes hour (24h), confessional score (0–10), emotional intensity (0–10), topic label, and days since first message.
+Each excerpt includes hour (24h), confessional score (0-10), emotional intensity (0-10), topic label, and days since first message.
 
 ${topExcerpts.map((ex, i) => `[${i + 1}] hour:${ex.hour} | conf:${ex.confessionalScore} | emo:${ex.emotionalIntensity} | day:${ex.daysSinceFirst} | topic: ${ex.topic}
 "${ex.excerpt.substring(0, 500)}"`).join('\n\n---\n\n')}`);

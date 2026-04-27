@@ -5,7 +5,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence, type DashPage } from './DashboardLayout';
 
 // ============================================================================
-// POLICY DRIFT PAGE — 06 / Terms
+// POLICY DRIFT PAGE - 06 / Terms
 // The argument: what you consented to in 2023 is not what you consent to now.
 // You were not asked again.
 //
@@ -28,7 +28,7 @@ const KEY_CLAUSES = [
       },
       v2025: {
         text: 'We may use Content you provide us to improve our Services, for example to train the models that power ChatGPT.',
-        annotation: 'Identical language. Opt-out now available via Data Controls — but not stated here.',
+        annotation: 'Identical language. Opt-out now available via Data Controls - but not stated here.',
       },
       v2026: {
         text: 'Some of our Services allow you to delete Personal Data stored in your account. Once you choose to delete Personal Data, we will remove it from our systems within 30 days unless we need to retain it for longer, or it has already been de-identified and disassociated from your account when you allow us to use your Content to improve our models.',
@@ -200,7 +200,7 @@ function ConsentMoment({ isInView }: { isInView: boolean }) {
         color: PALETTE.inkMuted, lineHeight: 1.75,
         maxWidth: 580, marginBottom: '2rem',
       }}>
-        You signed up for ChatGPT. At some point — probably in 2022 or 2023 — you clicked something like this.
+        You signed up for ChatGPT. At some point - probably in 2022 or 2023 - you clicked something like this.
       </p>
 
       {/* Reconstructed consent UI */}
@@ -269,7 +269,7 @@ function ConsentMoment({ isInView }: { isInView: boolean }) {
               borderLeft: `2px solid ${PALETTE.redMuted}`,
               paddingLeft: '1rem',
             }}>
-              That click, in 2023, was treated as consent to the 2023 policy. It has also been treated as consent to the 2025 policy, and the 2026 policy — both of which introduced categories of data collection that did not exist when you clicked. You were not asked again.
+              That click, in 2023, was treated as consent to the 2023 policy. It has also been treated as consent to the 2025 policy, and the 2026 policy - both of which introduced categories of data collection that did not exist when you clicked. You were not asked again.
             </p>
           </motion.div>
         )}
@@ -629,7 +629,7 @@ function ClauseRow({ clause, index, isInView }: {
                         fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint,
                         lineHeight: 1.6, fontStyle: 'italic',
                       }}>
-                        — not present in this version
+                        - not present in this version
                       </p>
                     ) : (
                       <blockquote style={{
@@ -672,7 +672,7 @@ function ClauseRow({ clause, index, isInView }: {
   );
 }
 
-// ── The deletion carve-out — featured section ─────────────────────────────
+// ── The deletion carve-out - featured section ─────────────────────────────
 
 function DeletionCarveOut({ isInView }: { isInView: boolean }) {
   return (
@@ -693,7 +693,7 @@ function DeletionCarveOut({ isInView }: { isInView: boolean }) {
         color: PALETTE.redMuted, textTransform: 'uppercase',
         marginBottom: '1.5rem',
       }}>
-        The clause that matters most — OpenAI Privacy Policy, April 2026
+        The clause that matters most - OpenAI Privacy Policy, April 2026
       </p>
 
       <blockquote style={{
@@ -731,7 +731,7 @@ function DeletionCarveOut({ isInView }: { isInView: boolean }) {
           },
           {
             label: 'What it actually says',
-            text: 'Unless that data has already been used to train a model — in which case, the deletion right does not apply. The 30-day promise has an exception that swallows the rule.',
+            text: 'Unless that data has already been used to train a model - in which case, the deletion right does not apply. The 30-day promise has an exception that swallows the rule.',
             color: PALETTE.ink,
             isHighlight: true,
           },
@@ -797,7 +797,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
         color: PALETTE.redMuted, textTransform: 'uppercase',
         marginBottom: '2rem',
-      }}>The consent failure — four arguments</p>
+      }}>The consent failure - four arguments</p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
         {arguments_.map((arg, i) => (
@@ -853,7 +853,7 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
     },
     {
       label: 'The carve-out and what follows',
-      text: 'The 2026 deletion carve-out — data used in model training is exempt from the right to deletion — connects directly to the next argument. Because that data is not just stored. It was learned from. And what a model has learned, it cannot unlearn.',
+      text: 'The 2026 deletion carve-out - data used in model training is exempt from the right to deletion - connects directly to the next argument. Because that data is not just stored. It was learned from. And what a model has learned, it cannot unlearn.',
     },
   ];
 
@@ -897,7 +897,7 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
           maxWidth: 560, marginBottom: '1.5rem',
           fontStyle: 'italic',
         }}>
-          The terms describe what was taken. The next section explains how the system works — how
+          The terms describe what was taken. The next section explains how the system works - how
           inference operates, what it produces, and what it means that you cannot see it happening.
         </p>
         <button
@@ -1050,7 +1050,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
       {/* Policy word count bars */}
       <PolicyWordBars isInView={isInView} />
 
-      {/* Deletion carve-out — featured */}
+      {/* Deletion carve-out - featured */}
       <DeletionCarveOut isInView={isInView} />
 
       {/* Clause comparison table */}

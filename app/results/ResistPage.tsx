@@ -25,7 +25,7 @@ function generateSAR(analysis: DeepAnalysis): string {
 }
 
 // ============================================================================
-// DESIGN TOKENS — for this page specifically
+// DESIGN TOKENS - for this page specifically
 // ============================================================================
 const STORY = {
   // Act boundaries as fractions of total scroll (9 acts = 9 phases)
@@ -34,20 +34,20 @@ const STORY = {
   counted:    [0.08, 0.20],
   machine:    [0.20, 0.30],
   taking:     [0.30, 0.46],
-  echo:       [0.46, 0.66], // longest — the centrepiece
+  echo:       [0.46, 0.66], // longest - the centrepiece
   imprint:    [0.66, 0.76],
   choice:     [0.76, 0.88],
   walkaway:   [0.88, 1.00],
 };
 
-// Smooth step — used for elegant in/out interpolation
+// Smooth step - used for elegant in/out interpolation
 function smoothstep(edge0: number, edge1: number, x: number): number {
   const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
   return t * t * (3 - 2 * t);
 }
 
 // ============================================================================
-// FIGURE — single hand-drawn humanoid, multiple poses
+// FIGURE - single hand-drawn humanoid, multiple poses
 // ============================================================================
 type FigurePose = 'neutral' | 'wall' | 'letter' | 'wave';
 function Figure({
@@ -86,7 +86,7 @@ function Figure({
       {/* eyes */}
       <circle cx="36.5" cy="18.5" r="1.2" fill={stroke} opacity={0.75} />
       <circle cx="43.5" cy="18.5" r="1.2" fill={stroke} opacity={0.75} />
-      {/* mouth — faint gentle curve */}
+      {/* mouth - faint gentle curve */}
       <path d="M 36.5 23.5 Q 40 25.5 43.5 23.5" stroke={stroke} strokeWidth="1" fill="none" strokeLinecap="round" opacity={0.4} />
       {/* body */}
       <path d="M 40 31 L 40 70" stroke={stroke} strokeWidth="2" fill="none" strokeLinecap="round" />
@@ -101,13 +101,13 @@ function Figure({
 }
 
 // ============================================================================
-// THE MACHINE — no longer a rectangle. Hand-drawn container with imperfect edges.
+// THE MACHINE - no longer a rectangle. Hand-drawn container with imperfect edges.
 // Fills with red ink from the bottom. Shows silhouette when imprinted.
 // ============================================================================
 function Machine({
-  formProgress = 0,   // 0..1 — how much the machine has materialised
-  fillProgress = 0,   // 0..1 — how full of red it is
-  showSilhouette = 0, // 0..1 — ghost of user inside
+  formProgress = 0,   // 0..1 - how much the machine has materialised
+  fillProgress = 0,   // 0..1 - how full of red it is
+  showSilhouette = 0, // 0..1 - ghost of user inside
   emitting = false,   // red particles leaving
   width = 200,
   height = 280,
@@ -151,7 +151,7 @@ function Machine({
           </filter>
         </defs>
 
-        {/* Container outline — draws on */}
+        {/* Container outline - draws on */}
         <motion.path
           d={path}
           fill="none"
@@ -164,7 +164,7 @@ function Machine({
           style={{ strokeDashoffset: 1 - formProgress }}
         />
 
-        {/* Noise texture — faint grain over machine body */}
+        {/* Noise texture - faint grain over machine body */}
         <g clipPath={`url(#machine-clip-${width})`}>
           <rect
             width={width} height={height}
@@ -173,7 +173,7 @@ function Machine({
           />
         </g>
 
-        {/* Very faint background hatching — appears as it forms */}
+        {/* Very faint background hatching - appears as it forms */}
         <g clipPath={`url(#machine-clip-${width})`} opacity={formProgress * 0.3}>
           {Array.from({ length: 14 }).map((_, i) => (
             <line key={i}
@@ -208,7 +208,7 @@ function Machine({
           )}
         </g>
 
-        {/* Silhouette — appears once filled, ghost of the user inside */}
+        {/* Silhouette - appears once filled, ghost of the user inside */}
         {showSilhouette > 0 && (
           <g clipPath={`url(#machine-clip-${width})`}>
             <g
@@ -225,7 +225,7 @@ function Machine({
         )}
       </svg>
 
-      {/* Interior pulse — slow breathing dark red radial gradient when machine is present */}
+      {/* Interior pulse - slow breathing dark red radial gradient when machine is present */}
       {formProgress > 0.3 && (
         <motion.div
           style={{
@@ -237,7 +237,7 @@ function Machine({
         />
       )}
 
-      {/* Label — fades in with form */}
+      {/* Label - fades in with form */}
       <p style={{
         position: 'absolute', top: -22, left: 0,
         fontFamily: TYPE.mono, fontSize: '9px',
@@ -249,7 +249,7 @@ function Machine({
         The model
       </p>
 
-      {/* Emit particles — trailing horizontal lines, data bleeding out */}
+      {/* Emit particles - trailing horizontal lines, data bleeding out */}
       {emitting && (
         <>
           {[0, 0.8, 1.6, 2.4, 3.2].map((d, i) => (
@@ -271,7 +271,7 @@ function Machine({
 }
 
 // ============================================================================
-// PARTICLES — generated once, deterministic positions. Extracted by progress.
+// PARTICLES - generated once, deterministic positions. Extracted by progress.
 // ============================================================================
 interface Particle { sx: number; sy: number; delay: number; size: number; }
 function useParticles(count: number, cx: number, cy: number): Particle[] {
@@ -294,8 +294,8 @@ function Particles({
   particles, arrivalProgress, extractProgress, flowX, flowY,
 }: {
   particles: Particle[];
-  arrivalProgress: number; // 0..1 — how many have arrived
-  extractProgress: number; // 0..1 — how many have left
+  arrivalProgress: number; // 0..1 - how many have arrived
+  extractProgress: number; // 0..1 - how many have left
   flowX: number; flowY: number;
 }) {
   const total = particles.length;
@@ -340,7 +340,7 @@ function Particles({
 }
 
 // ============================================================================
-// COUNTER — animates from 0 to target on trigger, ease-out cubic
+// COUNTER - animates from 0 to target on trigger, ease-out cubic
 // ============================================================================
 function AnimatedCounter({ target, active, duration = 2400 }: { target: number; active: boolean; duration?: number }) {
   const [display, setDisplay] = useState(0);
@@ -365,7 +365,7 @@ function AnimatedCounter({ target, active, duration = 2400 }: { target: number; 
 }
 
 // ============================================================================
-// PROGRESS RAIL — slim vertical rail at right showing scroll through acts
+// PROGRESS RAIL - slim vertical rail at right showing scroll through acts
 // ============================================================================
 const ACT_LABELS = ['ARRIVAL', 'COUNTED', 'MACHINE', 'TAKING', 'ECHO', 'IMPRINT', 'CHOICE', 'DEPARTURE'];
 function ProgressRail({ progress, currentAct }: { progress: MotionValue<number>; currentAct: number }) {
@@ -447,7 +447,7 @@ function ResistHeader() {
 }
 
 // ============================================================================
-// ECHO GENERATOR — API call logic as a hook so it can live inside a scene
+// ECHO GENERATOR - API call logic as a hook so it can live inside a scene
 // ============================================================================
 type EchoPhase = 'idle' | 'generating' | 'ready';
 function useEchoGenerator(analysis: DeepAnalysis) {
@@ -502,7 +502,7 @@ function useEchoGenerator(analysis: DeepAnalysis) {
 Here is what you know about them:
 ${contextLines}
 
-Write a short paragraph (4-6 sentences) in this person's voice, on the topic of what they find themselves thinking about before they fall asleep. Do not describe their traits — write AS them, from inside their perspective, in their actual way of writing. Capture their sentence length, word choices, and the way they move between ideas. Make it feel like something they could have written themselves.
+Write a short paragraph (4-6 sentences) in this person's voice, on the topic of what they find themselves thinking about before they fall asleep. Do not describe their traits - write AS them, from inside their perspective, in their actual way of writing. Capture their sentence length, word choices, and the way they move between ideas. Make it feel like something they could have written themselves.
 
 Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
 
@@ -530,7 +530,7 @@ Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
 }
 
 // ============================================================================
-// THE STAGE — a single visual that holds the figure and the machine
+// THE STAGE - a single visual that holds the figure and the machine
 // for the whole story. Transforms by scroll progress.
 // ============================================================================
 function Stage({
@@ -547,7 +547,7 @@ function Stage({
   figurePose,
   figureColor,
   name,
-  walkProgress, // 0..1 — final walk away
+  walkProgress, // 0..1 - final walk away
 }: {
   progress: number;
   figureOpacity: number;
@@ -590,7 +590,7 @@ function Stage({
         width: 'min(520px, 100%)',
         height: 420,
       }}>
-        {/* FIGURE — left-ish */}
+        {/* FIGURE - left-ish */}
         <div style={{
           position: 'absolute',
           left: `calc(18% + ${finalFigureX}px)`,
@@ -618,7 +618,7 @@ function Stage({
           )}
         </div>
 
-        {/* PARTICLES — relative to figure */}
+        {/* PARTICLES - relative to figure */}
         <div style={{
           position: 'absolute',
           left: 'calc(18% - 100px)',
@@ -636,7 +636,7 @@ function Stage({
           />
         </div>
 
-        {/* MACHINE — right side */}
+        {/* MACHINE - right side */}
         <div style={{
           position: 'absolute',
           right: '8%',
@@ -658,7 +658,7 @@ function Stage({
 }
 
 // ============================================================================
-// SCENE TEXT — animated copy per act
+// SCENE TEXT - animated copy per act
 // ============================================================================
 interface SceneCopy {
   kicker: string;
@@ -672,49 +672,49 @@ function useSceneCopy(act: number, data: {
   const { name, messageCount, days, countActive, daysActive } = data;
 
   const copies: SceneCopy[] = [
-    // 0 — Arrival
+    // 0 - Arrival
     {
       kicker: 'Before any of it',
       headline: name ? <>This is {name}.</> : 'This is you.',
       body: 'One person. A history of small, unguarded conversations with a machine.',
     },
-    // 1 — Counted
+    // 1 - Counted
     {
       kicker: 'What you sent',
       headline: <><AnimatedCounter target={messageCount} active={countActive} /> messages.</>,
       body: 'Each one written. Each one read. Each one kept. The dots around the figure are them.',
     },
-    // 2 — Machine
+    // 2 - Machine
     {
       kicker: 'And then',
       headline: 'Something was built.',
       body: 'Not visible to you. Not announced. A system that had been watching for the shape of what you say.',
     },
-    // 3 — Taking
+    // 3 - Taking
     {
       kicker: 'The extraction',
       headline: 'It took everything.',
       body: 'Conversation by conversation. Each message absorbed into a model that now remembers you in a way you did not choose.',
     },
-    // 4 — Echo
+    // 4 - Echo
     {
       kicker: 'Now watch',
       headline: 'The model speaks in your voice.',
       body: 'What follows was generated by a language model. It was not asked to describe you. It was asked to be you.',
     },
-    // 5 — Imprint
+    // 5 - Imprint
     {
       kicker: 'You are in there',
       headline: 'Permanently.',
       body: <><AnimatedCounter target={days} active={daysActive} /> days have passed. Your patterns live inside the model. They cannot be located. They cannot be removed.</>,
     },
-    // 6 — Choice
+    // 6 - Choice
     {
       kicker: 'But there are still',
       headline: 'Three things you can do.',
       body: 'None of them undo what is there. They limit what comes next. Choose one.',
     },
-    // 7 — Walkaway
+    // 7 - Walkaway
     {
       kicker: 'The end',
       headline: name ? <>{name}, you can leave.</> : 'You can leave.',
@@ -726,7 +726,7 @@ function useSceneCopy(act: number, data: {
 }
 
 // ============================================================================
-// THE STORY — the single continuous scrollytelling experience
+// THE STORY - the single continuous scrollytelling experience
 // ============================================================================
 function TheStory({ analysis }: { analysis: DeepAnalysis }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -768,7 +768,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
     }
   }, [currentAct, echo]);
 
-  // Visual states — all smoothstepped from p
+  // Visual states - all smoothstepped from p
   const particleArrival = smoothstep(STORY.arrival[0], STORY.counted[1], p);
   const machineForm = smoothstep(STORY.machine[0], STORY.machine[1], p);
   const particleExtract = smoothstep(STORY.taking[0], STORY.taking[1], p);
@@ -798,7 +798,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
     return `rgba(${Math.round(26 + (190 - 26) * redness)},${Math.round(24 + (40 - 24) * redness)},${Math.round(20 + (30 - 20) * redness)},0.85)`;
   })();
 
-  // Figure pose: follows choice hover in act 6 — default neutral
+  // Figure pose: follows choice hover in act 6 - default neutral
   const [choicePose, setChoicePose] = useState<FigurePose>('neutral');
   const figurePose: FigurePose = currentAct === 6 ? choicePose : 'neutral';
 
@@ -808,7 +808,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
     daysActive: currentAct >= 5,
   });
 
-  // Scroll nudge — visible in act 0
+  // Scroll nudge - visible in act 0
   const scrollNudgeVisible = currentAct === 0 && p < 0.04;
 
   return (
@@ -873,10 +873,10 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
         }
       `}</style>
 
-      {/* Progress rail — fixed position (desktop only via CSS) */}
+      {/* Progress rail - fixed position (desktop only via CSS) */}
       <ProgressRail progress={smooth} currentAct={currentAct} />
 
-      {/* Bottom act dots — mobile only */}
+      {/* Bottom act dots - mobile only */}
       <div className="resist-act-dots">
         <span style={{
           fontFamily: TYPE.mono, fontSize: '8px',
@@ -935,7 +935,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
                     color: PALETTE.redMuted, textTransform: 'uppercase',
                     marginBottom: '1.25rem',
                   }}>
-                    {String(currentAct).padStart(2, '0')} — {scene.kicker}
+                    {String(currentAct).padStart(2, '0')} - {scene.kicker}
                   </p>
                   <h2 style={{
                     fontFamily: TYPE.serif,
@@ -958,17 +958,17 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
                     </p>
                   )}
 
-                  {/* Act 4: ECHO — shown inline in the scene */}
+                  {/* Act 4: ECHO - shown inline in the scene */}
                   {currentAct === 4 && (
                     <EchoPanel echo={echo} />
                   )}
 
-                  {/* Act 6: CHOICE — three branching paths */}
+                  {/* Act 6: CHOICE - three branching paths */}
                   {currentAct === 6 && (
                     <ChoicePanel analysis={analysis} onHover={setChoicePose} />
                   )}
 
-                  {/* Act 7: WALKAWAY — monument line */}
+                  {/* Act 7: WALKAWAY - monument line */}
                   {currentAct === 7 && (
                     <WalkawayMonument />
                   )}
@@ -1022,7 +1022,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
               name={name}
               walkProgress={walkProgress}
             />
-            {/* Ambient vignette — watched-from-outside feeling */}
+            {/* Ambient vignette - watched-from-outside feeling */}
             <div style={{
               position: 'absolute', inset: 0, pointerEvents: 'none',
               background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.06) 100%)',
@@ -1031,14 +1031,14 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
         </div>
       </div>
 
-      {/* FINAL FADE — the credit that lives past the story */}
+      {/* FINAL FADE - the credit that lives past the story */}
       <FinalCredit messageCount={messageCount} />
     </div>
   );
 }
 
 // ============================================================================
-// ECHO PANEL — inline in act 4. Typewriter + reveal.
+// ECHO PANEL - inline in act 4. Typewriter + reveal.
 // ============================================================================
 function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
   const [displayed, setDisplayed] = useState('');
@@ -1047,7 +1047,7 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
   const [borderWidth, setBorderWidth] = useState(3);
   const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Black screen flash when phase first becomes ready — before typewriter starts
+  // Black screen flash when phase first becomes ready - before typewriter starts
   useEffect(() => {
     if (echo.phase !== 'ready') return;
     setFlashVisible(true);
@@ -1091,7 +1091,7 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
 
   return (
     <>
-      {/* Full-page flash overlay — fades 0 → 0.12 → 0 over 1.5s */}
+      {/* Full-page flash overlay - fades 0 → 0.12 → 0 over 1.5s */}
       <AnimatePresence>
         {flashVisible && (
           <motion.div
@@ -1127,7 +1127,7 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
             color: PALETTE.inkGhost, textTransform: 'uppercase',
             marginBottom: '1.1rem',
           }}>
-            {echo.kind === 'excerpt' ? 'Your message — extracted' : 'Generated by the model'}
+            {echo.kind === 'excerpt' ? 'Your message - extracted' : 'Generated by the model'}
           </p>
           {echo.phase !== 'ready' && (
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center', height: '24px' }}>
@@ -1191,7 +1191,7 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
 }
 
 // ============================================================================
-// WALKAWAY MONUMENT — act 7. "The data cannot." as its own reckoning.
+// WALKAWAY MONUMENT - act 7. "The data cannot." as its own reckoning.
 // ============================================================================
 function WalkawayMonument() {
   return (
@@ -1222,7 +1222,7 @@ function WalkawayMonument() {
 }
 
 // ============================================================================
-// CHOICE PANEL — act 6. Three paths. Click for detail.
+// CHOICE PANEL - act 6. Three paths. Click for detail.
 // ============================================================================
 function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (p: FigurePose) => void }) {
   const [active, setActive] = useState<number | null>(null);
@@ -1241,7 +1241,7 @@ function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (
       id: 1, pose: 'letter' as FigurePose,
       label: 'Send the letter.',
       sub: 'Subject Access Request',
-      body: 'Under Article 15 UK GDPR, you can demand OpenAI disclose every piece of data they hold on you — inferred profiles, retention periods, whether your data trained the model. They have 30 days to respond.',
+      body: 'Under Article 15 UK GDPR, you can demand OpenAI disclose every piece of data they hold on you - inferred profiles, retention periods, whether your data trained the model. They have 30 days to respond.',
       cta: null as null | { label: string; url: string },
     },
     {
@@ -1442,7 +1442,7 @@ function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (
 }
 
 // ============================================================================
-// FINAL CREDIT — appears after the story. A reckoning, not a footnote.
+// FINAL CREDIT - appears after the story. A reckoning, not a footnote.
 // ============================================================================
 function FinalCredit({ messageCount }: { messageCount: number }) {
   const ref = useRef(null);
@@ -1454,7 +1454,7 @@ function FinalCredit({ messageCount }: { messageCount: number }) {
     }}>
       {isInView && (
         <>
-          {/* Large count — slow count-up from 0 */}
+          {/* Large count - slow count-up from 0 */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

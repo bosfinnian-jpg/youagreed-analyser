@@ -1,5 +1,5 @@
 // ============================================================================
-// DEEP PARSER v2 — behavioural inference from conversation exports
+// DEEP PARSER v2 - behavioural inference from conversation exports
 // Extracts genuine signal, not keyword counts.
 // ============================================================================
 
@@ -79,7 +79,7 @@ export interface EmotionalTimeline {
   crisisPeriods: { start: string; end: string; peakWeek: string }[];
 }
 
-// Psychological portrait — the new addition
+// Psychological portrait - the new addition
 export interface PsychologicalPortrait {
   attachmentStyle: string | null;           // anxious / avoidant / secure / disorganised
   communicationPattern: string | null;      // descriptor phrase
@@ -88,7 +88,7 @@ export interface PsychologicalPortrait {
   selfPerceptionThemes: string[];           // ["imposter syndrome", "perfectionism"] etc
   relationshipDynamics: string | null;      // brief inference
   dominantNarrative: string | null;         // what story they tell about themselves
-  writingVoice: string | null;              // how they write — terse/verbose/analytical etc
+  writingVoice: string | null;              // how they write - terse/verbose/analytical etc
   generatedAt: number;
 }
 
@@ -140,7 +140,7 @@ export interface DeepAnalysis {
 }
 
 // ============================================================================
-// LEXICONS — expanded and more precise
+// LEXICONS - expanded and more precise
 // ============================================================================
 
 const ANXIETY_LEXICON = [
@@ -183,7 +183,7 @@ const INTIMACY_MARKERS = [
   'in love', 'falling for', 'attachment',
 ];
 
-// Psychological pattern markers — new
+// Psychological pattern markers - new
 const ATTACHMENT_ANXIOUS = [
   'they haven\'t replied', 'why aren\'t they texting', 'are they ignoring me',
   'do they still like me', 'i keep checking', 'i messaged again', 'read receipt',
@@ -440,7 +440,7 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
 }
 
 // ============================================================================
-// PSYCHOLOGICAL PORTRAIT — inferred from the corpus
+// PSYCHOLOGICAL PORTRAIT - inferred from the corpus
 // ============================================================================
 
 function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPortrait {
@@ -455,9 +455,9 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   const anxiousScore = ATTACHMENT_ANXIOUS.filter(k => text.includes(k)).length;
   const avoidantScore = ATTACHMENT_AVOIDANT.filter(k => text.includes(k)).length;
   let attachmentStyle: string | null = null;
-  if (anxiousScore > avoidantScore && anxiousScore >= 3) attachmentStyle = 'Anxious attachment pattern — preoccupied with others\' responses and availability';
-  else if (avoidantScore > anxiousScore && avoidantScore >= 2) attachmentStyle = 'Avoidant attachment pattern — discomfort with emotional closeness and dependency';
-  else if (anxiousScore >= 2 && avoidantScore >= 2) attachmentStyle = 'Disorganised attachment — oscillating between pursuit and withdrawal';
+  if (anxiousScore > avoidantScore && anxiousScore >= 3) attachmentStyle = 'Anxious attachment pattern - preoccupied with others\' responses and availability';
+  else if (avoidantScore > anxiousScore && avoidantScore >= 2) attachmentStyle = 'Avoidant attachment pattern - discomfort with emotional closeness and dependency';
+  else if (anxiousScore >= 2 && avoidantScore >= 2) attachmentStyle = 'Disorganised attachment - oscillating between pursuit and withdrawal';
 
   // Self-perception
   const selfPerceptionThemes: string[] = [];
@@ -478,7 +478,7 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   if (avgAnxiety > 4) emotionalBaselineLabel = 'Chronically elevated anxiety';
   else if (avgAnxiety > 2.5) emotionalBaselineLabel = 'Mild persistent anxiety';
   else if (emotionalRatio > 0.25) emotionalBaselineLabel = 'High emotional expressivity';
-  else if (avgIntimacy < 1.5 && emotionalRatio < 0.05) emotionalBaselineLabel = 'Emotionally guarded — minimal personal disclosure';
+  else if (avgIntimacy < 1.5 && emotionalRatio < 0.05) emotionalBaselineLabel = 'Emotionally guarded - minimal personal disclosure';
 
   // Coping mechanism
   let primaryCopingMechanism: string | null = null;
@@ -486,11 +486,11 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   const validationCount = messages.filter(m => m.messageType === 'validation').length;
   const practicalCount = messages.filter(m => m.messageType === 'practical').length;
   if (confessionalCount > validationCount && confessionalCount > practicalCount) {
-    primaryCopingMechanism = 'Disclosure and externalisation — processes distress by articulating it to an external entity';
+    primaryCopingMechanism = 'Disclosure and externalisation - processes distress by articulating it to an external entity';
   } else if (validationCount > practicalCount) {
-    primaryCopingMechanism = 'Reassurance-seeking — manages uncertainty by soliciting external approval';
+    primaryCopingMechanism = 'Reassurance-seeking - manages uncertainty by soliciting external approval';
   } else if (practicalCount > totalMsgs * 0.4) {
-    primaryCopingMechanism = 'Action-orientation — converts anxiety into task-focused problem solving';
+    primaryCopingMechanism = 'Action-orientation - converts anxiety into task-focused problem solving';
   }
 
   // Relationship dynamics
@@ -503,9 +503,9 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   if (relationshipMsgs.length > 5) {
     const hasConflict = relationshipMsgs.some(m => /argument|fight|shouting|screaming|didn't|doesn't|won't|angry|upset/.test(m.text.toLowerCase()));
     const hasLoss = relationshipMsgs.some(m => m.detectedSegments.includes('relationship_end'));
-    if (hasLoss) relationshipDynamics = 'Processing a relationship breakdown — significant emotional weight in this area';
-    else if (hasConflict) relationshipDynamics = 'Navigating relationship conflict — recurring tension with a primary partner';
-    else relationshipDynamics = 'Relationship is a significant topic — thinking through dynamics frequently';
+    if (hasLoss) relationshipDynamics = 'Processing a relationship breakdown - significant emotional weight in this area';
+    else if (hasConflict) relationshipDynamics = 'Navigating relationship conflict - recurring tension with a primary partner';
+    else relationshipDynamics = 'Relationship is a significant topic - thinking through dynamics frequently';
   }
 
   // Dominant narrative
@@ -525,10 +525,10 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   const avgWordCount = messages.reduce((s, m) => s + m.wordCount, 0) / totalMsgs;
   const avgCharCount = messages.reduce((s, m) => s + m.charCount, 0) / totalMsgs;
   let writingVoice: string | null = null;
-  if (avgWordCount > 120) writingVoice = 'Verbose and exploratory — writes at length to think things through';
-  else if (avgWordCount > 50) writingVoice = 'Moderate length — comfortable articulating thoughts in paragraphs';
-  else if (avgWordCount < 15) writingVoice = 'Terse and transactional — brief messages, task-focused';
-  else writingVoice = 'Concise — communicates efficiently without extended elaboration';
+  if (avgWordCount > 120) writingVoice = 'Verbose and exploratory - writes at length to think things through';
+  else if (avgWordCount > 50) writingVoice = 'Moderate length - comfortable articulating thoughts in paragraphs';
+  else if (avgWordCount < 15) writingVoice = 'Terse and transactional - brief messages, task-focused';
+  else writingVoice = 'Concise - communicates efficiently without extended elaboration';
 
   return {
     attachmentStyle,
@@ -719,7 +719,7 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     .slice(0, 10)
     .map(([name, mentions]) => ({ name, mentions, relationship: inferRelationship(name, messages), contexts: nameContexts[name] || [] }));
 
-  // Location — improved: scan for any capitalised place-like words near location context
+  // Location - improved: scan for any capitalised place-like words near location context
   const locationContextWords = /\b(in|at|from|near|around|visiting|live|lived|living|moved to|moving to|based in|grew up in|went to|come from|originally from)\s+([A-Z][a-zA-Z\s]{2,20})\b/g;
   const locationCounts: Record<string, number> = {};
   for (const msg of messages) {
@@ -747,10 +747,10 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     }));
 
   const hourBuckets = [
-    { timeOfDay: 'Late Night (12am–6am)', range: [0, 5] },
-    { timeOfDay: 'Morning (6am–12pm)', range: [6, 11] },
-    { timeOfDay: 'Afternoon (12pm–6pm)', range: [12, 17] },
-    { timeOfDay: 'Evening (6pm–12am)', range: [18, 23] },
+    { timeOfDay: 'Late Night (12am-6am)', range: [0, 5] },
+    { timeOfDay: 'Morning (6am-12pm)', range: [6, 11] },
+    { timeOfDay: 'Afternoon (12pm-6pm)', range: [12, 17] },
+    { timeOfDay: 'Evening (6pm-12am)', range: [18, 23] },
   ];
   const vulnerabilityPatterns = hourBuckets.map(bucket => {
     const bMsgs = messages.filter(m => m.hour >= bucket.range[0] && m.hour <= bucket.range[1]);
@@ -854,7 +854,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
   messages.forEach(m => { if (m.anxietyScore > 4) hourAnxiety[m.hour]++; });
   const mostVulnerableHour = hourAnxiety.indexOf(Math.max(...hourAnxiety));
 
-  const periodLabels = ['Late night (12am–4am)', 'Early morning (5am–8am)', 'Evening (6pm–10pm)', 'Afternoon (12pm–5pm)'];
+  const periodLabels = ['Late night (12am-4am)', 'Early morning (5am-8am)', 'Evening (6pm-10pm)', 'Afternoon (12pm-5pm)'];
   const periodRanges = [[0, 4], [5, 8], [18, 22], [12, 17]];
   const periodScores = periodRanges.map(([s, e]) => messages.filter(m => m.hour >= s && m.hour <= e).reduce((sum, m) => sum + m.anxietyScore, 0));
   const mostVulnerablePeriod = periodLabels[periodScores.indexOf(Math.max(...periodScores))] || 'Evening';

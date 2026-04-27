@@ -1,5 +1,5 @@
 // ============================================================================
-// synthesis.ts — client-side caller for /api/synthesize
+// synthesis.ts - client-side caller for /api/synthesize
 // Runs after per-message enrichment. One call. Produces the intelligence briefing.
 // ============================================================================
 
@@ -87,7 +87,7 @@ function selectTopExcerpts(
 
   ranked.sort((a, b) => b.score - a.score);
 
-  // Deduplicate by excerpt similarity — don't send 40 near-identical messages
+  // Deduplicate by excerpt similarity - don't send 40 near-identical messages
   const chosen: typeof ranked = [];
   const seen = new Set<string>();
 
@@ -115,10 +115,10 @@ function aggregateSignalCounts(enrichments: MessageEnrichment[]): Record<string,
 
 function getDominantTimeOfDay(hourDistribution: number[]): string {
   const buckets = [
-    { label: 'Late night (12am–5am)', range: [0, 5] },
-    { label: 'Morning (6am–11am)', range: [6, 11] },
-    { label: 'Afternoon (12pm–5pm)', range: [12, 17] },
-    { label: 'Evening (6pm–11pm)', range: [18, 23] },
+    { label: 'Late night (12am-5am)', range: [0, 5] },
+    { label: 'Morning (6am-11am)', range: [6, 11] },
+    { label: 'Afternoon (12pm-5pm)', range: [12, 17] },
+    { label: 'Evening (6pm-11pm)', range: [18, 23] },
   ];
   const counts = buckets.map(b => {
     let sum = 0;

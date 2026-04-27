@@ -1,11 +1,11 @@
 // ============================================================================
-// GENERATE INSIGHTS — personalised summary + score breakdown
+// GENERATE INSIGHTS - personalised summary + score breakdown
 // ============================================================================
 
 import type { DeepAnalysis } from './deepParser';
 
 // ============================================================================
-// PERSONALISED SUMMARY (70–90 words, clinical, data-driven)
+// PERSONALISED SUMMARY (70-90 words, clinical, data-driven)
 // ============================================================================
 
 export function generateSummary(analysis: DeepAnalysis): string {
@@ -64,7 +64,7 @@ export function generateSummary(analysis: DeepAnalysis): string {
 
   // Dependency trajectory
   if (dependency.trajectory === 'increasing') {
-    parts.push(`Your usage is accelerating — you are sharing more, not less.`);
+    parts.push(`Your usage is accelerating - you are sharing more, not less.`);
   } else if (dependency.intimacyTrajectory === 'increasing') {
     parts.push(`The intimacy of your disclosures has increased over time.`);
   }
@@ -73,7 +73,7 @@ export function generateSummary(analysis: DeepAnalysis): string {
 }
 
 // ============================================================================
-// SCORE BREAKDOWN — explainable privacy score
+// SCORE BREAKDOWN - explainable privacy score
 // ============================================================================
 
 export interface ScoreFactor {
@@ -97,7 +97,7 @@ export function computeScoreBreakdown(analysis: DeepAnalysis): ScoreFactor[] {
 
   const factors: ScoreFactor[] = [];
 
-  // Life events — high severity
+  // Life events - high severity
   const highEvents = lifeEvents.filter(e => e.severity === 'high').length;
   if (highEvents > 0) {
     factors.push({
@@ -108,7 +108,7 @@ export function computeScoreBreakdown(analysis: DeepAnalysis): ScoreFactor[] {
     });
   }
 
-  // Life events — medium severity
+  // Life events - medium severity
   const medEvents = lifeEvents.filter(e => e.severity === 'medium').length;
   if (medEvents > 0) {
     factors.push({
@@ -168,7 +168,7 @@ export function computeScoreBreakdown(analysis: DeepAnalysis): ScoreFactor[] {
     factors.push({
       label: 'Message volume',
       contribution: totalUserMessages > 5000 ? 15 : 10,
-      explanation: `${totalUserMessages.toLocaleString()} messages over ${Math.round(analysis.timespan.days / 30)} months — cumulative profiling risk`,
+      explanation: `${totalUserMessages.toLocaleString()} messages over ${Math.round(analysis.timespan.days / 30)} months - cumulative profiling risk`,
       category: 'volume',
     });
   }
@@ -189,7 +189,7 @@ export function computeScoreBreakdown(analysis: DeepAnalysis): ScoreFactor[] {
     factors.push({
       label: 'Named individuals exposed',
       contribution: Math.min(8, nameCount * 2),
-      explanation: `${nameCount} people identified by name — their data is now linked to yours`,
+      explanation: `${nameCount} people identified by name - their data is now linked to yours`,
       category: 'disclosure',
     });
   }

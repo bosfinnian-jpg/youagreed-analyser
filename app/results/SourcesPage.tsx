@@ -18,7 +18,7 @@ const ACTIVE_SOURCES = [
     fileType: '.json',
     severity: 'critical' as const,
     reveals: ['Cognitive profile', 'Emotional patterns', 'Vulnerability windows', 'Personal relationships', 'Sensitive disclosures'],
-    description: 'Your full conversation history. The most revealing source — contains your reasoning patterns, emotional disclosures, and the cognitive fingerprint that cannot be deleted from a trained model.',
+    description: 'Your full conversation history. The most revealing source - contains your reasoning patterns, emotional disclosures, and the cognitive fingerprint that cannot be deleted from a trained model.',
     exportPath: 'Settings → Data Controls → Export Data → conversations.json',
     exportUrl: 'https://chatgpt.com/#settings/DataControls',
     accept: '.json',
@@ -33,7 +33,7 @@ const ACTIVE_SOURCES = [
     fileType: '.json',
     severity: 'critical' as const,
     reveals: ['Reasoning patterns', 'Emotional disclosures', 'Cognitive fingerprint', 'Value system', 'Sensitive disclosures'],
-    description: 'Full conversation history exported from claude.ai. Anthropic trains on conversations by default — the same extraction problem, different company.',
+    description: 'Full conversation history exported from claude.ai. Anthropic trains on conversations by default - the same extraction problem, different company.',
     exportPath: 'claude.ai → Settings → Account → Export Data → conversations.json',
     exportUrl: 'https://claude.ai/settings',
     accept: '.json',
@@ -70,7 +70,7 @@ interface SourceState {
 }
 
 // ============================================================================
-// ACTIVE SOURCE CARD — full upload capability
+// ACTIVE SOURCE CARD - full upload capability
 // ============================================================================
 
 function ActiveSourceCard({
@@ -175,7 +175,7 @@ function ActiveSourceCard({
                 </a>
               </div>
 
-              {/* Upload zone — only if not done */}
+              {/* Upload zone - only if not done */}
               {!isDone && state.status !== 'processing' && (
                 <div
                   onDragOver={e => { e.preventDefault(); }}
@@ -197,7 +197,7 @@ function ActiveSourceCard({
                     Drop {source.fileType} here or click to upload
                   </p>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.7 }}>
-                    Processed locally — never transmitted
+                    Processed locally - never transmitted
                   </p>
                   <input
                     ref={inputRef}
@@ -248,7 +248,7 @@ function ActiveSourceCard({
               {isDone && (
                 <div style={{ borderLeft: `3px solid ${PALETTE.green}`, paddingLeft: '1.2rem', maxWidth: 480 }}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.green, textTransform: 'uppercase' }}>
-                    Source connected — dashboard updated
+                    Source connected - dashboard updated
                   </p>
                 </div>
               )}
@@ -357,7 +357,7 @@ export default function SourcesPage({
 
       setSourceStates(prev => ({ ...prev, [sourceId]: { ...prev[sourceId], progress: 15, stage: 'Parsing conversations' } }));
 
-      // Check if other sources already analysed — if so, merge
+      // Check if other sources already analysed - if so, merge
       const existingResults = sessionStorage.getItem('analysisResults');
       const existingRawIds = ACTIVE_SOURCES
         .filter(s => s.id !== sourceId)
@@ -378,7 +378,7 @@ export default function SourcesPage({
         const newNormalised = detectedType === 'claude' ? normaliseClaude(jsonData) : jsonData;
         combinedJson = [...allRaw, ...newNormalised];
       } else {
-        // First source being added — just use this one
+        // First source being added - just use this one
         const { normaliseClaude } = await import('./claudeParser');
         combinedJson = detectedType === 'claude' ? normaliseClaude(jsonData) : jsonData;
       }
@@ -475,7 +475,7 @@ export default function SourcesPage({
               Every platform you use is building a file on you.
             </h1>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, fontStyle: 'italic', maxWidth: '50ch' }}>
-              Upload a second export and the dashboard updates — more data, sharper argument. Each source adds a dimension the others cannot see.
+              Upload a second export and the dashboard updates - more data, sharper argument. Each source adds a dimension the others cannot see.
             </p>
           </motion.div>
 
@@ -544,7 +544,7 @@ export default function SourcesPage({
           <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
         </div>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '60ch', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)', fontStyle: 'italic' }}>
-          The claims made throughout this installation are grounded in published research. The argument about irreversibility is not rhetorical — it is technical.
+          The claims made throughout this installation are grounded in published research. The argument about irreversibility is not rhetorical - it is technical.
         </p>
         {[
           {
@@ -558,8 +558,8 @@ export default function SourcesPage({
             authors: 'Cooper, A. F., Moss, E., Laufer, B., & De-Arteaga, M.',
             year: '2024',
             title: 'Arbitrariness and Social Prediction: The Confounding Role of Variance in Fair Classification',
-            venue: 'FAccT — ACM Conference on Fairness, Accountability, and Transparency',
-            note: 'Addresses the practical impossibility of machine unlearning in deployed systems — the technical basis for the irreversibility argument on the Permanent page.',
+            venue: 'FAccT - ACM Conference on Fairness, Accountability, and Transparency',
+            note: 'Addresses the practical impossibility of machine unlearning in deployed systems - the technical basis for the irreversibility argument on the Permanent page.',
           },
           {
             authors: 'Zuboff, S.',
@@ -573,7 +573,7 @@ export default function SourcesPage({
             year: '1977',
             title: 'Discipline and Punish: The Birth of the Prison',
             venue: 'Pantheon Books (trans. Alan Sheridan)',
-            note: 'The panopticon as a model of internalised surveillance. Applied here to the way conversational AI creates a continuous confessional record — visible to the system, invisible to the subject.',
+            note: 'The panopticon as a model of internalised surveillance. Applied here to the way conversational AI creates a continuous confessional record - visible to the system, invisible to the subject.',
           },
           {
             authors: 'Dunne, A. & Raby, F.',
@@ -645,7 +645,7 @@ export default function SourcesPage({
       <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '2rem' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.8rem' }}>About your data</p>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)', color: PALETTE.inkFaint, lineHeight: 1.8, maxWidth: '52ch' }}>
-          All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists — not to collect it.
+          All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists - not to collect it.
         </p>
       </div>
 

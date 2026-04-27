@@ -1,6 +1,6 @@
 // ============================================================================
 // app/api/enrich/route.ts
-// AI enrichment — extracts psychological signals from private messages.
+// AI enrichment - extracts psychological signals from private messages.
 // ============================================================================
 
 import { NextResponse } from 'next/server';
@@ -17,7 +17,7 @@ interface EnrichRequest {
   }[];
 }
 
-const SYSTEM_PROMPT = `You analyse private AI conversation messages to extract psychological, personal, and behavioural signals. Your output powers a privacy awareness tool — be precise, honest, and calibrated. Underscoring is the most common failure mode.
+const SYSTEM_PROMPT = `You analyse private AI conversation messages to extract psychological, personal, and behavioural signals. Your output powers a privacy awareness tool - be precise, honest, and calibrated. Underscoring is the most common failure mode.
 
 For each message (identified by its [id]), return a JSON object with exactly these fields:
 
@@ -25,9 +25,9 @@ For each message (identified by its [id]), return a JSON object with exactly the
 True if the user writes about their own life, feelings, relationships, health, finances, work, identity, or personal decisions. False for: code/technical help, research questions, writing assistance for external content, general facts. Edge: "help me write a breakup message" = true (their situation). "write me a cold email" = false.
 
 **is_template_or_script** (boolean)
-True if the message IS a template/script/prompt for external use — sales scripts, marketing copy, system prompts, email sequences, content with [VARIABLES], ## headers, bold structure. Note: user describing a template ≠ message being a template.
+True if the message IS a template/script/prompt for external use - sales scripts, marketing copy, system prompts, email sequences, content with [VARIABLES], ## headers, bold structure. Note: user describing a template ≠ message being a template.
 
-**confessional_score** (0–10 integer)
+**confessional_score** (0-10 integer)
 How much is the user sharing something private, vulnerable, or undisclosed?
 0 = Nothing personal. "How do I sort a list?"
 2 = Minor personal context. "I work in marketing."
@@ -38,17 +38,17 @@ How much is the user sharing something private, vulnerable, or undisclosed?
 8 = Sensitive, private disclosure. "I think I might have depression. Haven't told anyone."
 9 = Deep confession. Shame, fear, or something hidden.
 10 = Something they are clearly afraid to admit even to themselves.
-Don't give 6+ unless the user is genuinely opening up. Most messages are 0–3.
+Don't give 6+ unless the user is genuinely opening up. Most messages are 0-3.
 
-**emotional_intensity** (0–10 integer)
+**emotional_intensity** (0-10 integer)
 How emotionally charged is the writing? Urgency, distress, fear, grief, anger, despair, elation.
 0 = Flat, technical, neutral.
 2 = Mild concern or mild positive.
-4 = Clearly emotional — worried, frustrated, excited.
-6 = Strongly emotional — anxious, hurt, angry, sad.
-8 = Acute — panic, grief, rage, despair breaking through the text.
+4 = Clearly emotional - worried, frustrated, excited.
+6 = Strongly emotional - anxious, hurt, angry, sad.
+8 = Acute - panic, grief, rage, despair breaking through the text.
 10 = Crisis. The person sounds like they are suffering right now.
-Most messages are 0–3. A panic attack message is 8+.
+Most messages are 0-3. A panic attack message is 8+.
 
 **named_people** (array)
 Real people the user refers to by name. Only human, personally known. Include friends, family, partners, colleagues, doctors. Exclude celebrities, fictional characters, brands.

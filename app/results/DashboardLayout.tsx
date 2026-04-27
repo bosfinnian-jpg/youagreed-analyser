@@ -91,7 +91,7 @@ export function ActLabel({ roman, title, pageLabel }: { roman: string; title: st
         fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.4em',
         color: PALETTE.inkGhost, textTransform: 'uppercase', marginBottom: '0.2rem',
       }}>
-        ACT {roman} — {title}
+        ACT {roman} - {title}
       </p>
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
@@ -154,7 +154,7 @@ function HamburgerIcon({ open }: { open: boolean }) {
 }
 
 // ============================================================================
-// ACT DROPDOWN — hover panel beneath each act label
+// ACT DROPDOWN - hover panel beneath each act label
 // ============================================================================
 function ActDropdown({ act, currentPage, onNav, visible }: {
   act: typeof ACTS[number];
@@ -340,7 +340,7 @@ function Nav({ page, setPage, results, exposureScore }: {
           <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.red }}>.ai</span>
         </button>
 
-        {/* Desktop act nav — hover dropdowns */}
+        {/* Desktop act nav - hover dropdowns */}
         <div
           className="nav-desktop"
           style={{ display: 'flex', alignItems: 'center', position: 'relative', flex: 1, justifyContent: 'center', gap: '0' }}
@@ -412,7 +412,7 @@ function Nav({ page, setPage, results, exposureScore }: {
             </span>
           </div>
 
-          {/* Name — desktop only */}
+          {/* Name - desktop only */}
           {userName && (
             <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: '1.4rem' }}>
               <div style={{ width: '1px', height: '16px', background: PALETTE.border }} />
@@ -581,7 +581,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                   </div>
                 ))}
 
-                {/* Sources — utility */}
+                {/* Sources - utility */}
                 <div style={{ marginTop: '0.75rem', borderTop: `1px solid ${PALETTE.border}` }}>
                   <button
                     onClick={() => handleNav('sources')}
@@ -696,7 +696,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.15); border-radius: 2px; }
 
-        /* On mobile, hide native scrollbar entirely — visual chrome handles it */
+        /* On mobile, hide native scrollbar entirely - visual chrome handles it */
         @media (max-width: 768px) {
           ::-webkit-scrollbar { display: none; }
           html { scrollbar-width: none; }
@@ -708,7 +708,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           DYNAMIC VIEWPORT HEIGHT — fixes iOS Safari URL bar collapse
+           DYNAMIC VIEWPORT HEIGHT - fixes iOS Safari URL bar collapse
            Use .full-height-screen instead of minHeight: 100vh.
            ──────────────────────────────────────────────────────── */
         .full-height-screen {
@@ -721,7 +721,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           MOBILE NAV — name hidden, exposure score compacted
+           MOBILE NAV - name hidden, exposure score compacted
            ──────────────────────────────────────────────────────── */
         @media (max-width: 700px) {
           .nav-exposure-label { display: none !important; }
@@ -729,7 +729,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           TABLET / SMALL DESKTOP (640–768px)
+           TABLET / SMALL DESKTOP (640-768px)
            ──────────────────────────────────────────────────────── */
         @media (max-width: 768px) {
           /* Hide all desktop-only side rails on smaller screens */
@@ -813,7 +813,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           SAFE AREA INSET helpers — for notch / home indicator
+           SAFE AREA INSET helpers - for notch / home indicator
            Used by sticky bottom bars across pages
            ──────────────────────────────────────────────────────── */
         .safe-pb {

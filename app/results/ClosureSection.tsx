@@ -63,7 +63,7 @@ export default function ClosureSection({ analysis, setPage }: {
         position: 'relative',
       }}>
 
-        {/* Large ghost score — architectural background element */}
+        {/* Large ghost score - architectural background element */}
         {score > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -88,7 +88,7 @@ export default function ClosureSection({ analysis, setPage }: {
           </motion.div>
         )}
 
-        {/* Thin horizontal rule — full width */}
+        {/* Thin horizontal rule - full width */}
         <motion.div
           initial={{ scaleX: 0 }}
           animate={isInView ? { scaleX: 1 } : {}}
@@ -121,10 +121,10 @@ export default function ClosureSection({ analysis, setPage }: {
           End of report
         </motion.p>
 
-        {/* Main content — centred column */}
+        {/* Main content - centred column */}
         <div style={{ maxWidth: 720, position: 'relative', zIndex: 1 }}>
 
-          {/* EKG — larger, more presence */}
+          {/* EKG - larger, more presence */}
           <motion.svg
             width="320" height="44" viewBox="0 0 320 44"
             style={{ display: 'block', marginBottom: '3rem', overflow: 'visible' }}
@@ -152,7 +152,7 @@ export default function ClosureSection({ analysis, setPage }: {
             />
           </motion.svg>
 
-          {/* The main statement — much bigger */}
+          {/* The main statement - much bigger */}
           {isInView && (
             <p style={{
               fontFamily: TYPE.serif,

@@ -37,7 +37,7 @@ function generateRecommendations(analysis: DeepAnalysis): Recommendation[] {
     recs.push({
       id: 'confessional',
       title: 'Stop treating AI as a confidant',
-      body: `You made ${confessionalCount} confessional disclosures — private admissions, secrets, things you say you haven't told anyone else. Every one is stored permanently and cannot be deleted from trained model weights.`,
+      body: `You made ${confessionalCount} confessional disclosures - private admissions, secrets, things you say you haven't told anyone else. Every one is stored permanently and cannot be deleted from trained model weights.`,
       severity: 'high',
     });
   }
@@ -55,7 +55,7 @@ function generateRecommendations(analysis: DeepAnalysis): Recommendation[] {
     recs.push({
       id: 'latenight',
       title: 'Avoid late-night sessions',
-      body: `${Math.round(nighttimeRatio * 100)}% of your messages were sent between midnight and 5am. Messages in this window show elevated emotional disclosure and reduced self-censorship — producing the most exploitable data.`,
+      body: `${Math.round(nighttimeRatio * 100)}% of your messages were sent between midnight and 5am. Messages in this window show elevated emotional disclosure and reduced self-censorship - producing the most exploitable data.`,
       severity: 'medium',
     });
   }
@@ -64,7 +64,7 @@ function generateRecommendations(analysis: DeepAnalysis): Recommendation[] {
     recs.push({
       id: 'validation',
       title: 'Recognise when you are seeking reassurance',
-      body: `${validationCount} of your messages sought validation or approval. This pattern is detectable from writing alone and would classify you as susceptible to social-proof marketing — a high-value segment for subscription products and influencer campaigns.`,
+      body: `${validationCount} of your messages sought validation or approval. This pattern is detectable from writing alone and would classify you as susceptible to social-proof marketing - a high-value segment for subscription products and influencer campaigns.`,
       severity: 'medium',
     });
   }
@@ -74,7 +74,7 @@ function generateRecommendations(analysis: DeepAnalysis): Recommendation[] {
     recs.push({
       id: 'lifeevents',
       title: 'Never disclose life crises to AI',
-      body: `${highSeverityEvents.length} high-severity life event${highSeverityEvents.length > 1 ? 's were' : ' was'} detected (${highSeverityEvents.slice(0, 2).map(e => e.label.toLowerCase()).join(', ')}). Crisis data is the single most commercially valuable category — it identifies you as vulnerable and targetable.`,
+      body: `${highSeverityEvents.length} high-severity life event${highSeverityEvents.length > 1 ? 's were' : ' was'} detected (${highSeverityEvents.slice(0, 2).map(e => e.label.toLowerCase()).join(', ')}). Crisis data is the single most commercially valuable category - it identifies you as vulnerable and targetable.`,
       severity: 'high',
     });
   }
@@ -83,7 +83,7 @@ function generateRecommendations(analysis: DeepAnalysis): Recommendation[] {
     recs.push({
       id: 'volume',
       title: 'Reduce your overall usage volume',
-      body: `${totalUserMessages.toLocaleString()} messages over ${Math.round(analysis.timespan.days / 30)} months${dependency.trajectory === 'increasing' ? ', with usage accelerating' : ''}. Cumulative data volume dramatically increases profiling accuracy — each additional message makes your cognitive fingerprint more precise.`,
+      body: `${totalUserMessages.toLocaleString()} messages over ${Math.round(analysis.timespan.days / 30)} months${dependency.trajectory === 'increasing' ? ', with usage accelerating' : ''}. Cumulative data volume dramatically increases profiling accuracy - each additional message makes your cognitive fingerprint more precise.`,
       severity: 'medium',
     });
   }

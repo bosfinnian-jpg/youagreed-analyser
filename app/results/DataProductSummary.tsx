@@ -10,10 +10,10 @@ interface DataProductSummaryProps {
 }
 
 // ============================================================================
-// TRAINING VALUE — value of conversation data to the AI industry
+// TRAINING VALUE - value of conversation data to the AI industry
 // ============================================================================
 // OpenAI's valuation crossed $300bn in 2025. That valuation is built on
-// the model — which was trained on conversations like yours, for free.
+// the model - which was trained on conversations like yours, for free.
 // This is illustrative: the economic argument, not a market rate for your data.
 function estimateTrainingValue(segments: DeepAnalysis['commercialProfile']['segments']): number {
   // Returns an illustrative 'sensitivity index' (not a CPM or market price)
@@ -61,17 +61,17 @@ function TrainingValueHero({ sensitivityIndex, isInView }: { sensitivityIndex: n
         </span>
       </div>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 560 }}>
-        OpenAI’s valuation in 2025. That number is built on the model — which was trained on conversations like yours, without payment, and without the ability to remove your contribution. You cannot opt out retroactively. You cannot be compensated. The data is inside the weights now.
+        OpenAI’s valuation in 2025. That number is built on the model - which was trained on conversations like yours, without payment, and without the ability to remove your contribution. You cannot opt out retroactively. You cannot be compensated. The data is inside the weights now.
       </p>
       <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1rem', lineHeight: 1.6 }}>
-        Note: OpenAI does not sell your conversation data to advertisers. The risk is different — it is irreversibility, breach exposure, and the use of your disclosures to train commercial AI products.
+        Note: OpenAI does not sell your conversation data to advertisers. The risk is different - it is irreversibility, breach exposure, and the use of your disclosures to train commercial AI products.
       </p>
     </div>
   );
 }
 
 // ============================================================================
-// DOT PLOT — weekly vulnerability over time (Pudding-style shape of data)
+// DOT PLOT - weekly vulnerability over time (Pudding-style shape of data)
 // ============================================================================
 function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTimeline'] }) {
   const ref = useRef(null);
@@ -179,7 +179,7 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
           transition={{ delay: 1.2 }}
           style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.red, marginTop: '1rem' }}
         >
-          ● {timeline.crisisPeriods.length} crisis period{timeline.crisisPeriods.length > 1 ? 's' : ''} detected — outlined in red above
+          ● {timeline.crisisPeriods.length} crisis period{timeline.crisisPeriods.length > 1 ? 's' : ''} detected - outlined in red above
         </motion.p>
       )}
     </div>
@@ -187,7 +187,7 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
 }
 
 // ============================================================================
-// SEGMENT CARDS — styled like ad platform targeting UI
+// SEGMENT CARDS - styled like ad platform targeting UI
 // ============================================================================
 function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commercialProfile']['segments']; isInView: boolean }) {
   if (!segments.length) return null;
@@ -198,7 +198,7 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
         Inferred vulnerability categories
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.6, maxWidth: 560, marginBottom: '2rem' }}>
-        These are the vulnerability categories your conversations map onto. OpenAI does not sell this profile to advertisers — but these patterns exist in your data. If exposed through a breach or subpoena, they would fit directly into systems that do trade on them.
+        These are the vulnerability categories your conversations map onto. OpenAI does not sell this profile to advertisers - but these patterns exist in your data. If exposed through a breach or subpoena, they would fit directly into systems that do trade on them.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
@@ -210,7 +210,7 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
             transition={{ delay: 0.1 + i * 0.1, duration: 0.6 }}
             style={{ background: PALETTE.bgPanel }}
           >
-            {/* Card header — platform dossier aesthetic */}
+            {/* Card header - platform dossier aesthetic */}
             <div style={{
               padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1rem, 2.5vw, 1.5rem) 0',
               display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem',
@@ -248,7 +248,7 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
               </div>
             </div>
 
-            {/* Confidence bar — full width */}
+            {/* Confidence bar - full width */}
             <div style={{ margin: '1rem clamp(1rem, 2.5vw, 1.5rem) 0', height: '2px', background: PALETTE.bgElevated }}>
               <motion.div
                 initial={{ scaleX: 0 }}
@@ -288,7 +288,7 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
 }
 
 // ============================================================================
-// TARGETING WINDOW — 24-hour bar chart showing vulnerability by hour
+// TARGETING WINDOW - 24-hour bar chart showing vulnerability by hour
 // ============================================================================
 function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRatio }: {
   hourDistribution: number[];
@@ -368,7 +368,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
       </div>
       </div>
 
-      {/* Hour labels — just key ones */}
+      {/* Hour labels - just key ones */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(24, 1fr)', gap: '2px', minWidth: '360px', overflowX: 'hidden' }}>
         {hours.map(h => (
           <p key={h} style={{
@@ -382,7 +382,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
       </div>
 
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.red, marginTop: '0.75rem' }}>
-        ■ Late-night messages (12am–4am) carry the highest concentration of sensitive disclosure. This is when emotional defences are lowest — and when exposed data would be most revealing.
+        ■ Late-night messages (12am-4am) carry the highest concentration of sensitive disclosure. This is when emotional defences are lowest - and when exposed data would be most revealing.
       </p>
     </div>
   );
@@ -412,7 +412,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           You, as a commercial product.
         </h2>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580 }}>
-          OpenAI does not sell your data to advertisers. The real problem is different: your conversations helped train a model worth hundreds of billions of dollars, and that contribution cannot be undone. What follows shows the patterns your data contains — and what would be exposed if that data were ever compromised.
+          OpenAI does not sell your data to advertisers. The real problem is different: your conversations helped train a model worth hundreds of billions of dollars, and that contribution cannot be undone. What follows shows the patterns your data contains - and what would be exposed if that data were ever compromised.
         </p>
       </div>
 

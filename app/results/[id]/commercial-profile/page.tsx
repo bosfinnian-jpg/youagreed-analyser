@@ -17,22 +17,22 @@ interface MarketSeg {
 }
 
 // ============================================================================
-// HELPERS — copied from ProfilePage
+// HELPERS - copied from ProfilePage
 // ============================================================================
 
 function generateMarketplaceSegments(r: any): MarketSeg[] {
   const segments = r.commercialProfile?.segments || [];
   const cpmMap: Record<string, { cpm: string; cat: string }> = {
-    mental_health_support:    { cpm: '£6.20', cat: 'IAB: Health — Panic/Anxiety Disorders' },
-    career_development:       { cpm: '£3.80', cat: 'IAB: Business — Career Advice' },
+    mental_health_support:    { cpm: '£6.20', cat: 'IAB: Health - Panic/Anxiety Disorders' },
+    career_development:       { cpm: '£3.80', cat: 'IAB: Business - Career Advice' },
     financial_planning:       { cpm: '£4.50', cat: 'IAB: Personal Finance' },
-    relationship_advice:      { cpm: '£2.90', cat: 'IAB: Family — Dating/Marriage' },
-    productivity_optimisation:{ cpm: '£2.40', cat: 'IAB: Technology — Software' },
-    creative_professional:    { cpm: '£3.10', cat: 'IAB: Business — Freelance/Startup' },
-    health_wellness:          { cpm: '£5.60', cat: 'IAB: Health — General' },
+    relationship_advice:      { cpm: '£2.90', cat: 'IAB: Family - Dating/Marriage' },
+    productivity_optimisation:{ cpm: '£2.40', cat: 'IAB: Technology - Software' },
+    creative_professional:    { cpm: '£3.10', cat: 'IAB: Business - Freelance/Startup' },
+    health_wellness:          { cpm: '£5.60', cat: 'IAB: Health - General' },
     education_learning:       { cpm: '£2.20', cat: 'IAB: Education' },
     housing_relocation:       { cpm: '£7.80', cat: 'IAB: Real Estate' },
-    parenting:                { cpm: '£4.10', cat: 'IAB: Family — Babies and Toddlers' },
+    parenting:                { cpm: '£4.10', cat: 'IAB: Family - Babies and Toddlers' },
     legal_concerns:           { cpm: '£8.90', cat: 'IAB: Legal' },
   };
   return segments.slice(0, 6).map((seg: any) => {
@@ -103,7 +103,7 @@ function SectionHeader({ label, heading, body }: { label: string; heading: strin
 }
 
 // ============================================================================
-// COMMERCIAL TARGETS — specific real brands (copied from ProfilePage)
+// COMMERCIAL TARGETS - specific real brands (copied from ProfilePage)
 // ============================================================================
 
 function CommercialTargetsSection({ targets }: { targets: any[] }) {
@@ -113,7 +113,7 @@ function CommercialTargetsSection({ targets }: { targets: any[] }) {
       <SectionHeader
         label="Advertisers who would target you"
         heading="The brands that would pay to reach this profile."
-        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data entered the broker ecosystem — through a breach, a policy change, or a data-sharing agreement — these are the advertisers whose algorithms would identify you as a high-value target."
+        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data entered the broker ecosystem - through a breach, a policy change, or a data-sharing agreement - these are the advertisers whose algorithms would identify you as a high-value target."
       />
       <div style={{
         display: 'grid',
@@ -191,7 +191,7 @@ export default function CommercialProfilePage({ results, setPage }: {
         borderBottom: `1px solid ${PALETTE.border}`,
       }}>
         <ActLabel roman="II" title="The Inference" pageLabel="03 / Commercial Profile" />
-        <ThreadSentence>The product version of you — built without permission, priced without your knowledge.</ThreadSentence>
+        <ThreadSentence>The product version of you - built without permission, priced without your knowledge.</ThreadSentence>
 
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -218,7 +218,7 @@ export default function CommercialProfilePage({ results, setPage }: {
             color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '56ch',
           }}
         >
-          OpenAI does not sell your data to advertisers — but your conversations
+          OpenAI does not sell your data to advertisers - but your conversations
           helped train a model now worth hundreds of billions of dollars. That
           contribution is permanent and cannot be undone. What follows is the
           commercial shape of what you gave away.
@@ -226,7 +226,7 @@ export default function CommercialProfilePage({ results, setPage }: {
       </div>
 
       {/* ================================================================
-          MARKET PLACEMENT — segment ID card + marketplace segments grid
+          MARKET PLACEMENT - segment ID card + marketplace segments grid
           ================================================================ */}
       <Section index={1}>
         <div style={{
@@ -238,7 +238,7 @@ export default function CommercialProfilePage({ results, setPage }: {
             <SectionHeader
               label="Market placement"
               heading="What a profile like yours is worth."
-              body="These are the IAB advertising segments your inferred profile maps onto. The CPM rate is what advertisers pay per thousand impressions to reach someone matching this profile. These segments are derived from your conversation patterns — without your consent or awareness."
+              body="These are the IAB advertising segments your inferred profile maps onto. The CPM rate is what advertisers pay per thousand impressions to reach someone matching this profile. These segments are derived from your conversation patterns - without your consent or awareness."
             />
           </div>
 
@@ -368,7 +368,7 @@ export default function CommercialProfilePage({ results, setPage }: {
       </Section>
 
       {/* ================================================================
-          DATA PRODUCT SUMMARY — training value, vulnerability plot,
+          DATA PRODUCT SUMMARY - training value, vulnerability plot,
           segment cards, targeting window (full Appendix B content)
           ================================================================ */}
       {hasDeepData && (
@@ -378,7 +378,7 @@ export default function CommercialProfilePage({ results, setPage }: {
       )}
 
       {/* ================================================================
-          COMMERCIAL TARGETS — specific brands that would buy this profile
+          COMMERCIAL TARGETS - specific brands that would buy this profile
           ================================================================ */}
       {results.synthesis?.commercialTargets?.length > 0 && (
         <CommercialTargetsSection targets={results.synthesis.commercialTargets} />
@@ -416,7 +416,7 @@ export default function CommercialProfilePage({ results, setPage }: {
           }}
         >
           This is not your identity. This is a commercial reconstruction of your
-          identity — assembled without your knowledge, retained without meaningful
+          identity - assembled without your knowledge, retained without meaningful
           consent, and irrecoverable once embedded in a trained model.
         </motion.p>
         <motion.p

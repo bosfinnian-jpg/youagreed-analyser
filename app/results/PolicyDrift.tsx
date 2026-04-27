@@ -5,7 +5,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { PALETTE, TYPE } from './DashboardLayout';
 
 // ============================================================================
-// POLICY DRIFT — Three-column ToS comparison
+// POLICY DRIFT - Three-column ToS comparison
 // Shows what changed between OpenAI's 2023, 2025, and 2026 privacy policies.
 // The argument: what you consented to in 2023 is not what you consented to now.
 // ============================================================================
@@ -80,7 +80,7 @@ const DRIFT_CLAUSES: DriftClause[] = [
     description: 'What happens when you delete your data or account.',
     v2023: 'Retained as long as needed for legitimate business purposes.',
     v2025: 'Temporary chats kept up to 30 days for safety. Some services allow deletion.',
-    v2026: 'Deletion within 30 days unless needed longer — or already de-identified and used for model training, in which case deletion does not apply.',
+    v2026: 'Deletion within 30 days unless needed longer - or already de-identified and used for model training, in which case deletion does not apply.',
     change: 'expanded',
     severity: 'critical',
   },
@@ -170,7 +170,7 @@ function ColumnHeader({ year, clauseCount }: { year: string; clauseCount: number
         color: PALETTE.inkFaint,
         textTransform: 'uppercase',
       }}>
-        {year === '2023' ? 'June — Privacy Policy' : year === '2025' ? 'June — Privacy Policy' : 'April — US Privacy Policy'}
+        {year === '2023' ? 'June - Privacy Policy' : year === '2025' ? 'June - Privacy Policy' : 'April - US Privacy Policy'}
       </p>
     </div>
   );
@@ -196,7 +196,7 @@ function ClauseRow({ clause, index, isInView }: {
       transition={{ delay: index * 0.06, duration: 0.5 }}
       style={{ borderBottom: `1px solid ${PALETTE.border}` }}
     >
-      {/* Topic header row — full width */}
+      {/* Topic header row - full width */}
       <button
         onClick={() => setExpanded(!expanded)}
         style={{
@@ -441,7 +441,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
         transition={{ duration: 0.7 }}
         style={{ marginBottom: 'clamp(2rem, 4vw, 3.5rem)', position: 'relative' }}
       >
-        {/* Timeline marker — three points connected, growing rightward */}
+        {/* Timeline marker - three points connected, growing rightward */}
         <svg style={{
           position: 'absolute', right: 0, top: '50%',
           transform: 'translateY(-50%)',
@@ -450,13 +450,13 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
         }}>
           {/* Connecting line */}
           <line x1={20} y1={30} x2={180} y2={30} stroke="rgba(26,24,20,0.08)" strokeWidth="1" />
-          {/* 2023 — smallest dot */}
+          {/* 2023 - smallest dot */}
           <circle cx={20} cy={30} r={4} fill="none" stroke="rgba(26,24,20,0.2)" strokeWidth="1" />
           <text x={20} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(26,24,20,0.25)" letterSpacing="1">2023</text>
-          {/* 2025 — medium */}
+          {/* 2025 - medium */}
           <circle cx={100} cy={30} r={6} fill="none" stroke="rgba(160,100,0,0.25)" strokeWidth="1" />
           <text x={100} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(160,100,0,0.3)" letterSpacing="1">2025</text>
-          {/* 2026 — largest, red */}
+          {/* 2026 - largest, red */}
           <circle cx={180} cy={30} r={9} fill="rgba(190,40,30,0.06)" stroke="rgba(190,40,30,0.35)" strokeWidth="1" />
           <circle cx={180} cy={30} r={3} fill="rgba(190,40,30,0.4)" />
           <text x={180} y={20} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize="8" fill="rgba(190,40,30,0.5)" letterSpacing="1">2026</text>
@@ -503,7 +503,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
       {/* Stats */}
       <DriftSummary isInView={isInView} />
 
-      {/* Column header labels — desktop only */}
+      {/* Column header labels - desktop only */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : {}}
@@ -625,7 +625,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
               color: PALETTE.inkMuted,
               lineHeight: 1.75,
             }}>
-              In contract law, consent is specific. You agree to particular terms at a particular moment. When those terms change materially — as these have — consent to the original terms does not extend to the new ones. But that is precisely what continued use is treated as: ongoing consent to whatever the current policy says.
+              In contract law, consent is specific. You agree to particular terms at a particular moment. When those terms change materially - as these have - consent to the original terms does not extend to the new ones. But that is precisely what continued use is treated as: ongoing consent to whatever the current policy says.
             </p>
           </div>
           <div>
@@ -643,7 +643,7 @@ export default function PolicyDrift({ onAdvance }: { onAdvance?: () => void }) {
               color: PALETTE.inkMuted,
               lineHeight: 1.75,
             }}>
-              The 2026 policy introduces advertising — OpenAI now receives data about you from advertisers and uses your data to measure ad effectiveness. This category did not exist in 2023. Neither did contact list upload, browser data collection, or the carve-out that exempts de-identified training data from your deletion rights.
+              The 2026 policy introduces advertising - OpenAI now receives data about you from advertisers and uses your data to measure ad effectiveness. This category did not exist in 2023. Neither did contact list upload, browser data collection, or the carve-out that exempts de-identified training data from your deletion rights.
             </p>
           </div>
           <div>

@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 
 // ============================================================================
-// TRACE.AI — Terms of Service
+// TRACE.AI - Terms of Service
 // Dark background, EB Garamond body, Courier metadata.
-// Dense and document-like — §19.2 hides in plain sight.
+// Dense and document-like - §19.2 hides in plain sight.
 // ============================================================================
 
 const termsContent: Array<{ title: string; content: string }> = [
@@ -435,7 +435,7 @@ export default function TermsPage() {
           lineHeight: 1.7,
         }}
       >
-        {/* Header — unified site header */}
+        {/* Header - unified site header */}
         <header
           style={{
             background: 'rgba(238,236,229,0.97)',
@@ -482,7 +482,7 @@ export default function TermsPage() {
             position: 'relative',
           }}
         >
-          {/* Document stamp — top right */}
+          {/* Document stamp - top right */}
           <div style={{
             position: 'absolute', top: '40px', right: '32px',
             fontFamily: "'Courier Prime', monospace",
@@ -494,7 +494,7 @@ export default function TermsPage() {
             <div>TRACE.AI PLATFORM</div>
             <div>BINDING AGREEMENT</div>
           </div>
-          {/* Vertical rule — left margin, document feel */}
+          {/* Vertical rule - left margin, document feel */}
           <div style={{
             position: 'absolute', left: '16px', top: '56px', bottom: '40px',
             width: '1px', background: 'rgba(26,24,20,0.12)',

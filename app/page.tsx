@@ -93,7 +93,7 @@ function RadarBg() {
           stroke="rgba(190,40,30,0.2)" strokeWidth={1}
         />
 
-        {/* Sweep wedge — trailing glow */}
+        {/* Sweep wedge - trailing glow */}
         <circle cx={0} cy={0} r={200} fill="none"
           stroke="rgba(190,40,30,0.03)" strokeWidth={40}
           strokeDasharray={`${0.15 * 2 * Math.PI * 200} ${2 * Math.PI * 200}`}
@@ -101,7 +101,7 @@ function RadarBg() {
           transform="rotate(-8)"
         />
 
-        {/* Inner ring ticks — compass marks */}
+        {/* Inner ring ticks - compass marks */}
         {Array.from({ length: 36 }).map((_, i) => {
           const a = (i / 36) * Math.PI * 2;
           const inner = i % 9 === 0 ? 93 : 96;
@@ -219,7 +219,7 @@ export default function Home() {
           <RadarBg />
         </div>
 
-        {/* Radial light bloom behind title — pulses once */}
+        {/* Radial light bloom behind title - pulses once */}
         <motion.div
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: [0, 0.6, 0] }}
@@ -263,12 +263,12 @@ export default function Home() {
             borderBottom: `1px solid ${COLOR.inkTrace}`,
           }}
         >
-          {/* Wordmark — matches dashboard */}
+          {/* Wordmark - matches dashboard */}
           <span style={{ fontFamily: SERIF, fontSize: '1.1rem', letterSpacing: '-0.02em', color: COLOR.ink }}>
             trace<span style={{ color: COLOR.accent }}>.ai</span>
           </span>
 
-          {/* Right — minimal classification meta */}
+          {/* Right - minimal classification meta */}
           <div className="ya-header-meta" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: COLOR.inkFaint }}>
               Critical web tool
@@ -280,7 +280,7 @@ export default function Home() {
           </div>
         </motion.header>
 
-        {/* Vertical margin rules — printed document feel */}
+        {/* Vertical margin rules - printed document feel */}
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ delay: 1.8, duration: 1.4 }}

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { analyzeExport, type AnalyzeProgress } from '@/app/results/analyzeExport';
 
 // ============================================================================
-// TRACE.AI — Upload
+// TRACE.AI - Upload
 // The procedural beat between consent and reveal.
 // One job: take the file, show honest progress, move on.
 // ============================================================================
@@ -216,7 +216,7 @@ export default function UploadPage() {
           flexDirection: 'column',
         }}
       >
-        {/* Header — unified site header */}
+        {/* Header - unified site header */}
         <header
           className="ya-header"
           style={{
@@ -355,7 +355,7 @@ export default function UploadPage() {
                         }
                       }}
                     >
-                      {/* Corner bracket marks — document scanning aesthetic */}
+                      {/* Corner bracket marks - document scanning aesthetic */}
                       <svg style={{ position: 'absolute', top: 12, left: 12, pointerEvents: 'none' }} width="20" height="20">
                         <path d="M 0 16 L 0 0 L 16 0" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
                       </svg>
@@ -434,7 +434,7 @@ export default function UploadPage() {
                     lineHeight: 1.8,
                   }}
                 >
-                  File is parsed in your browser. AI enrichment takes 20–40 seconds.
+                  File is parsed in your browser. AI enrichment takes 20-40 seconds.
                 </motion.div>
 
                 {/* Error state */}
@@ -533,7 +533,7 @@ export default function UploadPage() {
                   {detail || '\u00A0'}
                 </div>
 
-                {/* Progress bar — thin, no gradient */}
+                {/* Progress bar - thin, no gradient */}
                 <div
                   style={{
                     position: 'relative',

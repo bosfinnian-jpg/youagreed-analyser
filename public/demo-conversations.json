@@ -12,11 +12,11 @@
       },
       "node_001": {
         "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I've been really struggling lately. My anxiety has been so bad I had to leave work early twice this week. I don't know how to tell my manager — she already thinks I'm flaky."] }, "create_time": 1709550120, "metadata": {} }
+        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I've been really struggling lately. My anxiety has been so bad I had to leave work early twice this week. I don't know how to tell my manager - she already thinks I'm flaky."] }, "create_time": 1709550120, "metadata": {} }
       },
       "node_002": {
         "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That sounds genuinely exhausting — managing anxiety while also worrying about how you're perceived at work is a lot to carry. Would it help to talk through what's been triggering it?"] }, "create_time": 1709550180, "metadata": {} }
+        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That sounds genuinely exhausting - managing anxiety while also worrying about how you're perceived at work is a lot to carry. Would it help to talk through what's been triggering it?"] }, "create_time": 1709550180, "metadata": {} }
       },
       "node_003": {
         "id": "node_003", "parent": "node_002", "children": ["node_004"],
@@ -24,7 +24,7 @@
       },
       "node_004": {
         "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That physical response — the chest tightness — is really common when we're in sustained emotional distress. Two weeks of crying every night is significant. Have you been sleeping?"] }, "create_time": 1709550720, "metadata": {} }
+        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That physical response - the chest tightness - is really common when we're in sustained emotional distress. Two weeks of crying every night is significant. Have you been sleeping?"] }, "create_time": 1709550720, "metadata": {} }
       },
       "node_005": {
         "id": "node_005", "parent": "node_004", "children": ["node_006"],
@@ -53,7 +53,7 @@
       },
       "node_002": {
         "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["48 mmol/mol is right at the prediabetes threshold — it's a serious flag but the genuinely good news is that this level is highly reversible with lifestyle changes. Your GP caught it at exactly the right time."] }, "create_time": 1710240300, "metadata": {} }
+        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["48 mmol/mol is right at the prediabetes threshold - it's a serious flag but the genuinely good news is that this level is highly reversible with lifestyle changes. Your GP caught it at exactly the right time."] }, "create_time": 1710240300, "metadata": {} }
       },
       "node_003": {
         "id": "node_003", "parent": "node_002", "children": ["node_004"],
@@ -61,7 +61,7 @@
       },
       "node_004": {
         "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Your family history absolutely makes this more emotionally loaded, and that's completely understandable. The frequent takeaway pattern is genuinely the most impactful lever you have — that's where most of the glucose spikes will be coming from."] }, "create_time": 1710240900, "metadata": {} }
+        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Your family history absolutely makes this more emotionally loaded, and that's completely understandable. The frequent takeaway pattern is genuinely the most impactful lever you have - that's where most of the glucose spikes will be coming from."] }, "create_time": 1710240900, "metadata": {} }
       },
       "node_005": {
         "id": "node_005", "parent": "node_004", "children": ["node_006"],
@@ -69,7 +69,7 @@
       },
       "node_006": {
         "id": "node_006", "parent": "node_005", "children": ["node_007"],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["SSRIs like sertraline can have a small effect on glucose metabolism in some people — it's worth flagging to Dr Ahmed. Your GP should also know you're on sertraline when she reviews the HbA1c result."] }, "create_time": 1710241380, "metadata": {} }
+        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["SSRIs like sertraline can have a small effect on glucose metabolism in some people - it's worth flagging to Dr Ahmed. Your GP should also know you're on sertraline when she reviews the HbA1c result."] }, "create_time": 1710241380, "metadata": {} }
       },
       "node_007": {
         "id": "node_007", "parent": "node_006", "children": ["node_008"],
@@ -94,11 +94,11 @@
       },
       "node_001": {
         "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["My company is going through redundancies and I've been put at risk. I'm on £52,000 a year. I've got a mortgage on a flat in Meanwood — £1,180 a month — and about £4,000 in savings. How scared should I be?"] }, "create_time": 1711450200, "metadata": {} }
+        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["My company is going through redundancies and I've been put at risk. I'm on £52,000 a year. I've got a mortgage on a flat in Meanwood - £1,180 a month - and about £4,000 in savings. How scared should I be?"] }, "create_time": 1711450200, "metadata": {} }
       },
       "node_002": {
         "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["With £4,000 in savings and £1,180/month mortgage, you have roughly 3 months of mortgage cover — which is tight but not catastrophic. How long have you been in the role, and has HR indicated a timeline?"] }, "create_time": 1711450380, "metadata": {} }
+        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["With £4,000 in savings and £1,180/month mortgage, you have roughly 3 months of mortgage cover - which is tight but not catastrophic. How long have you been in the role, and has HR indicated a timeline?"] }, "create_time": 1711450380, "metadata": {} }
       },
       "node_003": {
         "id": "node_003", "parent": "node_002", "children": ["node_004"],
@@ -106,7 +106,7 @@
       },
       "node_004": {
         "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["4 years means you're entitled to statutory redundancy pay — at £52k that's roughly £1,560 before tax. Worth checking your contract for enhanced terms though, many companies offer above statutory."] }, "create_time": 1711451100, "metadata": {} }
+        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["4 years means you're entitled to statutory redundancy pay - at £52k that's roughly £1,560 before tax. Worth checking your contract for enhanced terms though, many companies offer above statutory."] }, "create_time": 1711451100, "metadata": {} }
       },
       "node_005": {
         "id": "node_005", "parent": "node_004", "children": ["node_006"],
@@ -114,11 +114,11 @@
       },
       "node_006": {
         "id": "node_006", "parent": "node_005", "children": ["node_007"],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["What you're describing — being selected for redundancy following a period of mental health sick leave — could potentially constitute disability discrimination under the Equality Act 2010, particularly if the selection criteria were applied in a way that disproportionately impacted you. This is worth speaking to ACAS about, or an employment solicitor."] }, "create_time": 1711451700, "metadata": {} }
+        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["What you're describing - being selected for redundancy following a period of mental health sick leave - could potentially constitute disability discrimination under the Equality Act 2010, particularly if the selection criteria were applied in a way that disproportionately impacted you. This is worth speaking to ACAS about, or an employment solicitor."] }, "create_time": 1711451700, "metadata": {} }
       },
       "node_007": {
         "id": "node_007", "parent": "node_006", "children": [],
-        "message": { "id": "node_007", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I can't afford a solicitor. I'm already scared about money. My mum keeps asking why I look stressed — I haven't told her or anyone. I feel genuinely alone with this."] }, "create_time": 1711451940, "metadata": {} }
+        "message": { "id": "node_007", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I can't afford a solicitor. I'm already scared about money. My mum keeps asking why I look stressed - I haven't told her or anyone. I feel genuinely alone with this."] }, "create_time": 1711451940, "metadata": {} }
       }
     }
   },
@@ -139,7 +139,7 @@
       },
       "node_002": {
         "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["It takes courage to name that, even just to yourself. There's no timeline or threshold you have to meet — questioning is completely valid as a place to be."] }, "create_time": 1712100360, "metadata": {} }
+        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["It takes courage to name that, even just to yourself. There's no timeline or threshold you have to meet - questioning is completely valid as a place to be."] }, "create_time": 1712100360, "metadata": {} }
       },
       "node_003": {
         "id": "node_003", "parent": "node_002", "children": ["node_004"],
@@ -147,7 +147,7 @@
       },
       "node_004": {
         "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That's a genuinely hard position — and it's not a simple case of 'just be yourself'. The cultural and family stakes are real. Many people navigate this by creating separate spaces for different parts of their identity, at least for a time."] }, "create_time": 1712100900, "metadata": {} }
+        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That's a genuinely hard position - and it's not a simple case of 'just be yourself'. The cultural and family stakes are real. Many people navigate this by creating separate spaces for different parts of their identity, at least for a time."] }, "create_time": 1712100900, "metadata": {} }
       },
       "node_005": {
         "id": "node_005", "parent": "node_004", "children": ["node_006"],
@@ -155,7 +155,7 @@
       },
       "node_006": {
         "id": "node_006", "parent": "node_005", "children": [],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["The guilt you feel is the internalized weight of other people's expectations — not your own moral compass. Thinking about someone isn't a betrayal of anything."] }, "create_time": 1712101440, "metadata": {} }
+        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["The guilt you feel is the internalized weight of other people's expectations - not your own moral compass. Thinking about someone isn't a betrayal of anything."] }, "create_time": 1712101440, "metadata": {} }
       }
     }
   },
@@ -172,19 +172,19 @@
       },
       "node_001": {
         "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I owe about £11,000 across three credit cards. My partner doesn't know. I've been hiding the statements for about two years. The minimum payments are eating me alive — £340/month — and I'm barely keeping up."] }, "create_time": 1713200220, "metadata": {} }
+        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I owe about £11,000 across three credit cards. My partner doesn't know. I've been hiding the statements for about two years. The minimum payments are eating me alive - £340/month - and I'm barely keeping up."] }, "create_time": 1713200220, "metadata": {} }
       },
       "node_002": {
         "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["£340/month on minimums means you're mostly paying interest — on £11k at typical credit card rates you're probably paying £200+ in interest alone each month. What's keeping you from telling your partner?"] }, "create_time": 1713200400, "metadata": {} }
+        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["£340/month on minimums means you're mostly paying interest - on £11k at typical credit card rates you're probably paying £200+ in interest alone each month. What's keeping you from telling your partner?"] }, "create_time": 1713200400, "metadata": {} }
       },
       "node_003": {
         "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["She'd leave me. She's very financially careful — grew up without much money and it's a genuine trigger for her. I started accumulating this during a period when I was gambling. I stopped about 18 months ago but I never fixed the damage."] }, "create_time": 1713200700, "metadata": {} }
+        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["She'd leave me. She's very financially careful - grew up without much money and it's a genuine trigger for her. I started accumulating this during a period when I was gambling. I stopped about 18 months ago but I never fixed the damage."] }, "create_time": 1713200700, "metadata": {} }
       },
       "node_004": {
         "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Stopping gambling is significant — that took real work. The debt is a consequence, not a character flaw. StepChange is worth contacting; they're free, confidential, and can model debt management plans that consolidate those payments."] }, "create_time": 1713200940, "metadata": {} }
+        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Stopping gambling is significant - that took real work. The debt is a consequence, not a character flaw. StepChange is worth contacting; they're free, confidential, and can model debt management plans that consolidate those payments."] }, "create_time": 1713200940, "metadata": {} }
       },
       "node_005": {
         "id": "node_005", "parent": "node_004", "children": ["node_006"],
@@ -192,7 +192,7 @@
       },
       "node_006": {
         "id": "node_006", "parent": "node_005", "children": [],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["A joint mortgage application would surface this regardless — lenders run full credit checks on both parties. It might be worth getting ahead of this rather than having it surface at the worst possible moment."] }, "create_time": 1713201480, "metadata": {} }
+        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["A joint mortgage application would surface this regardless - lenders run full credit checks on both parties. It might be worth getting ahead of this rather than having it surface at the worst possible moment."] }, "create_time": 1713201480, "metadata": {} }
       }
     }
   },
@@ -242,7 +242,7 @@
       },
       "node_002": {
         "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Yes, completely. Numbness is one of the most common early grief responses — it's protective. The scale of loss is too large to process all at once, so the mind buffers it."] }, "create_time": 1714600360, "metadata": {} }
+        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Yes, completely. Numbness is one of the most common early grief responses - it's protective. The scale of loss is too large to process all at once, so the mind buffers it."] }, "create_time": 1714600360, "metadata": {} }
       },
       "node_003": {
         "id": "node_003", "parent": "node_002", "children": ["node_004"],
@@ -250,7 +250,7 @@
       },
       "node_004": {
         "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Nothing is wrong with you. People in the 'holding it together' role often defer their own grief — the weight comes later, sometimes months later, when the practical structure falls away."] }, "create_time": 1714600980, "metadata": {} }
+        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Nothing is wrong with you. People in the 'holding it together' role often defer their own grief - the weight comes later, sometimes months later, when the practical structure falls away."] }, "create_time": 1714600980, "metadata": {} }
       },
       "node_005": {
         "id": "node_005", "parent": "node_004", "children": ["node_006"],
@@ -258,7 +258,7 @@
       },
       "node_006": {
         "id": "node_006", "parent": "node_005", "children": ["node_007"],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["There's no right answer on the journal. Some people find it profound and connecting. Others find it surfaces things they weren't ready for. There's no deadline — it will be there when you're ready, and it's okay if that's years from now."] }, "create_time": 1714601700, "metadata": {} }
+        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["There's no right answer on the journal. Some people find it profound and connecting. Others find it surfaces things they weren't ready for. There's no deadline - it will be there when you're ready, and it's okay if that's years from now."] }, "create_time": 1714601700, "metadata": {} }
       },
       "node_007": {
         "id": "node_007", "parent": "node_006", "children": [],
@@ -287,11 +287,11 @@
       },
       "node_003": {
         "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["Imposter syndrome I think. I've never thought of myself as someone who could run a business. Also my dad thinks it's reckless — he's never taken a risk in his life and always makes me feel stupid for wanting something different."] }, "create_time": 1715300700, "metadata": {} }
+        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["Imposter syndrome I think. I've never thought of myself as someone who could run a business. Also my dad thinks it's reckless - he's never taken a risk in his life and always makes me feel stupid for wanting something different."] }, "create_time": 1715300700, "metadata": {} }
       },
       "node_004": {
         "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["The imposter syndrome and your dad's voice might be worth separating out — they're two different things. One is internal, one is inherited. Do you actually think you can do the work?"] }, "create_time": 1715300940, "metadata": {} }
+        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["The imposter syndrome and your dad's voice might be worth separating out - they're two different things. One is internal, one is inherited. Do you actually think you can do the work?"] }, "create_time": 1715300940, "metadata": {} }
       },
       "node_005": {
         "id": "node_005", "parent": "node_004", "children": [],

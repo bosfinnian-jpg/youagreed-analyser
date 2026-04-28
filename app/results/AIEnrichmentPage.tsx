@@ -582,7 +582,7 @@ function CostEstimate({ batchCount, messageCount }: { batchCount: number; messag
 // ════════════════════════════════════════════════════════════════════════════
 // MAIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
-export default function AiEnrichmentPage({ results }: Props) {
+export default function AIEnrichmentPage({ results }: Props) {
   if (!results) {
     return (
       <div style={{ maxWidth: '780px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem)' }}>

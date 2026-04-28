@@ -312,6 +312,108 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
 // ============================================================================
 // NAV
 // ============================================================================
+// ============================================================================
+// FURTHER READING — collapsible dropdown inside the drawer
+// ============================================================================
+const FURTHER_ITEMS = [
+  { id: 'ai-enrichment' as DashPage, label: 'AI enrichment', desc: 'How Claude read your messages' },
+  { id: 'how-it-works' as DashPage, label: 'How it works', desc: 'The inference architecture' },
+  { id: 'understand' as DashPage, label: 'Understand', desc: 'Interactive inference demo' },
+  { id: 'about' as DashPage, label: 'About', desc: 'Theoretical framework' },
+  { id: 'sources' as DashPage, label: 'Sources', desc: 'Policy clause index' },
+] as const;
+
+function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) => void }) {
+  const [open, setOpen] = useState(false);
+  const isActive = FURTHER_ITEMS.some(i => i.id === page);
+
+  return (
+    <div style={{ marginTop: '0.5rem', borderTop: `1px solid rgba(26,24,20,0.07)` }}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{
+          width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+          padding: '0.75rem 1.5rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          transition: 'background 0.12s',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(26,24,20,0.025)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.28em',
+            textTransform: 'uppercase',
+            color: isActive ? PALETTE.inkMuted : 'rgba(26,24,20,0.28)',
+          }}>
+            Further reading
+          </span>
+          {isActive && <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: PALETTE.red }} />}
+        </div>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+          style={{ fontFamily: TYPE.mono, fontSize: '9px', color: 'rgba(26,24,20,0.2)', lineHeight: 1 }}
+        >
+          ↓
+        </motion.span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            {FURTHER_ITEMS.map((item) => {
+              const isItemActive = page === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => onNav(item.id)}
+                  style={{
+                    width: '100%', background: isItemActive ? 'rgba(26,24,20,0.05)' : 'none',
+                    border: 'none', cursor: 'pointer', textAlign: 'left',
+                    padding: '0.55rem 1.5rem 0.55rem 2rem',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    transition: 'background 0.12s',
+                    borderLeft: isItemActive ? `2px solid ${PALETTE.red}` : '2px solid transparent',
+                  }}
+                  onMouseEnter={e => { if (!isItemActive) (e.currentTarget as HTMLElement).style.background = 'rgba(26,24,20,0.025)'; }}
+                  onMouseLeave={e => { if (!isItemActive) (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                >
+                  <div>
+                    <span style={{
+                      display: 'block', fontFamily: TYPE.serif, fontSize: '0.95rem',
+                      color: isItemActive ? PALETTE.ink : PALETTE.inkMuted,
+                      letterSpacing: '-0.01em', lineHeight: 1.2,
+                    }}>
+                      {item.label}
+                    </span>
+                    <span style={{
+                      display: 'block', fontFamily: TYPE.mono, fontSize: '8px',
+                      color: 'rgba(26,24,20,0.25)', letterSpacing: '0.04em', marginTop: '1px',
+                    }}>
+                      {item.desc}
+                    </span>
+                  </div>
+                  {isItemActive && <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: PALETTE.red, flexShrink: 0 }} />}
+                </button>
+              );
+            })}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// ============================================================================
+// NAV
+// ============================================================================
 function Nav({ page, setPage, results, exposureScore }: {
   page: DashPage;
   setPage: (p: DashPage) => void;
@@ -511,8 +613,8 @@ function Nav({ page, setPage, results, exposureScore }: {
               onClick={() => setMenuOpen(false)}
               style={{
                 position: 'fixed', inset: 0, zIndex: 150,
-                background: 'rgba(26,24,20,0.15)',
-                backdropFilter: 'blur(4px)',
+                background: 'rgba(26,24,20,0.18)',
+                backdropFilter: 'blur(6px)',
               }}
             />
 
@@ -520,26 +622,27 @@ function Nav({ page, setPage, results, exposureScore }: {
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'tween', duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+              transition={{ type: 'tween', duration: 0.32, ease: [0.4, 0, 0.2, 1] }}
               style={{
                 position: 'fixed', top: 0, right: 0, bottom: 0, zIndex: 190,
-                width: 'min(320px, 88vw)',
-                background: PALETTE.bgPanel,
-                borderLeft: `1px solid ${PALETTE.border}`,
+                width: 'min(300px, 88vw)',
+                background: '#f7f6f2',
+                borderLeft: `1px solid rgba(26,24,20,0.12)`,
                 display: 'flex', flexDirection: 'column',
                 overflowY: 'auto',
               }}
             >
-              {/* Drawer header */}
+              {/* Header */}
               <div style={{
-                height: '56px', padding: '0 1.75rem',
+                height: '56px', padding: '0 1.5rem',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                borderBottom: `1px solid ${PALETTE.border}`,
+                borderBottom: `1px solid rgba(26,24,20,0.08)`,
                 flexShrink: 0,
               }}>
-                <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-                  The argument
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', letterSpacing: '-0.01em', color: PALETTE.ink }}>trace</span>
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', letterSpacing: '-0.01em', color: PALETTE.red }}>.ai</span>
+                </div>
                 <button
                   onClick={() => setMenuOpen(false)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '12px', minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -548,25 +651,46 @@ function Nav({ page, setPage, results, exposureScore }: {
                 </button>
               </div>
 
-              {/* Acts */}
-              <div style={{ flex: 1, padding: '0.25rem 0 1.5rem' }}>
+              {/* Score strip */}
+              <div style={{
+                padding: '1.1rem 1.5rem',
+                borderBottom: `1px solid rgba(26,24,20,0.08)`,
+                display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+              }}>
+                <div>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.3em', textTransform: 'uppercase', color: PALETTE.inkGhost, display: 'block', marginBottom: '0.2rem' }}>
+                    Exposure index
+                  </span>
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '1.8rem', color: scoreColor, letterSpacing: '-0.04em', lineHeight: 1 }}>
+                    {exposureScore}<span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkGhost, marginLeft: '3px' }}>/100</span>
+                  </span>
+                </div>
+                {userName && (
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', color: PALETTE.inkFaint, fontStyle: 'italic' }}>
+                    {userName}
+                  </span>
+                )}
+              </div>
+
+              {/* Navigation */}
+              <div style={{ flex: 1, padding: '0.5rem 0' }}>
                 {ACTS.map((act, actIdx) => (
                   <div key={act.id}>
-                    {/* Act label row */}
+                    {/* Act divider */}
                     <div style={{
-                      padding: '1rem 1.75rem 0.3rem',
-                      display: 'flex', alignItems: 'center', gap: '0.65rem',
+                      padding: '0.9rem 1.5rem 0.25rem',
+                      display: 'flex', alignItems: 'center', gap: '0.5rem',
                     }}>
                       <span style={{
-                        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.4em',
-                        color: PALETTE.redMuted, textTransform: 'uppercase', whiteSpace: 'nowrap',
+                        fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.45em',
+                        color: 'rgba(190,40,30,0.4)', textTransform: 'uppercase',
                       }}>
                         {act.roman}
                       </span>
-                      <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
+                      <div style={{ flex: 1, height: '1px', background: 'rgba(26,24,20,0.07)' }} />
                       <span style={{
-                        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.25em',
-                        color: PALETTE.inkFaint, textTransform: 'uppercase', whiteSpace: 'nowrap',
+                        fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em',
+                        color: 'rgba(26,24,20,0.25)', textTransform: 'uppercase',
                       }}>
                         {act.title}
                       </span>
@@ -578,118 +702,62 @@ function Nav({ page, setPage, results, exposureScore }: {
                       return (
                         <motion.button
                           key={p.id}
-                          initial={{ opacity: 0, x: 14 }}
+                          initial={{ opacity: 0, x: 10 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.04 + actIdx * 0.06 + i * 0.04, duration: 0.28 }}
+                          transition={{ delay: 0.03 + actIdx * 0.05 + i * 0.035, duration: 0.24 }}
                           onClick={() => handleNav(p.id)}
                           style={{
-                            width: '100%', background: isActive ? PALETTE.bgElevated : 'none',
+                            width: '100%', background: isActive ? 'rgba(26,24,20,0.05)' : 'none',
                             border: 'none', cursor: 'pointer', textAlign: 'left',
-                            padding: '0.7rem 1.75rem',
+                            padding: '0.6rem 1.5rem',
                             minHeight: '44px',
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            transition: 'background 0.13s',
+                            transition: 'background 0.12s',
+                            borderLeft: isActive ? `2px solid ${PALETTE.red}` : '2px solid transparent',
                           }}
-                          onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = PALETTE.bgElevated; }}
-                          onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = isActive ? PALETTE.bgElevated : 'none'; }}
+                          onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = 'rgba(26,24,20,0.03)'; } }}
+                          onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'none'; }}
                         >
                           <div>
                             <span style={{
                               display: 'block',
                               fontFamily: TYPE.serif,
-                              fontSize: 'clamp(1.15rem, 2.5vw, 1.45rem)',
+                              fontSize: '1.15rem',
                               color: isActive ? PALETTE.ink : PALETTE.inkMuted,
                               letterSpacing: '-0.02em', lineHeight: 1.2,
                             }}>
                               {p.label}
-                              {isActive && (
-                                <span style={{
-                                  display: 'inline-block', width: '4px', height: '4px',
-                                  borderRadius: '50%', background: PALETTE.red,
-                                  marginLeft: '0.5rem', verticalAlign: 'middle',
-                                }} />
-                              )}
                             </span>
                             <span style={{
                               display: 'block',
-                              fontFamily: TYPE.mono, fontSize: '9px',
-                              color: PALETTE.inkFaint, letterSpacing: '0.05em',
-                              marginTop: '2px',
+                              fontFamily: TYPE.mono, fontSize: '8.5px',
+                              color: isActive ? 'rgba(26,24,20,0.35)' : PALETTE.inkGhost,
+                              letterSpacing: '0.04em',
+                              marginTop: '1px',
                             }}>
                               {p.desc}
                             </span>
                           </div>
-                          <span style={{
-                            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
-                            color: isActive ? PALETTE.redMuted : PALETTE.inkGhost,
-                            textTransform: 'uppercase',
-                          }}>
-                            {p.short}
-                          </span>
+                          {isActive && (
+                            <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: PALETTE.red, flexShrink: 0 }} />
+                          )}
                         </motion.button>
                       );
                     })}
                   </div>
                 ))}
 
-                {/* Buried pages — find out more */}
-                <div style={{ marginTop: '0.75rem', borderTop: `1px solid ${PALETTE.border}` }}>
-                  <div style={{ padding: '0.65rem 1.75rem 0.2rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.3em', color: PALETTE.inkGhost, textTransform: 'uppercase' }}>
-                      Find out more
-                    </span>
-                  </div>
-                  {(['ai-enrichment', 'how-it-works', 'understand', 'about', 'sources'] as const).map(id => (
-                    <button
-                      key={id}
-                      onClick={() => handleNav(id)}
-                      style={{
-                        width: '100%', background: page === id ? PALETTE.bgElevated : 'none',
-                        border: 'none', cursor: 'pointer', textAlign: 'left',
-                        padding: '0.7rem 1.75rem',
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        transition: 'background 0.13s',
-                      }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = page === id ? PALETTE.bgElevated : 'none'; }}
-                    >
-                      <span style={{
-                        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
-                        color: page === id ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase',
-                      }}>
-                        {{ 'sources': 'Sources', 'about': 'About', 'how-it-works': 'How It Works', 'understand': 'Understand', 'ai-enrichment': 'AI enrichment' }[id]}
-                      </span>
-                      <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost }}>
-                        {{ 'sources': '↑', 'about': '?', 'how-it-works': '→', 'understand': '→', 'ai-enrichment': '⚙' }[id]}
-                      </span>
-                    </button>
-                  ))}
-                  <ShareButton exposureScore={exposureScore} userName={userName} />
-                </div>
+                {/* Further reading — collapsible */}
+                <FurtherReading page={page} onNav={handleNav} />
               </div>
 
-              {/* Footer score */}
+              {/* Footer */}
               <div style={{
-                padding: '1.5rem 1.75rem',
-                borderTop: `1px solid ${PALETTE.border}`,
+                padding: '1rem 1.5rem',
+                borderTop: `1px solid rgba(26,24,20,0.08)`,
                 flexShrink: 0,
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                      Exposure index
-                    </p>
-                    <p style={{ fontFamily: TYPE.serif, fontSize: '2rem', color: scoreColor, letterSpacing: '-0.04em', lineHeight: 1 }}>
-                      {exposureScore}
-                      <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, letterSpacing: '0.1em', marginLeft: '4px' }}>/100</span>
-                    </p>
-                  </div>
-                  {userName && (
-                    <span style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
-                      {userName}
-                    </span>
-                  )}
-                </div>
+                <ShareButton exposureScore={exposureScore} userName={userName} />
               </div>
             </motion.div>
           </>

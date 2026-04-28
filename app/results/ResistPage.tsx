@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
-import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence, useMotionValueEvent } from 'framer-motion';
+import { motion, useScroll, useInView, useSpring, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import type { MotionValue } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
@@ -370,19 +370,19 @@ function AnimatedCounter({ target, active, duration = 2400 }: { target: number; 
 const ACT_LABELS = ['ARRIVAL', 'COUNTED', 'MACHINE', 'TAKING', 'ECHO', 'IMPRINT', 'CHOICE', 'DEPARTURE'];
 function ProgressRail({ progress, currentAct }: { progress: MotionValue<number>; currentAct: number }) {
   return (
-    <div className="resist-right-rail" style={{
+    <nav aria-label="Story progress" className="resist-right-rail" style={{
       position: 'fixed', right: 'clamp(1rem, 3vw, 2.5rem)', top: '50%',
       transform: 'translateY(-50%)', zIndex: 20,
       display: 'flex', flexDirection: 'column', gap: '14px',
       pointerEvents: 'none',
     }}>
       {ACT_LABELS.map((label, i) => (
-        <div key={label} style={{
+        <div key={label} aria-current={i === currentAct ? 'step' : undefined} style={{
           display: 'flex', alignItems: 'center', gap: '10px',
           opacity: i === currentAct ? 1 : 0.35,
           transition: 'opacity 0.5s',
         }}>
-          <span style={{
+          <span aria-hidden="true" style={{
             fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.25em',
             color: i === currentAct ? PALETTE.ink : PALETTE.inkFaint,
             textTransform: 'uppercase',
@@ -393,7 +393,7 @@ function ProgressRail({ progress, currentAct }: { progress: MotionValue<number>;
           }}>
             {label}
           </span>
-          <div style={{
+          <div aria-hidden="true" style={{
             width: '1px',
             height: i === currentAct ? '48px' : '12px',
             background: i === currentAct ? PALETTE.ink : PALETTE.border,
@@ -401,7 +401,7 @@ function ProgressRail({ progress, currentAct }: { progress: MotionValue<number>;
           }} />
         </div>
       ))}
-    </div>
+    </nav>
   );
 }
 
@@ -449,7 +449,7 @@ function ResistHeader() {
 // ============================================================================
 // ECHO GENERATOR — API call logic as a hook so it can live inside a scene
 // ============================================================================
-type EchoPhase = 'idle' | 'generating' | 'ready';
+type EchoPhase = 'idle' | 'generating' | 'ready' | 'error';
 function useEchoGenerator(analysis: DeepAnalysis) {
   const portrait = analysis?.psychologicalPortrait;
   const synthesis = (analysis as any)?.synthesis;
@@ -472,15 +472,14 @@ function useEchoGenerator(analysis: DeepAnalysis) {
 
   const [phase, setPhase] = useState<EchoPhase>('idle');
   const [text, setText] = useState<string>('');
-  const [triggered, setTriggered] = useState(false);
+  const hasTriggered = useRef(false);
 
   const generate = useCallback(async () => {
-    if (triggered) return;
-    setTriggered(true);
+    if (hasTriggered.current) return;
+    hasTriggered.current = true;
 
     if (kind === 'excerpt') {
       setPhase('generating');
-      // Small delay for drama
       setTimeout(() => { setText(mostRevealingExcerpt); setPhase('ready'); }, 900);
       return;
     }
@@ -488,43 +487,33 @@ function useEchoGenerator(analysis: DeepAnalysis) {
 
     setPhase('generating');
     try {
-      const contextLines = [
-        characterSummary && `Character summary: ${characterSummary}`,
-        writingVoice && `Writing voice: ${writingVoice}`,
-        verbalTells && `Verbal patterns: ${verbalTells}`,
-        emotionalBaseline && `Emotional baseline: ${emotionalBaseline}`,
-        dominantNarrative && `Dominant self-narrative: ${dominantNarrative}`,
-        primaryCoping && `Primary coping mechanism: ${primaryCoping}`,
-      ].filter(Boolean).join('\n');
-
-      const prompt = `You are a language model that has processed ${messageCount.toLocaleString()} messages from a single user. You have built a detailed model of how they think, write, and communicate.
-
-Here is what you know about them:
-${contextLines}
-
-Write a short paragraph (4-6 sentences) in this person's voice, on the topic of what they find themselves thinking about before they fall asleep. Do not describe their traits — write AS them, from inside their perspective, in their actual way of writing. Capture their sentence length, word choices, and the way they move between ideas. Make it feel like something they could have written themselves.
-
-Output ONLY the paragraph. No preamble. No explanation. Just the text.`;
-
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('/api/echo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          messages: [{ role: 'user', content: prompt }],
+          messageCount,
+          characterSummary: characterSummary || undefined,
+          writingVoice: writingVoice || undefined,
+          verbalTells: verbalTells || undefined,
+          emotionalBaseline: emotionalBaseline || undefined,
+          dominantNarrative: dominantNarrative || undefined,
+          primaryCoping: primaryCoping || undefined,
         }),
       });
-      if (!response.ok) throw new Error('API failed');
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error((err as any)?.error || `Request failed (${response.status})`);
+      }
       const data = await response.json();
-      const resultText = data.content?.find((b: { type: string; text?: string }) => b.type === 'text')?.text?.trim() || '';
-      if (!resultText) throw new Error('Empty');
+      const resultText: string = data?.text?.trim() || '';
+      if (!resultText) throw new Error('Empty response');
       setText(resultText);
       setPhase('ready');
-    } catch {
-      setPhase('ready');
+    } catch (err) {
+      console.error('[EchoGenerator]', err);
+      setPhase('error');
     }
-  }, [triggered, kind, characterSummary, writingVoice, verbalTells, emotionalBaseline, dominantNarrative, primaryCoping, messageCount, mostRevealingExcerpt]);
+  }, [kind, characterSummary, writingVoice, verbalTells, emotionalBaseline, dominantNarrative, primaryCoping, messageCount, mostRevealingExcerpt]);
 
   return { phase, text, generate, kind, messageCount };
 }
@@ -566,13 +555,14 @@ function Stage({
 }) {
   const stageRef = useRef<HTMLDivElement>(null);
 
-  // Walking leg alternation
+  // Walking leg alternation — keyed on boolean to prevent interval pile-up on every scroll tick
   const [walkFrame, setWalkFrame] = useState(0);
+  const isWalking = walkProgress > 0 && walkProgress < 1;
   useEffect(() => {
-    if (walkProgress <= 0 || walkProgress >= 1) return;
-    const interval = setInterval(() => setWalkFrame(f => (f + 1) % 2), 320);
+    if (!isWalking) return;
+    const interval = setInterval(() => setWalkFrame((f: number) => (f + 1) % 2), 320);
     return () => clearInterval(interval);
-  }, [walkProgress]);
+  }, [isWalking]);
 
   // Figure position: normally centred-left, walks further left during walkaway
   const walkOffset = walkProgress > 0 ? -(320 * walkProgress) : 0;
@@ -739,7 +729,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
   const messageCount = analysis?.totalUserMessages || 0;
   const days = analysis?.timespan?.days || 0;
   const name = analysis?.findings?.personalInfo?.names?.[0]?.name || '';
-  const particleCount = Math.min(50, Math.max(14, Math.floor(messageCount / 70)));
+  const particleCount = messageCount > 0 ? Math.min(50, Math.max(8, Math.floor(messageCount / 70))) : 8;
   const particles = useParticles(particleCount, 100, 100);
 
   // State driven by scroll progress
@@ -800,6 +790,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
 
   // Figure pose: follows choice hover in act 6 — default neutral
   const [choicePose, setChoicePose] = useState<FigurePose>('neutral');
+  useEffect(() => { if (currentAct !== 6) setChoicePose('neutral'); }, [currentAct]);
   const figurePose: FigurePose = currentAct === 6 ? choicePose : 'neutral';
 
   const scene = useSceneCopy(currentAct, {
@@ -1087,7 +1078,13 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
     return () => clearTimeout(t);
   }, [revealOn]);
 
+  // Clean up reveal timer on unmount
+  useEffect(() => () => { if (revealTimerRef.current) clearTimeout(revealTimerRef.current); }, []);
+
   if (echo.kind === 'none') return null;
+
+  const isLoading = echo.phase === 'generating' || echo.phase === 'idle';
+  const isError = echo.phase === 'error';
 
   return (
     <>
@@ -1129,8 +1126,8 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
           }}>
             {echo.kind === 'excerpt' ? 'Your message — extracted' : 'Generated by the model'}
           </p>
-          {echo.phase !== 'ready' && (
-            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', height: '24px' }}>
+          {isLoading && (
+            <div style={{ display: 'flex', gap: '6px', alignItems: 'center', height: '24px' }} role="status" aria-label="Generating…">
               {[0, 0.25, 0.5].map(d => (
                 <motion.div key={d}
                   animate={{ opacity: [0.2, 0.8, 0.2] }}
@@ -1139,6 +1136,14 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
                 />
               ))}
             </div>
+          )}
+          {isError && (
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: '0.95rem',
+              color: PALETTE.inkFaint, lineHeight: 1.7, fontStyle: 'italic',
+            }}>
+              The model did not respond. The data it holds on you remains.
+            </p>
           )}
           {echo.phase === 'ready' && echo.text && (
             <p style={{
@@ -1227,7 +1232,18 @@ function WalkawayMonument() {
 function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (p: FigurePose) => void }) {
   const [active, setActive] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
-  const sar = generateSAR(analysis);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sar = useMemo(() => generateSAR(analysis), [analysis]);
+
+  useEffect(() => () => { if (copyTimerRef.current) clearTimeout(copyTimerRef.current); }, []);
+
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(sar).then(() => {
+      setCopied(true);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+      copyTimerRef.current = setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {});
+  }, [sar]);
 
   const choices = [
     {
@@ -1268,6 +1284,9 @@ function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (
         {choices.map((c, i) => (
           <motion.button
             key={c.id}
+            type="button"
+            aria-expanded={active === c.id}
+            aria-label={c.label}
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 + i * 0.12, duration: 0.5 }}
@@ -1353,11 +1372,12 @@ function ChoicePanel({ analysis, onHover }: { analysis: DeepAnalysis; onHover: (
                     whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                     background: PALETTE.bg, padding: '1rem',
                     border: `1px solid ${PALETTE.border}`,
-                    marginBottom: '1rem', maxHeight: '240px', overflowY: 'auto',
+                    marginBottom: '1rem', maxHeight: '240px',
+                    overflowY: 'auto', overflowX: 'hidden', maxWidth: '100%',
                   }}>{sar}</pre>
                   <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', alignItems: 'center' }}>
                     <button
-                      onClick={() => { navigator.clipboard.writeText(sar); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+                      onClick={handleCopy}
                       style={{
                         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
                         textTransform: 'uppercase',

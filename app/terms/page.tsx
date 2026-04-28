@@ -329,60 +329,24 @@ const termsContent: Array<{ title: string; content: string }> = [
 18.4 If you are located in the European Economic Area, your use of the Service is also governed by the EU General Data Protection Regulation (GDPR) to the extent applicable.`,
   },
   {
-    title: '19. Public Exhibition and Display Rights',
-    content: `19.1 As part of its educational and artistic mission, the Service incorporates a public exhibition component designed to raise awareness about data privacy and the nature of information shared with AI systems.
+    title: '19. Entire Agreement and Severability',
+    content: `19.1 These Terms, together with the Privacy Policy and any other documents incorporated by reference, constitute the entire agreement between you and the Provider regarding your use of the Service.
 
-19.2 By uploading Content and agreeing to these Terms, you grant the Provider a worldwide, non-exclusive, royalty-free, perpetual, irrevocable licence to:
+19.2 These Terms supersede all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral, regarding the Service.
 
-(a) create anonymised, aggregated, or derivative works from your Content for public display and exhibition purposes;
+19.3 If any provision of these Terms is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such provision shall be limited or eliminated to the minimum extent necessary so that these Terms shall otherwise remain in full force and effect.
 
-(b) display excerpts, patterns, statistics, or visualisations derived from your Content in physical gallery spaces, digital exhibitions, educational presentations, and online platforms;
+19.4 No waiver of any term of these Terms shall be deemed a further or continuing waiver of such term or any other term.
 
-(c) use anonymised representations of your conversation data in promotional materials, academic publications, and public awareness campaigns;
-
-(d) incorporate themes, topics, emotional patterns, and behavioural insights derived from your Content into artistic installations and interactive displays.
-
-19.3 The Provider will employ reasonable technical measures to anonymise Content before public exhibition, including but not limited to:
-
-(a) removal of names and specific identifying information;
-
-(b) generalisation of location data;
-
-(c) aggregation of individual data points with those of other users.
-
-19.4 You acknowledge that despite anonymisation efforts:
-
-(a) certain unique conversation patterns or unusual topics may be potentially re-identifiable;
-
-(b) individuals with knowledge of your AI usage patterns might recognise derived content;
-
-(c) complete anonymisation cannot be guaranteed for all types of content.
-
-19.5 The licence granted under this clause survives termination of these Terms and cannot be revoked once Content has been incorporated into exhibition materials.
-
-19.6 If you do not wish to participate in the public exhibition component, you should not upload Content to the Service. Use of the Service constitutes acceptance of these exhibition and display terms.
-
-19.7 The Provider reserves the right to select, curate, and edit Content for exhibition purposes at its sole discretion.`,
+19.5 The Provider may assign its rights and obligations under these Terms without restriction. You may not assign or transfer these Terms, by operation of law or otherwise, without the Provider\u2019s prior written consent.`,
   },
   {
-    title: '20. Entire Agreement and Severability',
-    content: `20.1 These Terms, together with the Privacy Policy and any other documents incorporated by reference, constitute the entire agreement between you and the Provider regarding your use of the Service.
+    title: '20. Contact',
+    content: `20.1 If you have any questions about these Terms, please contact us via the Platform.
 
-20.2 These Terms supersede all prior and contemporaneous understandings, agreements, representations, and warranties, both written and oral, regarding the Service.
+20.2 For data protection enquiries or to exercise your rights under applicable data protection law, please contact our Data Protection Contact via the Platform.
 
-20.3 If any provision of these Terms is held to be invalid, illegal, or unenforceable by a court of competent jurisdiction, such provision shall be limited or eliminated to the minimum extent necessary so that these Terms shall otherwise remain in full force and effect.
-
-20.4 No waiver of any term of these Terms shall be deemed a further or continuing waiver of such term or any other term.
-
-20.5 The Provider may assign its rights and obligations under these Terms without restriction. You may not assign or transfer these Terms, by operation of law or otherwise, without the Provider\u2019s prior written consent.`,
-  },
-  {
-    title: '21. Contact',
-    content: `21.1 If you have any questions about these Terms, please contact us via the Platform.
-
-21.2 For data protection enquiries or to exercise your rights under applicable data protection law, please contact our Data Protection Contact via the Platform.
-
-21.3 We will endeavour to respond to all enquiries within a reasonable timeframe, typically within thirty (30) days of receipt.
+20.3 We will endeavour to respond to all enquiries within a reasonable timeframe, typically within thirty (30) days of receipt.
 
 Last Updated: 1 January 2026
 Version: 1.0`,

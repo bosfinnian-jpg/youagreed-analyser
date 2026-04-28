@@ -33,7 +33,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -122,6 +122,67 @@ export function ThreadSentence({ children }: { children: React.ReactNode }) {
         {children}
       </p>
     </div>
+  );
+}
+
+// ============================================================================
+// SHARE BUTTON — Web Share API with clipboard fallback
+// ============================================================================
+function ShareButton({ exposureScore, userName }: { exposureScore: number; userName?: string }) {
+  const [shared, setShared] = useState(false);
+
+  const handleShare = async () => {
+    const name = userName ? `${userName}'s` : 'My';
+    const text = `${name} trace.ai exposure score: ${exposureScore}/100. Find out what your AI conversations reveal about you.`;
+    const url = 'https://youagreed.co.uk';
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: 'trace.ai — your data dossier', text, url });
+        setShared(true);
+        setTimeout(() => setShared(false), 2500);
+      } catch {
+        // user dismissed — no-op
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(`${text} ${url}`);
+        setShared(true);
+        setTimeout(() => setShared(false), 2500);
+      } catch {
+        // clipboard blocked — silent fail
+      }
+    }
+  };
+
+  return (
+    <button
+      onClick={handleShare}
+      style={{
+        width: '100%', background: 'none', border: 'none',
+        cursor: 'pointer', textAlign: 'left',
+        padding: '0.7rem 1.75rem',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        transition: 'background 0.13s', borderTop: `1px solid ${PALETTE.border}`,
+      }}
+      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
+      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+    >
+      <span style={{
+        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
+        color: shared ? PALETTE.red : PALETTE.inkFaint,
+        textTransform: 'uppercase', transition: 'color 0.3s',
+      }}>
+        {shared ? 'Copied' : 'Share your score'}
+      </span>
+      <motion.span
+        animate={{ rotate: shared ? 360 : 0 }}
+        transition={{ duration: 0.4 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '9px', color: shared ? PALETTE.redMuted : PALETTE.inkGhost }}
+      >
+        {shared ? '✓' : '↗'}
+      </motion.span>
+    </button>
   );
 }
 
@@ -581,28 +642,34 @@ function Nav({ page, setPage, results, exposureScore }: {
                   </div>
                 ))}
 
-                {/* Sources — utility */}
+                {/* Sources + About — utility links */}
                 <div style={{ marginTop: '0.75rem', borderTop: `1px solid ${PALETTE.border}` }}>
-                  <button
-                    onClick={() => handleNav('sources')}
-                    style={{
-                      width: '100%', background: page === 'sources' ? PALETTE.bgElevated : 'none',
-                      border: 'none', cursor: 'pointer', textAlign: 'left',
-                      padding: '0.8rem 1.75rem',
-                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      transition: 'background 0.13s',
-                    }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = page === 'sources' ? PALETTE.bgElevated : 'none'; }}
-                  >
-                    <span style={{
-                      fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
-                      color: PALETTE.inkFaint, textTransform: 'uppercase',
-                    }}>
-                      Sources
-                    </span>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost }}>03</span>
-                  </button>
+                  {(['sources', 'about'] as const).map(id => (
+                    <button
+                      key={id}
+                      onClick={() => handleNav(id)}
+                      style={{
+                        width: '100%', background: page === id ? PALETTE.bgElevated : 'none',
+                        border: 'none', cursor: 'pointer', textAlign: 'left',
+                        padding: '0.7rem 1.75rem',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        transition: 'background 0.13s',
+                      }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = page === id ? PALETTE.bgElevated : 'none'; }}
+                    >
+                      <span style={{
+                        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
+                        color: page === id ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase',
+                      }}>
+                        {id === 'sources' ? 'Sources' : 'About'}
+                      </span>
+                      <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost }}>
+                        {id === 'sources' ? '↑' : '?'}
+                      </span>
+                    </button>
+                  ))}
+                  <ShareButton exposureScore={exposureScore} userName={userName} />
                 </div>
               </div>
 

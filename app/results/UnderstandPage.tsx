@@ -2010,7 +2010,7 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
             marginBottom: '1.2rem',
           }}
         >
-          If you want to act on what you learned
+          The academic record
         </p>
         <div
           style={{
@@ -2021,19 +2021,19 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
         >
           {[
             {
-              label: 'Ollama',
-              desc: 'Run a language model locally. Your data never leaves your device.',
-              url: 'https://ollama.com',
+              label: 'Cooper et al. (2022)',
+              desc: 'Challenges and opportunities of machine unlearning — the impossibility argument.',
+              url: 'https://arxiv.org/abs/2209.08924',
             },
             {
-              label: 'Have I Been Pwned',
-              desc: 'Check whether your credentials appear in known breaches.',
-              url: 'https://haveibeenpwned.com',
+              label: 'Nissenbaum (2011)',
+              desc: 'A contextual approach to privacy online — why notice-and-consent was structurally broken before AI arrived.',
+              url: 'https://www.jstor.org/stable/41426671',
             },
             {
-              label: 'DuckDuckGo',
-              desc: 'Privacy-focused search engine. No tracking or profile-building.',
-              url: 'https://duckduckgo.com',
+              label: 'Zuboff (2019)',
+              desc: 'The Age of Surveillance Capitalism — the two-stage extraction model that frames this tool.',
+              url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/',
             },
           ].map(r => (
             <a

@@ -12,6 +12,7 @@ import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
 import CannotBeDeletedPage from './CannotBeDeletedPage';
 import HowItWorksPage from './HowItWorksPage';
+import AboutPage from './AboutPage';
 import PolicyDriftPage from './PolicyDriftPage';
 
 interface AnalysisResult {
@@ -105,6 +106,7 @@ export default function ResultsPage() {
       {page === 'terms' && <PolicyDriftPage setPage={handleSetPage} />}
       {page === 'permanent' && <CannotBeDeletedPage results={results} setPage={handleSetPage} />}
       {page === 'how-it-works' && <HowItWorksPage />}
+      {page === 'about' && <AboutPage setPage={handleSetPage} />}
     </DashboardLayout>
   );
 }

@@ -990,7 +990,6 @@ export default function DashboardLayout({ results, children, page, setPage }: {
       `}</style>
 
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />
-      <ContextRail page={page} setPage={setPage} />
 
       <main style={{ paddingTop: '64px', position: 'relative', zIndex: 1 }}>
         <AnimatePresence mode="wait">

@@ -11,7 +11,7 @@ import RiskPage from './RiskPage';
 import SourcesPage from './SourcesPage';
 import UnderstandPage from './UnderstandPage';
 import CannotBeDeletedPage from './CannotBeDeletedPage';
-import ResistPage from './ResistPage';
+import HowItWorksPage from './HowItWorksPage';
 import PolicyDriftPage from './PolicyDriftPage';
 
 interface AnalysisResult {
@@ -104,7 +104,7 @@ export default function ResultsPage() {
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
       {page === 'terms' && <PolicyDriftPage setPage={handleSetPage} />}
       {page === 'permanent' && <CannotBeDeletedPage results={results} setPage={handleSetPage} />}
-      {page === 'resist' && <ResistPage analysis={results as any} />}
+      {page === 'how-it-works' && <HowItWorksPage />}
     </DashboardLayout>
   );
 }

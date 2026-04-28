@@ -33,7 +33,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'resist' | 'sources-detail';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -76,7 +76,7 @@ const ACTS = [
     title: 'After',
     pages: [
       { id: 'understand' as DashPage, label: 'Understand', short: '07', desc: 'How inference works' },
-      { id: 'resist' as DashPage, label: 'Resist', short: '08', desc: 'What remains possible' },
+      { id: 'how-it-works' as DashPage, label: 'How It Works', short: '08', desc: 'Why consent cannot reach what was taken' },
     ],
   },
 ] as const;

@@ -639,7 +639,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                       Find out more
                     </span>
                   </div>
-                  {(['how-it-works', 'understand', 'about', 'sources'] as const).map(id => (
+                  {(['ai-enrichment', 'how-it-works', 'understand', 'about', 'sources'] as const).map(id => (
                     <button
                       key={id}
                       onClick={() => handleNav(id)}
@@ -657,10 +657,10 @@ function Nav({ page, setPage, results, exposureScore }: {
                         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
                         color: page === id ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase',
                       }}>
-                        {{ 'sources': 'Sources', 'about': 'About', 'how-it-works': 'How It Works', 'understand': 'Understand' }[id]}
+                        {{ 'sources': 'Sources', 'about': 'About', 'how-it-works': 'How It Works', 'understand': 'Understand', 'ai-enrichment': 'AI enrichment' }[id]}
                       </span>
                       <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost }}>
-                        {{ 'sources': '↑', 'about': '?', 'how-it-works': '→', 'understand': '→' }[id]}
+                        {{ 'sources': '↑', 'about': '?', 'how-it-works': '→', 'understand': '→', 'ai-enrichment': '⚙' }[id]}
                       </span>
                     </button>
                   ))}

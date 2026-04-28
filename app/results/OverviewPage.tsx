@@ -695,6 +695,9 @@ function DisclosureChapter({ excerpt, date, onActive }: {
             lineHeight: 1.5,
             fontStyle: 'italic',
             letterSpacing: '-0.012em',
+            maxWidth: '60ch',
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
           }}>
             <span style={{ marginRight: '0.15em' }}>&ldquo;</span>
             {words.map((word, i) => (

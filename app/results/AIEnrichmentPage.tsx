@@ -583,8 +583,18 @@ function CostEstimate({ batchCount, messageCount }: { batchCount: number; messag
 // MAIN PAGE
 // ════════════════════════════════════════════════════════════════════════════
 export default function AiEnrichmentPage({ results }: Props) {
-  const totalMessages = results?.stats?.userMessages || results?.totalUserMessages || 0;
-  const batchCount = Math.ceil(Math.min(totalMessages, 300) / 25);
+  if (!results) {
+    return (
+      <div style={{ maxWidth: '780px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem)' }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: '1.2rem', color: PALETTE.inkFaint }}>
+          No analysis data available. Upload a ChatGPT export first.
+        </p>
+      </div>
+    );
+  }
+
+  const totalMessages = results?.stats?.userMessages || results?.totalUserMessages || results?.rawStats?.userMessages || 0;
+  const batchCount = Math.ceil(Math.max(totalMessages, 1) / 25);
   const isEnriched = results?.aiEnriched !== false;
 
   return (

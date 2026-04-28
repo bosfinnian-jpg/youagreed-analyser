@@ -70,8 +70,8 @@ const ACTS = [
     ],
   },
   {
-    id: 'resist',
-    label: 'Resist',
+    id: 'after',
+    label: 'After',
     roman: 'IV',
     title: 'After',
     pages: [

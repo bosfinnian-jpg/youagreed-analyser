@@ -194,7 +194,7 @@ export default function ClosureSection({ analysis, setPage }: {
             style={{ display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}
           >
             <button
-              onClick={() => setPage('resist')}
+              onClick={() => setPage('how-it-works')}
               style={{
                 fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em',
                 color: 'rgba(240,237,232,0.90)', textTransform: 'uppercase',

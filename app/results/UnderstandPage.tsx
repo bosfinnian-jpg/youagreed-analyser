@@ -1891,7 +1891,7 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
   };
 
   const handleResist = () => {
-    if (setPage) setPage('resist');
+    if (setPage) setPage('how-it-works');
     else window.location.href = '/results';
   };
 
@@ -2111,7 +2111,7 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
             e.currentTarget.style.color = C.bg;
           }}
         >
-          What you can do about it →
+          Why consent cannot reach it →
         </button>
         <button
           onClick={handleReturn}

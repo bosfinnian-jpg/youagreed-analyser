@@ -33,7 +33,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'ai-enrichment' | 'policy-drift';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -67,16 +67,6 @@ const ACTS = [
     pages: [
       { id: 'permanent' as DashPage, label: 'Permanent', short: '05', desc: 'Why it cannot be removed' },
       { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to' },
-    ],
-  },
-  {
-    id: 'after',
-    label: 'After',
-    roman: 'IV',
-    title: 'After',
-    pages: [
-      { id: 'understand' as DashPage, label: 'Understand', short: '07', desc: 'How inference works' },
-      { id: 'how-it-works' as DashPage, label: 'How It Works', short: '08', desc: 'Why consent cannot reach what was taken' },
     ],
   },
 ] as const;
@@ -642,9 +632,14 @@ function Nav({ page, setPage, results, exposureScore }: {
                   </div>
                 ))}
 
-                {/* Sources + About — utility links */}
+                {/* Buried pages — find out more */}
                 <div style={{ marginTop: '0.75rem', borderTop: `1px solid ${PALETTE.border}` }}>
-                  {(['sources', 'about'] as const).map(id => (
+                  <div style={{ padding: '0.65rem 1.75rem 0.2rem' }}>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.3em', color: PALETTE.inkGhost, textTransform: 'uppercase' }}>
+                      Find out more
+                    </span>
+                  </div>
+                  {(['how-it-works', 'understand', 'about', 'sources'] as const).map(id => (
                     <button
                       key={id}
                       onClick={() => handleNav(id)}
@@ -662,10 +657,10 @@ function Nav({ page, setPage, results, exposureScore }: {
                         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
                         color: page === id ? PALETTE.inkMuted : PALETTE.inkFaint, textTransform: 'uppercase',
                       }}>
-                        {id === 'sources' ? 'Sources' : 'About'}
+                        {{ 'sources': 'Sources', 'about': 'About', 'how-it-works': 'How It Works', 'understand': 'Understand' }[id]}
                       </span>
                       <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost }}>
-                        {id === 'sources' ? '↑' : '?'}
+                        {{ 'sources': '↑', 'about': '?', 'how-it-works': '→', 'understand': '→' }[id]}
                       </span>
                     </button>
                   ))}
@@ -701,6 +696,109 @@ function Nav({ page, setPage, results, exposureScore }: {
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+// ============================================================================
+// CONTEXT RAIL — right-side "find out more" links, buried but findable
+// ============================================================================
+const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: string; page: DashPage }>>> = {
+  overview: [
+    { label: 'How it works', desc: 'Why the model can infer what it does', page: 'how-it-works' },
+    { label: 'AI enrichment', desc: 'The Claude calls made on your messages', page: 'ai-enrichment' },
+    { label: 'Understand', desc: 'Interactive inference demo', page: 'understand' },
+  ],
+  profile: [
+    { label: 'AI enrichment', desc: 'How your profile was built', page: 'ai-enrichment' },
+    { label: 'How it works', desc: 'The inference architecture', page: 'how-it-works' },
+    { label: 'Understand', desc: 'Try it yourself', page: 'understand' },
+  ],
+  'commercial-profile': [
+    { label: 'AI enrichment', desc: 'The signals that built this', page: 'ai-enrichment' },
+    { label: 'Policy drift', desc: 'How the terms changed', page: 'policy-drift' },
+    { label: 'Sources', desc: 'Legal basis for each finding', page: 'sources' },
+  ],
+  risk: [
+    { label: 'Understand', desc: 'How inference works', page: 'understand' },
+    { label: 'Sources', desc: 'Policy basis for each risk', page: 'sources' },
+    { label: 'Policy drift', desc: 'When the terms changed', page: 'policy-drift' },
+  ],
+  permanent: [
+    { label: 'Sources', desc: 'The policy clauses that permit this', page: 'sources' },
+    { label: 'How it works', desc: 'Why deletion is not reversal', page: 'how-it-works' },
+    { label: 'Policy drift', desc: 'How permanence crept in', page: 'policy-drift' },
+  ],
+  terms: [
+    { label: 'Policy drift', desc: '2023 → 2025 → 2026 changes', page: 'policy-drift' },
+    { label: 'Sources', desc: 'Clause-by-clause breakdown', page: 'sources' },
+  ],
+  'policy-drift': [
+    { label: 'Sources', desc: 'Full clause index', page: 'sources' },
+    { label: 'Permanent', desc: 'Why this matters', page: 'permanent' },
+  ],
+  'ai-enrichment': [
+    { label: 'How it works', desc: 'The inference architecture', page: 'how-it-works' },
+    { label: 'Understand', desc: 'Interactive demo', page: 'understand' },
+    { label: 'Commercial profile', desc: 'What was inferred about you', page: 'commercial-profile' },
+  ],
+  sources: [
+    { label: 'Policy drift', desc: 'How the terms evolved', page: 'policy-drift' },
+    { label: 'About', desc: 'Theoretical framework', page: 'about' },
+  ],
+};
+
+const DEFAULT_CONTEXT_LINKS = [
+  { label: 'About', desc: 'Theoretical framework', page: 'about' as DashPage },
+  { label: 'Sources', desc: 'Full clause index', page: 'sources' as DashPage },
+];
+
+function ContextRail({ page, setPage }: { page: DashPage; setPage: (p: DashPage) => void }) {
+  const links = CONTEXT_LINKS[page] || DEFAULT_CONTEXT_LINKS;
+  return (
+    <div className="context-rail" style={{
+      position: 'fixed',
+      right: 'clamp(1rem, 2vw, 2rem)',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      zIndex: 40,
+      width: '140px',
+    }}>
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.28em',
+        textTransform: 'uppercase', color: PALETTE.inkGhost,
+        marginBottom: '0.75rem',
+      }}>
+        Find out more
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
+        {links.map(link => (
+          <button
+            key={link.page}
+            onClick={() => setPage(link.page)}
+            style={{
+              background: PALETTE.bgPanel, border: 'none', cursor: 'pointer',
+              textAlign: 'left', padding: '0.65rem 0.75rem',
+              transition: 'background 0.12s',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
+          >
+            <p style={{
+              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.1em',
+              textTransform: 'uppercase', color: PALETTE.inkMuted, marginBottom: '2px',
+            }}>
+              {link.label}
+            </p>
+            <p style={{
+              fontFamily: TYPE.serif, fontSize: '0.82rem',
+              lineHeight: 1.4, color: PALETTE.inkFaint,
+            }}>
+              {link.desc}
+            </p>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -800,7 +898,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
            ──────────────────────────────────────────────────────── */
         @media (max-width: 768px) {
           /* Hide all desktop-only side rails on smaller screens */
-          .ov-right-rail, .resist-right-rail { display: none !important; }
+          .ov-right-rail, .resist-right-rail, .context-rail { display: none !important; }
         }
 
         /* ────────────────────────────────────────────────────────
@@ -892,6 +990,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
       `}</style>
 
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />
+      <ContextRail page={page} setPage={setPage} />
 
       <main style={{ paddingTop: '64px', position: 'relative', zIndex: 1 }}>
         <AnimatePresence mode="wait">

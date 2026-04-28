@@ -269,7 +269,7 @@ function SignalGrid({ results }: { results: any }) {
 // ── Pipeline diagram ─────────────────────────────────────────────────────────
 function PipelineDiagram({ messageCount, batchCount }: { messageCount: number; batchCount: number }) {
   const ref = useRef<SVGSVGElement>(null);
-  const inView = useInView({ current: ref.current }, { once: true });
+  const inView = useInView(ref, { once: true });
 
   const steps = [
     { label: 'Your messages', sub: `${messageCount.toLocaleString()} total`, x: 60 },

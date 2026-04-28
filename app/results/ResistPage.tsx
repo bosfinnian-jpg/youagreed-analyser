@@ -461,10 +461,8 @@ function useEchoGenerator(analysis: DeepAnalysis) {
   const dominantNarrative: string = portrait?.dominantNarrative || '';
   const primaryCoping: string = portrait?.primaryCopingMechanism || '';
 
-  const mostRevealingExcerpt: string = (analysis as any)?.enrichments
-    ?.filter((e: any) => e?.most_revealing_excerpt)
-    ?.sort((a: any, b: any) => (b?.confessional_score || 0) - (a?.confessional_score || 0))
-    ?.[0]?.most_revealing_excerpt || '';
+  // juiciestMoments is stored in sessionStorage; enrichments is not
+  const mostRevealingExcerpt: string = (analysis as any)?.juiciestMoments?.[0]?.excerpt || '';
 
   const hasSynthesis = !!(characterSummary || writingVoice || verbalTells);
   const hasFallback = !hasSynthesis && !!mostRevealingExcerpt;
@@ -472,6 +470,8 @@ function useEchoGenerator(analysis: DeepAnalysis) {
 
   const [phase, setPhase] = useState<EchoPhase>('idle');
   const [text, setText] = useState<string>('');
+  // resolvedKind tracks what's actually being displayed (may differ from kind when API falls back to excerpt)
+  const [resolvedKind, setResolvedKind] = useState<'generated' | 'excerpt'>(kind === 'none' ? 'generated' : kind);
   const hasTriggered = useRef(false);
 
   const generate = useCallback(async () => {
@@ -511,11 +511,18 @@ function useEchoGenerator(analysis: DeepAnalysis) {
       setPhase('ready');
     } catch (err) {
       console.error('[EchoGenerator]', err);
-      setPhase('error');
+      // Fall back to a real excerpt from their data when the API isn't available
+      if (mostRevealingExcerpt) {
+        setText(mostRevealingExcerpt);
+        setResolvedKind('excerpt');
+        setPhase('ready');
+      } else {
+        setPhase('error');
+      }
     }
   }, [kind, characterSummary, writingVoice, verbalTells, emotionalBaseline, dominantNarrative, primaryCoping, messageCount, mostRevealingExcerpt]);
 
-  return { phase, text, generate, kind, messageCount };
+  return { phase, text, generate, kind: kind === 'none' ? 'none' as const : resolvedKind, messageCount };
 }
 
 // ============================================================================
@@ -751,12 +758,14 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
     return 7;
   }, [pRaw]);
 
-  // Auto-trigger echo generation when entering ECHO act
+  // Auto-trigger echo generation when entering the taking act (pre-loads before echo act)
+  const echoPhase = echo.phase;
+  const echoGenerate = echo.generate;
   useEffect(() => {
-    if (currentAct >= 3 && echo.phase === 'idle') {
-      echo.generate();
+    if (currentAct >= 3 && echoPhase === 'idle') {
+      echoGenerate();
     }
-  }, [currentAct, echo]);
+  }, [currentAct, echoPhase, echoGenerate]);
 
   // Visual states — all smoothstepped from p
   const particleArrival = smoothstep(STORY.arrival[0], STORY.counted[1], p);

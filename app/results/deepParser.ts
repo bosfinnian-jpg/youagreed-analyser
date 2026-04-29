@@ -685,13 +685,66 @@ function buildCommercialProfile(messages: ScoredMessage[]): CommercialProfile {
 
 function analyseTopicsByPeriod(messages: ScoredMessage[]): { early: string[]; mid: string[]; recent: string[] } {
   const third = Math.floor(messages.length / 3);
-  const stopwords = /^(that|this|what|when|where|about|help|like|just|have|your|would|could|should|don't|can't|won't|i've|i'm|i'll|i'd|there|their|these|those|which|while|being|been|will|from|with|into|than|then|them|they|some|here|more|also|does|well|very|much|said|such|only|over|most|even|both|back|time|know|need|feel|want|make|come|good|think|really|right|still|ever|going|first|after|before|again|always|never|every|something|anything|nothing|everyone|someone|somewhere|because|really|though|maybe|maybe|little|great|things|thing|people|person|actually|basically|literally)$/;
+
+  // Comprehensive stopword list — words that slip through short filters
+  const STOPWORDS = new Set([
+    'that', 'this', 'what', 'when', 'where', 'about', 'help', 'like', 'just', 'have',
+    'your', 'would', 'could', 'should', 'dont', 'cant', 'wont', 'ive', 'im', 'ill',
+    'there', 'their', 'these', 'those', 'which', 'while', 'being', 'been', 'will',
+    'from', 'with', 'into', 'than', 'then', 'them', 'they', 'some', 'here', 'more',
+    'also', 'does', 'well', 'very', 'much', 'said', 'such', 'only', 'over', 'most',
+    'even', 'both', 'back', 'time', 'know', 'need', 'feel', 'want', 'make', 'come',
+    'good', 'think', 'really', 'right', 'still', 'ever', 'going', 'first', 'after',
+    'before', 'again', 'always', 'never', 'every', 'something', 'anything', 'nothing',
+    'everyone', 'someone', 'somewhere', 'because', 'though', 'maybe', 'little', 'great',
+    'things', 'thing', 'people', 'person', 'actually', 'basically', 'literally',
+    'really', 'pretty', 'quite', 'rather', 'almost', 'already', 'around', 'through',
+    'without', 'within', 'between', 'during', 'whether', 'however', 'although',
+    'okay', 'just', 'sure', 'yeah', 'kind', 'sort', 'does', 'did', 'made', 'said',
+    'went', 'came', 'took', 'getting', 'having', 'making', 'doing', 'going', 'being',
+    'trying', 'looking', 'thinking', 'feeling', 'saying', 'asking', 'telling',
+    'chatgpt', 'claude', 'please', 'thank', 'thanks', 'hello', 'okay', 'right',
+    'write', 'give', 'help', 'create', 'make', 'write', 'tell', 'explain', 'show',
+    'using', 'based', 'since', 'until', 'those', 'these', 'other', 'another',
+    'different', 'same', 'each', 'every', 'much', 'many', 'more', 'less', 'very',
+    'long', 'short', 'high', 'small', 'large', 'next', 'last', 'past', 'find',
+    'seems', 'seem', 'feels', 'felt', 'thought', 'think', 'might', 'must', 'shall',
+  ]);
+
   const topTopics = (msgs: ScoredMessage[]) => {
-    const words = msgs.flatMap(m => m.text.toLowerCase().split(/\s+/).filter(w => w.length > 4 && !stopwords.test(w)));
-    const freq = words.reduce((acc, w) => { acc[w] = (acc[w] || 0) + 1; return acc; }, {} as Record<string, number>);
-    return Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([w]) => w);
+    // Only use user messages with personal/emotional content for topic extraction
+    const words = msgs
+      .flatMap(m => m.text.toLowerCase()
+        .replace(/[^a-z\s'-]/g, ' ')
+        .split(/\s+/)
+        .filter(w => {
+          // Minimum length 5, not a stopword, not a contraction fragment
+          return w.length >= 5 &&
+            !STOPWORDS.has(w) &&
+            !w.startsWith("'") &&
+            !/^\d+$/.test(w) &&
+            w.replace(/[^a-z]/g, '').length >= 4;
+        })
+      );
+
+    const freq = words.reduce((acc, w) => {
+      acc[w] = (acc[w] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Only return words that appear at least twice and look like real topics
+    return Object.entries(freq)
+      .filter(([, count]) => count >= 2)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6)
+      .map(([w]) => w);
   };
-  return { early: topTopics(messages.slice(0, third)), mid: topTopics(messages.slice(third, third * 2)), recent: topTopics(messages.slice(third * 2)) };
+
+  return {
+    early: topTopics(messages.slice(0, third)),
+    mid: topTopics(messages.slice(third, third * 2)),
+    recent: topTopics(messages.slice(third * 2)),
+  };
 }
 
 // ============================================================================
@@ -699,42 +752,161 @@ function analyseTopicsByPeriod(messages: ScoredMessage[]): { early: string[]; mi
 // ============================================================================
 
 function buildCompatibilityLayer(messages: ScoredMessage[]) {
-  const STOP_NAMES = new Set(['The', 'This', 'That', 'What', 'When', 'Where', 'How', 'Why', 'Can', 'Could', 'Would', 'Should', 'Have', 'Has', 'Does', 'Did', 'Will', 'Was', 'Were', 'Are', 'Is', 'It', 'He', 'She', 'We', 'You', 'They', 'But', 'And', 'For', 'Not', 'So', 'Do', 'To', 'In', 'On', 'At', 'By', 'Or', 'If', 'Up', 'Out', 'My', 'Me', 'Be', 'As', 'An', 'A', 'I', 'ChatGPT', 'Claude', 'AI', 'Ok', 'Yes', 'No', 'Just', 'Also', 'Now', 'Then', 'Here', 'There', 'Still', 'Even']);
+  // ============================================================================
+  // NAME EXTRACTION — strict, proximity-aware
+  // Only extract names in genuine personal context (near relationship markers).
+  // Never guess from capitalisation alone.
+  // ============================================================================
 
-  const namePattern = /\b([A-Z][a-z]{2,})\b/g;
-  const nameCounts: Record<string, number> = {};
-  const nameContexts: Record<string, string[]> = {};
-  for (const msg of messages.slice(0, 300)) {
-    const matches = [...msg.text.matchAll(namePattern)].map(m => m[1]);
-    for (const name of matches) {
-      if (STOP_NAMES.has(name)) continue;
-      nameCounts[name] = (nameCounts[name] || 0) + 1;
-      if (!nameContexts[name]) nameContexts[name] = [];
-      if (nameContexts[name].length < 2) nameContexts[name].push(msg.text.substring(0, 120));
-    }
-  }
-  const names = Object.entries(nameCounts)
-    .filter(([, c]) => c >= 2)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map(([name, mentions]) => ({ name, mentions, relationship: inferRelationship(name, messages), contexts: nameContexts[name] || [] }));
+  const HARD_STOP_NAMES = new Set([
+    'The', 'This', 'That', 'What', 'When', 'Where', 'How', 'Why', 'Can', 'Could',
+    'Would', 'Should', 'Have', 'Has', 'Does', 'Did', 'Will', 'Was', 'Were', 'Are',
+    'Is', 'It', 'He', 'She', 'We', 'You', 'They', 'But', 'And', 'For', 'Not', 'So',
+    'Do', 'To', 'In', 'On', 'At', 'By', 'Or', 'If', 'Up', 'Out', 'My', 'Me', 'Be',
+    'As', 'An', 'A', 'I', 'Ok', 'Yes', 'No', 'Just', 'Also', 'Now', 'Then', 'Here',
+    'There', 'Still', 'Even',
+    'ChatGPT', 'Claude', 'OpenAI', 'Anthropic', 'Google', 'Apple', 'Microsoft',
+    'Thanks', 'Sorry', 'Hello', 'Hey', 'Hi', 'Okay', 'Right', 'Well', 'Sure',
+    'Please', 'Maybe', 'Actually', 'Basically', 'Really', 'Very',
+    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+    'January', 'February', 'March', 'April', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December',
+    'English', 'British', 'American', 'European',
+    'Getting', 'Doing', 'Being', 'Having', 'Making', 'Taking', 'Going', 'Looking',
+    'Feeling', 'Thinking', 'Trying', 'Working', 'Starting', 'Running', 'Using',
+    'Writing', 'Reading', 'Building', 'Planning', 'Learning', 'Helping', 'Asking',
+  ]);
 
-  // Location — improved: scan for any capitalised place-like words near location context
-  const locationContextWords = /\b(in|at|from|near|around|visiting|live|lived|living|moved to|moving to|based in|grew up in|went to|come from|originally from)\s+([A-Z][a-zA-Z\s]{2,20})\b/g;
-  const locationCounts: Record<string, number> = {};
+  // Relationship introduction patterns
+  const INTRO_PATTERNS_STRONG = [
+    /\bmy\s+(?:girlfriend|boyfriend|partner|ex|wife|husband|fianc[ée]{1,2}|mum|mom|mother|dad|father|brother|sister|son|daughter|friend|mate|boss|colleague|therapist|flatmate|housemate|roommate)\s+([A-Z][a-z]{2,14})\b/g,
+    /\b([A-Z][a-z]{2,14})[,\s]+(?:is|was)\s+my\s+(?:girlfriend|boyfriend|partner|wife|husband|ex|friend|boss|colleague|therapist)/g,
+  ];
+  const INTRO_PATTERNS_WEAK = [
+    /\b(?:texted|messaged|called|rang|met|saw|told|asked)\s+([A-Z][a-z]{2,14})\b/g,
+    /\b([A-Z][a-z]{2,14})\s+(?:said|told me|thinks|asked|texted|messaged|called|rang|keeps)\b/g,
+  ];
+
+  const candidateNames = new Map<string, { mentions: number; relationshipMentions: number; contexts: string[] }>();
+  const weakCandidates = new Map<string, number>();
+
   for (const msg of messages) {
-    let match;
-    while ((match = locationContextWords.exec(msg.text)) !== null) {
-      const loc = match[2].trim();
-      if (loc.length > 2 && loc.length < 25 && !STOP_NAMES.has(loc.split(' ')[0])) {
-        locationCounts[loc] = (locationCounts[loc] || 0) + 1;
+    const text = msg.text;
+
+    // Strong patterns — relationship introductions
+    for (const pattern of INTRO_PATTERNS_STRONG) {
+      pattern.lastIndex = 0;
+      let match;
+      while ((match = pattern.exec(text)) !== null) {
+        const name = match[1];
+        if (!name || HARD_STOP_NAMES.has(name) || name.length < 3 || name.length > 14) continue;
+        const existing = candidateNames.get(name) || { mentions: 0, relationshipMentions: 0, contexts: [] };
+        existing.mentions += 2;
+        existing.relationshipMentions += 1;
+        if (existing.contexts.length < 3) existing.contexts.push(text.substring(0, 180));
+        candidateNames.set(name, existing);
+      }
+    }
+
+    // Count mentions of established names
+    for (const name of candidateNames.keys()) {
+      if (text.includes(name)) {
+        candidateNames.get(name)!.mentions += 1;
+      }
+    }
+
+    // Collect weak candidates
+    for (const pattern of INTRO_PATTERNS_WEAK) {
+      pattern.lastIndex = 0;
+      let match;
+      while ((match = pattern.exec(text)) !== null) {
+        const name = match[1];
+        if (!name || HARD_STOP_NAMES.has(name) || name.length < 3 || name.length > 14) continue;
+        if (candidateNames.has(name)) continue;
+        weakCandidates.set(name, (weakCandidates.get(name) || 0) + 1);
       }
     }
   }
-  const locations = Object.entries(locationCounts)
-    .sort((a, b) => b[1] - a[1])
+
+  // Promote weak candidates appearing 5+ times
+  for (const [name, count] of weakCandidates.entries()) {
+    if (count >= 5 && !HARD_STOP_NAMES.has(name)) {
+      const contexts = messages.filter(m => m.text.includes(name)).slice(0, 2).map(m => m.text.substring(0, 180));
+      candidateNames.set(name, { mentions: count, relationshipMentions: 0, contexts });
+    }
+  }
+
+  const names = Array.from(candidateNames.entries())
+    .filter(([, d]) => d.mentions >= 2 || d.relationshipMentions >= 1)
+    .sort((a, b) => (b[1].relationshipMentions * 3 + b[1].mentions) - (a[1].relationshipMentions * 3 + a[1].mentions))
+    .slice(0, 10)
+    .map(([name, data]) => ({
+      name,
+      mentions: data.mentions,
+      relationship: inferRelationship(name, messages),
+      contexts: data.contexts,
+    }));
+
+  // ============================================================================
+  // LOCATION EXTRACTION — whitelist-anchored, context-typed
+  // ============================================================================
+
+  const KNOWN_PLACES = new Set([
+    'London', 'Leeds', 'Manchester', 'Birmingham', 'Liverpool', 'Sheffield',
+    'Bristol', 'Edinburgh', 'Glasgow', 'Cardiff', 'Newcastle', 'Nottingham',
+    'Leicester', 'Brighton', 'Oxford', 'Cambridge', 'York', 'Bath', 'Norwich',
+    'Southampton', 'Portsmouth', 'Coventry', 'Belfast', 'Dublin',
+    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami', 'Seattle',
+    'Boston', 'San Francisco', 'Austin', 'Denver', 'Atlanta', 'Dallas',
+    'Toronto', 'Vancouver', 'Montreal', 'Sydney', 'Melbourne', 'Brisbane',
+    'Paris', 'Berlin', 'Amsterdam', 'Barcelona', 'Madrid', 'Rome', 'Milan',
+    'Lisbon', 'Vienna', 'Prague', 'Budapest', 'Warsaw', 'Stockholm', 'Oslo',
+    'Copenhagen', 'Helsinki', 'Athens', 'Brussels', 'Zurich', 'Geneva',
+    'Tokyo', 'Seoul', 'Singapore', 'Bangkok', 'Mumbai', 'Delhi', 'Shanghai',
+    'Beijing', 'Hong Kong', 'Dubai', 'Cape Town',
+  ]);
+
+  const LOCATION_PATTERNS: Array<{ pattern: RegExp; type: 'lives' | 'works' | 'visits'; weight: number }> = [
+    { pattern: /\b(?:i live in|i'm living in|i'm based in|based in|living in|i moved to|just moved to|relocating to)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'lives', weight: 5 },
+    { pattern: /\b(?:i grew up in|grew up in|i'm from|i come from|originally from|back home in|home is in)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'lives', weight: 4 },
+    { pattern: /\b(?:i work in|working in|my office is in|my job is in|employed in)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'works', weight: 3 },
+    { pattern: /\b(?:visiting|visited|went to|trip to|holiday in|on holiday in|vacation in|travelling to|traveling to)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'visits', weight: 1 },
+  ];
+
+  const locationScores = new Map<string, { score: number; type: 'lives' | 'works' | 'visits' | 'mentions' }>();
+
+  for (const msg of messages) {
+    for (const { pattern, type, weight } of LOCATION_PATTERNS) {
+      pattern.lastIndex = 0;
+      let match;
+      while ((match = pattern.exec(msg.text)) !== null) {
+        const raw = match[1].trim().replace(/\s+/g, ' ');
+        for (const place of KNOWN_PLACES) {
+          if (raw.toLowerCase().startsWith(place.toLowerCase())) {
+            const existing = locationScores.get(place);
+            const typeWeight = { lives: 5, works: 3, visits: 1, mentions: 0 };
+            if (!existing || weight > typeWeight[existing.type]) {
+              locationScores.set(place, { score: (existing?.score || 0) + weight, type });
+            } else {
+              locationScores.set(place, { score: existing.score + weight, type: existing.type });
+            }
+          }
+        }
+      }
+    }
+  }
+
+  const locations = Array.from(locationScores.entries())
+    .sort((a, b) => {
+      const tw = { lives: 100, works: 50, visits: 10, mentions: 1 };
+      return (b[1].score + tw[b[1].type]) - (a[1].score + tw[a[1].type]);
+    })
     .slice(0, 8)
-    .map(([location, mentions]) => ({ location, mentions, type: mentions > 8 ? 'lives' as const : 'mentions' as const }));
+    .map(([location, data]) => ({ location, mentions: data.score, type: data.type }));
+
+  // ============================================================================
+  // REST OF COMPATIBILITY LAYER
+  // ============================================================================
 
   const sensitiveMessages = messages
     .filter(m => m.confessionalScore > 2 || m.anxietyScore > 5 || m.detectedSegments.length > 0)
@@ -774,31 +946,81 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     return { theme, mentions: count, count, obsessionLevel: Math.min(10, count / 10) };
   }).filter(t => t.count > 5).sort((a, b) => b.count - a.count).slice(0, 8);
 
+  // Juiciest moments — content-led scoring, time is a bonus not the driver
   const juiciestMoments = messages
-    .filter(m => m.confessionalScore > 0 || m.anxietyScore > 4 || m.intimacyScore > 5)
-    .sort((a, b) => (b.confessionalScore + b.anxietyScore + b.intimacyScore) - (a.confessionalScore + a.anxietyScore + a.intimacyScore))
-    .slice(0, 10)
-    .map(m => ({
+    .map(m => {
+      const contentScore = m.confessionalScore * 1.5 + m.anxietyScore + m.intimacyScore;
+      const timeBonus = (m.hour >= 0 && m.hour <= 4) ? 2 : 0;
+      const lifeEventBonus = m.detectedSegments.length * 1.5;
+      return { m, totalScore: contentScore + timeBonus + lifeEventBonus };
+    })
+    .filter(({ m, totalScore }) => totalScore > 5 && m.text.length > 40)
+    .sort((a, b) => b.totalScore - a.totalScore)
+    .slice(0, 12)
+    .map(({ m }) => ({
       timestamp: new Date(m.timestamp * 1000).toISOString(),
       excerpt: m.text.substring(0, 300),
-      juiceScore: Math.min(10, Math.round((m.confessionalScore + m.anxietyScore + m.intimacyScore) / 3)),
-      reason: [m.hour >= 0 && m.hour <= 4 ? 'late_night' : null, m.anxietyScore > 4 ? 'emotional' : null, m.confessionalScore > 3 ? 'intimate' : null, m.detectedSegments.includes('relationship_end') ? 'relationship' : null, m.detectedSegments.includes('mental_health') ? 'mental_health' : null].filter(Boolean).join(', '),
+      juiceScore: Math.min(10, Math.round((m.confessionalScore * 1.5 + m.anxietyScore + m.intimacyScore) / 3.5)),
+      reason: [
+        m.hour >= 0 && m.hour <= 4 ? 'late_night' : null,
+        m.confessionalScore > 3 ? 'confessional' : null,
+        m.anxietyScore > 5 ? 'high_anxiety' : null,
+        m.intimacyScore > 6 ? 'intimate' : null,
+        m.detectedSegments.includes('relationship_end') ? 'relationship' : null,
+        m.detectedSegments.includes('mental_health') ? 'mental_health' : null,
+        m.detectedSegments.includes('financial_distress') ? 'financial' : null,
+        m.detectedSegments.includes('bereavement') ? 'bereavement' : null,
+      ].filter(Boolean).join(', '),
     }));
 
   return { names, locations, sensitiveMessages, vulnerabilityPatterns, repetitiveThemes, juiciestMoments };
 }
 
+
 function inferRelationship(name: string, messages: ScoredMessage[]): string | undefined {
-  const ctx = messages.filter(m => m.text.includes(name)).map(m => m.text.toLowerCase()).join(' ');
-  if (ctx.includes(`my girlfriend`) && ctx.includes(name.toLowerCase())) return 'girlfriend';
-  if (ctx.includes(`my boyfriend`) && ctx.includes(name.toLowerCase())) return 'boyfriend';
-  if (ctx.includes(`my ex`) && ctx.includes(name.toLowerCase())) return 'ex';
-  if (ctx.includes(`my partner`) && ctx.includes(name.toLowerCase())) return 'partner';
-  if (ctx.includes(`my mum`) || ctx.includes(`my mom`) || ctx.includes(`my mother`)) return 'mother';
-  if (ctx.includes(`my dad`) || ctx.includes(`my father`)) return 'father';
-  if (ctx.includes(`my boss`) && ctx.includes(name.toLowerCase())) return 'boss';
-  if (ctx.includes(`my friend`) && ctx.includes(name.toLowerCase())) return 'friend';
-  return undefined;
+  // Only check messages that actually contain the name
+  const relevantMessages = messages.filter(m => m.text.includes(name));
+  if (relevantMessages.length === 0) return undefined;
+
+  const RELATIONSHIP_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
+    { pattern: /\bmy\s+girlfriend\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+girlfriend/i, label: 'girlfriend' },
+    { pattern: /\bmy\s+boyfriend\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+boyfriend/i, label: 'boyfriend' },
+    { pattern: /\bmy\s+(?:ex|ex-girlfriend|ex-boyfriend|ex-partner)\s+(\w+)|(\w+)\s+(?:is|was|,)\s+my\s+ex/i, label: 'ex' },
+    { pattern: /\bmy\s+partner\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+partner/i, label: 'partner' },
+    { pattern: /\bmy\s+(?:wife|husband)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:wife|husband)/i, label: 'spouse' },
+    { pattern: /\bmy\s+(?:mum|mom|mother)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:mum|mom|mother)/i, label: 'mother' },
+    { pattern: /\bmy\s+(?:dad|father)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:dad|father)/i, label: 'father' },
+    { pattern: /\bmy\s+(?:brother)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:brother)/i, label: 'brother' },
+    { pattern: /\bmy\s+(?:sister)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:sister)/i, label: 'sister' },
+    { pattern: /\bmy\s+boss\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+boss/i, label: 'boss' },
+    { pattern: /\bmy\s+(?:friend|mate|pal)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:friend|mate)/i, label: 'friend' },
+    { pattern: /\bmy\s+therapist\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+therapist/i, label: 'therapist' },
+    { pattern: /\bmy\s+colleague\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+colleague/i, label: 'colleague' },
+  ];
+
+  const nameLower = name.toLowerCase();
+  const votes: Record<string, number> = {};
+
+  for (const msg of relevantMessages) {
+    const text = msg.text;
+    const textLower = text.toLowerCase();
+    const nameIdx = textLower.indexOf(nameLower);
+    if (nameIdx === -1) continue;
+
+    // Extract a window of 80 chars either side of the name for context
+    const windowStart = Math.max(0, nameIdx - 80);
+    const windowEnd = Math.min(text.length, nameIdx + name.length + 80);
+    const window = text.substring(windowStart, windowEnd);
+
+    for (const { pattern, label } of RELATIONSHIP_PATTERNS) {
+      if (pattern.test(window)) {
+        votes[label] = (votes[label] || 0) + 1;
+      }
+    }
+  }
+
+  if (Object.keys(votes).length === 0) return undefined;
+  return Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
 }
 
 // ============================================================================

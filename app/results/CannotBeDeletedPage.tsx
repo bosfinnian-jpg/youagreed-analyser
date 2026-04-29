@@ -535,7 +535,7 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
           fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
           color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
         }}>
-          You sent {messages.toLocaleString()} messages over {days > 0 ? `${days} days` : 'this period'}. {topics.length > 0 && `Your dominant patterns, ${topics.join(', ')}, shaped, in some small but real way, how the model that processed them now responds to questions in those areas. That influence cannot be measured, located, or removed.
+          You sent {messages.toLocaleString()} messages over {days > 0 ? `${days} days` : 'this period'}. {topics.length > 0 && `Your dominant patterns, ${topics.join(', ')}, shaped, in some small but real way, how the model that processed them now responds to questions in those areas. That influence cannot be measured, located, or removed.`}
         </p>
       ) : (
         <p style={{

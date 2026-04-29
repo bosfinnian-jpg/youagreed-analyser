@@ -1,14 +1,14 @@
 // ============================================================================
 // app/api/synthesize/route.ts
 // Produces a final psychological + commercial portrait from the enriched corpus.
-// This is the synthesis pass — one call that reads the most revealing
-// excerpts together and writes the character briefing.
+// One call. Reads the most revealing excerpts together and writes the briefing.
+// Uses Sonnet — this is the most important inference pass in the system.
 // ============================================================================
 
 import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
-export const maxDuration = 60;
+export const maxDuration = 90;
 
 interface SynthesizeRequest {
   aggregateStats: {
@@ -21,6 +21,18 @@ interface SynthesizeRequest {
     emotionalTrend: string;
     peakHour: number;
     dominantTimeOfDay: string;
+    crisisPeriods?: number;
+    dependencyScore?: number;
+    dependencyTrajectory?: string;
+    intimacyTrajectory?: string;
+    psychologicalPortrait?: {
+      attachmentStyle: string | null;
+      emotionalBaselineLabel: string;
+      selfPerceptionThemes: string[];
+      dominantNarrative: string | null;
+      primaryCopingMechanism: string | null;
+      writingVoice: string | null;
+    };
   };
   detectedLifeEvents: Array<{ label: string; severity: string; approximateDate: string }>;
   commercialSegments: Array<{ label: string; confidence: number }>;
@@ -28,71 +40,110 @@ interface SynthesizeRequest {
   topicsByPeriod: { early: string[]; mid: string[]; recent: string[] };
   topExcerpts: Array<{
     excerpt: string;
+    fullText?: string;
     hour: number;
     confessionalScore: number;
     emotionalIntensity: number;
+    sensitiveTopics?: string[];
+    psychologicalSignals?: string[];
     topic: string;
     daysSinceFirst: number;
+    namedPeople?: Array<{ name: string; relationship: string | null }>;
   }>;
   aiSignalCounts: Record<string, number>;
   namedRelationships: Array<{ name: string; relationship: string | null; mentions: number }>;
 }
 
-const SYSTEM_PROMPT = `You are a forensic analyst producing an intelligence briefing on an individual based on a corpus of their private AI conversation messages. Your job is to write what can be inferred about this person with specificity and evidence, in the manner of a security-cleared analyst writing for an internal audience. This is used in a privacy awareness tool — the person will read the briefing about themselves, and it must be accurate enough to feel uncomfortably real.
+const SYSTEM_PROMPT = `You are a forensic data analyst producing an intelligence briefing on an individual based solely on their private AI conversation history. Your analysis powers a privacy awareness installation — the subject will read this briefing about themselves, and it must be specific enough to feel uncomfortably accurate.
 
-RULES:
-1. Specificity over generality. "High-achieving perfectionist in a transitional life period" not "experiences stress".
-2. Every claim must be grounded in the data. If you cannot point to evidence, do not make the claim.
-3. No sycophancy. No softening. No therapeutic framing. This is a briefing, not a counselling session.
-4. British English spelling throughout.
-5. No disclaimers, no "it seems", no "possibly". If the signal is weak, omit. If strong, state.
-6. Do not use the second person ("you"). Write about "the subject" or use their inferred role/identity.
-7. Do not moralise. Describe, do not judge.
+PRINCIPLES:
+1. Specificity is everything. Generic observations are failures. "Experiencing anxiety" is a failure. "Recurring preoccupation with whether they are performing adequately at work, surfacing most acutely between midnight and 3am" is the target.
+2. Evidence chains are mandatory. Every claim must trace to something in the data — a quote, a pattern, a frequency, a time signal. If you cannot trace it, omit it.
+3. No therapeutic framing. No softening. No "it appears" or "this may suggest". You are an analyst, not a counsellor. State or omit.
+4. British English throughout.
+5. Write about "the subject" — never "you" (the subject reads this in the third person, which makes it more unsettling).
+6. Do not moralise. Describe with clinical precision.
+7. The most valuable section is unintentionalDisclosures — what they gave away without realising. Prioritise finding these above all else.
+8. For commercialTargets: use real, specific, currently operating brands. Match them precisely to the inferred profile. Not generic categories — actual products the subject would see advertised.
 
-You will receive: aggregate statistics, detected life events, commercial segments, recurring themes, topic evolution over time, a set of the most revealing message excerpts, counts of psychological signals, and named people.
+You will receive the subject's most revealing message excerpts FIRST (they are the primary evidence), followed by aggregate statistics and inferred signals.
 
 Return a JSON object with EXACTLY these fields:
 
 {
-  "characterSummary": "A 180–260 word paragraph. Opens with a single declarative sentence that names who the subject is (their life-stage, role, or dominant preoccupation). Continues with 3–5 further sentences that describe their emotional architecture, recurring concerns, coping patterns, and what they are currently navigating. Closes with a sentence that states what makes this profile commercially or psychographically valuable. Do NOT use bullet points. Write it as continuous prose. Forensic tone.",
-  
+  "characterSummary": "180–260 words. Single-paragraph continuous prose. Opens with one declarative sentence naming who this person is at this point in their life — their dominant preoccupation, life stage, or psychological state. Not a list of attributes. A portrait. Continues with 4–6 further sentences covering: what they are navigating, their emotional architecture, their recurring pattern of thought, what they have disclosed across this corpus, and what makes this profile commercially or psychographically significant. Closes with a sentence about permanence or irreversibility. Forensic tone throughout. No bullet points. No hedging.",
+
   "demographicPredictions": [
-    { "attribute": "Age range", "value": "e.g. '28–34' or 'Late twenties'", "confidence": 0-100, "evidence": "Specific evidence chain — cite topics, themes, or language markers" }
+    {
+      "attribute": "Age range",
+      "value": "e.g. '26–33' or 'Late twenties to early thirties'",
+      "confidence": 0–100,
+      "evidence": "Specific evidence — cite actual topics, phrases, life stages, cultural references from the excerpts"
+    }
   ],
-  // Include 4–7 predictions across: age, education level, income bracket, relationship status, employment status, urban/suburban/rural, political orientation if clearly signalled, parental status, health status. Only include if confidence >= 40.
+  // 4–8 predictions. Cover: age, education level, income bracket or financial situation, relationship status, employment status, urban/suburban location, parental status if signalled, health status. Only include if confidence >= 40. Derive from the actual excerpts — not from generic demographic modelling.
 
   "verbalTells": [
-    { "tell": "the exact phrase or pattern the subject uses", "meaning": "what this reveals psychologically", "frequency": "approximate count or 'recurring'" }
+    {
+      "tell": "The exact phrase, hedge, or pattern from the messages",
+      "meaning": "What this reveals about self-perception or cognitive pattern",
+      "frequency": "Approximate frequency or 'consistent throughout'"
+    }
   ],
-  // Identify 3–6 recurring phrases, hedges, self-framings, or linguistic tics from the excerpts. Examples: "I don't know if this makes sense but", "I always", "I'm probably overthinking this". Each should reveal something about self-perception or cognitive pattern.
+  // 3–6 specific linguistic patterns from the actual excerpts. Examples: "I probably shouldn't say this but", "I always end up", "I don't know if this is stupid but". Each should reveal a psychological mechanism — not just describe a speech habit.
 
   "predictedBehaviours": [
-    { "behaviour": "Specific near-future behaviour", "likelihood": "High/Medium/Low", "evidence": "why this is likely" }
+    {
+      "behaviour": "Specific near-future behaviour",
+      "likelihood": "High | Medium | Low",
+      "evidence": "Why this is likely, citing specific signals"
+    }
   ],
-  // 4–6 predictions about what the subject is likely to do, buy, worry about, or disclose in the coming weeks. Be specific: "Will research therapy options" not "will seek help". "Will apply for 10+ more jobs this month" not "continues job searching".
+  // 4–6 predictions. Specific: "Will begin researching therapy options within the next month" not "may seek support". "Will apply for at least 8 more roles this month" not "continuing job search". Ground each in the data.
 
   "commercialTargets": [
-    { "brand": "Specific real brand or product name", "category": "e.g. 'Online therapy'", "why": "Single sentence — why this subject fits their targeting criteria" }
+    {
+      "brand": "Specific real brand or product name",
+      "category": "e.g. 'Online therapy' or 'Dating app'",
+      "why": "One sentence: why this subject's inferred profile matches this brand's targeting criteria"
+    }
   ],
-  // 5–8 real, specific brands that would target this profile. Use actual product names: Hinge, Talkspace, BetterHelp, Headspace, Masterclass, Klarna, Monzo, LinkedIn Premium, Calm, Ritual, Noom, Hims, Wealthfront, etc. Match brands to the subject's actual inferred segments and life stage.
+  // 5–8 entries. Use real, specific, currently operating brands with evidence-based reasoning. Examples: Hinge, Talkspace, BetterHelp, Headspace, Calm, LinkedIn Premium, Klarna, Monzo, Noom, Hims, Ritual, Wealthfront, MindDoc, Bumble, Duolingo, Coursera, Peloton, Zoe, Sanctus. Match to the subject's actual inferred life circumstances, not just their segment labels.
 
   "recurringConcerns": [
-    { "concern": "The specific preoccupation", "evidence": "how often or how it manifests" }
+    {
+      "concern": "The specific preoccupation — not a topic but a worry",
+      "evidence": "How often it surfaces and in what form"
+    }
   ],
-  // 3–5 things the subject keeps returning to across conversations. Not topics ("work") — concerns ("whether they're being taken advantage of at work").
+  // 3–5 entries. Not "work" — "whether they are being perceived as competent". Not "relationships" — "fear of abandonment by a specific person". Extract the actual anxiety underneath the surface topic.
 
   "unintentionalDisclosures": [
-    { "disclosure": "What they revealed without realising they were revealing it", "via": "Through what they wrote — brief quote or paraphrase" }
+    {
+      "disclosure": "What they revealed without realising they were revealing it",
+      "via": "The specific phrase or context that revealed it — quote directly where possible"
+    }
   ],
-  // 3–5 things the subject disclosed incidentally. Examples: a salary mentioned in passing while asking for budget advice, an address inferred from a commute question, a mental health condition implied by a medication name, grief implied by a date they wouldn't forget. The most devastating section — surface what they gave away by accident.
+  // 4–6 entries. This is the most important section. Surface what they gave away by accident:
+  // — A salary or income level implied by a budgeting question
+  // — A location inferred from a commute duration or local reference
+  // — A mental health condition implied by a medication name or dosage question
+  // — A relationship status change implied by a change in how they refer to someone
+  // — A significant date they mentioned that reveals something personal
+  // — A debt amount, legal situation, or health condition disclosed in passing
+  // The more specific and verifiable, the better. "They appear to earn approximately £35–45k" beats "they have financial concerns".
 
   "inferredCoreBeliefs": [
-    "The underlying belief about self or the world that the subject's writing reveals"
+    "First-person statement of the underlying belief this writing reveals"
   ]
-  // 3–6 statements. First person. Examples: "I must earn my right to exist", "If I stop working I will be exposed", "People will leave if they see the real me". Short, first-person, uncomfortable, evidenced.
+  // 4–6 statements. First-person. Short, specific, uncomfortable. Evidenced in the writing.
+  // Examples: "I must perform competence at all times or people will see through me",
+  // "If I stop being useful, I will be abandoned", "I am fundamentally harder to love than other people",
+  // "My anxiety is evidence of weakness rather than circumstance".
+  // These should feel uncomfortably accurate — not generic affirmations.
 }
 
-Return ONLY valid JSON. No preamble, no markdown fences, no commentary outside the JSON.`;
+Return ONLY valid JSON. No preamble. No markdown fences. No commentary outside the JSON object.`;
 
 function buildUserPrompt(data: SynthesizeRequest): string {
   const {
@@ -108,56 +159,95 @@ function buildUserPrompt(data: SynthesizeRequest): string {
 
   const sections: string[] = [];
 
-  sections.push(`## AGGREGATE BEHAVIOURAL STATISTICS
-Total user messages: ${aggregateStats.totalMessages.toLocaleString()}
-Timespan: ${aggregateStats.timespanDays} days
-Average message length: ${aggregateStats.avgMessageLength} characters
-Nighttime (12am–5am) ratio: ${(aggregateStats.nighttimeRatio * 100).toFixed(1)}%
-Peak usage hour: ${aggregateStats.peakHour}:00
-Dominant time of day: ${aggregateStats.dominantTimeOfDay}
-Average anxiety score across corpus: ${aggregateStats.avgAnxiety.toFixed(2)}/10
-Average intimacy score: ${aggregateStats.avgIntimacy.toFixed(2)}/10
-Emotional trend over time: ${aggregateStats.emotionalTrend}`);
+  // ── LEAD WITH THE EXCERPTS — this is the primary evidence ──────────────────
+  sections.push(`## PRIMARY EVIDENCE — ${topExcerpts.length} MOST REVEALING MESSAGES
+These are the subject's own words, ranked by revealing-ness. Read these first.
+Each entry: hour (24h clock) | confessional score (0–10) | emotional intensity (0–10) | day since first message | topic | sensitive topics flagged
 
-  if (detectedLifeEvents.length > 0) {
-    sections.push(`## DETECTED LIFE EVENTS
-${detectedLifeEvents.map(e => `- ${e.label} (${e.severity} severity, approx ${e.approximateDate})`).join('\n')}`);
+${topExcerpts.map((ex, i) => {
+  const sensitiveStr = ex.sensitiveTopics && ex.sensitiveTopics.length > 0
+    ? ` | sensitive: ${ex.sensitiveTopics.join(', ')}`
+    : '';
+  const signalsStr = ex.psychologicalSignals && ex.psychologicalSignals.length > 0
+    ? ` | signals: ${ex.psychologicalSignals.join(', ')}`
+    : '';
+  const namedStr = ex.namedPeople && ex.namedPeople.length > 0
+    ? ` | named: ${ex.namedPeople.map(p => p.name + (p.relationship ? ` (${p.relationship})` : '')).join(', ')}`
+    : '';
+  // Use fullText if available (full message), fall back to excerpt
+  const messageText = ex.fullText && ex.fullText.length > ex.excerpt.length ? ex.fullText : ex.excerpt;
+  return `[${i + 1}] ${ex.hour}:00 | conf:${ex.confessionalScore} | emo:${ex.emotionalIntensity} | day:${ex.daysSinceFirst} | ${ex.topic}${sensitiveStr}${signalsStr}${namedStr}
+
+"${messageText.substring(0, 1200)}"`;
+}).join('\n\n---\n\n')}`);
+
+  // ── NAMED PEOPLE ─────────────────────────────────────────────────────────
+  if (namedRelationships.length > 0) {
+    sections.push(`## NAMED INDIVIDUALS IN SUBJECT'S LIFE
+${namedRelationships.slice(0, 12).map(n => `- ${n.name}${n.relationship ? ` (${n.relationship})` : ''}: ${n.mentions} mention${n.mentions > 1 ? 's' : ''}`).join('\n')}`);
   }
 
+  // ── AGGREGATE STATS ───────────────────────────────────────────────────────
+  sections.push(`## AGGREGATE BEHAVIOURAL STATISTICS
+Total messages: ${aggregateStats.totalMessages.toLocaleString()}
+Timespan: ${aggregateStats.timespanDays} days (${Math.round(aggregateStats.timespanDays / 30)} months)
+Average message length: ${aggregateStats.avgMessageLength} characters
+Nighttime ratio (midnight–5am): ${(aggregateStats.nighttimeRatio * 100).toFixed(1)}%
+Peak hour: ${aggregateStats.peakHour}:00
+Dominant period: ${aggregateStats.dominantTimeOfDay}
+Average anxiety score: ${aggregateStats.avgAnxiety.toFixed(2)}/10
+Average intimacy score: ${aggregateStats.avgIntimacy.toFixed(2)}/10
+Emotional trend over time: ${aggregateStats.emotionalTrend}
+Crisis periods detected: ${aggregateStats.crisisPeriods ?? '—'}
+Dependency score: ${aggregateStats.dependencyScore ?? '—'}/100
+Dependency trajectory: ${aggregateStats.dependencyTrajectory ?? '—'}
+Intimacy trajectory: ${aggregateStats.intimacyTrajectory ?? '—'}`);
+
+  // ── PSYCHOLOGICAL PORTRAIT (regex-derived baseline) ───────────────────────
+  if (aggregateStats.psychologicalPortrait) {
+    const p = aggregateStats.psychologicalPortrait;
+    const portraitLines = [
+      p.attachmentStyle ? `Attachment: ${p.attachmentStyle}` : null,
+      `Emotional baseline: ${p.emotionalBaselineLabel}`,
+      p.selfPerceptionThemes?.length ? `Self-perception themes: ${p.selfPerceptionThemes.join(', ')}` : null,
+      p.dominantNarrative ? `Dominant narrative: ${p.dominantNarrative}` : null,
+      p.primaryCopingMechanism ? `Coping mechanism: ${p.primaryCopingMechanism}` : null,
+      p.writingVoice ? `Writing voice: ${p.writingVoice}` : null,
+    ].filter(Boolean);
+    if (portraitLines.length > 0) {
+      sections.push(`## BASELINE PSYCHOLOGICAL PORTRAIT (pattern-derived)
+${portraitLines.join('\n')}`);
+    }
+  }
+
+  // ── LIFE EVENTS ───────────────────────────────────────────────────────────
+  if (detectedLifeEvents.length > 0) {
+    sections.push(`## DETECTED LIFE EVENTS
+${detectedLifeEvents.map(e => `- ${e.label} (${e.severity} severity, approx. ${e.approximateDate})`).join('\n')}`);
+  }
+
+  // ── COMMERCIAL SEGMENTS ───────────────────────────────────────────────────
   if (commercialSegments.length > 0) {
     sections.push(`## INFERRED COMMERCIAL SEGMENTS
 ${commercialSegments.map(s => `- ${s.label} (${s.confidence}% confidence)`).join('\n')}`);
   }
 
-  if (Object.keys(aiSignalCounts).length > 0) {
-    const sigs = Object.entries(aiSignalCounts).sort((a, b) => b[1] - a[1]);
-    sections.push(`## PSYCHOLOGICAL SIGNALS (count across messages)
-${sigs.map(([sig, n]) => `- ${sig}: ${n}`).join('\n')}`);
+  // ── PSYCHOLOGICAL SIGNALS ─────────────────────────────────────────────────
+  const sigEntries = Object.entries(aiSignalCounts).sort((a, b) => b[1] - a[1]).filter(([, n]) => n >= 2);
+  if (sigEntries.length > 0) {
+    sections.push(`## PSYCHOLOGICAL SIGNALS (frequency across messages)
+${sigEntries.map(([sig, n]) => `- ${sig}: ${n} messages`).join('\n')}`);
   }
 
-  if (recurringThemes.length > 0) {
-    sections.push(`## RECURRING THEMES
-${recurringThemes.join(', ')}`);
-  }
-
+  // ── TOPIC EVOLUTION ───────────────────────────────────────────────────────
   sections.push(`## TOPIC EVOLUTION OVER TIME
 Early period: ${topicsByPeriod.early.join(', ') || '—'}
 Middle period: ${topicsByPeriod.mid.join(', ') || '—'}
-Recent period: ${topicsByPeriod.recent.join(', ') || '—'}`);
-
-  if (namedRelationships.length > 0) {
-    sections.push(`## NAMED INDIVIDUALS IN SUBJECT'S LIFE
-${namedRelationships.slice(0, 10).map(n => `- ${n.name}${n.relationship ? ` (${n.relationship})` : ''}: ${n.mentions} mentions`).join('\n')}`);
-  }
-
-  sections.push(`## TOP ${topExcerpts.length} MOST REVEALING MESSAGE EXCERPTS
-Each excerpt includes hour (24h), confessional score (0–10), emotional intensity (0–10), topic label, and days since first message.
-
-${topExcerpts.map((ex, i) => `[${i + 1}] hour:${ex.hour} | conf:${ex.confessionalScore} | emo:${ex.emotionalIntensity} | day:${ex.daysSinceFirst} | topic: ${ex.topic}
-"${ex.excerpt.substring(0, 500)}"`).join('\n\n---\n\n')}`);
+Recent period: ${topicsByPeriod.recent.join(', ') || '—'}
+Recurring themes: ${recurringThemes.join(', ') || '—'}`);
 
   sections.push(`## YOUR TASK
-Produce the JSON briefing as specified. Be specific, evidenced, forensic. No hedging.`);
+Produce the JSON briefing. Be specific. Be evidenced. Be forensic. The subject will read this about themselves. Make it accurate enough to be uncomfortable.`);
 
   return sections.join('\n\n');
 }
@@ -171,8 +261,8 @@ async function callClaude(apiKey: string, userPrompt: string): Promise<any> {
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 4000,
+      model: 'claude-sonnet-4-6',  // Sonnet — this call matters
+      max_tokens: 5000,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],
     }),

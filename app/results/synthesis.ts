@@ -48,11 +48,15 @@ function selectTopExcerpts(
   limit = 40
 ): Array<{
   excerpt: string;
+  fullText: string;
   hour: number;
   confessionalScore: number;
   emotionalIntensity: number;
+  sensitiveTopics: string[];
+  psychologicalSignals: string[];
   topic: string;
   daysSinceFirst: number;
+  namedPeople: Array<{ name: string; relationship: string | null }>;
 }> {
   const firstTs = analysis.messages[0]?.timestamp || Date.now() / 1000;
 
@@ -63,23 +67,43 @@ function selectTopExcerpts(
       if (!msg) return null;
 
       // Composite score for "revealing-ness"
+      // Unintentional disclosures get extra weight — they are the most
+      // commercially dangerous and the most impactful for the installation
+      const hasIncidentalInfo = (e.sensitive_topics || []).some(t =>
+        ['debt', 'poverty', 'addiction', 'eating_disorder', 'abortion', 'miscarriage',
+         'fertility', 'criminal_record', 'immigration_status', 'infidelity', 'abuse',
+         'self_harm', 'suicidal_ideation'].includes(t)
+      );
+
       const score =
-        e.confessional_score * 1.8 +
+        e.confessional_score * 2.0 +
         e.emotional_intensity * 1.2 +
-        (e.sensitive_topics?.length || 0) * 2 +
+        (e.sensitive_topics?.length || 0) * 2.5 +
+        (hasIncidentalInfo ? 4 : 0) +            // boost for particularly sensitive disclosures
         (e.inferred_beliefs?.length || 0) * 1.5 +
+        (e.named_people?.length || 0) * 1.2 +    // boost if names are disclosed
         (msg.hour >= 0 && msg.hour <= 4 ? 2.5 : 0) +
         Math.min(2, Math.log2(Math.max(msg.wordCount, 10) / 10));
+
+      // Full text — use the actual message, not a truncated excerpt
+      // The excerpt is used for display; fullText is what the AI reads
+      const fullText = msg.text.substring(0, 2000); // generous limit
 
       return {
         score,
         data: {
-          excerpt: e.most_revealing_excerpt?.length > 20 ? e.most_revealing_excerpt : msg.text.substring(0, 500),
+          excerpt: e.most_revealing_excerpt?.length > 20
+            ? e.most_revealing_excerpt
+            : msg.text.substring(0, 400),
+          fullText,
           hour: msg.hour,
           confessionalScore: e.confessional_score,
           emotionalIntensity: e.emotional_intensity,
+          sensitiveTopics: e.sensitive_topics || [],
+          psychologicalSignals: e.psychological_signals || [],
           topic: e.topic || 'general',
           daysSinceFirst: Math.round((msg.timestamp - firstTs) / 86400),
+          namedPeople: e.named_people || [],
         },
       };
     })
@@ -92,7 +116,7 @@ function selectTopExcerpts(
   const seen = new Set<string>();
 
   for (const r of ranked) {
-    const fingerprint = r.data.excerpt.substring(0, 60).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const fingerprint = r.data.fullText.substring(0, 80).toLowerCase().replace(/[^a-z0-9]/g, '');
     if (seen.has(fingerprint)) continue;
     seen.add(fingerprint);
     chosen.push(r);
@@ -146,6 +170,11 @@ export async function runSynthesis(
       emotionalTrend: analysis.emotionalTimeline.emotionalTrend,
       peakHour: analysis.peakHour,
       dominantTimeOfDay: getDominantTimeOfDay(analysis.hourDistribution),
+      crisisPeriods: analysis.emotionalTimeline.crisisPeriods.length,
+      dependencyScore: analysis.dependency.dependencyScore,
+      dependencyTrajectory: analysis.dependency.trajectory,
+      intimacyTrajectory: analysis.dependency.intimacyTrajectory,
+      psychologicalPortrait: analysis.psychologicalPortrait,
     },
     detectedLifeEvents: analysis.lifeEvents.map(e => ({
       label: e.label,

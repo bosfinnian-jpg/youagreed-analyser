@@ -78,7 +78,7 @@ Return ONLY a valid JSON array, one object per message, preserving id order. No 
 
 async function callClaude(apiKey: string, messages: EnrichRequest['messages']): Promise<any[]> {
   const userContent = messages
-    .map(m => `[${m.id}] hour:${m.hour} | ${m.text.substring(0, 900)}`)
+    .map(m => `[${m.id}] hour:${m.hour} | ${m.text.substring(0, 1800)}`)
     .join('\n\n---\n\n');
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {

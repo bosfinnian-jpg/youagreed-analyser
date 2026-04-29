@@ -38,7 +38,7 @@ export interface ScoreBreakdownEntry {
 }
 
 const BATCH_SIZE = 25;
-const MAX_CANDIDATES = 300;
+const MAX_CANDIDATES = 500;
 const MAX_PARALLEL_BATCHES = 3;
 
 const SCORE_CEILINGS = {
@@ -69,13 +69,29 @@ function isStructuralTemplate(text: string): boolean {
   if (TEMPLATE_PATTERNS.some(re => re.test(text))) return true;
   const lines = text.split('\n').filter(l => l.trim());
   const n = Math.max(lines.length, 1);
+
+  // Markdown headings — 4+ is a structured document, not a personal message
   const headings = lines.filter(l => /^#{1,6}\s+\S/.test(l.trim())).length;
   if (headings >= 4) return true;
-  if (headings >= 2 && n >= 8 && headings / n > 0.18) return true;
+  if (headings >= 2 && n >= 8 && headings / n > 0.25) return true;
+
+  // Bold labels with colons — only if very dense (document structure)
   const boldLabels = (text.match(/\*\*[^*\n]{1,60}:\*\*/g) || []).length;
-  if (boldLabels >= 3) return true;
-  const numbered = lines.filter(l => /^\s*\d+[.)]\s+\S/.test(l)).length;
-  if (numbered >= 5 && numbered / n > 0.35) return true;
+  if (boldLabels >= 4) return true;
+
+  // Numbered lists — only flag as template if:
+  // 1. High count (7+ items) AND high ratio
+  // 2. AND items look like instructions (not personal enumeration)
+  // "5 things I need to tell my therapist" is NOT a template
+  const numberedLines = lines.filter(l => /^\s*\d+[.)]\s+\S/.test(l));
+  const numbered = numberedLines.length;
+  if (numbered >= 7 && numbered / n > 0.5) {
+    // Check if items look instructional rather than personal
+    const avgItemLength = numberedLines.reduce((s, l) => s + l.length, 0) / numbered;
+    const hasPersonalFirst = /\b(i |my |me |we )/.test(text.toLowerCase().substring(0, 200));
+    if (avgItemLength > 40 && !hasPersonalFirst) return true;
+  }
+
   return false;
 }
 

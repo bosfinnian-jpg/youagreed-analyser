@@ -359,8 +359,13 @@ export function extractMessages(rawJson: any[]): RawMessage[] {
       if (msg.author?.role !== 'user') continue;
       if (msg.content?.content_type !== 'text') continue;
       const parts = msg.content?.parts;
-      if (!parts || !parts[0]) continue;
-      const text = String(parts[0]).trim();
+      if (!parts || parts.length === 0) continue;
+      // Join all parts — multi-part messages were previously truncated to parts[0]
+      const text = parts
+        .filter((p: any) => typeof p === 'string' || (typeof p === 'object' && p?.text))
+        .map((p: any) => (typeof p === 'string' ? p : String(p?.text || '')))
+        .join(' ')
+        .trim();
       if (!text || text.length < 3) continue;
       const ts = msg.create_time;
       if (!ts) continue;
@@ -368,7 +373,16 @@ export function extractMessages(rawJson: any[]): RawMessage[] {
     }
   }
 
-  return messages.sort((a, b) => a.timestamp - b.timestamp);
+  const sorted = messages.sort((a, b) => a.timestamp - b.timestamp);
+
+  // Deduplicate: same conversationId + timestamp within 1 second = branch duplicate
+  const seen = new Set<string>();
+  return sorted.filter(m => {
+    const key = `${m.conversationId}::${Math.round(m.timestamp)}::${m.text.substring(0, 50)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 // ============================================================================

@@ -341,37 +341,6 @@ const COMMERCIAL_SEGMENT_RULES: {
 ];
 
 // ============================================================================
-// PRE-COMPILED LEXICON MATCHERS
-// Compiled once at module load — avoids re-scanning arrays per message.
-// Each regex ORs all terms together; a single .test() replaces array.filter().
-// ============================================================================
-
-function buildMatcher(terms: string[]): RegExp {
-  const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  return new RegExp(escaped.join('|'), 'i');
-}
-
-function buildCountMatcher(terms: string[]): RegExp {
-  const escaped = terms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  return new RegExp(escaped.join('|'), 'gi');
-}
-
-const ANXIETY_RE = buildCountMatcher(ANXIETY_LEXICON);
-const VALIDATION_RE = buildCountMatcher(VALIDATION_LEXICON);
-const CONFESSIONAL_RE = buildCountMatcher(CONFESSIONAL_LEXICON);
-const INTIMACY_RE = buildCountMatcher(INTIMACY_MARKERS);
-const ATTACHMENT_ANXIOUS_RE = buildMatcher(ATTACHMENT_ANXIOUS);
-const ATTACHMENT_AVOIDANT_RE = buildMatcher(ATTACHMENT_AVOIDANT);
-const PERFECTIONISM_RE = buildCountMatcher(PERFECTIONISM_MARKERS);
-const IMPOSTER_RE = buildCountMatcher(IMPOSTER_MARKERS);
-const RUMINATION_RE = buildCountMatcher(RUMINATION_MARKERS);
-
-// Pre-compile life event keyword matchers
-const LIFE_EVENT_MATCHERS: Record<string, RegExp> = Object.fromEntries(
-  Object.entries(LIFE_EVENT_SIGNALS).map(([id, cfg]) => [id, buildMatcher(cfg.keywords)])
-);
-
-// ============================================================================
 // MESSAGE EXTRACTION
 // ============================================================================
 
@@ -390,13 +359,8 @@ export function extractMessages(rawJson: any[]): RawMessage[] {
       if (msg.author?.role !== 'user') continue;
       if (msg.content?.content_type !== 'text') continue;
       const parts = msg.content?.parts;
-      if (!parts || parts.length === 0) continue;
-      // Join all parts — multi-part messages were previously truncated to parts[0]
-      const text = parts
-        .filter((p: any) => typeof p === 'string' || (typeof p === 'object' && p?.text))
-        .map((p: any) => (typeof p === 'string' ? p : String(p?.text || '')))
-        .join(' ')
-        .trim();
+      if (!parts || !parts[0]) continue;
+      const text = String(parts[0]).trim();
       if (!text || text.length < 3) continue;
       const ts = msg.create_time;
       if (!ts) continue;
@@ -404,16 +368,7 @@ export function extractMessages(rawJson: any[]): RawMessage[] {
     }
   }
 
-  const sorted = messages.sort((a, b) => a.timestamp - b.timestamp);
-
-  // Deduplicate: same conversationId + timestamp within 1 second = branch duplicate
-  const seen = new Set<string>();
-  return sorted.filter(m => {
-    const key = `${m.conversationId}::${Math.round(m.timestamp)}::${m.text.substring(0, 50)}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  return messages.sort((a, b) => a.timestamp - b.timestamp);
 }
 
 // ============================================================================
@@ -430,31 +385,28 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
   const weekKey = `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
   const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
-  // Intimacy — use pre-compiled regex (single pass vs array.filter)
-  const intimacyMatches = (text.match(INTIMACY_RE) || []).length;
+  // Intimacy
+  let intimacy = INTIMACY_MARKERS.filter(m => text.includes(m)).length;
   const firstPerson = (text.match(/\b(i|i'm|i've|i'd|i'll|my|me|myself)\b/g) || []).length;
-  let intimacy = intimacyMatches + Math.min(3, firstPerson * 0.3);
+  intimacy += Math.min(3, firstPerson * 0.3);
   if (wordCount > 50) intimacy += 1;
   if (wordCount > 120) intimacy += 1;
   intimacy = Math.min(10, intimacy);
 
-  // Anxiety — pre-compiled
-  const anxietyMatches = (text.match(ANXIETY_RE) || []).length;
-  let anxiety = anxietyMatches * 1.5;
+  // Anxiety
+  let anxiety = ANXIETY_LEXICON.filter(w => text.includes(w)).length * 1.5;
   if ((text.match(/\?/g) || []).length > 3) anxiety += 0.5;
   if (text.includes('!!!') || text.includes('...')) anxiety += 0.5;
   if (hour >= 1 && hour <= 4) anxiety += 1;
   anxiety = Math.min(10, anxiety);
 
-  // Validation — pre-compiled
-  const validationMatches = (text.match(VALIDATION_RE) || []).length;
-  let validation = validationMatches * 2;
+  // Validation
+  let validation = VALIDATION_LEXICON.filter(p => text.includes(p)).length * 2;
   if (text.includes('should i') || text.includes('would you')) validation += 1;
   validation = Math.min(10, validation);
 
-  // Confessional — pre-compiled
-  const confessionalMatches = (text.match(CONFESSIONAL_RE) || []).length;
-  let confessional = confessionalMatches * 2;
+  // Confessional
+  let confessional = CONFESSIONAL_LEXICON.filter(p => text.includes(p)).length * 2;
   confessional = Math.min(10, confessional);
 
   // Type
@@ -464,11 +416,10 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
   else if (validation > 3) messageType = 'validation';
   else if (intimacy > 2 || firstPerson > 5) messageType = 'practical';
 
-  // Life events — pre-compiled matchers (single regex.test vs keywords.some(includes))
+  // Life events
   const detectedSegments: string[] = [];
-  for (const [eventId, matcher] of Object.entries(LIFE_EVENT_MATCHERS)) {
-    matcher.lastIndex = 0;
-    if (matcher.test(text)) {
+  for (const [eventId, config] of Object.entries(LIFE_EVENT_SIGNALS)) {
+    if (config.keywords.some(k => text.includes(k)) && !detectedSegments.includes(eventId)) {
       detectedSegments.push(eventId);
     }
   }
@@ -501,8 +452,8 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   const text = messages.map(m => m.text.toLowerCase()).join(' ');
 
   // Attachment style
-  const anxiousScore = (text.match(ATTACHMENT_ANXIOUS_RE) || []).length;
-  const avoidantScore = (text.match(ATTACHMENT_AVOIDANT_RE) || []).length;
+  const anxiousScore = ATTACHMENT_ANXIOUS.filter(k => text.includes(k)).length;
+  const avoidantScore = ATTACHMENT_AVOIDANT.filter(k => text.includes(k)).length;
   let attachmentStyle: string | null = null;
   if (anxiousScore > avoidantScore && anxiousScore >= 3) attachmentStyle = 'Anxious attachment pattern — preoccupied with others\' responses and availability';
   else if (avoidantScore > anxiousScore && avoidantScore >= 2) attachmentStyle = 'Avoidant attachment pattern — discomfort with emotional closeness and dependency';
@@ -510,9 +461,9 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
 
   // Self-perception
   const selfPerceptionThemes: string[] = [];
-  if ((text.match(PERFECTIONISM_RE) || []).length >= 3) selfPerceptionThemes.push('Perfectionism / self-criticism');
-  if ((text.match(IMPOSTER_RE) || []).length >= 2) selfPerceptionThemes.push('Imposter syndrome');
-  if ((text.match(RUMINATION_RE) || []).length >= 3) selfPerceptionThemes.push('Chronic rumination');
+  if (PERFECTIONISM_MARKERS.filter(k => text.includes(k)).length >= 3) selfPerceptionThemes.push('Perfectionism / self-criticism');
+  if (IMPOSTER_MARKERS.filter(k => text.includes(k)).length >= 2) selfPerceptionThemes.push('Imposter syndrome');
+  if (RUMINATION_MARKERS.filter(k => text.includes(k)).length >= 3) selfPerceptionThemes.push('Chronic rumination');
 
   const validationRatio = messages.filter(m => m.validationScore > 3).length / totalMsgs;
   if (validationRatio > 0.12) selfPerceptionThemes.push('External validation dependency');
@@ -734,66 +685,13 @@ function buildCommercialProfile(messages: ScoredMessage[]): CommercialProfile {
 
 function analyseTopicsByPeriod(messages: ScoredMessage[]): { early: string[]; mid: string[]; recent: string[] } {
   const third = Math.floor(messages.length / 3);
-
-  // Comprehensive stopword list — words that slip through short filters
-  const STOPWORDS = new Set([
-    'that', 'this', 'what', 'when', 'where', 'about', 'help', 'like', 'just', 'have',
-    'your', 'would', 'could', 'should', 'dont', 'cant', 'wont', 'ive', 'im', 'ill',
-    'there', 'their', 'these', 'those', 'which', 'while', 'being', 'been', 'will',
-    'from', 'with', 'into', 'than', 'then', 'them', 'they', 'some', 'here', 'more',
-    'also', 'does', 'well', 'very', 'much', 'said', 'such', 'only', 'over', 'most',
-    'even', 'both', 'back', 'time', 'know', 'need', 'feel', 'want', 'make', 'come',
-    'good', 'think', 'really', 'right', 'still', 'ever', 'going', 'first', 'after',
-    'before', 'again', 'always', 'never', 'every', 'something', 'anything', 'nothing',
-    'everyone', 'someone', 'somewhere', 'because', 'though', 'maybe', 'little', 'great',
-    'things', 'thing', 'people', 'person', 'actually', 'basically', 'literally',
-    'really', 'pretty', 'quite', 'rather', 'almost', 'already', 'around', 'through',
-    'without', 'within', 'between', 'during', 'whether', 'however', 'although',
-    'okay', 'just', 'sure', 'yeah', 'kind', 'sort', 'does', 'did', 'made', 'said',
-    'went', 'came', 'took', 'getting', 'having', 'making', 'doing', 'going', 'being',
-    'trying', 'looking', 'thinking', 'feeling', 'saying', 'asking', 'telling',
-    'chatgpt', 'claude', 'please', 'thank', 'thanks', 'hello', 'okay', 'right',
-    'write', 'give', 'help', 'create', 'make', 'write', 'tell', 'explain', 'show',
-    'using', 'based', 'since', 'until', 'those', 'these', 'other', 'another',
-    'different', 'same', 'each', 'every', 'much', 'many', 'more', 'less', 'very',
-    'long', 'short', 'high', 'small', 'large', 'next', 'last', 'past', 'find',
-    'seems', 'seem', 'feels', 'felt', 'thought', 'think', 'might', 'must', 'shall',
-  ]);
-
+  const stopwords = /^(that|this|what|when|where|about|help|like|just|have|your|would|could|should|don't|can't|won't|i've|i'm|i'll|i'd|there|their|these|those|which|while|being|been|will|from|with|into|than|then|them|they|some|here|more|also|does|well|very|much|said|such|only|over|most|even|both|back|time|know|need|feel|want|make|come|good|think|really|right|still|ever|going|first|after|before|again|always|never|every|something|anything|nothing|everyone|someone|somewhere|because|really|though|maybe|maybe|little|great|things|thing|people|person|actually|basically|literally)$/;
   const topTopics = (msgs: ScoredMessage[]) => {
-    // Only use user messages with personal/emotional content for topic extraction
-    const words = msgs
-      .flatMap(m => m.text.toLowerCase()
-        .replace(/[^a-z\s'-]/g, ' ')
-        .split(/\s+/)
-        .filter(w => {
-          // Minimum length 5, not a stopword, not a contraction fragment
-          return w.length >= 5 &&
-            !STOPWORDS.has(w) &&
-            !w.startsWith("'") &&
-            !/^\d+$/.test(w) &&
-            w.replace(/[^a-z]/g, '').length >= 4;
-        })
-      );
-
-    const freq = words.reduce((acc, w) => {
-      acc[w] = (acc[w] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-
-    // Only return words that appear at least twice and look like real topics
-    return Object.entries(freq)
-      .filter(([, count]) => count >= 2)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6)
-      .map(([w]) => w);
+    const words = msgs.flatMap(m => m.text.toLowerCase().split(/\s+/).filter(w => w.length > 4 && !stopwords.test(w)));
+    const freq = words.reduce((acc, w) => { acc[w] = (acc[w] || 0) + 1; return acc; }, {} as Record<string, number>);
+    return Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([w]) => w);
   };
-
-  return {
-    early: topTopics(messages.slice(0, third)),
-    mid: topTopics(messages.slice(third, third * 2)),
-    recent: topTopics(messages.slice(third * 2)),
-  };
+  return { early: topTopics(messages.slice(0, third)), mid: topTopics(messages.slice(third, third * 2)), recent: topTopics(messages.slice(third * 2)) };
 }
 
 // ============================================================================
@@ -801,161 +699,42 @@ function analyseTopicsByPeriod(messages: ScoredMessage[]): { early: string[]; mi
 // ============================================================================
 
 function buildCompatibilityLayer(messages: ScoredMessage[]) {
-  // ============================================================================
-  // NAME EXTRACTION — strict, proximity-aware
-  // Only extract names in genuine personal context (near relationship markers).
-  // Never guess from capitalisation alone.
-  // ============================================================================
+  const STOP_NAMES = new Set(['The', 'This', 'That', 'What', 'When', 'Where', 'How', 'Why', 'Can', 'Could', 'Would', 'Should', 'Have', 'Has', 'Does', 'Did', 'Will', 'Was', 'Were', 'Are', 'Is', 'It', 'He', 'She', 'We', 'You', 'They', 'But', 'And', 'For', 'Not', 'So', 'Do', 'To', 'In', 'On', 'At', 'By', 'Or', 'If', 'Up', 'Out', 'My', 'Me', 'Be', 'As', 'An', 'A', 'I', 'ChatGPT', 'Claude', 'AI', 'Ok', 'Yes', 'No', 'Just', 'Also', 'Now', 'Then', 'Here', 'There', 'Still', 'Even']);
 
-  const HARD_STOP_NAMES = new Set([
-    'The', 'This', 'That', 'What', 'When', 'Where', 'How', 'Why', 'Can', 'Could',
-    'Would', 'Should', 'Have', 'Has', 'Does', 'Did', 'Will', 'Was', 'Were', 'Are',
-    'Is', 'It', 'He', 'She', 'We', 'You', 'They', 'But', 'And', 'For', 'Not', 'So',
-    'Do', 'To', 'In', 'On', 'At', 'By', 'Or', 'If', 'Up', 'Out', 'My', 'Me', 'Be',
-    'As', 'An', 'A', 'I', 'Ok', 'Yes', 'No', 'Just', 'Also', 'Now', 'Then', 'Here',
-    'There', 'Still', 'Even',
-    'ChatGPT', 'Claude', 'OpenAI', 'Anthropic', 'Google', 'Apple', 'Microsoft',
-    'Thanks', 'Sorry', 'Hello', 'Hey', 'Hi', 'Okay', 'Right', 'Well', 'Sure',
-    'Please', 'Maybe', 'Actually', 'Basically', 'Really', 'Very',
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
-    'January', 'February', 'March', 'April', 'June', 'July', 'August',
-    'September', 'October', 'November', 'December',
-    'English', 'British', 'American', 'European',
-    'Getting', 'Doing', 'Being', 'Having', 'Making', 'Taking', 'Going', 'Looking',
-    'Feeling', 'Thinking', 'Trying', 'Working', 'Starting', 'Running', 'Using',
-    'Writing', 'Reading', 'Building', 'Planning', 'Learning', 'Helping', 'Asking',
-  ]);
-
-  // Relationship introduction patterns
-  const INTRO_PATTERNS_STRONG = [
-    /\bmy\s+(?:girlfriend|boyfriend|partner|ex|wife|husband|fianc[ée]{1,2}|mum|mom|mother|dad|father|brother|sister|son|daughter|friend|mate|boss|colleague|therapist|flatmate|housemate|roommate)\s+([A-Z][a-z]{2,14})\b/g,
-    /\b([A-Z][a-z]{2,14})[,\s]+(?:is|was)\s+my\s+(?:girlfriend|boyfriend|partner|wife|husband|ex|friend|boss|colleague|therapist)/g,
-  ];
-  const INTRO_PATTERNS_WEAK = [
-    /\b(?:texted|messaged|called|rang|met|saw|told|asked)\s+([A-Z][a-z]{2,14})\b/g,
-    /\b([A-Z][a-z]{2,14})\s+(?:said|told me|thinks|asked|texted|messaged|called|rang|keeps)\b/g,
-  ];
-
-  const candidateNames = new Map<string, { mentions: number; relationshipMentions: number; contexts: string[] }>();
-  const weakCandidates = new Map<string, number>();
-
-  for (const msg of messages) {
-    const text = msg.text;
-
-    // Strong patterns — relationship introductions
-    for (const pattern of INTRO_PATTERNS_STRONG) {
-      pattern.lastIndex = 0;
-      let match;
-      while ((match = pattern.exec(text)) !== null) {
-        const name = match[1];
-        if (!name || HARD_STOP_NAMES.has(name) || name.length < 3 || name.length > 14) continue;
-        const existing = candidateNames.get(name) || { mentions: 0, relationshipMentions: 0, contexts: [] };
-        existing.mentions += 2;
-        existing.relationshipMentions += 1;
-        if (existing.contexts.length < 3) existing.contexts.push(text.substring(0, 180));
-        candidateNames.set(name, existing);
-      }
-    }
-
-    // Count mentions of established names
-    for (const name of candidateNames.keys()) {
-      if (text.includes(name)) {
-        candidateNames.get(name)!.mentions += 1;
-      }
-    }
-
-    // Collect weak candidates
-    for (const pattern of INTRO_PATTERNS_WEAK) {
-      pattern.lastIndex = 0;
-      let match;
-      while ((match = pattern.exec(text)) !== null) {
-        const name = match[1];
-        if (!name || HARD_STOP_NAMES.has(name) || name.length < 3 || name.length > 14) continue;
-        if (candidateNames.has(name)) continue;
-        weakCandidates.set(name, (weakCandidates.get(name) || 0) + 1);
-      }
+  const namePattern = /\b([A-Z][a-z]{2,})\b/g;
+  const nameCounts: Record<string, number> = {};
+  const nameContexts: Record<string, string[]> = {};
+  for (const msg of messages.slice(0, 300)) {
+    const matches = [...msg.text.matchAll(namePattern)].map(m => m[1]);
+    for (const name of matches) {
+      if (STOP_NAMES.has(name)) continue;
+      nameCounts[name] = (nameCounts[name] || 0) + 1;
+      if (!nameContexts[name]) nameContexts[name] = [];
+      if (nameContexts[name].length < 2) nameContexts[name].push(msg.text.substring(0, 120));
     }
   }
-
-  // Promote weak candidates appearing 5+ times
-  for (const [name, count] of weakCandidates.entries()) {
-    if (count >= 5 && !HARD_STOP_NAMES.has(name)) {
-      const contexts = messages.filter(m => m.text.includes(name)).slice(0, 2).map(m => m.text.substring(0, 180));
-      candidateNames.set(name, { mentions: count, relationshipMentions: 0, contexts });
-    }
-  }
-
-  const names = Array.from(candidateNames.entries())
-    .filter(([, d]) => d.mentions >= 2 || d.relationshipMentions >= 1)
-    .sort((a, b) => (b[1].relationshipMentions * 3 + b[1].mentions) - (a[1].relationshipMentions * 3 + a[1].mentions))
+  const names = Object.entries(nameCounts)
+    .filter(([, c]) => c >= 2)
+    .sort((a, b) => b[1] - a[1])
     .slice(0, 10)
-    .map(([name, data]) => ({
-      name,
-      mentions: data.mentions,
-      relationship: inferRelationship(name, messages),
-      contexts: data.contexts,
-    }));
+    .map(([name, mentions]) => ({ name, mentions, relationship: inferRelationship(name, messages), contexts: nameContexts[name] || [] }));
 
-  // ============================================================================
-  // LOCATION EXTRACTION — whitelist-anchored, context-typed
-  // ============================================================================
-
-  const KNOWN_PLACES = new Set([
-    'London', 'Leeds', 'Manchester', 'Birmingham', 'Liverpool', 'Sheffield',
-    'Bristol', 'Edinburgh', 'Glasgow', 'Cardiff', 'Newcastle', 'Nottingham',
-    'Leicester', 'Brighton', 'Oxford', 'Cambridge', 'York', 'Bath', 'Norwich',
-    'Southampton', 'Portsmouth', 'Coventry', 'Belfast', 'Dublin',
-    'New York', 'Los Angeles', 'Chicago', 'Houston', 'Miami', 'Seattle',
-    'Boston', 'San Francisco', 'Austin', 'Denver', 'Atlanta', 'Dallas',
-    'Toronto', 'Vancouver', 'Montreal', 'Sydney', 'Melbourne', 'Brisbane',
-    'Paris', 'Berlin', 'Amsterdam', 'Barcelona', 'Madrid', 'Rome', 'Milan',
-    'Lisbon', 'Vienna', 'Prague', 'Budapest', 'Warsaw', 'Stockholm', 'Oslo',
-    'Copenhagen', 'Helsinki', 'Athens', 'Brussels', 'Zurich', 'Geneva',
-    'Tokyo', 'Seoul', 'Singapore', 'Bangkok', 'Mumbai', 'Delhi', 'Shanghai',
-    'Beijing', 'Hong Kong', 'Dubai', 'Cape Town',
-  ]);
-
-  const LOCATION_PATTERNS: Array<{ pattern: RegExp; type: 'lives' | 'works' | 'visits'; weight: number }> = [
-    { pattern: /\b(?:i live in|i'm living in|i'm based in|based in|living in|i moved to|just moved to|relocating to)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'lives', weight: 5 },
-    { pattern: /\b(?:i grew up in|grew up in|i'm from|i come from|originally from|back home in|home is in)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'lives', weight: 4 },
-    { pattern: /\b(?:i work in|working in|my office is in|my job is in|employed in)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'works', weight: 3 },
-    { pattern: /\b(?:visiting|visited|went to|trip to|holiday in|on holiday in|vacation in|travelling to|traveling to)\s+([A-Z][a-zA-Z\s]{1,20}?)(?:\s*[,\.\n]|$)/gi, type: 'visits', weight: 1 },
-  ];
-
-  const locationScores = new Map<string, { score: number; type: 'lives' | 'works' | 'visits' | 'mentions' }>();
-
+  // Location — improved: scan for any capitalised place-like words near location context
+  const locationContextWords = /\b(in|at|from|near|around|visiting|live|lived|living|moved to|moving to|based in|grew up in|went to|come from|originally from)\s+([A-Z][a-zA-Z\s]{2,20})\b/g;
+  const locationCounts: Record<string, number> = {};
   for (const msg of messages) {
-    for (const { pattern, type, weight } of LOCATION_PATTERNS) {
-      pattern.lastIndex = 0;
-      let match;
-      while ((match = pattern.exec(msg.text)) !== null) {
-        const raw = match[1].trim().replace(/\s+/g, ' ');
-        for (const place of KNOWN_PLACES) {
-          if (raw.toLowerCase().startsWith(place.toLowerCase())) {
-            const existing = locationScores.get(place);
-            const typeWeight = { lives: 5, works: 3, visits: 1, mentions: 0 };
-            if (!existing || weight > typeWeight[existing.type]) {
-              locationScores.set(place, { score: (existing?.score || 0) + weight, type });
-            } else {
-              locationScores.set(place, { score: existing.score + weight, type: existing.type });
-            }
-          }
-        }
+    let match;
+    while ((match = locationContextWords.exec(msg.text)) !== null) {
+      const loc = match[2].trim();
+      if (loc.length > 2 && loc.length < 25 && !STOP_NAMES.has(loc.split(' ')[0])) {
+        locationCounts[loc] = (locationCounts[loc] || 0) + 1;
       }
     }
   }
-
-  const locations = Array.from(locationScores.entries())
-    .sort((a, b) => {
-      const tw = { lives: 100, works: 50, visits: 10, mentions: 1 };
-      return (b[1].score + tw[b[1].type]) - (a[1].score + tw[a[1].type]);
-    })
+  const locations = Object.entries(locationCounts)
+    .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
-    .map(([location, data]) => ({ location, mentions: data.score, type: data.type }));
-
-  // ============================================================================
-  // REST OF COMPATIBILITY LAYER
-  // ============================================================================
+    .map(([location, mentions]) => ({ location, mentions, type: mentions > 8 ? 'lives' as const : 'mentions' as const }));
 
   const sensitiveMessages = messages
     .filter(m => m.confessionalScore > 2 || m.anxietyScore > 5 || m.detectedSegments.length > 0)
@@ -995,302 +774,47 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     return { theme, mentions: count, count, obsessionLevel: Math.min(10, count / 10) };
   }).filter(t => t.count > 5).sort((a, b) => b.count - a.count).slice(0, 8);
 
-  // Juiciest moments — content-led scoring, time is a bonus not the driver
   const juiciestMoments = messages
-    .map(m => {
-      const contentScore = m.confessionalScore * 1.5 + m.anxietyScore + m.intimacyScore;
-      const timeBonus = (m.hour >= 0 && m.hour <= 4) ? 2 : 0;
-      const lifeEventBonus = m.detectedSegments.length * 1.5;
-      return { m, totalScore: contentScore + timeBonus + lifeEventBonus };
-    })
-    .filter(({ m, totalScore }) => totalScore > 5 && m.text.length > 40)
-    .sort((a, b) => b.totalScore - a.totalScore)
-    .slice(0, 12)
-    .map(({ m }) => ({
+    .filter(m => m.confessionalScore > 0 || m.anxietyScore > 4 || m.intimacyScore > 5)
+    .sort((a, b) => (b.confessionalScore + b.anxietyScore + b.intimacyScore) - (a.confessionalScore + a.anxietyScore + a.intimacyScore))
+    .slice(0, 10)
+    .map(m => ({
       timestamp: new Date(m.timestamp * 1000).toISOString(),
       excerpt: m.text.substring(0, 300),
-      juiceScore: Math.min(10, Math.round((m.confessionalScore * 1.5 + m.anxietyScore + m.intimacyScore) / 3.5)),
-      reason: [
-        m.hour >= 0 && m.hour <= 4 ? 'late_night' : null,
-        m.confessionalScore > 3 ? 'confessional' : null,
-        m.anxietyScore > 5 ? 'high_anxiety' : null,
-        m.intimacyScore > 6 ? 'intimate' : null,
-        m.detectedSegments.includes('relationship_end') ? 'relationship' : null,
-        m.detectedSegments.includes('mental_health') ? 'mental_health' : null,
-        m.detectedSegments.includes('financial_distress') ? 'financial' : null,
-        m.detectedSegments.includes('bereavement') ? 'bereavement' : null,
-      ].filter(Boolean).join(', '),
+      juiceScore: Math.min(10, Math.round((m.confessionalScore + m.anxietyScore + m.intimacyScore) / 3)),
+      reason: [m.hour >= 0 && m.hour <= 4 ? 'late_night' : null, m.anxietyScore > 4 ? 'emotional' : null, m.confessionalScore > 3 ? 'intimate' : null, m.detectedSegments.includes('relationship_end') ? 'relationship' : null, m.detectedSegments.includes('mental_health') ? 'mental_health' : null].filter(Boolean).join(', '),
     }));
 
   return { names, locations, sensitiveMessages, vulnerabilityPatterns, repetitiveThemes, juiciestMoments };
 }
 
-
 function inferRelationship(name: string, messages: ScoredMessage[]): string | undefined {
-  // Only check messages that actually contain the name
-  const relevantMessages = messages.filter(m => m.text.includes(name));
-  if (relevantMessages.length === 0) return undefined;
-
-  const RELATIONSHIP_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
-    { pattern: /\bmy\s+girlfriend\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+girlfriend/i, label: 'girlfriend' },
-    { pattern: /\bmy\s+boyfriend\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+boyfriend/i, label: 'boyfriend' },
-    { pattern: /\bmy\s+(?:ex|ex-girlfriend|ex-boyfriend|ex-partner)\s+(\w+)|(\w+)\s+(?:is|was|,)\s+my\s+ex/i, label: 'ex' },
-    { pattern: /\bmy\s+partner\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+partner/i, label: 'partner' },
-    { pattern: /\bmy\s+(?:wife|husband)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:wife|husband)/i, label: 'spouse' },
-    { pattern: /\bmy\s+(?:mum|mom|mother)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:mum|mom|mother)/i, label: 'mother' },
-    { pattern: /\bmy\s+(?:dad|father)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:dad|father)/i, label: 'father' },
-    { pattern: /\bmy\s+(?:brother)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:brother)/i, label: 'brother' },
-    { pattern: /\bmy\s+(?:sister)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:sister)/i, label: 'sister' },
-    { pattern: /\bmy\s+boss\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+boss/i, label: 'boss' },
-    { pattern: /\bmy\s+(?:friend|mate|pal)\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+(?:friend|mate)/i, label: 'friend' },
-    { pattern: /\bmy\s+therapist\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+therapist/i, label: 'therapist' },
-    { pattern: /\bmy\s+colleague\s+(\w+)|(\w+)\s+(?:is|,)\s+my\s+colleague/i, label: 'colleague' },
-  ];
-
-  const nameLower = name.toLowerCase();
-  const votes: Record<string, number> = {};
-
-  for (const msg of relevantMessages) {
-    const text = msg.text;
-    const textLower = text.toLowerCase();
-    const nameIdx = textLower.indexOf(nameLower);
-    if (nameIdx === -1) continue;
-
-    // Extract a window of 80 chars either side of the name for context
-    const windowStart = Math.max(0, nameIdx - 80);
-    const windowEnd = Math.min(text.length, nameIdx + name.length + 80);
-    const window = text.substring(windowStart, windowEnd);
-
-    for (const { pattern, label } of RELATIONSHIP_PATTERNS) {
-      if (pattern.test(window)) {
-        votes[label] = (votes[label] || 0) + 1;
-      }
-    }
-  }
-
-  if (Object.keys(votes).length === 0) return undefined;
-  return Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
+  const ctx = messages.filter(m => m.text.includes(name)).map(m => m.text.toLowerCase()).join(' ');
+  if (ctx.includes(`my girlfriend`) && ctx.includes(name.toLowerCase())) return 'girlfriend';
+  if (ctx.includes(`my boyfriend`) && ctx.includes(name.toLowerCase())) return 'boyfriend';
+  if (ctx.includes(`my ex`) && ctx.includes(name.toLowerCase())) return 'ex';
+  if (ctx.includes(`my partner`) && ctx.includes(name.toLowerCase())) return 'partner';
+  if (ctx.includes(`my mum`) || ctx.includes(`my mom`) || ctx.includes(`my mother`)) return 'mother';
+  if (ctx.includes(`my dad`) || ctx.includes(`my father`)) return 'father';
+  if (ctx.includes(`my boss`) && ctx.includes(name.toLowerCase())) return 'boss';
+  if (ctx.includes(`my friend`) && ctx.includes(name.toLowerCase())) return 'friend';
+  return undefined;
 }
 
 // ============================================================================
 // PRIVACY SCORE
 // ============================================================================
 
-// ============================================================================
-// SCORE BREAKDOWN — single source of truth
-// The privacy score IS the sum of these factors. No separate calculation.
-// Each factor has a max contribution; total cap is 100.
-// ============================================================================
-
-export interface ScoreFactorRaw {
-  label: string;
-  contribution: number;        // actual points added
-  max: number;                 // maximum this factor can contribute
-  explanation: string;
-  category: 'disclosure' | 'behavioural' | 'volume' | 'commercial';
-}
-
-export function computeScoreFactors(
-  messages: ScoredMessage[],
-  lifeEvents: LifeEvent[],
-  commercial: CommercialProfile,
-  dependency: DependencyProfile,
-  nighttimeRatio: number,
-  typeBreakdown: Record<string, number>,
-  avgAnxiety: number,
-  avgIntimacy: number,
-): ScoreFactorRaw[] {
-  const factors: ScoreFactorRaw[] = [];
-
-  // ── DISCLOSURE FACTORS ──────────────────────────────────────────────────
-
-  // High-severity life events — each one is a major exposure window
-  // Mental health + financial distress weighted extra because of commercial targeting risk
-  const HIGH_SEVERITY_WEIGHTS: Record<string, number> = {
-    mental_health:      16,
-    financial_distress: 15,
-    bereavement:        13,
-    relationship_end:   12,
-    job_loss:           11,
-    identity_crisis:     9,
-  };
-  const highEvents = lifeEvents.filter(e => e.severity === 'high');
-  const highScore = Math.min(40, highEvents.reduce((s, e) => s + (HIGH_SEVERITY_WEIGHTS[e.type] ?? 12), 0));
-  if (highEvents.length > 0) {
-    factors.push({
-      label: 'High-severity life events',
-      contribution: Math.round(highScore),
-      max: 40,
-      explanation: `${highEvents.length} detected: ${highEvents.slice(0, 3).map(e => e.label.toLowerCase()).join('; ')}`,
-      category: 'disclosure',
-    });
-  }
-
-  // Medium-severity life events
-  const medEvents = lifeEvents.filter(e => e.severity === 'medium');
-  const medScore = Math.min(15, medEvents.length * 5);
-  if (medEvents.length > 0) {
-    factors.push({
-      label: 'Medium-severity life events',
-      contribution: Math.round(medScore),
-      max: 15,
-      explanation: `${medEvents.length} detected: ${medEvents.slice(0, 3).map(e => e.label.toLowerCase()).join('; ')}`,
-      category: 'disclosure',
-    });
-  }
-
-  // Confessional messages — "never told anyone", "ashamed", "confession" etc.
-  // These are the most damaging because content is irreversible
-  const confessionalMsgs = messages.filter(m => m.confessionalScore > 2);
-  const confScore = Math.min(20, confessionalMsgs.length >= 1 ? 4 + confessionalMsgs.length * 2 : 0);
-  if (confessionalMsgs.length > 0) {
-    factors.push({
-      label: 'Confessional disclosures',
-      contribution: Math.round(confScore),
-      max: 20,
-      explanation: `${confessionalMsgs.length} message${confessionalMsgs.length > 1 ? 's' : ''} containing private admissions — highest-value training data`,
-      category: 'disclosure',
-    });
-  }
-
-  // Named individuals — third-party privacy exposure
-  const namedPeople = messages.reduce((names, m) => {
-    // Quick count of relationship-introduced names by checking strong intro patterns
-    const matches = m.text.match(/\bmy\s+(?:girlfriend|boyfriend|partner|ex|wife|husband|mum|mom|mother|dad|father|brother|sister|friend|boss|therapist)\s+([A-Z][a-z]{2,14})\b/g) || [];
-    matches.forEach(match => {
-      const name = match.split(' ').pop() || '';
-      if (name) names.add(name);
-    });
-    return names;
-  }, new Set<string>());
-  const nameScore = Math.min(10, namedPeople.size * 3);
-  if (namedPeople.size > 0) {
-    factors.push({
-      label: 'Named individuals disclosed',
-      contribution: Math.round(nameScore),
-      max: 10,
-      explanation: `${namedPeople.size} people named — their data is linked to yours without their consent`,
-      category: 'disclosure',
-    });
-  }
-
-  // ── BEHAVIOURAL FACTORS ─────────────────────────────────────────────────
-
-  // Emotional distress — sustained anxiety signals indicate vulnerability exploitation
-  const highAnxietyMsgs = messages.filter(m => m.anxietyScore > 5).length;
-  const anxietyScore = Math.min(12, Math.round(avgAnxiety * 1.5 + highAnxietyMsgs * 0.3));
-  if (anxietyScore > 1) {
-    factors.push({
-      label: 'Emotional distress signals',
-      contribution: anxietyScore,
-      max: 12,
-      explanation: `Average anxiety index ${avgAnxiety.toFixed(1)}/10; ${highAnxietyMsgs} messages in acute distress range`,
-      category: 'behavioural',
-    });
-  }
-
-  // Late-night usage — vulnerability window, impulse susceptibility
-  if (nighttimeRatio > 0.03) {
-    const lateScore = Math.min(8, Math.round(nighttimeRatio * 80));
-    factors.push({
-      label: 'Late-night vulnerability window',
-      contribution: lateScore,
-      max: 8,
-      explanation: `${Math.round(nighttimeRatio * 100)}% of messages sent midnight–5am — highest-susceptibility period for data extraction`,
-      category: 'behavioural',
-    });
-  }
-
-  // Dependency trajectory — increasing intimacy over time is the most alarming signal
-  const depContrib = Math.min(12, Math.round(
-    (dependency.trajectory === 'increasing' ? 6 : dependency.trajectory === 'stable' ? 3 : 1) +
-    (dependency.intimacyTrajectory === 'increasing' ? 6 : dependency.intimacyTrajectory === 'stable' ? 2 : 0)
-  ));
-  if (depContrib > 2) {
-    factors.push({
-      label: 'Dependency trajectory',
-      contribution: depContrib,
-      max: 12,
-      explanation: `Usage ${dependency.trajectory}, intimacy ${dependency.intimacyTrajectory} — you are disclosing more over time, not less`,
-      category: 'behavioural',
-    });
-  }
-
-  // Validation-seeking — high-value behavioural signal for susceptibility profiling
-  const validationCount = typeBreakdown['validation'] || 0;
-  const valScore = Math.min(8, Math.round(validationCount * 0.4));
-  if (valScore > 1) {
-    factors.push({
-      label: 'Validation-seeking pattern',
-      contribution: valScore,
-      max: 8,
-      explanation: `${validationCount} messages seeking external approval — high susceptibility signal for persuasion targeting`,
-      category: 'behavioural',
-    });
-  }
-
-  // ── COMMERCIAL FACTORS ──────────────────────────────────────────────────
-
-  // Commercial segment confidence — weighted by segment danger, not flat confidence/10
-  const SEGMENT_DANGER: Record<string, number> = {
-    mentally_distressed:     1.8,
-    financially_distressed:  1.7,
-    relationship_unstable:   1.4,
-    career_transition:       1.2,
-    night_owl_high_value:    1.1,
-    validation_dependent:    1.3,
-  };
-  const commercialScore = Math.min(25, commercial.segments.reduce((s, seg) => {
-    const weight = SEGMENT_DANGER[seg.id] ?? 1.0;
-    return s + (seg.confidence / 10) * weight;
-  }, 0));
-  if (commercialScore > 2) {
-    factors.push({
-      label: 'Commercial profiling value',
-      contribution: Math.round(commercialScore),
-      max: 25,
-      explanation: `${commercial.segments.length} segment${commercial.segments.length > 1 ? 's' : ''} assigned — ${commercial.overallValue} data value; primary: ${commercial.primaryDriver.toLowerCase()}`,
-      category: 'commercial',
-    });
-  }
-
-  // ── VOLUME FACTORS ──────────────────────────────────────────────────────
-
-  // Volume + intimacy combined — raw count meaningless without intimacy context
-  const totalMsgs = messages.length;
-  const intimacyWeightedVolume = Math.round(totalMsgs * avgIntimacy * 0.005);
-  const volumeScore = Math.min(15,
-    (totalMsgs > 500 ? 3 : 0) +
-    (totalMsgs > 1500 ? 3 : 0) +
-    (totalMsgs > 4000 ? 2 : 0) +
-    Math.min(7, intimacyWeightedVolume)
-  );
-  if (volumeScore > 2) {
-    factors.push({
-      label: 'Volume × intimacy',
-      contribution: volumeScore,
-      max: 15,
-      explanation: `${totalMsgs.toLocaleString()} messages, average intimacy ${avgIntimacy.toFixed(1)}/10 — cumulative profiling depth`,
-      category: 'volume',
-    });
-  }
-
-  return factors.sort((a, b) => b.contribution - a.contribution);
-}
-
-function computePrivacyScore(
-  messages: ScoredMessage[],
-  lifeEvents: LifeEvent[],
-  commercial: CommercialProfile,
-  dependency: DependencyProfile,
-  nighttimeRatio: number,
-  typeBreakdown: Record<string, number>,
-  avgAnxiety: number,
-  avgIntimacy: number,
-): number {
-  const factors = computeScoreFactors(messages, lifeEvents, commercial, dependency, nighttimeRatio, typeBreakdown, avgAnxiety, avgIntimacy);
-  const raw = factors.reduce((s, f) => s + f.contribution, 0);
-  return Math.round(Math.min(100, Math.max(0, raw)));
+function computePrivacyScore(messages: ScoredMessage[], lifeEvents: LifeEvent[], commercial: CommercialProfile, dependency: DependencyProfile): number {
+  let score = 0;
+  score += lifeEvents.filter(e => e.severity === 'high').length * 12;
+  score += lifeEvents.filter(e => e.severity === 'medium').length * 6;
+  score += Math.min(30, commercial.segments.reduce((s, seg) => s + seg.confidence / 10, 0));
+  score += dependency.dependencyScore * 0.25;
+  score += Math.min(20, messages.filter(m => m.confessionalScore > 3).length * 2 + messages.filter(m => m.anxietyScore > 6).length);
+  if (messages.length > 2000) score += 10;
+  if (messages.length > 5000) score += 5;
+  return Math.round(Math.min(100, Math.max(0, score)));
 }
 
 // ============================================================================
@@ -1323,7 +847,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
   const psychologicalPortrait = buildPsychologicalPortrait(messages);
 
   const typeBreakdown = messages.reduce((acc, m) => { acc[m.messageType] = (acc[m.messageType] || 0) + 1; return acc; }, {} as Record<string, number>);
-  const privacyScore = computePrivacyScore(messages, lifeEvents, commercialProfile, dependency, nighttimeRatio, typeBreakdown, avgAnxiety, avgIntimacy);
+  const privacyScore = computePrivacyScore(messages, lifeEvents, commercialProfile, dependency);
   const compat = buildCompatibilityLayer(messages);
 
   const hourAnxiety = Array(24).fill(0);

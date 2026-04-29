@@ -68,9 +68,15 @@ export default function ResultsPage() {
   useEffect(() => {
     const stored = sessionStorage.getItem('analysisResults');
     if (stored) {
-      const parsed = JSON.parse(stored);
-      setResults(parsed);
-      setSources(prev => prev.map(s => s.id === 'chatgpt' ? { ...s, connected: true } : s));
+      try {
+        const parsed = JSON.parse(stored);
+        setResults(parsed);
+        setSources(prev => prev.map(s => s.id === 'chatgpt' ? { ...s, connected: true } : s));
+      } catch {
+        // Corrupted sessionStorage — clear and restart
+        sessionStorage.removeItem('analysisResults');
+        router.push('/upload');
+      }
     } else {
       router.push('/upload');
     }

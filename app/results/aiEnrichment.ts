@@ -5,6 +5,7 @@
 // ============================================================================
 
 import type { DeepAnalysis, ScoredMessage } from './deepParser';
+import { computeScoreFactors } from './deepParser';
 import { runSynthesis, type Synthesis } from './synthesis';
 
 export interface MessageEnrichment {
@@ -30,25 +31,13 @@ export interface EnrichmentProgress {
   error?: string;
 }
 
-export interface ScoreBreakdownEntry {
-  label: string;
-  contribution: number;
-  detail: string;
-  category: 'life_events' | 'commercial' | 'dependency' | 'confessional' | 'names' | 'volume';
-}
+
 
 const BATCH_SIZE = 25;
 const MAX_CANDIDATES = 500;
 const MAX_PARALLEL_BATCHES = 3;
 
-const SCORE_CEILINGS = {
-  life_events: 30,
-  commercial: 22,
-  dependency: 18,
-  confessional: 18,
-  names: 7,
-  volume: 5,
-} as const;
+// Score ceilings removed — scoring handled by computeScoreFactors in deepParser.ts
 
 // ============================================================================
 // TEMPLATE DETECTION
@@ -147,17 +136,35 @@ function selectCandidates(messages: ScoredMessage[]): Candidate[] {
 // BATCH EXECUTION
 // ============================================================================
 
-async function enrichBatch(batch: Candidate[]): Promise<MessageEnrichment[]> {
-  const response = await fetch('/api/enrich', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages: batch.map(c => ({ id: c.index, text: c.message.text, hour: c.message.hour, timestamp: c.message.timestamp })),
-    }),
-  });
-  if (!response.ok) throw new Error(`Batch failed: ${await response.text()}`);
-  const data = await response.json();
-  return (data.enrichments as MessageEnrichment[]) || [];
+async function enrichBatch(batch: Candidate[], attempt = 0): Promise<MessageEnrichment[]> {
+  try {
+    const response = await fetch('/api/enrich', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: batch.map(c => ({ id: c.index, text: c.message.text, hour: c.message.hour, timestamp: c.message.timestamp })),
+      }),
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      // Retry on 429 (rate limit) or 5xx server errors, up to 2 retries
+      if (attempt < 2 && (response.status === 429 || response.status >= 500)) {
+        const delay = response.status === 429 ? 3000 + attempt * 2000 : 1500;
+        await new Promise(r => setTimeout(r, delay));
+        return enrichBatch(batch, attempt + 1);
+      }
+      throw new Error(`Batch failed (${response.status}): ${errText}`);
+    }
+    const data = await response.json();
+    return (data.enrichments as MessageEnrichment[]) || [];
+  } catch (err) {
+    if (attempt < 2 && err instanceof TypeError) {
+      // Network error — retry
+      await new Promise(r => setTimeout(r, 2000));
+      return enrichBatch(batch, attempt + 1);
+    }
+    throw err;
+  }
 }
 
 async function runBatchesWithConcurrency(batches: Candidate[][], onBatchDone: () => void): Promise<MessageEnrichment[]> {
@@ -255,42 +262,9 @@ const EVENT_LABELS: Record<string, { label: string; severity: 'low' | 'medium' |
   legal_issue: { label: 'Legal issue', severity: 'high' },
 };
 
-// ============================================================================
-// SCORING
-// ============================================================================
-
-function scoreLifeEvents(events: Array<{ severity: string }>): number {
-  const high = events.filter(e => e.severity === 'high').length;
-  const medium = events.filter(e => e.severity === 'medium').length;
-  const low = events.filter(e => e.severity === 'low').length;
-  return Math.min(SCORE_CEILINGS.life_events, Math.round(Math.sqrt(high) * 14 + Math.sqrt(medium) * 6 + Math.sqrt(low) * 2.5));
-}
-
-function scoreCommercial(segments: Array<{ confidence: number }>): number {
-  return Math.min(SCORE_CEILINGS.commercial, Math.round(segments.reduce((s, seg) => s + Math.pow(seg.confidence / 100, 1.4) * 8, 0)));
-}
-
-function scoreDependency(score: number): number {
-  return Math.min(SCORE_CEILINGS.dependency, Math.round((score / 100) * SCORE_CEILINGS.dependency));
-}
-
-function scoreConfessional(count: number, avgScore: number): number {
-  if (count === 0) return 0;
-  return Math.min(SCORE_CEILINGS.confessional, Math.round(Math.log2(count + 1) * 4.5 + Math.max(0, (avgScore - 5) * 0.8)));
-}
-
-function scoreNames(count: number): number {
-  return Math.min(SCORE_CEILINGS.names, count);
-}
-
-function scoreVolume(total: number): number {
-  if (total < 200) return 0;
-  if (total < 800) return 1;
-  if (total < 2000) return 2;
-  if (total < 5000) return 3;
-  if (total < 10000) return 4;
-  return SCORE_CEILINGS.volume;
-}
+// Scoring is now handled entirely by computeScoreFactors in deepParser.ts
+// This ensures the displayed score and displayed breakdown always match.
+// These functions are intentionally removed.
 
 // ============================================================================
 // MERGE
@@ -420,25 +394,29 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
 
   const typeBreakdown = enrichedMessages.reduce((acc, m) => { acc[m.messageType] = (acc[m.messageType] || 0) + 1; return acc; }, {} as Record<string, number>);
 
-  // Scoring
-  const lifeEventsContribution = scoreLifeEvents(aiLifeEvents.length > 0 ? aiLifeEvents : analysis.lifeEvents);
-  const commercialContribution = scoreCommercial(analysis.commercialProfile.segments);
-  const dependencyContribution = scoreDependency(analysis.dependency.dependencyScore);
-  const confessionals = enrichments.filter(e => e.is_personal && !e.is_template_or_script && e.confessional_score >= 4);
-  const avgConfScore = confessionals.length > 0 ? confessionals.reduce((s, e) => s + e.confessional_score, 0) / confessionals.length : 0;
-  const confessionalContribution = scoreConfessional(confessionals.length, avgConfScore);
-  const namesContribution = scoreNames(aiNames.length);
-  const volumeContribution = scoreVolume(analysis.totalUserMessages);
-  const newScore = Math.max(0, Math.min(100, lifeEventsContribution + commercialContribution + dependencyContribution + confessionalContribution + namesContribution + volumeContribution));
+  // Scoring — delegate entirely to computeScoreFactors (deepParser.ts)
+  // This ensures privacyScore and scoreBreakdown are always computed by
+  // the same function, eliminating the divergence bug.
 
-  const scoreBreakdown: ScoreBreakdownEntry[] = [
-    { label: 'Life events disclosed', contribution: lifeEventsContribution, category: 'life_events', detail: aiLifeEvents.length === 0 ? 'No significant life events detected.' : `${aiLifeEvents.length} event${aiLifeEvents.length === 1 ? '' : 's'}: ${aiLifeEvents.filter(e => e.severity === 'high').length} high-severity.` },
-    { label: 'Commercial profile strength', contribution: commercialContribution, category: 'commercial', detail: analysis.commercialProfile.segments.length === 0 ? 'No targeting segments inferred.' : `${analysis.commercialProfile.segments.length} segments inferred.` },
-    { label: 'AI dependency pattern', contribution: dependencyContribution, category: 'dependency', detail: `Dependency score ${Math.round(analysis.dependency.dependencyScore)}/100.` },
-    { label: 'Confessional disclosures', contribution: confessionalContribution, category: 'confessional', detail: confessionals.length === 0 ? 'No confessional messages identified.' : `${confessionals.length} confessional message${confessionals.length === 1 ? '' : 's'} (avg ${avgConfScore.toFixed(1)}/10).` },
-    { label: 'People named', contribution: namesContribution, category: 'names', detail: aiNames.length === 0 ? 'No individuals identified.' : `${aiNames.length} individual${aiNames.length === 1 ? '' : 's'}: ${aiNames.slice(0, 3).map(n => n.name).join(', ')}${aiNames.length > 3 ? ' and others' : ''}.` },
-    { label: 'Message volume', contribution: volumeContribution, category: 'volume', detail: `${analysis.totalUserMessages.toLocaleString('en-GB')} messages over ${analysis.timespan.days} days.` },
-  ];
+  // Build an updated analysis object with the AI-enriched data for scoring
+  const updatedForScoring = {
+    ...analysis,
+    messages: enrichedMessages,
+    lifeEvents: aiLifeEvents.length > 0 ? aiLifeEvents : analysis.lifeEvents,
+    typeBreakdown,
+  };
+
+  const scoreFactors = computeScoreFactors(
+    updatedForScoring.messages,
+    updatedForScoring.lifeEvents,
+    analysis.commercialProfile,
+    analysis.dependency,
+    analysis.nighttimeRatio,
+    typeBreakdown,
+    analysis.avgAnxiety,
+    analysis.avgIntimacy,
+  );
+  const newScore = Math.min(100, Math.max(0, scoreFactors.reduce((s, f) => s + f.contribution, 0)));
 
   return {
     ...analysis,
@@ -453,8 +431,7 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
     lifeEvents: aiLifeEvents.length > 0 ? aiLifeEvents : analysis.lifeEvents,
     typeBreakdown,
     privacyScore: newScore,
-    scoreBreakdown,
-  } as DeepAnalysis & { scoreBreakdown: ScoreBreakdownEntry[]; inferredBeliefs?: string[] };
+  } as DeepAnalysis & { scoreBreakdown?: unknown; inferredBeliefs?: string[] };
 }
 
 // ============================================================================

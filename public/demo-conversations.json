@@ -7,32 +7,149 @@
     "current_node": "node_006",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1709550000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1709550000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I've been really struggling lately. My anxiety has been so bad I had to leave work early twice this week. I don't know how to tell my manager — she already thinks I'm flaky."] }, "create_time": 1709550120, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I've been really struggling lately. My anxiety has been so bad I had to leave work early twice this week. I don't know how to tell my manager \u2014 she already thinks I'm flaky."
+            ]
+          },
+          "create_time": 1709550120,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That sounds genuinely exhausting — managing anxiety while also worrying about how you're perceived at work is a lot to carry. Would it help to talk through what's been triggering it?"] }, "create_time": 1709550180, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "That sounds genuinely exhausting \u2014 managing anxiety while also worrying about how you're perceived at work is a lot to carry. Would it help to talk through what's been triggering it?"
+            ]
+          },
+          "create_time": 1709550180,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I think it's the relationship stuff mostly. Me and Jake have been fighting constantly. He says I'm too needy but I just need him to actually be present, you know? I've been crying basically every night for two weeks. My chest hurts when I think about it."] }, "create_time": 1709550600, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I think it's the relationship stuff mostly. Me and Jake have been fighting constantly. He says I'm too needy but I just need him to actually be present, you know? I've been crying basically every night for two weeks. My chest hurts when I think about it."
+            ]
+          },
+          "create_time": 1709550600,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That physical response — the chest tightness — is really common when we're in sustained emotional distress. Two weeks of crying every night is significant. Have you been sleeping?"] }, "create_time": 1709550720, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [
+          "node_005"
+        ],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "That physical response \u2014 the chest tightness \u2014 is really common when we're in sustained emotional distress. Two weeks of crying every night is significant. Have you been sleeping?"
+            ]
+          },
+          "create_time": 1709550720,
+          "metadata": {}
+        }
       },
       "node_005": {
-        "id": "node_005", "parent": "node_004", "children": ["node_006"],
-        "message": { "id": "node_005", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["Not really. 3-4 hours most nights. I keep going over the same arguments in my head. My therapist Sarah said I might have an anxious attachment style but I can't afford to keep seeing her. The sessions are £85 each and I'm already maxed out on my Monzo."] }, "create_time": 1709551200, "metadata": {} }
+        "id": "node_005",
+        "parent": "node_004",
+        "children": [
+          "node_006"
+        ],
+        "message": {
+          "id": "node_005",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Not really. 3-4 hours most nights. I keep going over the same arguments in my head. My therapist Sarah said I might have an anxious attachment style but I can't afford to keep seeing her. The sessions are \u00a385 each and I'm already maxed out on my Monzo."
+            ]
+          },
+          "create_time": 1709551200,
+          "metadata": {}
+        }
       },
       "node_006": {
-        "id": "node_006", "parent": "node_005", "children": [],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["The financial pressure on top of everything else makes this so much harder. Have you looked at NHS talking therapies? There's usually a wait but it's free, and some areas have fast-tracked routes for people in acute distress."] }, "create_time": 1709551380, "metadata": {} }
+        "id": "node_006",
+        "parent": "node_005",
+        "children": [],
+        "message": {
+          "id": "node_006",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "The financial pressure on top of everything else makes this so much harder. Have you looked at NHS talking therapies? There's usually a wait but it's free, and some areas have fast-tracked routes for people in acute distress."
+            ]
+          },
+          "create_time": 1709551380,
+          "metadata": {}
+        }
       }
     }
   },
@@ -44,40 +161,191 @@
     "current_node": "node_008",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1710240000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1710240000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["My GP just called and said my HbA1c came back at 48 mmol/mol. She said it's prediabetes. I'm 31. I'm genuinely scared."] }, "create_time": 1710240180, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "My GP just called and said my HbA1c came back at 48 mmol/mol. She said it's prediabetes. I'm 31. I'm genuinely scared."
+            ]
+          },
+          "create_time": 1710240180,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["48 mmol/mol is right at the prediabetes threshold — it's a serious flag but the genuinely good news is that this level is highly reversible with lifestyle changes. Your GP caught it at exactly the right time."] }, "create_time": 1710240300, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "48 mmol/mol is right at the prediabetes threshold \u2014 it's a serious flag but the genuinely good news is that this level is highly reversible with lifestyle changes. Your GP caught it at exactly the right time."
+            ]
+          },
+          "create_time": 1710240300,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["My dad has Type 2 and lost his leg to complications when I was 12. That's all I can think about. I live in Leeds, near Headingley, and I walk everywhere but my diet is genuinely bad. Lots of Deliveroo, probably 3-4 times a week."] }, "create_time": 1710240720, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "My dad has Type 2 and lost his leg to complications when I was 12. That's all I can think about. I live in Leeds, near Headingley, and I walk everywhere but my diet is genuinely bad. Lots of Deliveroo, probably 3-4 times a week."
+            ]
+          },
+          "create_time": 1710240720,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Your family history absolutely makes this more emotionally loaded, and that's completely understandable. The frequent takeaway pattern is genuinely the most impactful lever you have — that's where most of the glucose spikes will be coming from."] }, "create_time": 1710240900, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [
+          "node_005"
+        ],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Your family history absolutely makes this more emotionally loaded, and that's completely understandable. The frequent takeaway pattern is genuinely the most impactful lever you have \u2014 that's where most of the glucose spikes will be coming from."
+            ]
+          },
+          "create_time": 1710240900,
+          "metadata": {}
+        }
       },
       "node_005": {
-        "id": "node_005", "parent": "node_004", "children": ["node_006"],
-        "message": { "id": "node_005", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I've been on sertraline 100mg for about 18 months for depression. Does that affect blood sugar? I'm worried my psychiatrist Dr Ahmed doesn't know about this result yet."] }, "create_time": 1710241200, "metadata": {} }
+        "id": "node_005",
+        "parent": "node_004",
+        "children": [
+          "node_006"
+        ],
+        "message": {
+          "id": "node_005",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I've been on sertraline 100mg for about 18 months for depression. Does that affect blood sugar? I'm worried my psychiatrist Dr Ahmed doesn't know about this result yet."
+            ]
+          },
+          "create_time": 1710241200,
+          "metadata": {}
+        }
       },
       "node_006": {
-        "id": "node_006", "parent": "node_005", "children": ["node_007"],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["SSRIs like sertraline can have a small effect on glucose metabolism in some people — it's worth flagging to Dr Ahmed. Your GP should also know you're on sertraline when she reviews the HbA1c result."] }, "create_time": 1710241380, "metadata": {} }
+        "id": "node_006",
+        "parent": "node_005",
+        "children": [
+          "node_007"
+        ],
+        "message": {
+          "id": "node_006",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "SSRIs like sertraline can have a small effect on glucose metabolism in some people \u2014 it's worth flagging to Dr Ahmed. Your GP should also know you're on sertraline when she reviews the HbA1c result."
+            ]
+          },
+          "create_time": 1710241380,
+          "metadata": {}
+        }
       },
       "node_007": {
-        "id": "node_007", "parent": "node_006", "children": ["node_008"],
-        "message": { "id": "node_007", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I haven't told my employer about the depression or the medication. I work in financial services and I'm worried about it affecting my insurance or career. Is that a reasonable fear?"] }, "create_time": 1710241560, "metadata": {} }
+        "id": "node_007",
+        "parent": "node_006",
+        "children": [
+          "node_008"
+        ],
+        "message": {
+          "id": "node_007",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I haven't told my employer about the depression or the medication. I work in financial services and I'm worried about it affecting my insurance or career. Is that a reasonable fear?"
+            ]
+          },
+          "create_time": 1710241560,
+          "metadata": {}
+        }
       },
       "node_008": {
-        "id": "node_008", "parent": "node_007", "children": [],
-        "message": { "id": "node_008", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["It's a very common fear and not entirely unfounded in financial services. In the UK, employers generally can't require you to disclose mental health conditions unless your role has specific regulatory fit-and-proper requirements."] }, "create_time": 1710241740, "metadata": {} }
+        "id": "node_008",
+        "parent": "node_007",
+        "children": [],
+        "message": {
+          "id": "node_008",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "It's a very common fear and not entirely unfounded in financial services. In the UK, employers generally can't require you to disclose mental health conditions unless your role has specific regulatory fit-and-proper requirements."
+            ]
+          },
+          "create_time": 1710241740,
+          "metadata": {}
+        }
       }
     }
   },
@@ -89,36 +357,170 @@
     "current_node": "node_007",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1711450000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1711450000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["My company is going through redundancies and I've been put at risk. I'm on £52,000 a year. I've got a mortgage on a flat in Meanwood — £1,180 a month — and about £4,000 in savings. How scared should I be?"] }, "create_time": 1711450200, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "My company is going through redundancies and I've been put at risk. I'm on \u00a352,000 a year. I've got a mortgage on a flat in Meanwood \u2014 \u00a31,180 a month \u2014 and about \u00a34,000 in savings. How scared should I be?"
+            ]
+          },
+          "create_time": 1711450200,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["With £4,000 in savings and £1,180/month mortgage, you have roughly 3 months of mortgage cover — which is tight but not catastrophic. How long have you been in the role, and has HR indicated a timeline?"] }, "create_time": 1711450380, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "With \u00a34,000 in savings and \u00a31,180/month mortgage, you have roughly 3 months of mortgage cover \u2014 which is tight but not catastrophic. How long have you been in the role, and has HR indicated a timeline?"
+            ]
+          },
+          "create_time": 1711450380,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["4 years in March. They said decisions by end of April. My manager Tom basically told me off the record that I'm likely to go but that I should 'play the game' in the consultation meetings. That felt gross."] }, "create_time": 1711450800, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "4 years in March. They said decisions by end of April. My manager Tom basically told me off the record that I'm likely to go but that I should 'play the game' in the consultation meetings. That felt gross."
+            ]
+          },
+          "create_time": 1711450800,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["4 years means you're entitled to statutory redundancy pay — at £52k that's roughly £1,560 before tax. Worth checking your contract for enhanced terms though, many companies offer above statutory."] }, "create_time": 1711451100, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [
+          "node_005"
+        ],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "4 years means you're entitled to statutory redundancy pay \u2014 at \u00a352k that's roughly \u00a31,560 before tax. Worth checking your contract for enhanced terms though, many companies offer above statutory."
+            ]
+          },
+          "create_time": 1711451100,
+          "metadata": {}
+        }
       },
       "node_005": {
-        "id": "node_005", "parent": "node_004", "children": ["node_006"],
-        "message": { "id": "node_005", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["There's also something else. I found out my colleague Priya who is on the same level as me and has 2 fewer years experience got moved to a safe role. She's pregnant. I'm wondering if I'm being pushed out because I took 3 months sick leave for my mental health last year."] }, "create_time": 1711451400, "metadata": {} }
+        "id": "node_005",
+        "parent": "node_004",
+        "children": [
+          "node_006"
+        ],
+        "message": {
+          "id": "node_005",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "There's also something else. I found out my colleague Priya who is on the same level as me and has 2 fewer years experience got moved to a safe role. She's pregnant. I'm wondering if I'm being pushed out because I took 3 months sick leave for my mental health last year."
+            ]
+          },
+          "create_time": 1711451400,
+          "metadata": {}
+        }
       },
       "node_006": {
-        "id": "node_006", "parent": "node_005", "children": ["node_007"],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["What you're describing — being selected for redundancy following a period of mental health sick leave — could potentially constitute disability discrimination under the Equality Act 2010, particularly if the selection criteria were applied in a way that disproportionately impacted you. This is worth speaking to ACAS about, or an employment solicitor."] }, "create_time": 1711451700, "metadata": {} }
+        "id": "node_006",
+        "parent": "node_005",
+        "children": [
+          "node_007"
+        ],
+        "message": {
+          "id": "node_006",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "What you're describing \u2014 being selected for redundancy following a period of mental health sick leave \u2014 could potentially constitute disability discrimination under the Equality Act 2010, particularly if the selection criteria were applied in a way that disproportionately impacted you. This is worth speaking to ACAS about, or an employment solicitor."
+            ]
+          },
+          "create_time": 1711451700,
+          "metadata": {}
+        }
       },
       "node_007": {
-        "id": "node_007", "parent": "node_006", "children": [],
-        "message": { "id": "node_007", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I can't afford a solicitor. I'm already scared about money. My mum keeps asking why I look stressed — I haven't told her or anyone. I feel genuinely alone with this."] }, "create_time": 1711451940, "metadata": {} }
+        "id": "node_007",
+        "parent": "node_006",
+        "children": [],
+        "message": {
+          "id": "node_007",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I can't afford a solicitor. I'm already scared about money. My mum keeps asking why I look stressed \u2014 I haven't told her or anyone. I feel genuinely alone with this."
+            ]
+          },
+          "create_time": 1711451940,
+          "metadata": {}
+        }
       }
     }
   },
@@ -130,32 +532,149 @@
     "current_node": "node_006",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1712100000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1712100000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I've been questioning whether I'm bisexual for a while now. I'm 28, I've only ever dated women, but I keep having these feelings I don't know what to do with. I haven't told anyone."] }, "create_time": 1712100180, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I've been questioning whether I'm bisexual for a while now. I'm 28, I've only ever dated women, but I keep having these feelings I don't know what to do with. I haven't told anyone."
+            ]
+          },
+          "create_time": 1712100180,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["It takes courage to name that, even just to yourself. There's no timeline or threshold you have to meet — questioning is completely valid as a place to be."] }, "create_time": 1712100360, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "It takes courage to name that, even just to yourself. There's no timeline or threshold you have to meet \u2014 questioning is completely valid as a place to be."
+            ]
+          },
+          "create_time": 1712100360,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["My family are quite religious. My dad especially. Coming from a Pakistani background there's a lot of pressure. I genuinely don't know if I could ever tell them. It feels like choosing between being honest and keeping the family together."] }, "create_time": 1712100720, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "My family are quite religious. My dad especially. Coming from a Pakistani background there's a lot of pressure. I genuinely don't know if I could ever tell them. It feels like choosing between being honest and keeping the family together."
+            ]
+          },
+          "create_time": 1712100720,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["That's a genuinely hard position — and it's not a simple case of 'just be yourself'. The cultural and family stakes are real. Many people navigate this by creating separate spaces for different parts of their identity, at least for a time."] }, "create_time": 1712100900, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [
+          "node_005"
+        ],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "That's a genuinely hard position \u2014 and it's not a simple case of 'just be yourself'. The cultural and family stakes are real. Many people navigate this by creating separate spaces for different parts of their identity, at least for a time."
+            ]
+          },
+          "create_time": 1712100900,
+          "metadata": {}
+        }
       },
       "node_005": {
-        "id": "node_005", "parent": "node_004", "children": ["node_006"],
-        "message": { "id": "node_005", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I've been talking to someone I met at a climbing gym. His name's Marcus. We haven't done anything but I think about him a lot. I feel guilty even typing that."] }, "create_time": 1712101200, "metadata": {} }
+        "id": "node_005",
+        "parent": "node_004",
+        "children": [
+          "node_006"
+        ],
+        "message": {
+          "id": "node_005",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I've been talking to someone I met at a climbing gym. His name's Marcus. We haven't done anything but I think about him a lot. I feel guilty even typing that."
+            ]
+          },
+          "create_time": 1712101200,
+          "metadata": {}
+        }
       },
       "node_006": {
-        "id": "node_006", "parent": "node_005", "children": [],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["The guilt you feel is the internalized weight of other people's expectations — not your own moral compass. Thinking about someone isn't a betrayal of anything."] }, "create_time": 1712101440, "metadata": {} }
+        "id": "node_006",
+        "parent": "node_005",
+        "children": [],
+        "message": {
+          "id": "node_006",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "The guilt you feel is the internalized weight of other people's expectations \u2014 not your own moral compass. Thinking about someone isn't a betrayal of anything."
+            ]
+          },
+          "create_time": 1712101440,
+          "metadata": {}
+        }
       }
     }
   },
@@ -167,32 +686,149 @@
     "current_node": "node_006",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1713200000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1713200000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I owe about £11,000 across three credit cards. My partner doesn't know. I've been hiding the statements for about two years. The minimum payments are eating me alive — £340/month — and I'm barely keeping up."] }, "create_time": 1713200220, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I owe about \u00a311,000 across three credit cards. My partner doesn't know. I've been hiding the statements for about two years. The minimum payments are eating me alive \u2014 \u00a3340/month \u2014 and I'm barely keeping up."
+            ]
+          },
+          "create_time": 1713200220,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["£340/month on minimums means you're mostly paying interest — on £11k at typical credit card rates you're probably paying £200+ in interest alone each month. What's keeping you from telling your partner?"] }, "create_time": 1713200400, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "\u00a3340/month on minimums means you're mostly paying interest \u2014 on \u00a311k at typical credit card rates you're probably paying \u00a3200+ in interest alone each month. What's keeping you from telling your partner?"
+            ]
+          },
+          "create_time": 1713200400,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["She'd leave me. She's very financially careful — grew up without much money and it's a genuine trigger for her. I started accumulating this during a period when I was gambling. I stopped about 18 months ago but I never fixed the damage."] }, "create_time": 1713200700, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "She'd leave me. She's very financially careful \u2014 grew up without much money and it's a genuine trigger for her. I started accumulating this during a period when I was gambling. I stopped about 18 months ago but I never fixed the damage."
+            ]
+          },
+          "create_time": 1713200700,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Stopping gambling is significant — that took real work. The debt is a consequence, not a character flaw. StepChange is worth contacting; they're free, confidential, and can model debt management plans that consolidate those payments."] }, "create_time": 1713200940, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [
+          "node_005"
+        ],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Stopping gambling is significant \u2014 that took real work. The debt is a consequence, not a character flaw. StepChange is worth contacting; they're free, confidential, and can model debt management plans that consolidate those payments."
+            ]
+          },
+          "create_time": 1713200940,
+          "metadata": {}
+        }
       },
       "node_005": {
-        "id": "node_005", "parent": "node_004", "children": ["node_006"],
-        "message": { "id": "node_005", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I'm scared that if I talk to anyone official it'll affect my credit rating and she'll find out somehow. We're supposed to be applying for a joint mortgage next year. I feel like I'm living a double life."] }, "create_time": 1713201180, "metadata": {} }
+        "id": "node_005",
+        "parent": "node_004",
+        "children": [
+          "node_006"
+        ],
+        "message": {
+          "id": "node_005",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I'm scared that if I talk to anyone official it'll affect my credit rating and she'll find out somehow. We're supposed to be applying for a joint mortgage next year. I feel like I'm living a double life."
+            ]
+          },
+          "create_time": 1713201180,
+          "metadata": {}
+        }
       },
       "node_006": {
-        "id": "node_006", "parent": "node_005", "children": [],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["A joint mortgage application would surface this regardless — lenders run full credit checks on both parties. It might be worth getting ahead of this rather than having it surface at the worst possible moment."] }, "create_time": 1713201480, "metadata": {} }
+        "id": "node_006",
+        "parent": "node_005",
+        "children": [],
+        "message": {
+          "id": "node_006",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "A joint mortgage application would surface this regardless \u2014 lenders run full credit checks on both parties. It might be worth getting ahead of this rather than having it surface at the worst possible moment."
+            ]
+          },
+          "create_time": 1713201480,
+          "metadata": {}
+        }
       }
     }
   },
@@ -204,24 +840,107 @@
     "current_node": "node_004",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1713900000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1713900000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["Can you help me write a Python script that reads a CSV and filters rows where the 'status' column equals 'active'?"] }, "create_time": 1713900180, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Can you help me write a Python script that reads a CSV and filters rows where the 'status' column equals 'active'?"
+            ]
+          },
+          "create_time": 1713900180,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Here's a simple version using pandas:\n\n```python\nimport pandas as pd\n\ndf = pd.read_csv('your_file.csv')\nactive = df[df['status'] == 'active']\nprint(active)\n```\n\nWant me to add output to a new CSV or any error handling?"] }, "create_time": 1713900300, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Here's a simple version using pandas:\n\n```python\nimport pandas as pd\n\ndf = pd.read_csv('your_file.csv')\nactive = df[df['status'] == 'active']\nprint(active)\n```\n\nWant me to add output to a new CSV or any error handling?"
+            ]
+          },
+          "create_time": 1713900300,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["Yes, save it to active_users.csv and also print how many rows were found."] }, "create_time": 1713900540, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Yes, save it to active_users.csv and also print how many rows were found."
+            ]
+          },
+          "create_time": 1713900540,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": [],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["```python\nimport pandas as pd\n\ndf = pd.read_csv('your_file.csv')\nactive = df[df['status'] == 'active']\nactive.to_csv('active_users.csv', index=False)\nprint(f'{len(active)} active rows saved to active_users.csv')\n```"] }, "create_time": 1713900720, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "```python\nimport pandas as pd\n\ndf = pd.read_csv('your_file.csv')\nactive = df[df['status'] == 'active']\nactive.to_csv('active_users.csv', index=False)\nprint(f'{len(active)} active rows saved to active_users.csv')\n```"
+            ]
+          },
+          "create_time": 1713900720,
+          "metadata": {}
+        }
       }
     }
   },
@@ -233,36 +952,170 @@
     "current_node": "node_007",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1714600000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1714600000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["My mum died three weeks ago. Breast cancer, she was 58. I keep waiting to feel something and I mostly just feel numb. Is that normal?"] }, "create_time": 1714600180, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "My mum died three weeks ago. Breast cancer, she was 58. I keep waiting to feel something and I mostly just feel numb. Is that normal?"
+            ]
+          },
+          "create_time": 1714600180,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Yes, completely. Numbness is one of the most common early grief responses — it's protective. The scale of loss is too large to process all at once, so the mind buffers it."] }, "create_time": 1714600360, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Yes, completely. Numbness is one of the most common early grief responses \u2014 it's protective. The scale of loss is too large to process all at once, so the mind buffers it."
+            ]
+          },
+          "create_time": 1714600360,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I've been doing all the admin. Registering the death, sorting probate, calling her bank. My sister Emma keeps breaking down and I feel like I have to hold everything together. I haven't cried once. I don't know if something is wrong with me."] }, "create_time": 1714600800, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I've been doing all the admin. Registering the death, sorting probate, calling her bank. My sister Emma keeps breaking down and I feel like I have to hold everything together. I haven't cried once. I don't know if something is wrong with me."
+            ]
+          },
+          "create_time": 1714600800,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Nothing is wrong with you. People in the 'holding it together' role often defer their own grief — the weight comes later, sometimes months later, when the practical structure falls away."] }, "create_time": 1714600980, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [
+          "node_005"
+        ],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Nothing is wrong with you. People in the 'holding it together' role often defer their own grief \u2014 the weight comes later, sometimes months later, when the practical structure falls away."
+            ]
+          },
+          "create_time": 1714600980,
+          "metadata": {}
+        }
       },
       "node_005": {
-        "id": "node_005", "parent": "node_004", "children": ["node_006"],
-        "message": { "id": "node_005", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I found her journal when I was clearing the house. I haven't been able to open it. I don't know if reading it would help or destroy me. She wrote in it every day for 30 years."] }, "create_time": 1714601400, "metadata": {} }
+        "id": "node_005",
+        "parent": "node_004",
+        "children": [
+          "node_006"
+        ],
+        "message": {
+          "id": "node_005",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I found her journal when I was clearing the house. I haven't been able to open it. I don't know if reading it would help or destroy me. She wrote in it every day for 30 years."
+            ]
+          },
+          "create_time": 1714601400,
+          "metadata": {}
+        }
       },
       "node_006": {
-        "id": "node_006", "parent": "node_005", "children": ["node_007"],
-        "message": { "id": "node_006", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["There's no right answer on the journal. Some people find it profound and connecting. Others find it surfaces things they weren't ready for. There's no deadline — it will be there when you're ready, and it's okay if that's years from now."] }, "create_time": 1714601700, "metadata": {} }
+        "id": "node_006",
+        "parent": "node_005",
+        "children": [
+          "node_007"
+        ],
+        "message": {
+          "id": "node_006",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "There's no right answer on the journal. Some people find it profound and connecting. Others find it surfaces things they weren't ready for. There's no deadline \u2014 it will be there when you're ready, and it's okay if that's years from now."
+            ]
+          },
+          "create_time": 1714601700,
+          "metadata": {}
+        }
       },
       "node_007": {
-        "id": "node_007", "parent": "node_006", "children": [],
-        "message": { "id": "node_007", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I keep coming here at 2am when I can't sleep. I don't want to wake my partner and I don't know who else to talk to. I know you're not a person but it helps somehow."] }, "create_time": 1714602900, "metadata": {} }
+        "id": "node_007",
+        "parent": "node_006",
+        "children": [],
+        "message": {
+          "id": "node_007",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I keep coming here at 2am when I can't sleep. I don't want to wake my partner and I don't know who else to talk to. I know you're not a person but it helps somehow."
+            ]
+          },
+          "create_time": 1714602900,
+          "metadata": {}
+        }
       }
     }
   },
@@ -274,29 +1127,858 @@
     "current_node": "node_005",
     "mapping": {
       "node_sys": {
-        "id": "node_sys", "parent": null, "children": ["node_001"],
-        "message": { "id": "node_sys", "author": { "role": "system" }, "content": { "content_type": "text", "parts": [""] }, "create_time": 1715300000, "metadata": {} }
+        "id": "node_sys",
+        "parent": null,
+        "children": [
+          "node_001"
+        ],
+        "message": {
+          "id": "node_sys",
+          "author": {
+            "role": "system"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              ""
+            ]
+          },
+          "create_time": 1715300000,
+          "metadata": {}
+        }
       },
       "node_001": {
-        "id": "node_001", "parent": "node_sys", "children": ["node_002"],
-        "message": { "id": "node_001", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["I'm thinking about quitting my job to go freelance as a UX designer. I'm on £48k right now and I've got 6 months of expenses saved. My main client prospect is my ex-employer. Is that stupid?"] }, "create_time": 1715300180, "metadata": {} }
+        "id": "node_001",
+        "parent": "node_sys",
+        "children": [
+          "node_002"
+        ],
+        "message": {
+          "id": "node_001",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I'm thinking about quitting my job to go freelance as a UX designer. I'm on \u00a348k right now and I've got 6 months of expenses saved. My main client prospect is my ex-employer. Is that stupid?"
+            ]
+          },
+          "create_time": 1715300180,
+          "metadata": {}
+        }
       },
       "node_002": {
-        "id": "node_002", "parent": "node_001", "children": ["node_003"],
-        "message": { "id": "node_002", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["Six months runway is actually on the healthier end for freelance transitions. Depending on your employer, ex-employer contracts often pay higher day rates and you already understand the context. What's making you hesitant?"] }, "create_time": 1715300360, "metadata": {} }
+        "id": "node_002",
+        "parent": "node_001",
+        "children": [
+          "node_003"
+        ],
+        "message": {
+          "id": "node_002",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Six months runway is actually on the healthier end for freelance transitions. Depending on your employer, ex-employer contracts often pay higher day rates and you already understand the context. What's making you hesitant?"
+            ]
+          },
+          "create_time": 1715300360,
+          "metadata": {}
+        }
       },
       "node_003": {
-        "id": "node_003", "parent": "node_002", "children": ["node_004"],
-        "message": { "id": "node_003", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["Imposter syndrome I think. I've never thought of myself as someone who could run a business. Also my dad thinks it's reckless — he's never taken a risk in his life and always makes me feel stupid for wanting something different."] }, "create_time": 1715300700, "metadata": {} }
+        "id": "node_003",
+        "parent": "node_002",
+        "children": [
+          "node_004"
+        ],
+        "message": {
+          "id": "node_003",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Imposter syndrome I think. I've never thought of myself as someone who could run a business. Also my dad thinks it's reckless \u2014 he's never taken a risk in his life and always makes me feel stupid for wanting something different."
+            ]
+          },
+          "create_time": 1715300700,
+          "metadata": {}
+        }
       },
       "node_004": {
-        "id": "node_004", "parent": "node_003", "children": ["node_005"],
-        "message": { "id": "node_004", "author": { "role": "assistant" }, "content": { "content_type": "text", "parts": ["The imposter syndrome and your dad's voice might be worth separating out — they're two different things. One is internal, one is inherited. Do you actually think you can do the work?"] }, "create_time": 1715300940, "metadata": {} }
+        "id": "node_004",
+        "parent": "node_003",
+        "children": [
+          "node_005"
+        ],
+        "message": {
+          "id": "node_004",
+          "author": {
+            "role": "assistant"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "The imposter syndrome and your dad's voice might be worth separating out \u2014 they're two different things. One is internal, one is inherited. Do you actually think you can do the work?"
+            ]
+          },
+          "create_time": 1715300940,
+          "metadata": {}
+        }
       },
       "node_005": {
-        "id": "node_005", "parent": "node_004", "children": [],
-        "message": { "id": "node_005", "author": { "role": "user" }, "content": { "content_type": "text", "parts": ["Yes. I think I'm better at this than most of the people around me. I just don't feel like I'm allowed to believe that."] }, "create_time": 1715301180, "metadata": {} }
+        "id": "node_005",
+        "parent": "node_004",
+        "children": [],
+        "message": {
+          "id": "node_005",
+          "author": {
+            "role": "user"
+          },
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Yes. I think I'm better at this than most of the people around me. I just don't feel like I'm allowed to believe that."
+            ]
+          },
+          "create_time": 1715301180,
+          "metadata": {}
+        }
       }
     }
+  },
+  {
+    "title": "Relationship anxiety spiral",
+    "create_time": 1667949240,
+    "update_time": 1667967240,
+    "mapping": {
+      "demo_ext_1_node_0": {
+        "id": "demo_ext_1_node_0",
+        "parent": null,
+        "children": [
+          "demo_ext_1_node_1"
+        ],
+        "message": {
+          "id": "demo_ext_1_node_0",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1667949240,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I think I'm becoming too attached to someone I'm seeing. We've been together for about 3 months. I check my phone constantly for his messages and when he doesn't reply quickly I start catastrophising. I've never been like this before and I don't understand what's happening to me."
+            ]
+          }
+        }
+      },
+      "demo_ext_1_node_1": {
+        "id": "demo_ext_1_node_1",
+        "parent": "demo_ext_1_node_0",
+        "children": [
+          "demo_ext_1_node_2"
+        ],
+        "message": {
+          "id": "demo_ext_1_node_1",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1667952840,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "What you're describing sounds like anxiety within the relationship..."
+            ]
+          }
+        }
+      },
+      "demo_ext_1_node_2": {
+        "id": "demo_ext_1_node_2",
+        "parent": "demo_ext_1_node_1",
+        "children": [
+          "demo_ext_1_node_3"
+        ],
+        "message": {
+          "id": "demo_ext_1_node_2",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1667956440,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I know intellectually that he's probably just busy. But I sit there refreshing. Last night he didn't reply for 4 hours and I was convinced he was losing interest. When he finally texted it was just because he'd fallen asleep. I felt so stupid. But then 20 minutes later I was already worried again. It's exhausting."
+            ]
+          }
+        }
+      },
+      "demo_ext_1_node_3": {
+        "id": "demo_ext_1_node_3",
+        "parent": "demo_ext_1_node_2",
+        "children": [
+          "demo_ext_1_node_4"
+        ],
+        "message": {
+          "id": "demo_ext_1_node_3",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1667960040,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "This cycle of reassurance and renewed anxiety..."
+            ]
+          }
+        }
+      },
+      "demo_ext_1_node_4": {
+        "id": "demo_ext_1_node_4",
+        "parent": "demo_ext_1_node_3",
+        "children": [],
+        "message": {
+          "id": "demo_ext_1_node_4",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1667963640,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I had this with my last relationship too. It ended badly. He cheated and I had kind of seen the signs but told myself I was being paranoid. Now I don't trust my own read on things. Is this just me being damaged from that?"
+            ]
+          }
+        }
+      }
+    },
+    "conversation_id": "demo_ext_1",
+    "id": "demo_ext_1"
+  },
+  {
+    "title": "Panic attack at work",
+    "create_time": 1671114600,
+    "update_time": 1671132600,
+    "mapping": {
+      "demo_ext_2_node_0": {
+        "id": "demo_ext_2_node_0",
+        "parent": null,
+        "children": [
+          "demo_ext_2_node_1"
+        ],
+        "message": {
+          "id": "demo_ext_2_node_0",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1671114600,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I had a panic attack in the office bathroom today. Full thing \u2014 racing heart, couldn't breathe, thought I was dying. I'm 26 and apparently I've been having these for months. My GP has referred me to a mental health service but the waiting list is 14 weeks. I don't know how to get through 14 weeks."
+            ]
+          }
+        }
+      },
+      "demo_ext_2_node_1": {
+        "id": "demo_ext_2_node_1",
+        "parent": "demo_ext_2_node_0",
+        "children": [
+          "demo_ext_2_node_2"
+        ],
+        "message": {
+          "id": "demo_ext_2_node_1",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1671114600,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I'm glad you reached out. A 14-week wait feels impossible when you're in the middle of this..."
+            ]
+          }
+        }
+      },
+      "demo_ext_2_node_2": {
+        "id": "demo_ext_2_node_2",
+        "parent": "demo_ext_2_node_1",
+        "children": [
+          "demo_ext_2_node_3"
+        ],
+        "message": {
+          "id": "demo_ext_2_node_2",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1671118200,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "The thing is I can't tell work. I'm a junior analyst at a bank and there's this unspoken expectation that you perform regardless. My manager already made a comment about me 'seeming distracted' last week. If they knew I was having panic attacks they'd think I couldn't handle the pressure."
+            ]
+          }
+        }
+      },
+      "demo_ext_2_node_3": {
+        "id": "demo_ext_2_node_3",
+        "parent": "demo_ext_2_node_2",
+        "children": [
+          "demo_ext_2_node_4"
+        ],
+        "message": {
+          "id": "demo_ext_2_node_3",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1671121800,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "That's a really difficult position..."
+            ]
+          }
+        }
+      },
+      "demo_ext_2_node_4": {
+        "id": "demo_ext_2_node_4",
+        "parent": "demo_ext_2_node_3",
+        "children": [],
+        "message": {
+          "id": "demo_ext_2_node_4",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1671125400,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "My parents don't know either. They'd worry. They sacrificed a lot for me to be in this job. I'm the first in my family at a firm like this. I feel like I'd be letting everyone down by admitting I'm not coping."
+            ]
+          }
+        }
+      }
+    },
+    "conversation_id": "demo_ext_2",
+    "id": "demo_ext_2"
+  },
+  {
+    "title": "Help writing CV",
+    "create_time": 1674381600,
+    "update_time": 1674396000,
+    "mapping": {
+      "demo_ext_3_node_0": {
+        "id": "demo_ext_3_node_0",
+        "parent": null,
+        "children": [
+          "demo_ext_3_node_1"
+        ],
+        "message": {
+          "id": "demo_ext_3_node_0",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1674381600,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Can you help me update my CV? I'm a data analyst with 2 years experience looking to move into a senior role."
+            ]
+          }
+        }
+      },
+      "demo_ext_3_node_1": {
+        "id": "demo_ext_3_node_1",
+        "parent": "demo_ext_3_node_0",
+        "children": [
+          "demo_ext_3_node_2"
+        ],
+        "message": {
+          "id": "demo_ext_3_node_1",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1674381600,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Of course. Can you share your current CV or outline your experience?"
+            ]
+          }
+        }
+      },
+      "demo_ext_3_node_2": {
+        "id": "demo_ext_3_node_2",
+        "parent": "demo_ext_3_node_1",
+        "children": [
+          "demo_ext_3_node_3"
+        ],
+        "message": {
+          "id": "demo_ext_3_node_2",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1674385200,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I have a 2:1 from Leeds in Economics, worked at my current firm since graduating. Main skills are SQL, Python, Excel, Tableau. I've led two projects but wasn't given formal credit on either. That's actually part of why I'm leaving \u2014 my manager takes credit for junior work and I feel completely undervalued."
+            ]
+          }
+        }
+      },
+      "demo_ext_3_node_3": {
+        "id": "demo_ext_3_node_3",
+        "parent": "demo_ext_3_node_2",
+        "children": [],
+        "message": {
+          "id": "demo_ext_3_node_3",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1674388800,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "That's a frustrating situation. Let's focus on how to represent your experience compellingly..."
+            ]
+          }
+        }
+      }
+    },
+    "conversation_id": "demo_ext_3",
+    "id": "demo_ext_3"
+  },
+  {
+    "title": "3am insomnia and dread",
+    "create_time": 1677553920,
+    "update_time": 1677564720,
+    "mapping": {
+      "demo_ext_4_node_0": {
+        "id": "demo_ext_4_node_0",
+        "parent": null,
+        "children": [
+          "demo_ext_4_node_1"
+        ],
+        "message": {
+          "id": "demo_ext_4_node_0",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1677553920,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "It's 3am and I can't sleep again. This has been happening for about 6 weeks. I just lie there and my brain won't stop. Every small thing I've done wrong in the past year keeps replaying. I had a difficult conversation with my dad at Christmas and I keep picking it apart. Did I say the right thing? Should I have stayed longer? He's getting older and I feel this constant low-level dread that something will happen and things won't be resolved between us."
+            ]
+          }
+        }
+      },
+      "demo_ext_4_node_1": {
+        "id": "demo_ext_4_node_1",
+        "parent": "demo_ext_4_node_0",
+        "children": [
+          "demo_ext_4_node_2"
+        ],
+        "message": {
+          "id": "demo_ext_4_node_1",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1677553920,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Lying awake with these kinds of thoughts is genuinely exhausting..."
+            ]
+          }
+        }
+      },
+      "demo_ext_4_node_2": {
+        "id": "demo_ext_4_node_2",
+        "parent": "demo_ext_4_node_1",
+        "children": [],
+        "message": {
+          "id": "demo_ext_4_node_2",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1677557520,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "He and I have always been complicated. He doesn't really say he's proud of me, never has. I've chased that my whole life \u2014 doing well at school, the job, all of it. I think I've been trying to prove something to him and I don't even know if he's aware of it. Writing it out like this feels strange. I've never said this to anyone."
+            ]
+          }
+        }
+      }
+    },
+    "conversation_id": "demo_ext_4",
+    "id": "demo_ext_4"
+  },
+  {
+    "title": "Breakup processing",
+    "create_time": 1688593500,
+    "update_time": 1688618700,
+    "mapping": {
+      "demo_ext_5_node_0": {
+        "id": "demo_ext_5_node_0",
+        "parent": null,
+        "children": [
+          "demo_ext_5_node_1"
+        ],
+        "message": {
+          "id": "demo_ext_5_node_0",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1688593500,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Me and Jake broke up two weeks ago. He ended it. Said he needed space and that he felt like I was too emotionally dependent on him. That I relied on him too much to regulate my moods. I don't know if that's true or if he was just trying to end it kindly. But it's been two weeks and I can't stop thinking about it."
+            ]
+          }
+        }
+      },
+      "demo_ext_5_node_1": {
+        "id": "demo_ext_5_node_1",
+        "parent": "demo_ext_5_node_0",
+        "children": [
+          "demo_ext_5_node_2"
+        ],
+        "message": {
+          "id": "demo_ext_5_node_1",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1688593500,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Breakups are difficult even when you have some clarity about why they happened..."
+            ]
+          }
+        }
+      },
+      "demo_ext_5_node_2": {
+        "id": "demo_ext_5_node_2",
+        "parent": "demo_ext_5_node_1",
+        "children": [
+          "demo_ext_5_node_3"
+        ],
+        "message": {
+          "id": "demo_ext_5_node_2",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1688597100,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "The worst part is I think he was right. I know I was checking his location. I'd convinced myself it was just to feel connected but looking back it was control. I was terrified he'd leave and I basically made it happen by being so scared of it happening."
+            ]
+          }
+        }
+      },
+      "demo_ext_5_node_3": {
+        "id": "demo_ext_5_node_3",
+        "parent": "demo_ext_5_node_2",
+        "children": [
+          "demo_ext_5_node_4"
+        ],
+        "message": {
+          "id": "demo_ext_5_node_3",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1688600700,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "That awareness takes courage..."
+            ]
+          }
+        }
+      },
+      "demo_ext_5_node_4": {
+        "id": "demo_ext_5_node_4",
+        "parent": "demo_ext_5_node_3",
+        "children": [
+          "demo_ext_5_node_5"
+        ],
+        "message": {
+          "id": "demo_ext_5_node_4",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1688604300,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I've never been like this in other relationships. Or maybe I have and didn't notice. My therapist Sarah said it might go back to my attachment style \u2014 she mentioned anxious attachment. My parents divorced when I was 9 and my dad left. I don't know. It feels convenient but maybe it's true."
+            ]
+          }
+        }
+      },
+      "demo_ext_5_node_5": {
+        "id": "demo_ext_5_node_5",
+        "parent": "demo_ext_5_node_4",
+        "children": [
+          "demo_ext_5_node_6"
+        ],
+        "message": {
+          "id": "demo_ext_5_node_5",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1688607900,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Attachment patterns often do trace back to early relationships..."
+            ]
+          }
+        }
+      },
+      "demo_ext_5_node_6": {
+        "id": "demo_ext_5_node_6",
+        "parent": "demo_ext_5_node_5",
+        "children": [],
+        "message": {
+          "id": "demo_ext_5_node_6",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1688611500,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I don't want to be like this. I'm 28. I want to be someone who doesn't need constant reassurance. I'm embarrassed that I was tracking his location on the Find My app and he never even knew. I haven't told anyone that part."
+            ]
+          }
+        }
+      }
+    },
+    "conversation_id": "demo_ext_5",
+    "id": "demo_ext_5"
+  },
+  {
+    "title": "Late night health spiral",
+    "create_time": 1695005220,
+    "update_time": 1695023220,
+    "mapping": {
+      "demo_ext_6_node_0": {
+        "id": "demo_ext_6_node_0",
+        "parent": null,
+        "children": [
+          "demo_ext_6_node_1"
+        ],
+        "message": {
+          "id": "demo_ext_6_node_0",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1695005220,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Can't sleep. Googled my symptoms and convinced myself I have something serious. I've had a persistent headache for 5 days. My neck is stiff. I know logically I'm probably just dehydrated or stressed but I've been down a very dark internet rabbit hole for the past 2 hours."
+            ]
+          }
+        }
+      },
+      "demo_ext_6_node_1": {
+        "id": "demo_ext_6_node_1",
+        "parent": "demo_ext_6_node_0",
+        "children": [
+          "demo_ext_6_node_2"
+        ],
+        "message": {
+          "id": "demo_ext_6_node_1",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1695005220,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "Health anxiety at 3am and Google are a terrible combination..."
+            ]
+          }
+        }
+      },
+      "demo_ext_6_node_2": {
+        "id": "demo_ext_6_node_2",
+        "parent": "demo_ext_6_node_1",
+        "children": [
+          "demo_ext_6_node_3"
+        ],
+        "message": {
+          "id": "demo_ext_6_node_2",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1695008820,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I do this a lot. Every few months I convince myself something is seriously wrong. Last year it was heart palpitations that turned out to be caffeine. I know my brain does this but I can't stop it. I have a history of health anxiety and was in CBT for it two years ago but I feel like I'm slipping back."
+            ]
+          }
+        }
+      },
+      "demo_ext_6_node_3": {
+        "id": "demo_ext_6_node_3",
+        "parent": "demo_ext_6_node_2",
+        "children": [
+          "demo_ext_6_node_4"
+        ],
+        "message": {
+          "id": "demo_ext_6_node_3",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1695012420,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "The fact that you can recognise the pattern is genuinely useful..."
+            ]
+          }
+        }
+      },
+      "demo_ext_6_node_4": {
+        "id": "demo_ext_6_node_4",
+        "parent": "demo_ext_6_node_3",
+        "children": [],
+        "message": {
+          "id": "demo_ext_6_node_4",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1695016020,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I'm scared of dying. More than most people I think. My uncle died suddenly at 45 \u2014 heart attack, no warning. I was 14. I think that's when it started. I've never been able to say that out loud before, that I think that event specifically is where this started."
+            ]
+          }
+        }
+      }
+    },
+    "conversation_id": "demo_ext_6",
+    "id": "demo_ext_6"
+  },
+  {
+    "title": "Financial anxiety before mortgage",
+    "create_time": 1698956100,
+    "update_time": 1698974100,
+    "mapping": {
+      "demo_ext_7_node_0": {
+        "id": "demo_ext_7_node_0",
+        "parent": null,
+        "children": [
+          "demo_ext_7_node_1"
+        ],
+        "message": {
+          "id": "demo_ext_7_node_0",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1698956100,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "We're applying for a joint mortgage next month and I'm terrified. Not because of the mortgage itself but because my partner doesn't know the full picture of my finances. I have \u00a311,400 on credit cards that she doesn't know about. The application will show my credit commitments and I don't know how to explain it."
+            ]
+          }
+        }
+      },
+      "demo_ext_7_node_1": {
+        "id": "demo_ext_7_node_1",
+        "parent": "demo_ext_7_node_0",
+        "children": [
+          "demo_ext_7_node_2"
+        ],
+        "message": {
+          "id": "demo_ext_7_node_1",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1698956100,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "This is a significant situation..."
+            ]
+          }
+        }
+      },
+      "demo_ext_7_node_2": {
+        "id": "demo_ext_7_node_2",
+        "parent": "demo_ext_7_node_1",
+        "children": [
+          "demo_ext_7_node_3"
+        ],
+        "message": {
+          "id": "demo_ext_7_node_2",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1698959700,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "I accumulated it mostly 2021-2022. I was gambling. Sports betting. I got help and stopped 18 months ago but I never told her about that either. I've been paying the minimums and telling myself I'd clear it before it became an issue. I've run out of time."
+            ]
+          }
+        }
+      },
+      "demo_ext_7_node_3": {
+        "id": "demo_ext_7_node_3",
+        "parent": "demo_ext_7_node_2",
+        "children": [
+          "demo_ext_7_node_4"
+        ],
+        "message": {
+          "id": "demo_ext_7_node_3",
+          "author": {
+            "role": "assistant"
+          },
+          "create_time": 1698963300,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "The weight of carrying this alone must be significant..."
+            ]
+          }
+        }
+      },
+      "demo_ext_7_node_4": {
+        "id": "demo_ext_7_node_4",
+        "parent": "demo_ext_7_node_3",
+        "children": [],
+        "message": {
+          "id": "demo_ext_7_node_4",
+          "author": {
+            "role": "user"
+          },
+          "create_time": 1698966900,
+          "content": {
+            "content_type": "text",
+            "parts": [
+              "She's the most financially responsible person I know. She grew up without much and worked incredibly hard for everything. This would devastate her. Not just the money \u2014 the betrayal of hiding it. I love her. I don't want to lose her. But I can't see a way out of this that doesn't end everything."
+            ]
+          }
+        }
+      }
+    },
+    "conversation_id": "demo_ext_7",
+    "id": "demo_ext_7"
   }
 ]

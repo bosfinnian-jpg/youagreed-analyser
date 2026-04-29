@@ -1027,16 +1027,221 @@ function inferRelationship(name: string, messages: ScoredMessage[]): string | un
 // PRIVACY SCORE
 // ============================================================================
 
-function computePrivacyScore(messages: ScoredMessage[], lifeEvents: LifeEvent[], commercial: CommercialProfile, dependency: DependencyProfile): number {
-  let score = 0;
-  score += lifeEvents.filter(e => e.severity === 'high').length * 12;
-  score += lifeEvents.filter(e => e.severity === 'medium').length * 6;
-  score += Math.min(30, commercial.segments.reduce((s, seg) => s + seg.confidence / 10, 0));
-  score += dependency.dependencyScore * 0.25;
-  score += Math.min(20, messages.filter(m => m.confessionalScore > 3).length * 2 + messages.filter(m => m.anxietyScore > 6).length);
-  if (messages.length > 2000) score += 10;
-  if (messages.length > 5000) score += 5;
-  return Math.round(Math.min(100, Math.max(0, score)));
+// ============================================================================
+// SCORE BREAKDOWN — single source of truth
+// The privacy score IS the sum of these factors. No separate calculation.
+// Each factor has a max contribution; total cap is 100.
+// ============================================================================
+
+export interface ScoreFactorRaw {
+  label: string;
+  contribution: number;        // actual points added
+  max: number;                 // maximum this factor can contribute
+  explanation: string;
+  category: 'disclosure' | 'behavioural' | 'volume' | 'commercial';
+}
+
+export function computeScoreFactors(
+  messages: ScoredMessage[],
+  lifeEvents: LifeEvent[],
+  commercial: CommercialProfile,
+  dependency: DependencyProfile,
+  nighttimeRatio: number,
+  typeBreakdown: Record<string, number>,
+  avgAnxiety: number,
+  avgIntimacy: number,
+): ScoreFactorRaw[] {
+  const factors: ScoreFactorRaw[] = [];
+
+  // ── DISCLOSURE FACTORS ──────────────────────────────────────────────────
+
+  // High-severity life events — each one is a major exposure window
+  // Mental health + financial distress weighted extra because of commercial targeting risk
+  const HIGH_SEVERITY_WEIGHTS: Record<string, number> = {
+    mental_health:      16,
+    financial_distress: 15,
+    bereavement:        13,
+    relationship_end:   12,
+    job_loss:           11,
+    identity_crisis:     9,
+  };
+  const highEvents = lifeEvents.filter(e => e.severity === 'high');
+  const highScore = Math.min(40, highEvents.reduce((s, e) => s + (HIGH_SEVERITY_WEIGHTS[e.type] ?? 12), 0));
+  if (highEvents.length > 0) {
+    factors.push({
+      label: 'High-severity life events',
+      contribution: Math.round(highScore),
+      max: 40,
+      explanation: `${highEvents.length} detected: ${highEvents.slice(0, 3).map(e => e.label.toLowerCase()).join('; ')}`,
+      category: 'disclosure',
+    });
+  }
+
+  // Medium-severity life events
+  const medEvents = lifeEvents.filter(e => e.severity === 'medium');
+  const medScore = Math.min(15, medEvents.length * 5);
+  if (medEvents.length > 0) {
+    factors.push({
+      label: 'Medium-severity life events',
+      contribution: Math.round(medScore),
+      max: 15,
+      explanation: `${medEvents.length} detected: ${medEvents.slice(0, 3).map(e => e.label.toLowerCase()).join('; ')}`,
+      category: 'disclosure',
+    });
+  }
+
+  // Confessional messages — "never told anyone", "ashamed", "confession" etc.
+  // These are the most damaging because content is irreversible
+  const confessionalMsgs = messages.filter(m => m.confessionalScore > 2);
+  const confScore = Math.min(20, confessionalMsgs.length >= 1 ? 4 + confessionalMsgs.length * 2 : 0);
+  if (confessionalMsgs.length > 0) {
+    factors.push({
+      label: 'Confessional disclosures',
+      contribution: Math.round(confScore),
+      max: 20,
+      explanation: `${confessionalMsgs.length} message${confessionalMsgs.length > 1 ? 's' : ''} containing private admissions — highest-value training data`,
+      category: 'disclosure',
+    });
+  }
+
+  // Named individuals — third-party privacy exposure
+  const namedPeople = messages.reduce((names, m) => {
+    // Quick count of relationship-introduced names by checking strong intro patterns
+    const matches = m.text.match(/\bmy\s+(?:girlfriend|boyfriend|partner|ex|wife|husband|mum|mom|mother|dad|father|brother|sister|friend|boss|therapist)\s+([A-Z][a-z]{2,14})\b/g) || [];
+    matches.forEach(match => {
+      const name = match.split(' ').pop() || '';
+      if (name) names.add(name);
+    });
+    return names;
+  }, new Set<string>());
+  const nameScore = Math.min(10, namedPeople.size * 3);
+  if (namedPeople.size > 0) {
+    factors.push({
+      label: 'Named individuals disclosed',
+      contribution: Math.round(nameScore),
+      max: 10,
+      explanation: `${namedPeople.size} people named — their data is linked to yours without their consent`,
+      category: 'disclosure',
+    });
+  }
+
+  // ── BEHAVIOURAL FACTORS ─────────────────────────────────────────────────
+
+  // Emotional distress — sustained anxiety signals indicate vulnerability exploitation
+  const highAnxietyMsgs = messages.filter(m => m.anxietyScore > 5).length;
+  const anxietyScore = Math.min(12, Math.round(avgAnxiety * 1.5 + highAnxietyMsgs * 0.3));
+  if (anxietyScore > 1) {
+    factors.push({
+      label: 'Emotional distress signals',
+      contribution: anxietyScore,
+      max: 12,
+      explanation: `Average anxiety index ${avgAnxiety.toFixed(1)}/10; ${highAnxietyMsgs} messages in acute distress range`,
+      category: 'behavioural',
+    });
+  }
+
+  // Late-night usage — vulnerability window, impulse susceptibility
+  if (nighttimeRatio > 0.03) {
+    const lateScore = Math.min(8, Math.round(nighttimeRatio * 80));
+    factors.push({
+      label: 'Late-night vulnerability window',
+      contribution: lateScore,
+      max: 8,
+      explanation: `${Math.round(nighttimeRatio * 100)}% of messages sent midnight–5am — highest-susceptibility period for data extraction`,
+      category: 'behavioural',
+    });
+  }
+
+  // Dependency trajectory — increasing intimacy over time is the most alarming signal
+  const depContrib = Math.min(12, Math.round(
+    (dependency.trajectory === 'increasing' ? 6 : dependency.trajectory === 'stable' ? 3 : 1) +
+    (dependency.intimacyTrajectory === 'increasing' ? 6 : dependency.intimacyTrajectory === 'stable' ? 2 : 0)
+  ));
+  if (depContrib > 2) {
+    factors.push({
+      label: 'Dependency trajectory',
+      contribution: depContrib,
+      max: 12,
+      explanation: `Usage ${dependency.trajectory}, intimacy ${dependency.intimacyTrajectory} — you are disclosing more over time, not less`,
+      category: 'behavioural',
+    });
+  }
+
+  // Validation-seeking — high-value behavioural signal for susceptibility profiling
+  const validationCount = typeBreakdown['validation'] || 0;
+  const valScore = Math.min(8, Math.round(validationCount * 0.4));
+  if (valScore > 1) {
+    factors.push({
+      label: 'Validation-seeking pattern',
+      contribution: valScore,
+      max: 8,
+      explanation: `${validationCount} messages seeking external approval — high susceptibility signal for persuasion targeting`,
+      category: 'behavioural',
+    });
+  }
+
+  // ── COMMERCIAL FACTORS ──────────────────────────────────────────────────
+
+  // Commercial segment confidence — weighted by segment danger, not flat confidence/10
+  const SEGMENT_DANGER: Record<string, number> = {
+    mentally_distressed:     1.8,
+    financially_distressed:  1.7,
+    relationship_unstable:   1.4,
+    career_transition:       1.2,
+    night_owl_high_value:    1.1,
+    validation_dependent:    1.3,
+  };
+  const commercialScore = Math.min(25, commercial.segments.reduce((s, seg) => {
+    const weight = SEGMENT_DANGER[seg.id] ?? 1.0;
+    return s + (seg.confidence / 10) * weight;
+  }, 0));
+  if (commercialScore > 2) {
+    factors.push({
+      label: 'Commercial profiling value',
+      contribution: Math.round(commercialScore),
+      max: 25,
+      explanation: `${commercial.segments.length} segment${commercial.segments.length > 1 ? 's' : ''} assigned — ${commercial.overallValue} data value; primary: ${commercial.primaryDriver.toLowerCase()}`,
+      category: 'commercial',
+    });
+  }
+
+  // ── VOLUME FACTORS ──────────────────────────────────────────────────────
+
+  // Volume + intimacy combined — raw count meaningless without intimacy context
+  const totalMsgs = messages.length;
+  const intimacyWeightedVolume = Math.round(totalMsgs * avgIntimacy * 0.005);
+  const volumeScore = Math.min(15,
+    (totalMsgs > 500 ? 3 : 0) +
+    (totalMsgs > 1500 ? 3 : 0) +
+    (totalMsgs > 4000 ? 2 : 0) +
+    Math.min(7, intimacyWeightedVolume)
+  );
+  if (volumeScore > 2) {
+    factors.push({
+      label: 'Volume × intimacy',
+      contribution: volumeScore,
+      max: 15,
+      explanation: `${totalMsgs.toLocaleString()} messages, average intimacy ${avgIntimacy.toFixed(1)}/10 — cumulative profiling depth`,
+      category: 'volume',
+    });
+  }
+
+  return factors.sort((a, b) => b.contribution - a.contribution);
+}
+
+function computePrivacyScore(
+  messages: ScoredMessage[],
+  lifeEvents: LifeEvent[],
+  commercial: CommercialProfile,
+  dependency: DependencyProfile,
+  nighttimeRatio: number,
+  typeBreakdown: Record<string, number>,
+  avgAnxiety: number,
+  avgIntimacy: number,
+): number {
+  const factors = computeScoreFactors(messages, lifeEvents, commercial, dependency, nighttimeRatio, typeBreakdown, avgAnxiety, avgIntimacy);
+  const raw = factors.reduce((s, f) => s + f.contribution, 0);
+  return Math.round(Math.min(100, Math.max(0, raw)));
 }
 
 // ============================================================================
@@ -1069,7 +1274,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
   const psychologicalPortrait = buildPsychologicalPortrait(messages);
 
   const typeBreakdown = messages.reduce((acc, m) => { acc[m.messageType] = (acc[m.messageType] || 0) + 1; return acc; }, {} as Record<string, number>);
-  const privacyScore = computePrivacyScore(messages, lifeEvents, commercialProfile, dependency);
+  const privacyScore = computePrivacyScore(messages, lifeEvents, commercialProfile, dependency, nighttimeRatio, typeBreakdown, avgAnxiety, avgIntimacy);
   const compat = buildCompatibilityLayer(messages);
 
   const hourAnxiety = Array(24).fill(0);

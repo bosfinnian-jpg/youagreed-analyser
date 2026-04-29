@@ -78,7 +78,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
           letterSpacing: '-0.025em', lineHeight: 1.15,
           marginBottom: '1.5rem', maxWidth: '24ch',
         }}>
-          A tool for reading what you agreed to.
+          A tool that shows what you agreed to.
         </h1>
         <div style={{ borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.25rem', maxWidth: '56ch' }}>
           <p style={{
@@ -87,7 +87,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             color: PALETTE.inkMuted, fontStyle: 'italic',
             lineHeight: 1.75, margin: 0,
           }}>
-            trace.ai analyses your ChatGPT conversation export and produces a structured account of what was extracted — what was inferred, what was disclosed, and what cannot be removed. The dossier is not a prediction. It is a demonstration of what commercial AI inference produces from conversational data.
+            trace.ai analyses your ChatGPT conversation export and produces a structured account of what that data reveals: what was inferred, what was disclosed, and what cannot be removed. The dossier is not a prediction about you specifically. It is a demonstration of what commercial AI inference produces from conversational data at scale.
           </p>
         </div>
       </motion.div>
@@ -99,13 +99,13 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             What this is
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem' }}>
-            The analysis runs entirely in your browser. No conversation data is sent to a server. The AI enrichment calls use your session only — nothing is stored, logged, or retained beyond the current session.
+            The inference analysis runs in your browser. The AI enrichment calls, which extract psychological signals from your messages, are made via the Anthropic API during your session only. Conversation content is not logged or retained beyond your current session.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem' }}>
-            The inferences produced are speculative demonstrations. They show what commercial profiling systems can plausibly derive from language patterns — they are not claims about any specific individual's psychology, identity, or intentions. The categories used (vulnerability windows, cognitive fingerprint, commercial segments) are drawn from documented industry profiling frameworks.
+            The inferences are demonstrations, not definitive claims. They show what commercial profiling systems can plausibly derive from language patterns. The categories used, including vulnerability windows and commercial segments, are drawn from documented industry profiling frameworks.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660 }}>
-            The argument of the tool is structural, not personal. The question it asks is not "what does this reveal about you specifically?" but "what does this reveal about the system you agreed to participate in?"
+            The argument is structural. The question is not "what does this reveal about you?" but "what does this reveal about the system you agreed to participate in?"
           </p>
         </div>
       </Block>
@@ -117,13 +117,13 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             The argument
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem' }}>
-            Consent frameworks — GDPR, cookie banners, privacy policies — were designed for reversible behavioural tracking. The data they govern can be deleted, corrected, or withdrawn. The right to erasure makes technical sense.
+            Consent frameworks, GDPR, cookie banners, privacy policies, were designed for reversible behavioural tracking. The data they govern can be deleted, corrected, or withdrawn. The right to erasure makes technical sense in that context.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem' }}>
-            Conversational AI training is not reversible. A sentence passed through a model during training is dissolved into incremental weight adjustments across hundreds of billions of parameters. There is no record to delete. There is no bounded object to return. The right to erasure cannot be technically fulfilled for training data.
+            Conversational AI training is not reversible. A sentence processed during training dissolves into weight adjustments across hundreds of billions of parameters. There is no bounded object to return. The right to erasure cannot be technically fulfilled for training data.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660 }}>
-            The gap between these two paradigms is not a policy failure. It is an architectural one. trace.ai makes that gap visible.
+            That gap is not a policy failure. It is an architectural one. trace.ai makes it visible.
           </p>
         </div>
       </Block>
@@ -176,10 +176,10 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 'clamp(0.75rem, 2vw, 1.25rem)' }}>
             {[
-              { label: 'Processing', detail: 'All analysis runs client-side in your browser. Your conversations are never uploaded to any server.' },
-              { label: 'AI enrichment', detail: 'The synthesis and enrichment calls are made via the Anthropic API during your session only. No conversation content is logged or retained.' },
-              { label: 'Storage', detail: 'Results are stored in your browser\'s sessionStorage for the duration of this session. They are removed when you close the tab.' },
-              { label: 'Sharing', detail: 'Nothing is shared with any third party. The dossier exists only in your current browser session.' },
+              { label: 'Processing', detail: 'All inference analysis runs in your browser. Your conversations are never uploaded to a server.' },
+              { label: 'AI enrichment', detail: 'Enrichment calls are made via the Anthropic API during your session only. No conversation content is logged or retained by trace.ai.' },
+              { label: 'Storage', detail: "Results are stored in your browser's sessionStorage for the duration of your session. They are removed when you close the tab." },
+              { label: 'Sharing', detail: 'Nothing is shared with any third party. The dossier exists only in your browser session.' },
             ].map(item => (
               <div key={item.label} style={{ background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`, padding: 'clamp(1rem, 2.5vw, 1.5rem)' }}>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
@@ -201,10 +201,10 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             Built by
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 560, marginBottom: '0.75rem' }}>
-            trace.ai is a critical practice project by Finn Bostrom, a Digital Media student at the University of Leeds.
+            trace.ai is a critical practice project by Finn Bostrom, Digital Media, University of Leeds.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560, fontStyle: 'italic' }}>
-            The tool is the argument. Using it is the point.
+            The tool is the argument.
           </p>
         </div>
       </Block>

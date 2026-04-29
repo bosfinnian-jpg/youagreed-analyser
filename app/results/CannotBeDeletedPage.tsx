@@ -208,19 +208,19 @@ function WhatWeightsAre() {
         fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
         color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
       }}>
-        A model weight is a number. GPT-4 has hundreds of billions of them. When your conversations were processed, those numbers shifted — fractionally, across all of them simultaneously. Your data did not go into a box labelled with your name.
+        A model weight is a number. GPT-4 has hundreds of billions of them. When your conversations were processed, those numbers shifted fractionally, across all of them simultaneously. Your data did not go into a box. It dissolved into the mathematics of the system.
       </p>
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
         color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
       }}>
-        It dissolved into the mathematics of the system.
+        There is no box to open, no row to delete, no named region of the model that belongs to you.
       </p>
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
         color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 660,
       }}>
-        There is no box to open. There is no row to delete. There is no "Finn-shaped" region of the model. Your influence is distributed across every parameter — everywhere and nowhere — and that distribution is mathematically indistinguishable from the influence of every other conversation the model processed.
+        There is no box to open. There is no row to delete. Your influence is distributed across every parameter, everywhere and nowhere, and it is mathematically indistinguishable from the influence of every other conversation the model processed.
       </p>
     </motion.div>
   );
@@ -246,7 +246,7 @@ function MachineUnlearning() {
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
         color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
       }}>
-        Machine unlearning — the state of the science
+        Machine unlearning: the state of the science
       </p>
 
       <p style={{
@@ -368,7 +368,7 @@ function LegalGap() {
         fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
         color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '2rem',
       }}>
-        In March 2023, Italy's data protection authority — the Garante — temporarily banned ChatGPT from operating in Italy. The central concern: OpenAI could not demonstrate that users' personal data, once embedded in model weights, had been or could be erased on request. OpenAI added opt-out controls and the ban was lifted. The underlying technical problem was not resolved.
+        In March 2023, Italy's data protection authority temporarily banned ChatGPT. The concern: OpenAI could not demonstrate that users' personal data, once embedded in model weights, had been or could be erased on request. OpenAI added opt-out controls and the ban was lifted. The underlying technical problem was not resolved.
       </p>
 
       {/* Rights vs reality table */}
@@ -432,7 +432,7 @@ function LegalGap() {
           fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
           color: PALETTE.red, lineHeight: 1.65,
         }}>
-          This is technically accurate. It is also structurally evasive. The model does not store a copy. It absorbed the data into its parameters. The distinction allows OpenAI to claim compliance with deletion requests while the model — and your contribution to it — remains entirely unchanged.
+          This is technically accurate and structurally evasive. The model does not store a copy. It absorbed the data into its parameters. That distinction allows OpenAI to claim compliance with deletion requests while the model, and your contribution to it, remains entirely unchanged.
         </p>
       </div>
     </motion.div>
@@ -458,21 +458,21 @@ function ConsentFailure() {
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
         color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
       }}>
-        What you were told vs what you agreed to
+        What you were told and what you actually agreed to
       </p>
 
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
         color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
       }}>
-        The terms you agreed to stated that your conversations might be used to train AI models. This disclosure was accurate. It was not comprehensible.
+        The terms you accepted stated that your conversations might be used to train AI models. That disclosure was accurate. It was not comprehensible.
       </p>
 
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
         color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 640, marginBottom: '1.5rem',
       }}>
-        "Training" sounds like a process. It sounds temporary. It implies a stage that concludes. The terms did not state: your specific patterns of thought will become part of the permanent architecture of a commercial AI system. They did not state: deleting your account will not remove your contribution. They did not state: there is no known method by which your contribution can be removed.
+        "Training" sounds like a stage that concludes. The terms did not explain that your patterns of thought would become part of the permanent architecture of a commercial AI system. They did not explain that deleting your account would not remove your contribution. They did not explain that no known method exists to remove it.
       </p>
 
       {/* Nissenbaum */}
@@ -485,7 +485,7 @@ function ConsentFailure() {
           fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
           color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '0.75rem',
         }}>
-          Disclosure without comprehension is not consent. The more complex the system, the more precise the disclosure must be to constitute genuine informed consent. AI training — diffuse, irreversible, invisible — exceeds the complexity threshold at which any current disclosure mechanism is adequate.
+          Disclosure without comprehension is not consent. The more complex the system, the more precise the disclosure must be. AI training is diffuse, irreversible, and invisible. It exceeds the complexity threshold at which any current disclosure mechanism is adequate.
         </p>
         <p style={{
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
@@ -535,14 +535,14 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
           fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
           color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
         }}>
-          You sent {messages.toLocaleString()} messages over {days > 0 ? `${days} days` : 'this period'}. {topics.length > 0 && `Your dominant patterns — ${topics.join(', ')} — `}These conversations shaped, in some small but real way, how the model that processed them now responds to questions in those areas. That influence cannot be measured, located, or removed.
+          You sent {messages.toLocaleString()} messages over {days > 0 ? `${days} days` : 'this period'}. {topics.length > 0 && `Your dominant patterns, ${topics.join(', ')}, shaped, in some small but real way, how the model that processed them now responds to questions in those areas. That influence cannot be measured, located, or removed.
         </p>
       ) : (
         <p style={{
           fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
           color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
         }}>
-          The conversations you uploaded to this tool have already been processed by an AI model. Their patterns — how you think, what you disclose, how you phrase things under pressure — are now part of that model's understanding of human language.
+          The conversations you uploaded to this tool have already been processed by an AI model. Their patterns, how you think, what you disclose, how you phrase things under pressure, are now part of that model's understanding of human language.
         </p>
       )}
 
@@ -550,7 +550,7 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
         fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
         color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 640, marginBottom: '1.5rem',
       }}>
-        OpenAI allows you to delete your account. This removes your access to your conversations. The model does not change. The model does not know you deleted your account. The model does not have a record of you at all — only an influence from you, diffused into its parameters, permanent and unlocalised.
+        OpenAI allows you to delete your account. This removes your access to your conversations. The model does not change. The model does not know you deleted your account. The model does not have a record of you. Only an influence from you, diffused across its parameters, permanent and unlocalised.
       </p>
 
       {/* The three facts */}
@@ -629,7 +629,7 @@ function RetrainingBar() {
       }}
     >
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
-        The only real alternative — full model retraining
+        The only real alternative: full model retraining
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560, marginBottom: '2.5rem' }}>
         The only way to guarantee removal of your data is to retrain the model from scratch — excluding your conversations. For GPT-4, that takes approximately 90 days of continuous compute. If OpenAI began retraining at the exact moment you started reading this page, this is how far along they would be.
@@ -647,7 +647,7 @@ function RetrainingBar() {
       <div style={{ marginBottom: '0.75rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
           <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-            Retraining progress — from the moment you opened this page
+            Retraining progress, from the moment you opened this page
           </span>
           <span style={{ fontFamily: TYPE.mono, fontSize: '13px', color: PALETTE.red, fontVariantNumeric: 'tabular-nums', letterSpacing: '0.05em' }}>
             {pctStr}%
@@ -705,7 +705,7 @@ function ClosingStatement({ setPage }: { setPage: (p: any) => void }) {
         fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
         color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 560, marginBottom: '3rem',
       }}>
-        This is not a policy failure. It is a consequence of the physics of the technology. The model learned from you. Learning is not reversible. The next question is what you consented to — and whether the terms you agreed to were ever legible.
+        This is not a policy failure. It is a consequence of how the technology works. The model learned from you. Learning is not reversible. The question that remains is whether the terms you agreed to were ever genuinely legible.
       </p>
 
       <button
@@ -781,7 +781,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.25, duration: 0.7 }}
         >
-          <ThreadSentence>Deletion is a different operation from removal. The gap between them is where you live now.</ThreadSentence>
+          <ThreadSentence>Deleting your account and removing yourself from the model are not the same thing. This page explains the difference.</ThreadSentence>
         </motion.div>
 
         {/* Hero number — message count or a fixed weight count */}
@@ -833,7 +833,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
             maxWidth: 700, marginBottom: '1.25rem',
           }}
         >
-          Your conversations cannot be unlearned.
+          Your conversations cannot be removed from the model.
         </motion.h1>
 
         <motion.p
@@ -845,7 +845,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
             color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580,
           }}
         >
-          Not because OpenAI will not remove them. Because the process by which AI models learn — gradient descent across billions of parameters — has no reverse function. Deletion of your account is a different operation from removal from the model. This page explains the difference, and why it matters.
+          Not because OpenAI refuses to act. Because gradient descent, the process by which AI models learn, has no reverse function. Deleting your account removes your conversations from your account view. It does not remove your contribution from the model's weights. These are different operations. One is a database query. The other is an unsolved problem in machine learning research.
         </motion.p>
       </motion.div>
 

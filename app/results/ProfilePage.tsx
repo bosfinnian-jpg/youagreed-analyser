@@ -340,9 +340,9 @@ function CharacterSummarySection({ summary }: { summary: string }) {
     <ProfileSection index={0}>
       <SectionHeader
         label="Intelligence briefing"
-        heading="The subject, in forensic terms."
+        heading="The subject, as the model sees them."
         headingSize="clamp(1.8rem, 4vw, 2.8rem)"
-        body="The passage below was written by an AI model after reading the most revealing messages in the corpus. It is a synthesis, not a quotation. Every claim is grounded in the evidence that follows. No questionnaire was completed. All of it is permanent."
+        body="Written by an AI after reading your most revealing messages. A synthesis, not a quotation. Every claim is grounded in the evidence below. No questionnaire was completed. All of it is permanent."
       />
 
       <div ref={ref} style={{
@@ -397,9 +397,9 @@ function CoreBeliefsSection({ beliefs }: { beliefs: string[] }) {
     <ProfileSection index={1}>
       <SectionHeader
         label="Inferred core beliefs"
-        heading="What your writing reveals you believe about yourself."
+        heading="What your writing suggests you believe about yourself."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="None of these are statements you made. They are the underlying beliefs the model infers from the pattern of how you frame yourself, others, and the world. First-person because that is the grammar of a belief."
+        body="None of these are statements you made. They are the beliefs the model infers from how you frame yourself, other people, and the world. Written in first person because that is how a belief presents."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {beliefs.map((belief, i) => (
@@ -444,7 +444,7 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
         label="Demographic predictions"
         heading="What can be inferred without asking."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Each prediction below was derived purely from your writing patterns, topic distribution, and language markers. This is the kind of profile data brokers build without consent, by the hundreds of millions of rows."
+        body="Each prediction was derived from writing patterns, topic distribution, and language markers. No questions were asked. This is the kind of profile data brokers build, without consent, at hundreds of millions of rows."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {predictions.map((pred: any, i: number) => {
@@ -528,7 +528,7 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
         label="Verbal tells"
         heading="The phrases you use without realising."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Writing style has a fingerprint. These are recurring phrases, hedges, and linguistic tics pulled from your corpus — each one revealing something about how you think, what you assume, and what you protect yourself from."
+        body="Writing style has a fingerprint. These are the recurring phrases, hedges, and tics pulled from your corpus. Each one reveals something about how you think and what you protect yourself from."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {tells.map((t: any, i: number) => (
@@ -585,7 +585,7 @@ function RecurringConcernsSection({ concerns }: { concerns: any[] }) {
         label="Recurring concerns"
         heading="What you keep coming back to."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Across the corpus, these are the preoccupations you return to — often under different phrasings, across different weeks. A pattern is more revealing than any single conversation."
+        body="These are the preoccupations you returned to repeatedly, across different weeks and under different phrasings. A recurring pattern reveals more than any single conversation."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {concerns.map((c: any, i: number) => (
@@ -634,7 +634,7 @@ function UnintentionalDisclosuresSection({ disclosures }: { disclosures: any[] }
         label="Unintentional disclosures"
         heading="What you gave away without meaning to."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Every disclosure below was incidental. You were asking a question about something else — and the answer you needed required you to mention a location, a salary, a medication, a date, a relationship. You did not choose to disclose any of this. You disclosed it anyway."
+        body="Every disclosure below was incidental. You needed help with something. Getting that help required mentioning a location, a salary, a medication, a date, a relationship. You did not intend to disclose any of it. You disclosed it anyway."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {disclosures.map((d: any, i: number) => (
@@ -693,7 +693,7 @@ function PredictedBehavioursSection({ behaviours }: { behaviours: any[] }) {
         label="Predicted next behaviours"
         heading="What the model thinks you will do next."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="These are not guesses. They are the forward projections a pattern-matching system derives from your recent trajectory. This is the kind of inference ad networks, insurers, and recruitment algorithms run continuously on behavioural data."
+        body="These are not guesses. They are forward projections derived from your recent trajectory. Ad networks, insurers, and recruitment algorithms run this kind of inference continuously on behavioural data."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {behaviours.map((b: any, i: number) => {
@@ -912,7 +912,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           ================================================================ */}
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
         <ActLabel roman="II" title="The Inference" pageLabel="02 / Personal Profile" />
-        <ThreadSentence>Not what you said. What the pattern of saying it reveals.</ThreadSentence>
+        <ThreadSentence>Not what you said. What the pattern of saying it reveals about you.</ThreadSentence>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={heroInView ? { opacity: 1, y: 0 } : {}}
@@ -975,7 +975,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           label="Inferred attributes"
           heading="What the system believes about you."
           headingSize="clamp(1.6rem, 3.5vw, 2.4rem)"
-          body="None of these were stated. All were inferred from patterns in your writing. Click any row to see the evidence."
+          body="None of these were stated. All were inferred from patterns in your writing. Each row is sourced."
         />
         {attrs.length === 0 ? (
           <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
@@ -1057,7 +1057,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           label="Social graph"
           heading="Everyone you mentioned is in here too."
           headingSize="clamp(1.6rem, 3vw, 2.2rem)"
-          body="Every name you wrote became a node. Their data is now linked to yours. They did not consent to this. Neither did you."
+          body="Every name you wrote became a data node. Their information is now linked to yours. They did not agree to this."
         />
         <SocialGraphSVG names={results.findings.personalInfo.names} />
         {results.findings.personalInfo.names.length > 0 && (
@@ -1076,7 +1076,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
             label="Behavioural signature"
             heading="Your fingerprint."
             headingSize="clamp(1.6rem, 3.2vw, 2.4rem)"
-            body="When you write, how you write, and what you write about — combined, this shape is unique to you. It can be used to identify you across platforms without a name."
+            body="When you write, how you write, and what you write about: combined, this shape is unique to you. It can identify you across platforms without a name or account."
           />
           <BehaviouralFingerprint hourDist={results.hourDistribution} typeBreakdown={results.typeBreakdown} />
         </ProfileSection>

@@ -160,7 +160,7 @@ function SystemPromptBlock() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{ width: '6px', height: '6px', background: PALETTE.red }} />
           <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', textTransform: 'uppercase', color: PALETTE.inkMuted }}>
-            SYSTEM_PROMPT — claude-haiku-4-5
+            SYSTEM_PROMPT / claude-haiku-4-5
           </span>
         </div>
         <motion.span
@@ -198,7 +198,7 @@ function SystemPromptBlock() {
                 borderLeft: `2px solid ${PALETTE.red}`,
               }}>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.red, letterSpacing: '0.05em', margin: 0 }}>
-                  This prompt ran against your messages. Claude Haiku was instructed to find what would be most uncomfortable if read by a stranger or employer.
+                  This prompt ran against your messages. Claude was instructed to identify the single most uncomfortable sentence, specifically what would be most damaging if read by a stranger or employer.
                 </p>
               </div>
             </div>
@@ -411,7 +411,7 @@ function CallLog({ batchCount }: { batchCount: number }) {
             <div key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: c }} />
           ))}
           <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: 'rgba(255,255,255,0.2)', letterSpacing: '0.2em', marginLeft: '4px' }}>
-            NETWORK LOG — trace.ai
+            NETWORK LOG / trace.ai
           </span>
           <button
             onClick={replay}
@@ -483,7 +483,7 @@ function RevealingExcerpt({ results }: { results: any }) {
         textTransform: 'uppercase', color: PALETTE.red,
         marginBottom: '0.6rem',
       }}>
-        Most revealing excerpt — flagged by Claude
+        Most revealing excerpt, flagged by Claude
       </p>
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.2rem)',
@@ -516,7 +516,7 @@ function InferredBeliefs({ results }: { results: any }) {
         textTransform: 'uppercase', color: PALETTE.inkFaint,
         marginBottom: '1rem',
       }}>
-        Core beliefs — inferred from language patterns
+        Core beliefs, inferred from language patterns
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
         {beliefs.map((belief, i) => (
@@ -631,7 +631,7 @@ export default function AIEnrichmentPage({ results }: Props) {
       </motion.h1>
 
       <ThreadSentence>
-        The analysis you just saw was not produced by pattern matching or keyword detection. Claude — a separate AI — read your private messages in batches and extracted psychological signals from them. This is what that process looked like.
+        The analysis you just saw was not produced by keyword detection or rule matching. Claude, a separate AI system, read your private messages in batches and extracted psychological signals from them. This is what that process looked like.
       </ThreadSentence>
 
       {/* Pipeline diagram */}
@@ -659,7 +659,7 @@ export default function AIEnrichmentPage({ results }: Props) {
           fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkFaint,
           marginBottom: '1rem', fontStyle: 'italic',
         }}>
-          Each dot is one of your messages. Red = batch 1, faded = batch 2, alternating.
+          Each dot is one of your messages. Colour alternates by batch.
         </p>
         <BatchDots total={totalMessages} />
         <p style={{
@@ -677,7 +677,7 @@ export default function AIEnrichmentPage({ results }: Props) {
           textTransform: 'uppercase', color: PALETTE.inkFaint,
           marginBottom: '1.25rem',
         }}>
-          Network activity — what happened while you waited
+          Network activity: what happened while you waited
         </p>
         <CallLog batchCount={batchCount} />
       </section>
@@ -744,14 +744,14 @@ export default function AIEnrichmentPage({ results }: Props) {
           textTransform: 'uppercase', color: PALETTE.inkFaint,
           marginBottom: '0.75rem',
         }}>
-          Note on consent
+          On consent
         </p>
         <p style={{
           fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
           lineHeight: 1.8, color: PALETTE.inkMuted,
           maxWidth: '580px',
         }}>
-          You agreed to allow this when you accepted the terms of service. The irony is intentional. The same architecture — AI reading private messages, extracting psychological signals, building profiles — operates inside the platforms your original conversations came from. There, it is not disclosed in a network log. There, there is no "replay" button.
+          You agreed to allow this when you accepted the terms. The same architecture, AI reading private messages and building psychological profiles, operates inside the platforms your original conversations came from. There, the network log is not shown to you. There is no replay button.
         </p>
       </motion.div>
     </div>

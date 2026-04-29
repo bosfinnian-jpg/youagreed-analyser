@@ -337,8 +337,8 @@ export default function HowItWorksPage() {
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.25, duration: 0.7 }}>
           <ThreadSentence>
-            Consent was designed for reversible systems. Training is not reversible.
-            The gap between these two facts is not a policy failure — it is an architectural one.
+            Consent was designed for reversible systems. AI training is not reversible.
+            That gap is not a policy failure. It is an architectural one.
           </ThreadSentence>
         </motion.div>
       </motion.div>
@@ -346,8 +346,8 @@ export default function HowItWorksPage() {
       <PageSection
         number="The mechanism"
         title="How training works"
-        body="Every conversation you had followed this sequence. A sentence passed through a model during training is not retained as a record — it is dissolved into incremental adjustments across billions of parameters. The sentence cannot subsequently be located."
-        finding="Training does not store what it learns from. It dissolves data into parameter adjustments across 175 billion weights. The data cannot be located, so it cannot be removed."
+        body="Every conversation followed this sequence. A sentence passed through a model during training is not retained as a record. It dissolves into incremental adjustments across billions of parameters. The sentence cannot subsequently be located or removed."
+        finding="Training does not store what it learns from. It dissolves data into weight adjustments across billions of parameters. The data cannot be located, so it cannot be removed."
       >
         <NeuralNetworkDiagram />
       </PageSection>
@@ -355,8 +355,8 @@ export default function HowItWorksPage() {
       <PageSection
         number="The impossibility"
         title="Why deletion fails"
-        body="The influence of a single training example is distributed across thousands of non-contiguous parameters. There is no clean boundary to excise. You cannot surgically remove what was never surgically inserted."
-        finding="Approximate unlearning methods exist. They degrade model performance unpredictably and cannot offer the guarantees that deletion requires. The alternative — retraining from scratch — takes months and costs millions."
+        body="The influence of a single training example is distributed across thousands of non-contiguous parameters. There is no clean boundary to excise. You cannot remove what was never discretely inserted."
+        finding="Approximate unlearning methods exist. They degrade model performance unpredictably and cannot provide the guarantees that legal deletion requires. The alternative, retraining from scratch, takes months and costs tens of millions of dollars."
       >
         <UnlearningDiagram />
       </PageSection>
@@ -364,7 +364,7 @@ export default function HowItWorksPage() {
       <PageSection
         number="The structural argument"
         title="Why consent frameworks fail"
-        body="Cookie consent frameworks were designed for reversible behavioural tracking. Conversational AI training is not reversible. The consent mechanism was applied to a system it was never designed to govern."
+        body="Cookie consent frameworks were designed for reversible behavioural tracking. AI training is not reversible. The consent mechanism was applied to a system it was never designed to govern."
       >
         <ConsentDiagram />
       </PageSection>

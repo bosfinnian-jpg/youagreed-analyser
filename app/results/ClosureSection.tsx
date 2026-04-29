@@ -40,8 +40,8 @@ export default function ClosureSection({ analysis, setPage }: {
   const score = (analysis as any).privacyScore || 0;
 
   const mainText = messageCount > 0
-    ? `${messageCount.toLocaleString()} messages over ${days > 365 ? `${(days / 365).toFixed(1)} years` : `${days} days`}. Every one of them is now part of a system you cannot inspect, correct, or leave.`
-    : `Every message you have ever sent to a conversational AI is now part of a system you cannot inspect, correct, or leave.`;
+    ? `${messageCount.toLocaleString()} messages over ${days > 365 ? `${(days / 365).toFixed(1)} years` : `${days} days`}. Every one is now embedded in a system you cannot inspect, correct, or leave.`
+    : `Every message you have sent to a conversational AI is now embedded in a system you cannot inspect, correct, or leave.`;
 
   return (
     <motion.div
@@ -183,7 +183,7 @@ export default function ClosureSection({ analysis, setPage }: {
               maxWidth: 520,
             }}
           >
-            The next time it asks you how you are feeling, consider who is listening.
+            The next time it asks how you are feeling, consider who is listening.
           </motion.p>
 
           {/* CTAs */}
@@ -211,7 +211,7 @@ export default function ClosureSection({ analysis, setPage }: {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              What you can do →
+              Why it cannot be removed →
             </button>
 
             <button

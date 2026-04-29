@@ -273,7 +273,7 @@ function ArrivalChapter({ name, date, onActive }: {
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
       <div style={{ marginBottom: '2.5rem' }}>
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
-        <ThreadSentence>You agreed to terms that described this. They did not describe it fully.</ThreadSentence>
+        <ThreadSentence>You agreed to terms that permitted this. What follows is what those terms allowed.</ThreadSentence>
       </div>
       <motion.p
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -316,7 +316,7 @@ function ArrivalChapter({ name, date, onActive }: {
           marginBottom: 'clamp(2.5rem,8vw,4rem)',
         }}
       >
-        What follows was extracted from your conversations.
+        What follows was inferred from your conversations.
         Each item is permanent. None of it can be returned.
       </motion.p>
 
@@ -587,7 +587,7 @@ function InferenceChapter({ inferences, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          None of these attributes were stated. They were inferred —
+          None of these attributes were stated. All were inferred
           and the inference process is not described in the terms you agreed to.
         </p>
       </ChapterShell>
@@ -936,7 +936,7 @@ function NetworkChapter({ names, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          These individuals did not consent. Their names —
+          These individuals did not consent. Their names
           and the contexts in which you mentioned them —
           have been retained.
         </p>
@@ -1187,7 +1187,7 @@ function ScoreChapter({ score, onActive }: {
           margin: '0 auto',
           textAlign: 'center',
         }}>
-          A composite estimate of the personal pattern recoverable
+          A composite measure of the personal information recoverable
           from your conversation history alone.
         </p>
       </ChapterShell>
@@ -1363,10 +1363,11 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
               lineHeight: 1.78,
               maxWidth: '46ch',
             }}>
-              The right to deletion, as written in the terms you agreed to,
-              does not extend to the patterns a model has already learned.
-              This is the central asymmetry: ingestion is reversible only
-              for you. For the model, it is not.
+              The right to deletion, as written in the terms you accepted,
+              does not apply to what a model has already learned.
+              Deleting your account removes your data from OpenAI's servers.
+              It does not remove your contribution from the model's weights.
+              Those are different operations.
             </p>
           </div>
         </div>

@@ -672,7 +672,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
     >
 
       <ActLabel roman="IV" title="After" pageLabel="07 / Understand" />
-      <ThreadSentence>Inference does not require intent. Pattern recognition has no conscience.</ThreadSentence>
+      <ThreadSentence>Inference does not require intent. The system does not need to mean anything by it.</ThreadSentence>
 
       <motion.h1
         initial={{ opacity: 0, y: 12 }}
@@ -689,7 +689,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           marginBottom: '1.5rem',
         }}
       >
-        Understand what just happened to you.
+        Understand what just happened.
       </motion.h1>
 
       <motion.p
@@ -705,7 +705,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
         }}
       >
-        Four modules. Each ends with something you do, not something you read. Before you begin — try the tool below. Type anything you might say to an AI.
+        Four modules. Each one ends with something you do. Before you begin, try the tool below: type anything you might say to an AI.
       </motion.p>
 
       {/* InferenceTagger embedded as the intro interactive */}

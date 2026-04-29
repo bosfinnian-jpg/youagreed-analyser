@@ -128,7 +128,7 @@ function ShareButton({ exposureScore, userName }: { exposureScore: number; userN
 
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
-        await navigator.share({ title: 'trace.ai — your data dossier', text, url });
+        await navigator.share({ title: 'trace.ai: your data dossier', text, url });
         setShared(true);
         setTimeout(() => setShared(false), 2500);
       } catch {

@@ -125,9 +125,9 @@ const KEY_CLAUSES = [
 
 const YEARS = ['2023', '2025', '2026'] as const;
 const YEAR_LABELS: Record<string, string> = {
-  '2023': 'June 2023',
-  '2025': 'June 2025',
-  '2026': 'April 2026 (US)',
+  '2023': 'OpenAI Privacy Policy · June 2023',
+  '2025': 'OpenAI Privacy Policy · June 2025',
+  '2026': 'OpenAI Privacy Policy · April 2026',
 };
 
 const SEVERITY_COLOR: Record<string, string> = {
@@ -201,6 +201,15 @@ function ConsentMoment({ isInView }: { isInView: boolean }) {
         maxWidth: 580, marginBottom: '2rem',
       }}>
         You signed up for ChatGPT. At some point — probably in 2022 or 2023 — you clicked something like this.
+      </p>
+
+      {/* Source attribution */}
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+        color: PALETTE.inkFaint, textTransform: 'uppercase',
+        marginBottom: '1rem', opacity: 0.7,
+      }}>
+        Reconstructed from OpenAI signup flow, 2023
       </p>
 
       {/* Reconstructed consent UI */}
@@ -471,11 +480,14 @@ function PolicyWordBars({ isInView }: { isInView: boolean }) {
 
   return (
     <div style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>
         How long did it get?
       </p>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.75rem', opacity: 0.7 }}>
+        OpenAI Privacy Policy — word count by version
+      </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint, lineHeight: 1.6, maxWidth: 480, marginBottom: '2rem' }}>
-        Word count of OpenAI's privacy policy across three versions.
+        Word count across three versions of OpenAI's privacy policy.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '1.75rem' }}>
@@ -691,9 +703,16 @@ function DeletionCarveOut({ isInView }: { isInView: boolean }) {
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
         color: PALETTE.redMuted, textTransform: 'uppercase',
-        marginBottom: '1.5rem',
+        marginBottom: '0.5rem',
       }}>
-        The clause that matters most — OpenAI Privacy Policy, April 2026
+        The clause that matters most
+      </p>
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
+        color: PALETTE.inkFaint, textTransform: 'uppercase',
+        marginBottom: '1.5rem', opacity: 0.7,
+      }}>
+        OpenAI Privacy Policy, April 2026 (US)
       </p>
 
       <blockquote style={{
@@ -771,23 +790,23 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
   const arguments_ = [
     {
       source: 'Nissenbaum, 2011',
-      claim: 'Transparency paradox',
-      text: 'The more complete the disclosure of data practices, the less comprehensible it becomes. A policy detailed enough to be accurate is too long to read. A policy short enough to read is too vague to inform. Both versions of transparency fail.',
+      claim: 'OpenAI\'s policy cannot be both readable and honest',
+      text: 'OpenAI\'s privacy policy grew from 3,417 words to 9,241 words between 2023 and 2026. Nissenbaum\'s transparency paradox explains why this is not accidental: a policy detailed enough to accurately describe OpenAI\'s data practices is too long to read. A version short enough to read omits the clauses that matter. The consent it generates is not meaningful.',
     },
     {
       source: 'McDonald & Cranor, 2008',
-      claim: '76 work-days',
-      text: 'If US internet users attempted to read the privacy policies of every website they visited, it would take approximately 76 work-days per year. The consent model requires something no-one does, and treats not doing it as implied agreement.',
+      claim: 'OpenAI\'s policy was designed not to be read',
+      text: 'Reading every privacy policy a typical internet user encounters would take 76 full work-days per year. OpenAI knows this. Every large platform knows this. The consent model depends on people not reading the document — and then treats the absence of objection as agreement. OpenAI\'s three policy versions in three years are a case study in that structure.',
     },
     {
       source: 'OpenAI Terms of Service, 2023',
-      claim: 'Continued use = re-consent',
-      text: '"Your continued use of the Services following the posting of updated Terms constitutes your acceptance of such changes." The contract updates itself. You consent by continuing to exist within it.',
+      claim: 'OpenAI\'s terms updated themselves',
+      text: '"Your continued use of the Services following the posting of updated Terms constitutes your acceptance of such changes." This sentence appears in the 2023 Terms of Service. It means OpenAI could — and did — add advertising, contact list upload, and a deletion carve-out to its policy without asking you again. Continued use was treated as a new signature.',
     },
     {
       source: 'Zuboff, 2022',
-      claim: 'Behavioural modification',
-      text: 'The opacity of data extraction is not incidental. Surveillance capitalism requires that the subject not fully understand what is happening. Transparency, if it occurred, would undermine the system it describes.',
+      claim: 'OpenAI\'s opacity is a feature, not a failure',
+      text: 'Zuboff argues that the opacity of data extraction under surveillance capitalism is structural: the system requires that subjects do not fully understand what is being taken. OpenAI\'s three-year expansion of its privacy policy — adding clauses, burying exceptions, introducing new data categories — fits this pattern. The consent framework is not broken. It is working as intended.',
     },
   ];
 
@@ -963,9 +982,50 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
           }
         }
       `}</style>
+      {/* Disambiguation header — above everything */}
+      <div style={{
+        borderBottom: `2px solid ${PALETTE.ink}`,
+        paddingTop: 'clamp(2.5rem, 6vw, 4rem)',
+        paddingBottom: 'clamp(1.5rem, 3vw, 2rem)',
+        marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
+      }}>
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          fontWeight: 400,
+          color: PALETTE.ink,
+          letterSpacing: '-0.03em',
+          lineHeight: 1.1,
+          marginBottom: '0.5rem',
+        }}>
+          These are not our terms.
+        </p>
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          fontWeight: 400,
+          color: PALETTE.inkMuted,
+          letterSpacing: '-0.03em',
+          lineHeight: 1.1,
+        }}>
+          These are the terms you already agreed to.
+        </p>
+        <p style={{
+          fontFamily: TYPE.mono,
+          fontSize: '10px',
+          letterSpacing: '0.25em',
+          color: PALETTE.inkFaint,
+          textTransform: 'uppercase',
+          marginTop: '1.25rem',
+          lineHeight: 1.6,
+        }}>
+          trace.ai stores nothing. trace.ai has no terms of service. Everything on this page is from OpenAI.
+        </p>
+      </div>
+
       {/* Hero */}
       <div ref={ref} style={{
-        padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem)',
+        padding: 'clamp(2rem, 5vw, 4rem) 0 clamp(2rem, 4vw, 3rem)',
         borderBottom: `1px solid ${PALETTE.border}`,
         marginBottom: 'clamp(3rem, 6vw, 5rem)',
         position: 'relative',
@@ -1058,9 +1118,16 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
         <p style={{
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
           color: PALETTE.redMuted, textTransform: 'uppercase',
-          marginBottom: '0.5rem',
+          marginBottom: '0.35rem',
         }}>
           Clause-by-clause comparison
+        </p>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+          marginBottom: '0.75rem', opacity: 0.7,
+        }}>
+          OpenAI Privacy Policy — June 2023, June 2025, April 2026
         </p>
         <p style={{
           fontFamily: TYPE.serif, fontSize: '1rem',

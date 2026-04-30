@@ -440,10 +440,16 @@ function VolumeChapter({ count, days, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          Each one a permanent fixture in a model that does not forget.
-          The terms you agreed to do not specify which conversations
-          were used to train it.
+          Each one a permanent record in OpenAI's training pipeline.
+          OpenAI's Privacy Policy permits the use of conversation content
+          to improve its models. No version of that policy specifies
+          which conversations were used.
         </p>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+          marginTop: '1rem', opacity: 0.6,
+        }}>OpenAI Privacy Policy, June 2023 — April 2026</p>
       </ChapterShell>
     </div>
   );
@@ -587,9 +593,16 @@ function InferenceChapter({ inferences, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          None of these attributes were stated. All were inferred
-          and the inference process is not described in the terms you agreed to.
+          None of these attributes were stated. All were inferred.
+          OpenAI's terms permit the use of conversation content to improve
+          its models — but say nothing about what is inferred in the process,
+          or what that inference produces.
         </p>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+          marginTop: '1rem', opacity: 0.6,
+        }}>OpenAI Terms of Service, 2023 · OpenAI Privacy Policy, 2026</p>
       </ChapterShell>
     </div>
   );
@@ -749,9 +762,14 @@ function DisclosureChapter({ excerpt, date, onActive }: {
           maxWidth: '50ch',
         }}>
           It was processed, classified, and used to weight a model.
-          The right to erasure, as defined in the terms, does not
-          extend to what has already been learned.
+          OpenAI's April 2026 Privacy Policy contains an explicit carve-out:
+          data already used in model training is exempt from the right to deletion.
         </p>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+          marginTop: '1rem', opacity: 0.6,
+        }}>OpenAI Privacy Policy, April 2026 (US) — deletion carve-out</p>
       </ChapterShell>
     </div>
   );
@@ -936,10 +954,15 @@ function NetworkChapter({ names, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          These individuals did not consent. Their names
-          and the contexts in which you mentioned them —
-          have been retained.
+          These individuals did not consent to being named in a training dataset.
+          OpenAI's terms govern only the account holder — not the people
+          mentioned in their conversations.
         </p>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+          marginTop: '1rem', opacity: 0.6,
+        }}>OpenAI Privacy Policy, 2023 — third-party data</p>
       </ChapterShell>
     </div>
   );
@@ -1188,8 +1211,15 @@ function ScoreChapter({ score, onActive }: {
           textAlign: 'center',
         }}>
           A composite measure of the personal information recoverable
-          from your conversation history alone.
+          from your conversation history — derived from what OpenAI's
+          systems were permitted to collect, retain, and learn from.
         </p>
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+          color: PALETTE.inkFaint, textTransform: 'uppercase',
+          marginTop: '1rem', opacity: 0.6,
+          textAlign: 'center',
+        }}>Based on OpenAI Privacy Policy categories, June 2023 — April 2026</p>
       </ChapterShell>
     </div>
   );
@@ -1363,12 +1393,17 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
               lineHeight: 1.78,
               maxWidth: '46ch',
             }}>
-              The right to deletion, as written in the terms you accepted,
-              does not apply to what a model has already learned.
-              Deleting your account removes your data from OpenAI's servers.
-              It does not remove your contribution from the model's weights.
-              Those are different operations.
+              OpenAI's April 2026 Privacy Policy explicitly exempts training data
+              from the right to deletion. Deleting your account removes your data
+              from OpenAI's servers. It does not remove your contribution from the
+              model's weights. Those are different operations — and only one of
+              them is covered by the terms you accepted.
             </p>
+            <p style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase',
+              marginTop: '1rem', opacity: 0.6,
+            }}>OpenAI Privacy Policy, April 2026 · Cooper et al., 2024 (machine unlearning)</p>
           </div>
         </div>
       </ChapterShell>
@@ -1621,6 +1656,46 @@ export default function OverviewPage({ results, sources, setPage }: {
           </button>
         </div>
       )}
+
+      {/* Disambiguation header */}
+      <div style={{
+        padding: `clamp(2rem, 5vw, 3.5rem) ${pad}`,
+        borderBottom: `2px solid ${PALETTE.ink}`,
+        maxWidth: 1200, margin: '0 auto',
+      }}>
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          fontWeight: 400,
+          color: PALETTE.ink,
+          letterSpacing: '-0.03em',
+          lineHeight: 1.1,
+          marginBottom: '0.4rem',
+        }}>
+          This is your data.
+        </p>
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
+          fontWeight: 400,
+          color: PALETTE.inkMuted,
+          letterSpacing: '-0.03em',
+          lineHeight: 1.1,
+        }}>
+          These are your conversations.
+        </p>
+        <p style={{
+          fontFamily: TYPE.mono,
+          fontSize: '10px',
+          letterSpacing: '0.25em',
+          color: PALETTE.inkFaint,
+          textTransform: 'uppercase',
+          marginTop: '1.25rem',
+          lineHeight: 1.6,
+        }}>
+          Extracted from your ChatGPT export · Processed locally · trace.ai stores nothing
+        </p>
+      </div>
 
       {/* Chapters */}
       <main>

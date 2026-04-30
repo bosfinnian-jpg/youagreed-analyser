@@ -203,16 +203,18 @@ function ChapterShell({
       id={`chapter-${id}`}
       className="chapter-snap chapter-shell"
       style={{
-        padding: 'clamp(3rem,10vw,10rem) clamp(1.25rem,6vw,5rem)',
+        height: '100dvh',
+        padding: 'clamp(1.5rem,4vw,3rem) clamp(1.25rem,6vw,5rem)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         position: 'relative',
         borderBottom: last ? 'none' : `1px solid ${PALETTE.border}`,
         overflow: 'hidden',
+        boxSizing: 'border-box',
       }}
     >
-      {/* Ghost chapter number — fades + scales up as chapter enters view */}
+      {/* Ghost chapter number */}
       {num && (
         <div aria-hidden="true" className="chapter-ghost-num" style={{
           position: 'absolute',
@@ -220,7 +222,7 @@ function ChapterShell({
           top: '50%',
           transform: `translateY(-50%) scale(${isActive ? 1 : 0.96})`,
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(12rem, 30vw, 28rem)',
+          fontSize: 'clamp(10rem, 26vw, 22rem)',
           fontWeight: 400,
           color: `rgba(26,24,20,${isActive ? 0.042 : 0.008})`,
           lineHeight: 1,
@@ -234,7 +236,7 @@ function ChapterShell({
       <div style={{ maxWidth: 880, margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
         {(num || label) && (
           <div style={{
-            display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(2.5rem,5vw,4rem)',
+            display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(1rem,2.5vw,2rem)',
             opacity: isActive ? 1 : 0.3,
             transform: `translateX(${isActive ? 0 : -10}px)`,
             transition: 'opacity 0.9s ease, transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)',
@@ -344,112 +346,180 @@ function ArrivalChapter({ name, date, onActive }: {
 
 // ════════════════════════════════════════════════════════════════════════════
 // CHAPTER 01 — VOLUME
-// A massive number counts up. Then a field of dots stagger-blooms in.
+// Radial clock: 24 spokes, bar length = message density at that hour.
+// Shows when you talked to it — behavioural, not just a count.
 // ════════════════════════════════════════════════════════════════════════════
-function VolumeChapter({ count, days, onActive }: {
+function VolumeChapter({ count, days, hourDist, onActive }: {
   count: number;
   days: number;
+  hourDist: number[];
   onActive: (id: ChapterId) => void;
 }) {
-  const numRef = useRef<HTMLSpanElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const numRef     = useRef<HTMLSpanElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
+  const spokeRefs  = useRef<SVGRectElement[]>([]);
 
-  // Dot grid configuration
-  const COLS = 28;
-  const ROWS = 14;
-  const TOTAL = COLS * ROWS;
-  const filled = Math.min(Math.round((count / Math.max(count, 1)) * TOTAL), TOTAL);
+  // Normalise hourDist to 0–1; fall back to flat if missing
+  const dist = hourDist?.length === 24 ? hourDist : Array(24).fill(0);
+  const maxVal = Math.max(...dist, 1);
+  const norm = dist.map(v => v / maxVal);
+
+  // Peak hour label
+  const peakHour = norm.indexOf(Math.max(...norm));
+  const peakLabel = peakHour === 0 ? 'midnight'
+    : peakHour < 12 ? `${peakHour}am`
+    : peakHour === 12 ? 'noon'
+    : `${peakHour - 12}pm`;
+
+  const CX = 110; const CY = 110;
+  const INNER = 28; const OUTER = 96;
 
   useScrollTrigger(sectionRef, () => {
-    // 1. Count number up with spring
+    // Count up
     const num = numRef.current;
     if (num) {
       const obj = { v: 0 };
       animate(obj, {
         v: count,
         ease: createSpring({ stiffness: 60, damping: 14 }).ease,
-        duration: 2200,
+        duration: 2000,
         onUpdate: () => { num.textContent = fmt(Math.round(obj.v)); },
       });
     }
 
-    // 2. Stagger the dot grid with grid + random
-    const grid = gridRef.current;
-    if (grid) {
-      const dots = Array.from(grid.querySelectorAll('.v-dot'));
-      dots.forEach(d => {
-        (d as HTMLElement).style.opacity = '0';
-        (d as HTMLElement).style.transform = 'scale(0.3)';
-      });
-      animate(dots, {
-        opacity: [0, 1],
-        scale:   [0.3, 1],
-        delay:   stagger(7, { grid: [COLS, ROWS], from: 'random' }),
-        ease:    createSpring({ stiffness: 280, damping: 22 }).ease,
-        duration: 600,
-      });
-    }
-  }, [count]);
+    // Spokes grow outward from inner ring
+    spokeRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const fullH = norm[i] * (OUTER - INNER);
+      el.style.height = '0px';
+      setTimeout(() => {
+        animate(el, {
+          height: [`0px`, `${fullH}px`],
+          opacity: [0.4, norm[i] > 0.6 ? 1 : 0.65],
+          duration: 700,
+          ease: createSpring({ stiffness: 180, damping: 18 }).ease,
+        });
+      }, 300 + i * 28);
+    });
+  }, [count, norm]);
 
   return (
     <div ref={sectionRef}>
       <ChapterShell id="volume" num="01" label="Volume" onActive={onActive}>
-        <div style={{ marginBottom: 'clamp(2.5rem,7vw,5rem)' }}>
-          <h2 style={{
-            fontFamily: TYPE.serif,
-            fontSize: 'clamp(5.5rem,22vw,12rem)',
-            fontWeight: 400, color: PALETTE.ink,
-            letterSpacing: '-0.05em', lineHeight: 0.92,
-            marginBottom: '0.5rem',
-          }}>
-            <span ref={numRef}>0</span>
-          </h2>
-          <p style={{
-            fontFamily: TYPE.serif,
-            fontSize: 'clamp(1.3rem,4vw,2rem)',
-            color: PALETTE.inkMuted,
-            letterSpacing: '-0.02em',
-            fontStyle: 'italic',
-            lineHeight: 1.3,
-          }}>
-            messages, processed{days > 0 ? ` across ${days} days` : ''}.
-          </p>
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(2rem,6vw,5rem)', flexWrap: 'wrap' }}>
 
-        <div ref={gridRef} className="v-grid" style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-          gap: 'clamp(4px, 0.7vw, 8px)',
-          marginBottom: 'clamp(3rem,5vw,4rem)',
-          maxWidth: 720,
-        }}>
-          {Array.from({ length: TOTAL }).map((_, i) => (
-            <div key={i} className="v-dot" style={{
-              aspectRatio: '1',
-              borderRadius: '50%',
-              background: i < filled ? 'rgba(190,40,30,0.62)' : 'rgba(26,24,20,0.10)',
-            }} />
-          ))}
-        </div>
+          {/* Left: number + copy */}
+          <div style={{ flex: '1 1 200px', minWidth: 180 }}>
+            <h2 style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(3.8rem,12vw,7rem)',
+              fontWeight: 400, color: PALETTE.ink,
+              letterSpacing: '-0.05em', lineHeight: 0.92,
+              marginBottom: '0.4rem',
+            }}>
+              <span ref={numRef}>0</span>
+            </h2>
+            <p style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(1rem,2.5vw,1.4rem)',
+              color: PALETTE.inkMuted,
+              letterSpacing: '-0.01em',
+              fontStyle: 'italic',
+              lineHeight: 1.3,
+              marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
+            }}>
+              messages{days > 0 ? `, across ${days} days` : ''}.
+            </p>
 
-        <p style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(1rem,1.7vw,1.18rem)',
-          color: PALETTE.inkMuted,
-          lineHeight: 1.78,
-          maxWidth: '50ch',
-        }}>
-          Each one a permanent record in OpenAI's training pipeline.
-          OpenAI's Privacy Policy permits the use of conversation content
-          to improve its models. No version of that policy specifies
-          which conversations were used.
-        </p>
-        <p style={{
-          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-          color: PALETTE.inkFaint, textTransform: 'uppercase',
-          marginTop: '1rem', opacity: 0.6,
-        }}>OpenAI Privacy Policy, June 2023 — April 2026</p>
+            <p style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(0.9rem,1.5vw,1.05rem)',
+              color: PALETTE.inkMuted,
+              lineHeight: 1.75,
+              maxWidth: '38ch',
+            }}>
+              Each one a permanent record in OpenAI's training pipeline.
+              OpenAI's Privacy Policy permits the use of conversation content
+              to improve its models. No version specifies which conversations were used.
+            </p>
+            <p style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase',
+              marginTop: '0.75rem', opacity: 0.6,
+            }}>OpenAI Privacy Policy, June 2023 — April 2026</p>
+          </div>
+
+          {/* Right: radial clock */}
+          <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem' }}>
+            <svg
+              viewBox="0 0 220 220"
+              style={{ width: 'clamp(160px,28vw,220px)', height: 'clamp(160px,28vw,220px)', overflow: 'visible' }}
+            >
+              {/* Hour rings (guide circles) */}
+              {[INNER, (INNER + OUTER) / 2, OUTER].map(r => (
+                <circle key={r} cx={CX} cy={CY} r={r}
+                  fill="none" stroke="rgba(26,24,20,0.07)" strokeWidth={0.5} />
+              ))}
+
+              {/* Hour spokes */}
+              {Array.from({ length: 24 }).map((_, i) => {
+                // 0 = midnight at top, rotate -90deg so 0h is 12 o'clock
+                const angleDeg = (i / 24) * 360 - 90;
+                const angleRad = (angleDeg * Math.PI) / 180;
+                const fullH = norm[i] * (OUTER - INNER);
+                const isPeak = i === peakHour;
+                const x = CX + Math.cos(angleRad) * INNER;
+                const y = CY + Math.sin(angleRad) * INNER;
+
+                return (
+                  <g key={i} transform={`translate(${x},${y}) rotate(${angleDeg + 90})`}>
+                    <rect
+                      ref={el => { if (el) spokeRefs.current[i] = el; }}
+                      x={-1.5} y={0}
+                      width={isPeak ? 4 : 3}
+                      height={0}
+                      fill={isPeak ? PALETTE.red : `rgba(26,24,20,0.55)`}
+                      style={{ transformOrigin: 'top center' }}
+                    />
+                  </g>
+                );
+              })}
+
+              {/* Centre dot */}
+              <circle cx={CX} cy={CY} r={3} fill={PALETTE.red} opacity={0.7} />
+              <circle cx={CX} cy={CY} r={8} fill="none" stroke={PALETTE.red} strokeWidth={0.5} strokeOpacity={0.3} />
+
+              {/* Hour labels at cardinal points */}
+              {[{h:'12am',a:-90},{h:'6am',a:0},{h:'12pm',a:90},{h:'6pm',a:180}].map(({h,a}) => {
+                const rad = (a * Math.PI) / 180;
+                const lr = OUTER + 14;
+                return (
+                  <text key={h}
+                    x={CX + Math.cos(rad) * lr}
+                    y={CY + Math.sin(rad) * lr + 3}
+                    textAnchor="middle" fontSize="7.5" letterSpacing="0.04em"
+                    fill="rgba(26,24,20,0.28)"
+                    fontFamily="'Courier Prime', monospace"
+                  >{h}</text>
+                );
+              })}
+            </svg>
+
+            <p style={{
+              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em',
+              color: PALETTE.redMuted, textTransform: 'uppercase', textAlign: 'center',
+            }}>
+              Peak activity · {peakLabel}
+            </p>
+            <p style={{
+              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em',
+              color: PALETTE.inkFaint, textTransform: 'uppercase', textAlign: 'center',
+            }}>
+              Messages by hour of day
+            </p>
+          </div>
+
+        </div>
       </ChapterShell>
     </div>
   );
@@ -522,10 +592,10 @@ function InferenceChapter({ inferences, onActive }: {
       <ChapterShell id="inference" num="02" label="Inference" onActive={onActive}>
         <h2 style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(2.2rem,5vw,3.6rem)',
+          fontSize: 'clamp(1.6rem,3.5vw,2.4rem)',
           fontWeight: 400, color: PALETTE.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 'clamp(2.5rem,5vw,4rem)',
+          marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
           maxWidth: '20ch',
         }}>
           From these messages, the model learned:
@@ -535,7 +605,7 @@ function InferenceChapter({ inferences, onActive }: {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
           gap: 'clamp(0.85rem, 2vw, 1.5rem)',
-          marginBottom: 'clamp(3rem,5vw,4rem)',
+          marginBottom: 'clamp(1rem,2vw,1.5rem)',
         }}>
           {inferences.map((inf, i) => (
             <div key={i} className="inf-stamp" style={{
@@ -675,10 +745,10 @@ function DisclosureChapter({ excerpt, date, onActive }: {
       <ChapterShell id="disclosure" num="03" label="Disclosure" onActive={onActive}>
         <h2 style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(2.2rem,5vw,3.6rem)',
+          fontSize: 'clamp(1.6rem,3.5vw,2.4rem)',
           fontWeight: 400, color: PALETTE.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 'clamp(2.5rem,5vw,4rem)',
+          marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
           maxWidth: '22ch',
         }}>
           The most exposing thing you wrote:
@@ -687,7 +757,7 @@ function DisclosureChapter({ excerpt, date, onActive }: {
         <div style={{
           position: 'relative',
           paddingLeft: 'clamp(1.5rem,4vw,3rem)',
-          marginBottom: 'clamp(2rem,4vw,3rem)',
+          marginBottom: 'clamp(0.85rem,2vw,1.5rem)',
           maxWidth: 760,
         }}>
           <svg style={{
@@ -885,10 +955,10 @@ function NetworkChapter({ names, onActive }: {
       <ChapterShell id="network" num="04" label="Network" onActive={onActive}>
         <h2 style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(2.2rem,5vw,3.6rem)',
+          fontSize: 'clamp(1.6rem,3.5vw,2.4rem)',
           fontWeight: 400, color: PALETTE.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 'clamp(2rem,5vw,4rem)',
+          marginBottom: 'clamp(0.85rem,2vw,1.5rem)',
           maxWidth: '22ch',
         }}>
           The {displayed.length} {displayed.length === 1 ? 'person' : 'people'} you named:
@@ -898,7 +968,7 @@ function NetworkChapter({ names, onActive }: {
           width: '100%',
           maxWidth: isMobile ? 420 : 720,
           aspectRatio: aspectRatio,
-          marginBottom: 'clamp(2.5rem,5vw,4rem)',
+          marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
           marginInline: 'auto',
         }}>
           <svg ref={svgRef} viewBox={viewBox} style={{ width: '100%', height: '100%' }}>
@@ -1074,10 +1144,10 @@ function ScoreChapter({ score, onActive }: {
       <ChapterShell id="score" num="05" label="Score" onActive={onActive}>
         <h2 style={{
           fontFamily: TYPE.serif,
-          fontSize: 'clamp(2.2rem,5vw,3.6rem)',
+          fontSize: 'clamp(1.6rem,3.5vw,2.4rem)',
           fontWeight: 400, color: PALETTE.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 'clamp(3rem,7vw,5rem)',
+          marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
           maxWidth: '22ch',
         }}>
           Combined into a single value:
@@ -1087,11 +1157,11 @@ function ScoreChapter({ score, onActive }: {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: 'clamp(3rem,5vw,4rem)',
+          marginBottom: 'clamp(1rem,2vw,1.5rem)',
         }}>
           <div style={{
             position: 'relative',
-            width: 'min(85vw, clamp(300px, 45vw, 460px))',
+            width: 'min(60vw, clamp(200px, 32vw, 320px))',
             aspectRatio: '1',
           }}>
             <svg viewBox="0 0 360 360" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
@@ -1371,10 +1441,10 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
           <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(2rem, 5vw, 4rem) 0' }}>
             <h2 ref={headlineRef} style={{
               fontFamily: TYPE.serif,
-              fontSize: 'clamp(2.6rem,8vw,4.2rem)',
+              fontSize: 'clamp(2rem,5vw,3rem)',
               fontWeight: 400, color: PALETTE.ink,
               letterSpacing: '-0.035em', lineHeight: 1.04,
-              marginBottom: 'clamp(2rem,4vw,3rem)',
+              marginBottom: 'clamp(0.85rem,2vw,1.5rem)',
               maxWidth: '14ch',
             }}>
               {words.map((w, i) => (
@@ -1443,7 +1513,7 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
             color: PALETTE.ink,
             lineHeight: 1.55,
             maxWidth: '32ch',
-            marginBottom: 'clamp(2.5rem,5vw,4rem)',
+            marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
             fontStyle: 'italic',
           }}>
             That was the record. What follows is what the record reveals about who you are.
@@ -1515,6 +1585,7 @@ export default function OverviewPage({ results, sources, setPage }: {
   const days         = results?.timespan?.days || 0;
   const primaryName  = results?.findings?.personalInfo?.names?.[0]?.name || null;
   const namesAll     = (results?.findings?.personalInfo?.names || []).map((n: any) => n.name);
+  const hourDist: number[] = results?.hourDistribution || Array(24).fill(0);
 
   const today = new Date().toLocaleDateString('en-GB', {
     day: 'numeric', month: 'long', year: 'numeric',
@@ -1700,7 +1771,7 @@ export default function OverviewPage({ results, sources, setPage }: {
       {/* Chapters */}
       <main>
         <ArrivalChapter name={primaryName} date={today} onActive={handleActive} />
-        {messageCount > 0 && <VolumeChapter count={messageCount} days={days} onActive={handleActive} />}
+        {messageCount > 0 && <VolumeChapter count={messageCount} days={days} hourDist={hourDist} onActive={handleActive} />}
         {inferences.length > 0 && <InferenceChapter inferences={inferences} onActive={handleActive} />}
         {excerpt && <DisclosureChapter excerpt={excerpt} date={excerptDate} onActive={handleActive} />}
         {namesAll.length > 0 && <NetworkChapter names={namesAll} onActive={handleActive} />}

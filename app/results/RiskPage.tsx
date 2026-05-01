@@ -65,7 +65,7 @@ interface RiskScenario {
   subtitle: string;
   body: string;
   dataPoints: { label: string; value: string; alarming: boolean }[];
-  precedent: { source: string; detail: string };
+  precedent: { source: string; detail: string; url: string };
 }
 
 function generateScenarios(r: AnalysisResult): RiskScenario[] {
@@ -103,7 +103,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       { label: 'Late-night ratio', value: nightPct + '%', alarming: nightPct > 10 },
       { label: 'High-severity events', value: String(highSevEvents.length), alarming: highSevEvents.length > 0 },
     ],
-    precedent: { source: 'FTC v. BetterHelp, 2023', detail: 'BetterHelp shared therapy status data with Facebook and Snapchat for ad targeting. Fine: $7.8 million. Users had been told their data was private.' },
+    precedent: { source: 'FTC v. BetterHelp, 2023', detail: 'BetterHelp shared therapy status data with Facebook and Snapchat for ad targeting. Fine: $7.8 million. Users had been told their data was private.', url: 'https://www.ftc.gov/news-events/news/press-releases/2023/03/ftc-action-against-betterhelp' },
   });
 
   const careerEvents = lifeEvents.filter(e => ['job_loss', 'job_search'].includes(e.type));
@@ -123,7 +123,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       { label: 'Dependency score', value: depScore + '/100', alarming: depScore > 50 },
       { label: 'Top themes', value: themes.slice(0, 2).join(', ') || 'None flagged', alarming: false },
     ],
-    precedent: { source: 'Mobley v. Workday, 2024', detail: 'A US federal court allowed a discrimination case to proceed against Workday after a plaintiff was rejected from 100+ jobs by its AI screening tools.' },
+    precedent: { source: 'Mobley v. Workday, 2024', detail: 'A US federal court allowed a discrimination case to proceed against Workday after a plaintiff was rejected from 100+ jobs by its AI screening tools.', url: 'https://www.bbc.co.uk/news/technology-68557264' },
   });
 
   const targetRelevance = segments.length * 8 + (nightPct > 5 ? 10 : 0) + sensitiveCount * 2;
@@ -142,7 +142,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       { label: 'Location exposed', value: homeLoc ? homeLoc.location : 'Not detected', alarming: !!homeLoc },
       { label: 'Named contacts', value: String(nameCount), alarming: nameCount > 3 },
     ],
-    precedent: { source: 'FTC v. Oracle, 2024', detail: 'Oracle settled for $115 million over tracking and selling user data from platforms users never interacted with directly.' },
+    precedent: { source: 'FTC v. Oracle, 2024', detail: 'Oracle settled for $115 million over tracking and selling user data from platforms users never interacted with directly.', url: 'https://www.ftc.gov/news-events/news/press-releases/2024/12/ftc-takes-action-against-oracle-exposing-sensitive-data-sale' },
   });
 
   const breachRelevance = (r.privacyScore || 0) * 0.5 + nameCount * 3 + locCount * 4 + sensitiveCount * 2;
@@ -159,7 +159,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       { label: 'Locations exposed', value: String(locCount), alarming: locCount > 0 },
       { label: 'Sensitive records', value: String(sensitiveCount), alarming: sensitiveCount > 0 },
     ],
-    precedent: { source: 'Equifax breach, 2017', detail: '148 million people exposed. Most did not know Equifax held their data. The company simply had it.' },
+    precedent: { source: 'Equifax breach, 2017', detail: '148 million people exposed. Most did not know Equifax held their data. The company simply had it.', url: 'https://www.ftc.gov/enforcement/refunds/equifax-data-breach-settlement' },
   });
 
   const SEV_ORDER = { critical: 0, high: 1, medium: 2, low: 3 };
@@ -274,15 +274,24 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         borderLeft: `2px solid ${PALETTE.border}`,
         paddingLeft: '1.5rem',
       }}>
-        <p style={{
-          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-          color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem',
-        }}>
+        <a
+          href={scenario.precedent.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+            color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem',
+            display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+            textDecoration: 'none', borderBottom: `1px solid ${PALETTE.redMuted}60`,
+            paddingBottom: '1px', cursor: 'pointer',
+          }}
+        >
           {scenario.precedent.source}
-        </p>
+          <span style={{ fontSize: '9px', opacity: 0.7 }}>↗</span>
+        </a>
         <p style={{
           fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)',
-          color: PALETTE.inkMuted, lineHeight: 1.7,
+          color: PALETTE.inkMuted, lineHeight: 1.7, marginTop: '0.5rem',
         }}>
           {scenario.precedent.detail}
         </p>
@@ -399,13 +408,25 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
             </p>
 
             <div style={{ borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.2rem' }}>
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-                color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem',
-              }}>{scenario.precedent.source}</p>
+              <a
+                href={scenario.precedent.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                style={{
+                  fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                  color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem',
+                  display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                  textDecoration: 'none', borderBottom: `1px solid ${PALETTE.redMuted}60`,
+                  paddingBottom: '1px', cursor: 'pointer',
+                }}
+              >
+                {scenario.precedent.source}
+                <span style={{ fontSize: '9px', opacity: 0.7 }}>↗</span>
+              </a>
               <p style={{
                 fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)',
-                fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.7,
+                fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.7, marginTop: '0.4rem',
               }}>{scenario.precedent.detail}</p>
             </div>
           </motion.div>
@@ -645,25 +666,48 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
 // Real incidents. Real scales. The question is not IF — it is when.
 
 const BREACHES = [
-  { year: 2021, month: 4,  name: 'Facebook',   records: 533, detail: 'Phone numbers, names, locations of 533M users published' },
-  { year: 2021, month: 6,  name: 'LinkedIn',    records: 700, detail: '700M user profiles scraped and listed for sale' },
-  { year: 2021, month: 10, name: 'Twitch',      records: 0.5, detail: '125GB of source code, creator revenue data' },
-  { year: 2022, month: 8,  name: 'Twitter/X',   records: 400, detail: '400M unique user records including private emails' },
-  { year: 2023, month: 3,  name: 'OpenAI',      records: 0.1, detail: 'Bug exposed conversation titles and payment info of active users' },
-  { year: 2023, month: 6,  name: 'MOVEit',      records: 60,  detail: '60M+ affected across hundreds of organisations via file transfer software' },
-  { year: 2024, month: 2,  name: 'Change Health',records: 190, detail: '190M patient healthcare records — largest US medical breach' },
-  { year: 2024, month: 5,  name: 'Snowflake',   records: 50,  detail: 'Ticketmaster, Santander, AT&T data via cloud storage credentials' },
-  { year: 2025, month: 1,  name: 'DeepSeek',    records: 1,   detail: 'AI chat logs, API keys, backend data exposed in open database' },
+  { year: 2021, month: 4,  name: 'Facebook',      records: 533,  detail: 'Phone numbers, names, and locations of 533M users published to a hacking forum. Data scraped before a 2019 vulnerability was patched.', url: 'https://www.businessinsider.com/stolen-data-of-533-million-facebook-users-leaked-online-2021-4' },
+  { year: 2021, month: 6,  name: 'LinkedIn',      records: 700,  detail: '700M user profiles scraped and listed for sale — 92% of total user base. Included emails, phone numbers, professional history.', url: 'https://www.privacysharks.com/linkedin-user-database-for-sale/' },
+  { year: 2021, month: 10, name: 'Twitch',        records: 0.5,  detail: '125GB of source code, creator earnings data, and internal security tools leaked by anonymous hacker. Revenue data for top streamers made public.', url: 'https://www.theverge.com/2021/10/6/22712250/twitch-hack-data-leak-amazon' },
+  { year: 2022, month: 8,  name: 'Twitter/X',     records: 400,  detail: '400M unique user records including private email addresses and phone numbers, exploited via a 2021 API vulnerability.', url: 'https://techcrunch.com/2023/01/05/twitter-data-400m/' },
+  { year: 2023, month: 3,  name: 'OpenAI',        records: 0.1,  detail: 'A bug in the Redis client library exposed conversation titles, payment info, and the last four digits of credit cards of active users for ~9 hours.', url: 'https://openai.com/blog/march-20-chatgpt-outage' },
+  { year: 2023, month: 6,  name: 'MOVEit',        records: 60,   detail: '60M+ individuals affected across hundreds of organisations — including the BBC, British Airways, and the US Department of Energy — via a zero-day in file transfer software.', url: 'https://www.bbc.co.uk/news/technology-65814214' },
+  { year: 2024, month: 2,  name: 'Change Health', records: 190,  detail: '190M patient records including diagnoses, medications, and Social Security numbers. Largest US healthcare breach in history. UnitedHealth paid a $22M ransom.', url: 'https://www.theguardian.com/us-news/2024/feb/22/change-healthcare-cyberattack' },
+  { year: 2024, month: 5,  name: 'Snowflake',     records: 50,   detail: 'Ticketmaster (560M users), Santander, AT&T, and 160+ other companies breached via stolen cloud credentials. Data sold on criminal forums.', url: 'https://www.wired.com/story/snowflake-breach-advanced-auto-parts-lendingtree/' },
+  { year: 2025, month: 1,  name: 'DeepSeek',      records: 1,    detail: 'AI chat logs, API keys, backend data, and system prompts exposed in an unsecured database. One million chat histories accessible without authentication.', url: 'https://www.wired.com/story/deepseek-database-leak/' },
 ];
 
 function BreachTimeline() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-5%' });
-  const [tooltip, setTooltip] = useState<typeof BREACHES[number] | null>(null);
+  const [active, setActive] = useState<typeof BREACHES[number] | null>(null);
+  const [svgW, setSvgW] = useState(860);
 
-  const maxR  = Math.max(...BREACHES.map(b => b.records));
+  useEffect(() => {
+    const obs = new ResizeObserver(e => setSvgW(e[0].contentRect.width || 860));
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const maxR = Math.max(...BREACHES.map(b => b.records));
   const minYear = 2021; const maxYear = 2025;
-  const W = 100; // percentage units for positioning
+  const PAD_X = 24;
+  const BASELINE_Y = 200;
+  const chartW = svgW - PAD_X * 2;
+  const SVG_H = 340;
+
+  // Alternate breaches above/below baseline to reduce overlap
+  const positioned = BREACHES.map((b, i) => {
+    const xFrac = (b.year - minYear + (b.month - 1) / 12) / (maxYear - minYear);
+    const x = PAD_X + xFrac * chartW;
+    const maxRadius = Math.min(70, chartW * 0.09);
+    const minRadius = 10;
+    const r = minRadius + (b.records / maxR) * (maxRadius - minRadius);
+    const above = i % 2 === 0;
+    const cy = above ? BASELINE_Y - r - 12 : BASELINE_Y + r + 12;
+    const isAI = b.name === 'OpenAI' || b.name === 'DeepSeek';
+    return { ...b, x, r, cy, above, isAI };
+  });
 
   return (
     <motion.div
@@ -674,133 +718,179 @@ function BreachTimeline() {
       style={{
         borderTop: `1px solid ${PALETTE.border}`,
         paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
-        marginTop:  'clamp(2.5rem, 5vw, 4rem)',
+        marginTop: 'clamp(2.5rem, 5vw, 4rem)',
         marginBottom: 'clamp(3rem, 7vw, 6rem)',
       }}
     >
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
         Major data incidents — 2021–2025
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint, lineHeight: 1.7, maxWidth: 520, marginBottom: '2.5rem' }}>
-        Circle size = records exposed (millions). Breach is not exceptional. Hover each incident.
-      </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2.5rem' }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.65, maxWidth: 520 }}>
+          Circle size = records exposed (millions). Breach is not exceptional — it is the norm. Click any incident for the source.
+        </p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexShrink: 0 }}>
+          {[
+            { color: 'rgba(190,40,30,0.7)', label: 'AI platform' },
+            { color: 'rgba(255,100,72,0.5)', label: 'Other breach' },
+          ].map(({ color, label }) => (
+            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: color }} />
+              <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {/* Timeline SVG */}
-      <div style={{ position: 'relative', overflowX: 'auto' }}>
+      {/* SVG — responsive width */}
+      <div style={{ position: 'relative', width: '100%', overflowX: 'auto' }}>
         <svg
-          viewBox="0 0 900 180"
-          style={{ width: '100%', minWidth: 600, overflow: 'visible' }}
-          preserveAspectRatio="xMidYMid meet"
+          viewBox={`0 0 ${svgW} ${SVG_H}`}
+          width="100%"
+          style={{ display: 'block', minWidth: 480, overflow: 'visible' }}
         >
-          {/* Baseline */}
-          <line x1={40} y1={110} x2={860} y2={110} stroke={PALETTE.border} strokeWidth={1} />
-
-          {/* Year labels */}
-          {[2021,2022,2023,2024,2025].map(yr => {
-            const x = 40 + ((yr - minYear) / (maxYear - minYear)) * 820;
+          {/* Year tick lines — faint verticals */}
+          {[2021, 2022, 2023, 2024, 2025].map(yr => {
+            const x = PAD_X + ((yr - minYear) / (maxYear - minYear)) * chartW;
             return (
               <g key={yr}>
-                <line x1={x} y1={105} x2={x} y2={115} stroke={PALETTE.border} strokeWidth={1} />
-                <text x={x} y={132} textAnchor="middle" fontFamily="'Courier Prime', monospace" fontSize={10} fill={'rgba(26,24,20,0.3)'} letterSpacing="1">
+                <line x1={x} y1={40} x2={x} y2={SVG_H - 40}
+                  stroke={PALETTE.border} strokeWidth={0.5} strokeDasharray="2 6" />
+                <text x={x} y={SVG_H - 22} textAnchor="middle"
+                  style={{ fontFamily: TYPE.mono, fontSize: '11px', fill: 'rgba(26,24,20,0.35)', letterSpacing: '0.1em' }}>
                   {yr}
                 </text>
               </g>
             );
           })}
 
-          {/* Breach circles */}
-          {BREACHES.map((b, i) => {
-            const x = 40 + ((b.year - minYear + (b.month - 1) / 12) / (maxYear - minYear)) * 820;
-            const maxRadius = 50;
-            const minRadius = 8;
-            const r = minRadius + (b.records / maxR) * (maxRadius - minRadius);
-            const isOpenAI = b.name === 'OpenAI' || b.name === 'DeepSeek';
-            const baseColor = isOpenAI ? '190,40,30' : '255,100,72';
-            const delay = 0.1 + i * 0.08;
+          {/* Baseline */}
+          <line x1={PAD_X} y1={BASELINE_Y} x2={PAD_X + chartW} y2={BASELINE_Y}
+            stroke={PALETTE.border} strokeWidth={1} />
 
+          {/* Circles */}
+          {positioned.map((b, i) => {
+            const baseRgb = b.isAI ? '190,40,30' : '200,80,50';
+            const isActive = active?.name === b.name;
             return (
               <motion.g
-                key={i}
+                key={b.name}
                 initial={{ opacity: 0, scale: 0 }}
                 animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay, type: 'spring', stiffness: 200, damping: 18 }}
-                style={{ transformOrigin: `${x}px 110px`, cursor: 'pointer' }}
-                onMouseEnter={() => setTooltip(b)}
-                onMouseLeave={() => setTooltip(null)}
+                transition={{ delay: 0.1 + i * 0.09, type: 'spring', stiffness: 180, damping: 16 }}
+                style={{ transformOrigin: `${b.x}px ${BASELINE_Y}px`, cursor: 'pointer' }}
+                onClick={() => window.open(b.url, '_blank', 'noopener noreferrer')}
+                onMouseEnter={() => setActive(b)}
+                onMouseLeave={() => setActive(null)}
               >
-                <circle
-                  cx={x} cy={110 - r * 0.5}
-                  r={r}
-                  fill={`rgba(${baseColor},0.12)`}
-                  stroke={`rgba(${baseColor},0.5)`}
-                  strokeWidth={isOpenAI ? 1.5 : 1}
+                {/* Stem */}
+                <line
+                  x1={b.x} y1={BASELINE_Y}
+                  x2={b.x} y2={b.above ? b.cy + b.r : b.cy - b.r}
+                  stroke={`rgba(${baseRgb},0.2)`} strokeWidth={1} strokeDasharray="2 3"
                 />
-                {isOpenAI && (
-                  <circle cx={x} cy={110 - r * 0.5} r={3} fill={`rgba(${baseColor},0.8)`} />
+                {/* Outer glow on hover */}
+                {isActive && (
+                  <circle cx={b.x} cy={b.cy} r={b.r + 6}
+                    fill="none" stroke={`rgba(${baseRgb},0.2)`} strokeWidth={1.5} />
                 )}
-                {r > 24 && (
-                  <text x={x} y={110 - r * 0.5 + 4} textAnchor="middle"
-                    fontFamily="'Courier Prime', monospace" fontSize={9}
-                    fill={`rgba(${baseColor},0.8)`} letterSpacing="0.5"
-                  >
+                {/* Main circle */}
+                <circle
+                  cx={b.x} cy={b.cy} r={b.r}
+                  fill={`rgba(${baseRgb},${isActive ? 0.22 : 0.1})`}
+                  stroke={`rgba(${baseRgb},${isActive ? 0.9 : 0.45})`}
+                  strokeWidth={b.isAI ? 1.5 : 1}
+                />
+                {/* Centre dot for AI platforms */}
+                {b.isAI && <circle cx={b.x} cy={b.cy} r={3} fill={`rgba(${baseRgb},0.8)`} />}
+                {/* Name label — inside if large enough, outside if small */}
+                {b.r >= 22 ? (
+                  <text x={b.x} y={b.cy + 4} textAnchor="middle"
+                    style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: `rgba(${baseRgb},0.9)`, letterSpacing: '0.08em', pointerEvents: 'none' }}>
+                    {b.name}
+                  </text>
+                ) : (
+                  <text x={b.x} y={b.above ? b.cy - b.r - 6 : b.cy + b.r + 14} textAnchor="middle"
+                    style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: `rgba(${baseRgb},0.75)`, letterSpacing: '0.08em', pointerEvents: 'none' }}>
                     {b.name}
                   </text>
                 )}
-              </motion.g>
-            );
-          })}
-
-          {/* Annotation arrow for OpenAI */}
-          {(() => {
-            const oai = BREACHES.find(b => b.name === 'OpenAI');
-            if (!oai) return null;
-            const x = 40 + ((oai.year - minYear + (oai.month - 1) / 12) / (maxYear - minYear)) * 820;
-            return (
-              <motion.g initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 1.2 }}>
-                <line x1={x} y1={95} x2={x - 60} y2={65} stroke={'rgba(190,40,30,0.3)'} strokeWidth={0.75} strokeDasharray="3,3" />
-                <text x={x - 65} y={60} textAnchor="end" fontFamily="'Courier Prime', monospace" fontSize={9} fill={'rgba(190,40,30,0.6)'} letterSpacing="0.5">
-                  OpenAI, 2023
+                {/* Record count */}
+                {b.r >= 28 && (
+                  <text x={b.x} y={b.cy + 17} textAnchor="middle"
+                    style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: `rgba(${baseRgb},0.55)`, pointerEvents: 'none' }}>
+                    {b.records >= 1 ? `${b.records}M` : '<1M'}
+                  </text>
+                )}
+                {/* Click indicator */}
+                <text x={b.x + b.r - 4} y={b.cy - b.r + 10} textAnchor="middle"
+                  style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: `rgba(${baseRgb},0.5)`, pointerEvents: 'none' }}>
+                  ↗
                 </text>
               </motion.g>
             );
-          })()}
+          })}
         </svg>
 
-        {/* Tooltip */}
-        {tooltip && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{
-              position: 'absolute', bottom: '100%', left: '50%', transform: 'translateX(-50%)',
-              background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`,
-              padding: '1rem 1.25rem', maxWidth: 320, zIndex: 20,
-              pointerEvents: 'none',
-            }}
-          >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-              {tooltip.name} — {tooltip.month}/{tooltip.year}
-            </p>
-            <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.65 }}>
-              {tooltip.detail}
-            </p>
-            {tooltip.records >= 1 && (
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.4rem' }}>
-                {tooltip.records}M records
-              </p>
-            )}
-          </motion.div>
-        )}
+        {/* Detail panel — appears below chart when active */}
+        <AnimatePresence>
+          {active && (
+            <motion.div
+              key={active.name}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                marginTop: '0.75rem',
+                padding: '1.25rem 1.5rem',
+                background: PALETTE.bgPanel,
+                border: `1px solid ${(active.name === 'OpenAI' || active.name === 'DeepSeek') ? PALETTE.red : PALETTE.border}`,
+                borderLeft: `3px solid ${(active.name === 'OpenAI' || active.name === 'DeepSeek') ? PALETTE.red : PALETTE.border}`,
+                display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+                gap: '1.5rem', flexWrap: 'wrap',
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: (active.name === 'OpenAI' || active.name === 'DeepSeek') ? PALETTE.red : PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                  {active.name} — {new Date(active.year, active.month - 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                </p>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
+                  {active.detail}
+                </p>
+              </div>
+              <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                {active.records >= 1 && (
+                  <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.5rem, 3vw, 2rem)', color: PALETTE.red, letterSpacing: '-0.03em', lineHeight: 1, marginBottom: '0.25rem' }}>
+                    {active.records}M
+                  </p>
+                )}
+                <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkFaint, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>records exposed</p>
+                <a
+                  href={active.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em',
+                    color: PALETTE.redMuted, textTransform: 'uppercase',
+                    textDecoration: 'none', borderBottom: `1px solid ${PALETTE.redMuted}60`,
+                    paddingBottom: '1px', display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+                  }}
+                >
+                  Source ↗
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <p style={{
         fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted,
-        lineHeight: 1.7, maxWidth: 560, marginTop: '1.5rem',
+        lineHeight: 1.7, maxWidth: 560, marginTop: '1.75rem',
         fontStyle: 'italic', borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1rem',
       }}>
-        The question is not whether a breach will expose AI conversation data. It is
-        which breach, and when. Your conversations exist on servers. Servers get breached.
-        The pattern is consistent.
+        The question is not whether a breach will expose AI conversation data. It is which breach, and when. Your conversations exist on servers. Servers get breached. The pattern is consistent.
       </p>
     </motion.div>
   );

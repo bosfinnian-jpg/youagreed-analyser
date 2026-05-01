@@ -96,9 +96,9 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
   const weeks = timeline?.weeks ?? [];
   if (weeks.length < 3) return null;
 
-  // Dimensions
+  // Dimensions — left pad gives room for axis, right pad prevents clip
   const H = 240;
-  const PAD = { top: 24, right: 20, bottom: 48, left: 8 };
+  const PAD = { top: 24, right: 24, bottom: 48, left: 32 };
   const cW = svgWidth - PAD.left - PAD.right;
   const cH = H - PAD.top - PAD.bottom;
 
@@ -275,6 +275,12 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
           {/* Baseline */}
           <line x1={PAD.left} y1={PAD.top + cH} x2={PAD.left + cW} y2={PAD.top + cH}
             stroke={PALETTE.border} strokeWidth={0.5} />
+
+          {/* Left axis labels */}
+          <text x={PAD.left - 6} y={PAD.top + 4} textAnchor="end"
+            style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: 'rgba(26,24,20,0.3)', letterSpacing: '0.05em' }}>High</text>
+          <text x={PAD.left - 6} y={PAD.top + cH} textAnchor="end"
+            style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: 'rgba(26,24,20,0.3)', letterSpacing: '0.05em' }}>Low</text>
         </svg>
 
         {/* Tooltip */}
@@ -445,102 +451,196 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
 }
 
 // ============================================================================
-// TARGETING WINDOW — 24-hour bar chart showing vulnerability by hour
+// TARGETING WINDOW — radial 24-hour clock of disclosure activity
 // ============================================================================
 function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRatio }: {
   hourDistribution: number[];
   mostVulnerablePeriod: string;
   nighttimeRatio: number;
 }) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    if (isInView) { const t = setTimeout(() => setRevealed(true), 200); return () => clearTimeout(t); }
+  }, [isInView]);
+
   if (!hourDistribution?.length) return null;
 
   const max = Math.max(...hourDistribution, 1);
   const hours = Array.from({ length: 24 }, (_, i) => i);
 
-  function hourLabel(h: number) {
-    if (h === 0) return '12a';
-    if (h === 12) return '12p';
-    return h < 12 ? `${h}a` : `${h - 12}p`;
+  // Clock geometry
+  const SIZE = 260;
+  const cx = SIZE / 2;
+  const cy = SIZE / 2;
+  const innerR = 48;  // hollow centre
+  const outerMaxR = 112; // max spoke length
+
+  function hourToAngle(h: number) {
+    // 0h = top (−π/2), clockwise
+    return (h / 24) * Math.PI * 2 - Math.PI / 2;
   }
 
-  function barColor(h: number, count: number) {
-    const isLateNight = h >= 0 && h <= 4;
-    const intensity = count / max;
-    if (isLateNight && intensity > 0.1) return PALETTE.red;
-    if (intensity > 0.6) return PALETTE.amber;
-    return 'rgba(26,24,20,0.22)';
+  function wedgePath(h: number, count: number) {
+    const norm = count / max;
+    const spokeR = innerR + norm * (outerMaxR - innerR);
+    const angleStart = hourToAngle(h) - (Math.PI / 24) * 0.7;
+    const angleEnd = hourToAngle(h) + (Math.PI / 24) * 0.7;
+    const x1 = cx + Math.cos(angleStart) * innerR;
+    const y1 = cy + Math.sin(angleStart) * innerR;
+    const x2 = cx + Math.cos(angleStart) * spokeR;
+    const y2 = cy + Math.sin(angleStart) * spokeR;
+    const x3 = cx + Math.cos(angleEnd) * spokeR;
+    const y3 = cy + Math.sin(angleEnd) * spokeR;
+    const x4 = cx + Math.cos(angleEnd) * innerR;
+    const y4 = cy + Math.sin(angleEnd) * innerR;
+    return `M ${x1.toFixed(2)} ${y1.toFixed(2)} L ${x2.toFixed(2)} ${y2.toFixed(2)} A ${spokeR.toFixed(2)} ${spokeR.toFixed(2)} 0 0 1 ${x3.toFixed(2)} ${y3.toFixed(2)} L ${x4.toFixed(2)} ${y4.toFixed(2)} A ${innerR} ${innerR} 0 0 0 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`;
   }
+
+  function wedgeColor(h: number, count: number) {
+    const isLate = h <= 4 || h === 23;
+    const norm = count / max;
+    if (isLate && norm > 0.05) return `rgba(190,40,30,${0.4 + norm * 0.55})`;
+    if (norm > 0.55) return `rgba(170,90,0,${0.35 + norm * 0.35})`;
+    if (norm > 0.1) return `rgba(26,24,20,${0.12 + norm * 0.2})`;
+    return 'rgba(26,24,20,0.06)';
+  }
+
+  // Cardinal labels
+  const cardinals = [
+    { h: 0, label: '12a' }, { h: 6, label: '6a' },
+    { h: 12, label: '12p' }, { h: 18, label: '6p' },
+  ];
+
+  // Late-night arc path (23–4h shaded zone)
+  const lateStart = hourToAngle(23);
+  const lateEnd = hourToAngle(4) + Math.PI / 24;
+  const lx1 = cx + Math.cos(lateStart) * innerR;
+  const ly1 = cy + Math.sin(lateStart) * innerR;
+  const lx2 = cx + Math.cos(lateStart) * outerMaxR;
+  const ly2 = cy + Math.sin(lateStart) * outerMaxR;
+  const lx3 = cx + Math.cos(lateEnd) * outerMaxR;
+  const ly3 = cy + Math.sin(lateEnd) * outerMaxR;
+  const lx4 = cx + Math.cos(lateEnd) * innerR;
+  const ly4 = cy + Math.sin(lateEnd) * innerR;
+  const lateArcPath = `M ${lx1.toFixed(2)} ${ly1.toFixed(2)} L ${lx2.toFixed(2)} ${ly2.toFixed(2)} A ${outerMaxR} ${outerMaxR} 0 0 1 ${lx3.toFixed(2)} ${ly3.toFixed(2)} L ${lx4.toFixed(2)} ${ly4.toFixed(2)} A ${innerR} ${innerR} 0 0 0 ${lx1.toFixed(2)} ${ly1.toFixed(2)} Z`;
 
   return (
     <div ref={ref} style={{ marginBottom: 'clamp(2rem, 5vw, 3rem)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
+      <div style={{ marginBottom: '1.75rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
           Disclosure pattern by hour
         </p>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted, letterSpacing: '0.1em' }}>
-          Peak: {mostVulnerablePeriod} · {Math.round(nighttimeRatio * 100)}% late-night messages
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.65, maxWidth: 520 }}>
+          When you opened up. Each wedge is one hour of the day — sized by message volume. The red zone is 11pm–4am: the window of lowest emotional guard and highest disclosure density.
         </p>
       </div>
 
-      {/* Bar chart */}
-      <div style={{ overflowX: 'auto', marginBottom: '4px' }}>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(24, 1fr)',
-        minWidth: '360px',
-        gap: '2px',
-        alignItems: 'flex-end',
-        height: '64px',
-        marginBottom: '4px',
-      }}>
-        {hours.map((h) => {
-          const count = hourDistribution[h] ?? 0;
-          const pct = count / max;
-          return (
-            <motion.div
-              key={h}
-              title={`${hourLabel(h)}: ${count} messages`}
-              initial={{ scaleY: 0 }}
-              animate={isInView ? { scaleY: 1 } : {}}
-              transition={{ delay: h * 0.02, duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-              style={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'flex-end',
-                transformOrigin: 'bottom',
-              }}
-            >
-              <div style={{
-                width: '100%',
-                height: `${Math.max(pct * 100, 2)}%`,
-                background: barColor(h, count),
-                minHeight: '2px',
-                transition: 'background 0.3s',
-              }} />
-            </motion.div>
-          );
-        })}
-      </div>
-      </div>
+      <div style={{ display: 'flex', gap: 'clamp(2rem, 5vw, 4rem)', alignItems: 'center', flexWrap: 'wrap' }}>
 
-      {/* Hour labels — just key ones */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(24, 1fr)', gap: '2px', minWidth: '360px', overflowX: 'hidden' }}>
-        {hours.map(h => (
-          <p key={h} style={{
-            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.05em',
-            color: h === 0 || h === 6 || h === 12 || h === 18 ? PALETTE.inkFaint : 'transparent',
-            textAlign: 'center', textTransform: 'uppercase',
-          }}>
-            {hourLabel(h)}
+        {/* Clock SVG */}
+        <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`} style={{ flexShrink: 0, overflow: 'visible' }}>
+          {/* Late-night zone background */}
+          <path d={lateArcPath} fill="rgba(190,40,30,0.06)" />
+
+          {/* Outer ring guide */}
+          <circle cx={cx} cy={cy} r={outerMaxR} fill="none" stroke={PALETTE.border} strokeWidth={0.5} strokeDasharray="2 4" />
+          {/* Mid ring guide */}
+          <circle cx={cx} cy={cy} r={(innerR + outerMaxR) / 2} fill="none" stroke={PALETTE.border} strokeWidth={0.5} strokeDasharray="1 6" opacity={0.5} />
+          {/* Inner ring */}
+          <circle cx={cx} cy={cy} r={innerR} fill={PALETTE.bgPanel} stroke={PALETTE.border} strokeWidth={0.5} />
+
+          {/* Wedges */}
+          {hours.map((h, i) => {
+            const count = hourDistribution[h] ?? 0;
+            if (count === 0) return null;
+            return (
+              <motion.path
+                key={h}
+                d={wedgePath(h, count)}
+                fill={wedgeColor(h, count)}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={revealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
+                transition={{ duration: 0.5, delay: (i / 24) * 0.6, ease: [0.4, 0, 0.2, 1] }}
+                style={{ transformOrigin: `${cx}px ${cy}px` } as React.CSSProperties}
+              />
+            );
+          })}
+
+          {/* Cardinal tick marks */}
+          {cardinals.map(({ h, label }) => {
+            const angle = hourToAngle(h);
+            const tickR = outerMaxR + 8;
+            const lblR = outerMaxR + 20;
+            return (
+              <g key={h}>
+                <line
+                  x1={(cx + Math.cos(angle) * (outerMaxR + 2)).toFixed(2)}
+                  y1={(cy + Math.sin(angle) * (outerMaxR + 2)).toFixed(2)}
+                  x2={(cx + Math.cos(angle) * tickR).toFixed(2)}
+                  y2={(cy + Math.sin(angle) * tickR).toFixed(2)}
+                  stroke={PALETTE.inkFaint} strokeWidth={0.75}
+                />
+                <text
+                  x={(cx + Math.cos(angle) * lblR).toFixed(2)}
+                  y={(cy + Math.sin(angle) * lblR + 3).toFixed(2)}
+                  textAnchor="middle"
+                  style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: 'rgba(26,24,20,0.45)', letterSpacing: '0.08em' }}
+                >
+                  {label}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Centre stat */}
+          <motion.g initial={{ opacity: 0 }} animate={revealed ? { opacity: 1 } : {}} transition={{ delay: 0.9 }}>
+            <text x={cx} y={cy - 8} textAnchor="middle"
+              style={{ fontFamily: TYPE.serif, fontSize: '18px', fill: PALETTE.red, letterSpacing: '-0.02em' }}>
+              {Math.round(nighttimeRatio * 100)}%
+            </text>
+            <text x={cx} y={cy + 9} textAnchor="middle"
+              style={{ fontFamily: TYPE.mono, fontSize: '7px', fill: PALETTE.inkFaint, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              late-night
+            </text>
+          </motion.g>
+
+          {/* Late night label */}
+          <motion.text
+            x={(cx + Math.cos(hourToAngle(1.5)) * (outerMaxR + 28)).toFixed(2)}
+            y={(cy + Math.sin(hourToAngle(1.5)) * (outerMaxR + 28) + 3).toFixed(2)}
+            textAnchor="middle"
+            initial={{ opacity: 0 }} animate={revealed ? { opacity: 1 } : {}} transition={{ delay: 1 }}
+            style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: PALETTE.red, letterSpacing: '0.12em', textTransform: 'uppercase' } as React.CSSProperties}
+          >
+            vulnerable
+          </motion.text>
+        </svg>
+
+        {/* Callout stats */}
+        <div style={{ flex: 1, minWidth: 180 }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>Peak window</p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              {mostVulnerablePeriod}
+            </p>
+          </div>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>Late-night share</p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', color: PALETTE.red, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
+              {Math.round(nighttimeRatio * 100)}%
+            </p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.3rem', lineHeight: 1.5 }}>
+              of all messages sent 12am–5am
+            </p>
+          </div>
+          <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65, borderLeft: `2px solid ${PALETTE.red}`, paddingLeft: '0.85rem' }}>
+            Late-night messages carry the highest concentration of sensitive disclosure. This is when emotional defences are lowest — and when exposed data would be most revealing.
           </p>
-        ))}
+        </div>
       </div>
-
-      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.red, marginTop: '0.75rem' }}>
-        ■ Late-night messages (12am–4am) carry the highest concentration of sensitive disclosure. This is when emotional defences are lowest — and when exposed data would be most revealing.
-      </p>
     </div>
   );
 }

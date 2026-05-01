@@ -39,155 +39,167 @@ export function RetainedTag({ variant = 'inline' }: { variant?: 'inline' | 'bloc
 }
 
 // ============================================================================
-// ONE-WAY FLOW DIAGRAM
+// ONE-WAY FLOW DIAGRAM — animated SVG pipeline
 // ============================================================================
-function OneWayFlow() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+function OneWayFlow({ setPage }: { setPage: (p: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-5%' });
+  const [phase, setPhase] = useState(0); // 0=idle, 1=flowing, 2=absorbed, 3=blocked
 
-  const steps = [
-    { label: 'You typed', sub: 'A message in the interface' },
-    { label: 'Transmitted', sub: 'Sent to OpenAI servers' },
-    { label: 'Stored', sub: 'Retained for up to 30 days' },
-    { label: 'Selected', sub: 'Included in training batch' },
-    { label: 'Gradient computed', sub: 'Your text becomes mathematics' },
+  useEffect(() => {
+    if (!isInView) return;
+    const t1 = setTimeout(() => setPhase(1), 400);
+    const t2 = setTimeout(() => setPhase(2), 2200);
+    const t3 = setTimeout(() => setPhase(3), 3200);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
+  }, [isInView]);
+
+  const stages = [
+    { id: 'type', label: 'You type', sub: 'Interface' },
+    { id: 'send', label: 'Transmitted', sub: 'OpenAI servers' },
+    { id: 'store', label: 'Stored', sub: 'Up to 30 days' },
+    { id: 'select', label: 'Batched', sub: 'Training selection' },
+    { id: 'gradient', label: 'Gradient descent', sub: 'Mathematics computed' },
+    { id: 'weights', label: 'Weights shift', sub: 'Permanent', red: true },
   ];
+
+  const W = 860; const H = 120;
+  const stageX = stages.map((_, i) => 40 + (i / (stages.length - 1)) * 780);
+  const baseY = 60;
 
   return (
     <div ref={ref} style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)' }}>
-      <p style={{
-        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-        color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
-      }}>
-        The pipeline
-      </p>
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 540,
-        marginBottom: 'clamp(2rem, 5vw, 3rem)',
-      }}>
-        Every conversation you had followed this sequence. It had no reverse function built into it.
-      </p>
-
-      {/* Flow — horizontal on desktop, vertical on mobile */}
       <style>{`
         @media (max-width: 640px) {
-          .flow-row { flex-direction: column !important; }
-          .flow-arrow { transform: rotate(90deg); }
-          .flow-final-arrow { flex-direction: column !important; align-items: center !important; }
           .cbd-2col { grid-template-columns: 1fr !important; }
           .cbd-3col { grid-template-columns: 1fr !important; }
-          .cbd-table-3col { grid-template-columns: 1fr !important; }
-          .cbd-table-3col > div + div { border-top: 1px dashed ${PALETTE.border}; }
+          .pipeline-svg { min-width: 500px; }
         }
       `}</style>
 
-      <div className="flow-row" style={{ display: 'flex', alignItems: 'stretch', gap: 0, flexWrap: 'nowrap', overflowX: 'auto' }}>
-        {steps.map((step, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 12 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: i * 0.15, duration: 0.6 }}
-            style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}
-          >
-            <div style={{
-              border: `1px solid ${PALETTE.border}`,
-              padding: 'clamp(0.75rem, 2vw, 1.25rem)',
-              minWidth: 'clamp(90px, 12vw, 130px)',
-              background: PALETTE.bgPanel,
-            }}>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.1rem)',
-                color: PALETTE.ink, letterSpacing: '-0.01em', marginBottom: '0.35rem',
-                lineHeight: 1.2,
-              }}>{step.label}</p>
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em',
-                color: PALETTE.inkFaint, lineHeight: 1.5,
-              }}>{step.sub}</p>
-            </div>
-            {i < steps.length - 1 && (
-              <div className="flow-arrow" style={{ padding: '0 clamp(0.3rem, 1vw, 0.6rem)', color: PALETTE.inkFaint, fontSize: '1.1rem', flexShrink: 0 }}>
-                →
-              </div>
-            )}
-          </motion.div>
-        ))}
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+        The pipeline
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 540, marginBottom: 'clamp(2rem, 4vw, 2.5rem)' }}>
+        Every conversation you had followed this sequence. Each stage was irreversible. There was no return function built into it.
+      </p>
 
-        {/* Final step — red, permanent */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: steps.length * 0.15, duration: 0.6 }}
-          style={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}
-        >
-          <div className="flow-arrow" style={{ padding: '0 clamp(0.3rem, 1vw, 0.6rem)', color: PALETTE.red, fontSize: '1.1rem', flexShrink: 0 }}>→</div>
-          <div style={{
-            border: `1px solid ${PALETTE.red}`,
-            padding: 'clamp(0.75rem, 2vw, 1.25rem)',
-            minWidth: 'clamp(90px, 12vw, 130px)',
-            background: PALETTE.redFaint,
-          }}>
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.1rem)',
-              color: PALETTE.red, letterSpacing: '-0.01em', marginBottom: '0.35rem',
-              lineHeight: 1.2,
-            }}>Weights adjusted</p>
-            <p style={{
-              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.1em',
-              color: PALETTE.redMuted, lineHeight: 1.5,
-            }}>Billions of parameters shifted</p>
-          </div>
-        </motion.div>
+      <div style={{ overflowX: 'auto', paddingBottom: '0.5rem' }}>
+        <svg className="pipeline-svg" viewBox={`0 0 ${W} ${H}`} width="100%" style={{ display: 'block', overflow: 'visible', minWidth: 500 }}>
+
+          {/* Main pipeline track */}
+          <motion.line x1={40} y1={baseY} x2={720} y2={baseY}
+            stroke={PALETTE.border} strokeWidth={1}
+            initial={{ pathLength: 0 }} animate={phase >= 1 ? { pathLength: 1 } : {}}
+            transition={{ duration: 1.2, ease: 'easeInOut' }} />
+
+          {/* Flowing particles along track */}
+          {phase >= 1 && phase < 2 && [0, 0.22, 0.44, 0.66].map((offset, i) => (
+            <motion.circle key={i} r={3} fill={PALETTE.red} opacity={0.6}
+              initial={{ cx: 40 }} animate={{ cx: 720 }}
+              transition={{ duration: 1.6, delay: offset, repeat: Infinity, ease: 'linear' }}
+              style={{ cy: baseY } as React.CSSProperties} />
+          ))}
+
+          {/* Stage nodes */}
+          {stages.map((stage, i) => {
+            const x = stageX[i];
+            const isLast = i === stages.length - 1;
+            const color = isLast ? PALETTE.red : PALETTE.ink;
+            const bgFill = isLast ? 'rgba(190,40,30,0.06)' : PALETTE.bgPanel;
+            return (
+              <motion.g key={stage.id}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={phase >= 1 ? { opacity: 1, scale: 1 } : {}}
+                transition={{ delay: 0.1 + i * 0.15, duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                style={{ transformOrigin: `${x}px ${baseY}px` } as React.CSSProperties}
+              >
+                {/* Node circle */}
+                <circle cx={x} cy={baseY} r={isLast ? 10 : 7}
+                  fill={bgFill} stroke={isLast ? PALETTE.red : PALETTE.border} strokeWidth={isLast ? 1.5 : 1} />
+                {isLast && <circle cx={x} cy={baseY} r={4} fill={PALETTE.red} />}
+                {/* Label above */}
+                <text x={x} y={baseY - 18} textAnchor="middle"
+                  style={{ fontFamily: TYPE.serif, fontSize: '11px', fill: color, letterSpacing: '-0.01em' }}>
+                  {stage.label}
+                </text>
+                {/* Sub below */}
+                <text x={x} y={baseY + 22} textAnchor="middle"
+                  style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: 'rgba(26,24,20,0.4)', letterSpacing: '0.06em' }}>
+                  {stage.sub}
+                </text>
+              </motion.g>
+            );
+          })}
+
+          {/* Absorbed flash on weights node */}
+          {phase >= 2 && (
+            <motion.circle cx={stageX[5]} cy={baseY} r={24}
+              fill="none" stroke={PALETTE.red} strokeWidth={1}
+              initial={{ opacity: 0.8, scale: 0.5 }} animate={{ opacity: 0, scale: 2.5 }}
+              transition={{ duration: 1, ease: 'easeOut' }}
+              style={{ transformOrigin: `${stageX[5]}px ${baseY}px` } as React.CSSProperties} />
+          )}
+
+          {/* Return path — blocked */}
+          <motion.line x1={720} y1={baseY + 28} x2={60} y2={baseY + 28}
+            stroke={PALETTE.border} strokeWidth={0.5} strokeDasharray="3 5"
+            initial={{ opacity: 0 }} animate={phase >= 3 ? { opacity: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }} />
+
+          {/* Arrow pointing left — blocked */}
+          {phase >= 3 && (
+            <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+              <text x={390} y={baseY + 42} textAnchor="middle"
+                style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: PALETTE.red, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+                NO RETURN FUNCTION
+              </text>
+              {/* Strike through the dashed line */}
+              <line x1={200} y1={baseY + 28} x2={580} y2={baseY + 28}
+                stroke={PALETTE.red} strokeWidth={1.5} opacity={0.4} />
+              <line x1={210} y1={baseY + 23} x2={570} y2={baseY + 33}
+                stroke={PALETTE.red} strokeWidth={1} opacity={0.25} />
+            </motion.g>
+          )}
+        </svg>
       </div>
 
-      {/* No return arrow */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: (steps.length + 1) * 0.15 }}
-        style={{
-          display: 'flex', alignItems: 'center', gap: '1rem',
-          marginTop: '1.5rem', paddingLeft: '0.5rem',
-        }}
-      >
-        <div style={{
-          position: 'relative', width: 120, height: 2,
-          background: PALETTE.border,
+      {/* Contextual link to how-it-works */}
+      <motion.div initial={{ opacity: 0 }} animate={phase >= 3 ? { opacity: 1 } : {}} transition={{ delay: 0.8 }}
+        style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+          See how the extraction works in detail
+        </span>
+        <button onClick={() => setPage('how-it-works')} style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.redMuted,
+          background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase',
+          textDecoration: 'underline', textDecorationColor: 'rgba(190,40,30,0.3)', padding: 0,
         }}>
-          {/* Struck-through return arrow */}
-          <div style={{
-            position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)',
-            fontFamily: TYPE.mono, fontSize: '0.9rem', color: PALETTE.inkFaint,
-          }}>←</div>
-          {/* Red strike */}
-          <div style={{
-            position: 'absolute', inset: '-4px 0',
-            background: PALETTE.red,
-            opacity: 0.6,
-            height: '2px',
-            top: '50%',
-            transform: 'rotate(-4deg)',
-          }} />
-        </div>
-        <p style={{
-          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em',
-          color: PALETTE.red, textTransform: 'uppercase',
-        }}>
-          No return function
-        </p>
+          How it works ↗
+        </button>
       </motion.div>
     </div>
   );
 }
 
 // ============================================================================
-// SECTION — What weights actually are
+// WHAT WEIGHTS ARE — animated dissolution grid
 // ============================================================================
-function WhatWeightsAre() {
-  const ref = useRef(null);
+function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
+  const [dissolved, setDissolved] = useState(false);
+
+  useEffect(() => {
+    if (isInView) { const t = setTimeout(() => setDissolved(true), 800); return () => clearTimeout(t); }
+  }, [isInView]);
+
+  // Generate a grid of plausible weight values
+  const COLS = 14; const ROWS = 6;
+  const weights = Array.from({ length: ROWS * COLS }, (_, i) => ({
+    val: (Math.sin(i * 0.37 + 1.2) * 0.94).toFixed(4),
+    highlight: i % 7 === 0 || i % 11 === 0,
+  }));
 
   return (
     <motion.div
@@ -197,31 +209,113 @@ function WhatWeightsAre() {
       transition={{ duration: 0.8 }}
       style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)', paddingBottom: 'clamp(3rem, 6vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
-      <p style={{
-        fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
-        color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
-      }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
         What "in the weights" means
       </p>
 
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-        color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
-      }}>
-        A model weight is a number. GPT-4 has hundreds of billions of them. When your conversations were processed, those numbers shifted fractionally, across all of them simultaneously. Your data did not go into a box. It dissolved into the mathematics of the system.
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.25rem' }}>
+        A model weight is a number. GPT-4 has hundreds of billions of them. When your conversations were processed, those numbers shifted fractionally — across all of them simultaneously.
       </p>
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-        color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
-      }}>
-        There is no box to open, no row to delete, no named region of the model that belongs to you.
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 620, marginBottom: 'clamp(2rem, 4vw, 2.5rem)' }}>
+        Your data did not go into a box. It dissolved into the mathematics of the system. There is no row to delete. Your influence is distributed across every parameter — everywhere and nowhere simultaneously.
       </p>
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 660,
-      }}>
-        There is no box to open. There is no row to delete. Your influence is distributed across every parameter, everywhere and nowhere, and it is mathematically indistinguishable from the influence of every other conversation the model processed.
-      </p>
+
+      {/* Weight grid — numbers that "absorb" a fragment of text */}
+      <div style={{ position: 'relative', marginBottom: '1.75rem', overflow: 'hidden' }}>
+
+        {/* Sentence that dissolves in */}
+        <motion.div
+          initial={{ opacity: 0.9, y: 0 }}
+          animate={dissolved ? { opacity: 0, y: -8, scale: 0.97 } : { opacity: 0.9 }}
+          transition={{ duration: 1.2, ease: 'easeIn' }}
+          style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 4, pointerEvents: 'none',
+            background: 'rgba(244,242,237,0.85)',
+            padding: '0.5rem 1rem',
+            fontFamily: TYPE.serif, fontSize: 'clamp(0.9rem, 1.5vw, 1rem)',
+            color: PALETTE.ink, whiteSpace: 'nowrap',
+            letterSpacing: '-0.01em',
+            borderBottom: `1px solid ${PALETTE.red}40`,
+          }}
+        >
+          "I've been feeling really anxious lately..."
+        </motion.div>
+
+        {/* Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+          gap: '1px',
+          background: PALETTE.border,
+          border: `1px solid ${PALETTE.border}`,
+          position: 'relative', zIndex: 2,
+        }}>
+          {weights.map((w, i) => (
+            <motion.div
+              key={i}
+              initial={{ background: PALETTE.bgPanel, color: 'rgba(26,24,20,0.25)' }}
+              animate={dissolved ? {
+                background: w.highlight ? 'rgba(190,40,30,0.08)' : PALETTE.bgPanel,
+                color: w.highlight ? 'rgba(190,40,30,0.7)' : 'rgba(26,24,20,0.3)',
+              } : {}}
+              transition={{ duration: 0.6, delay: dissolved ? (i % 13) * 0.03 : 0 }}
+              style={{
+                padding: '4px 2px',
+                fontFamily: TYPE.mono,
+                fontSize: 'clamp(7px, 0.9vw, 9px)',
+                textAlign: 'center',
+                letterSpacing: '0.02em',
+                lineHeight: 1.2,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+              }}
+            >
+              {w.val}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Overlay label after dissolution */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={dissolved ? { opacity: 1 } : {}}
+          transition={{ delay: 1.4, duration: 0.8 }}
+          style={{
+            position: 'absolute', bottom: '-0.1rem', right: 0,
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
+            color: PALETTE.red, textTransform: 'uppercase',
+            zIndex: 5,
+          }}
+        >
+          ● Absorbed — indistinguishable from all other training data
+        </motion.div>
+      </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={dissolved ? { opacity: 1 } : {}}
+        transition={{ delay: 1.8, duration: 0.8 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 600, borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.25rem', marginBottom: '1.5rem' }}
+      >
+        Each highlighted value shifted fractionally when your data passed through. The shift is real. It cannot be measured. It cannot be located. It cannot be reversed.
+      </motion.p>
+
+      {/* Contextual link */}
+      <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.8 }}
+        style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <span style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+          Understand how the analysis was built
+        </span>
+        <button onClick={() => setPage('understand')} style={{
+          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.redMuted,
+          background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase',
+          textDecoration: 'underline', textDecorationColor: 'rgba(190,40,30,0.3)', padding: 0,
+        }}>
+          The inference model ↗
+        </button>
+      </motion.div>
     </motion.div>
   );
 }
@@ -679,61 +773,86 @@ function ClosingStatement({ setPage }: { setPage: (p: any) => void }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
+  const navItems = [
+    { page: 'terms', act: 'ACT III / 06', label: 'What you agreed to', body: 'The terms that made this legal. Parsed against what they actually permit.' },
+    { page: 'understand', act: 'Context', label: 'How the inference works', body: 'The methodology behind how your patterns were extracted and classified.' },
+    { page: 'how-it-works', act: 'Technical', label: 'How this tool works', body: 'The pipeline that built your profile — pattern matching, scoring, AI enrichment.' },
+    { page: 'risk', act: 'ACT II / 04', label: 'What it enables', body: 'The scenarios that become possible once this data exists.' },
+  ];
+
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0 }}
       animate={isInView ? { opacity: 1 } : {}}
       transition={{ duration: 1 }}
-      style={{
-        paddingTop: 'clamp(3rem, 6vw, 5rem)',
-        paddingBottom: 'clamp(4rem, 8vw, 6rem)',
-      }}
+      style={{ paddingTop: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(4rem, 8vw, 6rem)' }}
     >
-      <p style={{
-        fontFamily: TYPE.serif,
-        fontSize: 'clamp(1.4rem, 3.5vw, 2.4rem)',
-        color: PALETTE.ink,
-        letterSpacing: '-0.02em', lineHeight: 1.3,
-        maxWidth: 600, marginBottom: '2rem',
-        fontWeight: 400,
-      }}>
+      {/* Divider */}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={isInView ? { scaleX: 1 } : {}}
+        transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
+        style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2.5rem', opacity: 0.1 }}
+      />
+
+      {/* Closing lines */}
+      <motion.p
+        initial={{ opacity: 0, y: 6 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ delay: 0.3, duration: 0.8 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 3.5vw, 2.4rem)', color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.3, maxWidth: 600, marginBottom: '1.25rem', fontWeight: 400 }}
+      >
         You can delete your conversations.<br />
         You cannot delete what they taught.
-      </p>
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 560, marginBottom: '3rem',
-      }}>
-        This is not a policy failure. It is a consequence of how the technology works. The model learned from you. Learning is not reversible. The question that remains is whether the terms you agreed to were ever genuinely legible.
-      </p>
-
-      <button
-        onClick={() => setPage('terms')}
-        style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(1rem, 2vw, 1.2rem)',
-          letterSpacing: '-0.01em',
-          color: PALETTE.ink,
-          background: 'none',
-          border: `1px solid ${PALETTE.border}`,
-          padding: 'clamp(1rem, 2.5vw, 1.5rem) clamp(1.5rem, 3vw, 2.5rem)',
-          cursor: 'pointer',
-          transition: 'border-color 0.15s, background 0.15s',
-          display: 'block',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.borderColor = PALETTE.borderHover;
-          e.currentTarget.style.background = PALETTE.bgPanel;
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.borderColor = PALETTE.border;
-          e.currentTarget.style.background = 'none';
-        }}
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : {}}
+        transition={{ delay: 0.6, duration: 0.8 }}
+        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 540, marginBottom: 'clamp(3rem, 6vw, 4rem)', fontStyle: 'italic' }}
       >
-        <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>06 / Terms</span>
-        What you agreed to →
-      </button>
+        This is not a policy failure. It is a consequence of how the technology works. The question that remains is whether the terms you agreed to were ever genuinely legible.
+      </motion.p>
+
+      {/* Nav grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1px', background: PALETTE.border }}>
+        {navItems.map((item, i) => (
+          <motion.button
+            key={item.page}
+            initial={{ opacity: 0, y: 8 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.5 + i * 0.08, duration: 0.5 }}
+            onClick={() => setPage(item.page)}
+            style={{
+              background: PALETTE.bgPanel, border: 'none', cursor: 'pointer',
+              padding: 'clamp(1.25rem, 3vw, 1.75rem)', textAlign: 'left',
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = PALETTE.bgElevated)}
+            onMouseLeave={e => (e.currentTarget.style.background = PALETTE.bgPanel)}
+          >
+            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+              {item.act}
+            </span>
+            <span style={{ display: 'block', fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.ink, letterSpacing: '-0.01em', lineHeight: 1.2, marginBottom: '0.5rem' }}>
+              {item.label} →
+            </span>
+            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.06em', color: PALETTE.inkFaint, lineHeight: 1.55 }}>
+              {item.body}
+            </span>
+          </motion.button>
+        ))}
+      </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 0.45 } : {}}
+        transition={{ delay: 1.2, duration: 1 }}
+        style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: 'clamp(2.5rem, 5vw, 4rem)' }}
+      >
+        End of permanence record.
+      </motion.p>
     </motion.div>
   );
 }
@@ -756,6 +875,15 @@ export default function CannotBeDeletedPage({ results, setPage }: {
       padding: `0 ${pad}`,
       paddingBottom: 'clamp(4rem, 10vw, 8rem)',
     }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .cbd-2col { grid-template-columns: 1fr !important; }
+          .cbd-3col { grid-template-columns: 1fr !important; }
+          .cbd-table-3col { grid-template-columns: 1fr !important; }
+          .cbd-table-3col > div + div { border-top: 1px dashed rgba(26,24,20,0.1); }
+          .pipeline-svg { min-width: 400px !important; }
+        }
+      `}</style>
       {/* Hero */}
       <motion.div
         ref={ref}
@@ -850,8 +978,8 @@ export default function CannotBeDeletedPage({ results, setPage }: {
       </motion.div>
 
       {/* Sections */}
-      <OneWayFlow />
-      <WhatWeightsAre />
+      <OneWayFlow setPage={setPage} />
+      <WhatWeightsAre setPage={setPage} />
       <MachineUnlearning />
       <RetrainingBar />
       <LegalGap />

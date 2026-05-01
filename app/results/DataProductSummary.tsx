@@ -71,116 +71,273 @@ function TrainingValueHero({ sensitivityIndex, isInView }: { sensitivityIndex: n
 }
 
 // ============================================================================
-// DOT PLOT — weekly vulnerability over time (Pudding-style shape of data)
+// VULNERABILITY PLOT — bar chart + anxiety curve + crisis markers
 // ============================================================================
+const toDate = (d: unknown): Date => d instanceof Date ? d : new Date(d as string);
+
 function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTimeline'] }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: '-5%' });
+  const [revealed, setRevealed] = useState(false);
+  const [svgWidth, setSvgWidth] = useState(800);
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; week: NonNullable<DeepAnalysis['emotionalTimeline']>['weeks'][0] } | null>(null);
+
+  useEffect(() => {
+    if (isInView) { const t = setTimeout(() => setRevealed(true), 300); return () => clearTimeout(t); }
+  }, [isInView]);
+
+  useEffect(() => {
+    const obs = new ResizeObserver(e => setSvgWidth(e[0].contentRect.width || 800));
+    if (containerRef.current) obs.observe(containerRef.current);
+    return () => obs.disconnect();
+  }, []);
+
   const weeks = timeline?.weeks ?? [];
+  if (weeks.length < 3) return null;
 
-  const plotData = useMemo(() => {
-    if (weeks.length < 3) return null;
-    const maxMsgs = Math.max(...weeks.map(w => w.messageCount), 1);
-    const maxAnxiety = Math.max(...weeks.map(w => w.avgAnxiety), 1);
-    const MAX_DOTS = 72;
-    const sample = weeks.length > MAX_DOTS
-      ? weeks.filter((_, i) => i % Math.ceil(weeks.length / MAX_DOTS) === 0)
-      : weeks;
-    const COLS = Math.min(sample.length, 24);
-    const DOT_SIZE = 10;
-    const DOT_GAP = 4;
-    const totalW = COLS * (DOT_SIZE + DOT_GAP);
-    return { maxMsgs, maxAnxiety, sample, DOT_SIZE, DOT_GAP, totalW };
-  }, [weeks]);
+  // Dimensions
+  const H = 240;
+  const PAD = { top: 24, right: 20, bottom: 48, left: 8 };
+  const cW = svgWidth - PAD.left - PAD.right;
+  const cH = H - PAD.top - PAD.bottom;
 
-  if (!plotData) return null;
-  const { maxMsgs, maxAnxiety, sample, DOT_SIZE, DOT_GAP, totalW } = plotData;
+  const maxMsgs = Math.max(...weeks.map(w => w.messageCount), 1);
+  const maxAnxiety = Math.max(...weeks.map(w => w.avgAnxiety), 0.1);
+  const barW = Math.max(1, (cW / weeks.length) - 1.5);
 
-  function anxietyColor(score: number, max: number) {
-    const t = Math.min(score / max, 1);
-    if (t < 0.25) return 'rgba(26,24,20,0.12)';
-    if (t < 0.5) return 'rgba(160,100,0,0.5)';
-    if (t < 0.75) return 'rgba(190,40,30,0.55)';
-    return 'rgba(190,40,30,0.90)';
+  // Anxiety: 5-week smoothing
+  const smoothAnxiety = weeks.map((_, i) => {
+    const win = weeks.slice(Math.max(0, i - 2), Math.min(weeks.length, i + 3));
+    return win.reduce((s, w) => s + w.avgAnxiety, 0) / win.length;
+  });
+
+  // Bar colour — encode anxiety in hue
+  function barColor(week: typeof weeks[0], anxietyNorm: number) {
+    if (week.crisisFlag) return 'rgba(190,40,30,0.85)';
+    if (anxietyNorm > 0.72) return 'rgba(190,40,30,0.65)';
+    if (anxietyNorm > 0.45) return 'rgba(170,90,0,0.5)';
+    if (anxietyNorm > 0.2) return 'rgba(26,24,20,0.28)';
+    return 'rgba(26,24,20,0.11)';
   }
 
+  // Anxiety SVG path
+  const anxietyPts = smoothAnxiety.map((v, i) => {
+    const x = PAD.left + (i / Math.max(weeks.length - 1, 1)) * cW + barW / 2;
+    const y = PAD.top + cH - (v / maxAnxiety) * cH;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  });
+  const anxietyPath = `M ${anxietyPts.join(' L ')}`;
+
+  // Date labels — up to 7
+  const labelStep = Math.ceil(weeks.length / 7);
+
+  // Peak anxiety week index
+  const peakIdx = smoothAnxiety.indexOf(Math.max(...smoothAnxiety));
+
   return (
-    <div ref={ref} style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(2rem, 5vw, 3rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
+    <div ref={containerRef} style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(2rem, 5vw, 3rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: '1.75rem' }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
           Emotional exposure over time
         </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(26,24,20,0.12)', border: `1px solid ${PALETTE.border}` }} />
-            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>Low</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(190,40,30,0.90)' }} />
-            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>High anxiety</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            <div style={{ width: 12, height: 12, borderRadius: '50%', background: PALETTE.inkGhost, border: `1px solid ${PALETTE.border}` }} />
-            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>= more messages</span>
-          </div>
-        </div>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.65, maxWidth: 560 }}>
+          {weeks.length} weeks of recorded activity. Bar height shows message volume. Colour shows anxiety intensity. The line is the aggregate emotional arc — the pattern any system would read as you.
+        </p>
       </div>
 
-      {/* The dot plot */}
-      <div style={{ overflowX: 'auto', paddingBottom: '0.5rem' }}>
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: `${DOT_GAP}px`,
-          maxWidth: `${totalW}px`,
-          minWidth: '200px',
-        }}>
-          {sample.map((week, i) => {
-            const size = DOT_SIZE + Math.round((week.messageCount / maxMsgs) * 8);
-            const color = anxietyColor(week.avgAnxiety, maxAnxiety);
-            const hasCrisis = week.crisisFlag;
+      {/* Legend */}
+      <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '1.25rem', alignItems: 'center' }}>
+        {[
+          { swatch: <div style={{ width: 18, height: 10, background: 'rgba(26,24,20,0.18)', borderRadius: 1 }} />, label: 'Low anxiety' },
+          { swatch: <div style={{ width: 18, height: 10, background: 'rgba(170,90,0,0.5)', borderRadius: 1 }} />, label: 'Moderate' },
+          { swatch: <div style={{ width: 18, height: 10, background: 'rgba(190,40,30,0.85)', borderRadius: 1 }} />, label: 'High / crisis' },
+          { swatch: <div style={{ width: 18, height: 2, background: PALETTE.red, marginTop: 4 }} />, label: 'Anxiety curve' },
+        ].map(({ swatch, label }) => (
+          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+            {swatch}
+            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>{label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* SVG */}
+      <div style={{ position: 'relative', width: '100%' }}>
+        <svg ref={svgRef} width="100%" height={H} viewBox={`0 0 ${svgWidth} ${H}`} style={{ overflow: 'visible', display: 'block' }}>
+          <defs>
+            <linearGradient id="anxGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(190,40,30,0.18)" />
+              <stop offset="100%" stopColor="rgba(190,40,30,0)" />
+            </linearGradient>
+          </defs>
+
+          {/* Subtle grid */}
+          {[0.25, 0.5, 0.75, 1].map(f => (
+            <line key={f}
+              x1={PAD.left} y1={PAD.top + cH * (1 - f)}
+              x2={PAD.left + cW} y2={PAD.top + cH * (1 - f)}
+              stroke={PALETTE.border} strokeWidth={0.5} strokeDasharray="2 5" />
+          ))}
+
+          {/* Crisis zone fills */}
+          {timeline!.crisisPeriods.map((period, i) => {
+            const si = weeks.findIndex(w => w.weekKey === period.start);
+            const ei = weeks.findIndex(w => w.weekKey === period.end);
+            if (si < 0) return null;
+            const x1 = PAD.left + (si / Math.max(weeks.length - 1, 1)) * cW;
+            const x2 = PAD.left + (Math.min(ei > 0 ? ei : si + 2, weeks.length - 1) / Math.max(weeks.length - 1, 1)) * cW + barW;
             return (
-              <motion.div
+              <rect key={i} x={x1} y={PAD.top} width={x2 - x1} height={cH}
+                fill="rgba(190,40,30,0.06)" />
+            );
+          })}
+
+          {/* Bars */}
+          {weeks.map((week, i) => {
+            const bH = (week.messageCount / maxMsgs) * cH;
+            const x = PAD.left + (i / Math.max(weeks.length - 1, 1)) * cW;
+            const y = PAD.top + cH - bH;
+            const aNorm = week.avgAnxiety / maxAnxiety;
+            return (
+              <motion.rect
                 key={week.weekKey}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay: i * 0.012, duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                title={`Week of ${week.weekKey} · ${week.messageCount} messages · anxiety ${week.avgAnxiety.toFixed(1)}`}
-                style={{
-                  width: size,
-                  height: size,
-                  borderRadius: '50%',
-                  background: color,
-                  flexShrink: 0,
-                  outline: hasCrisis ? `2px solid ${PALETTE.red}` : 'none',
-                  outlineOffset: '2px',
-                  cursor: 'default',
+                x={x} y={y}
+                width={Math.max(barW, 1)} height={Math.max(bH, 1)}
+                fill={barColor(week, aNorm)}
+                rx={barW > 3 ? 1 : 0}
+                initial={{ scaleY: 0 }}
+                animate={revealed ? { scaleY: 1 } : { scaleY: 0 }}
+                transition={{ duration: 0.7, delay: (i / weeks.length) * 0.5, ease: [0.4, 0, 0.2, 1] }}
+                onMouseEnter={e => {
+                  const cr = (e.target as SVGElement).getBoundingClientRect();
+                  const cont = containerRef.current?.getBoundingClientRect();
+                  if (cont) setTooltip({ x: cr.left - cont.left + barW / 2, y: cr.top - cont.top - 8, week });
                 }}
+                onMouseLeave={() => setTooltip(null)}
+                style={{ cursor: 'crosshair', transformOrigin: `${x + barW / 2}px ${PAD.top + cH}px` } as React.CSSProperties}
               />
             );
           })}
-        </div>
+
+          {/* Anxiety area fill under curve */}
+          <motion.path
+            d={`${anxietyPath} L ${(PAD.left + cW).toFixed(1)},${PAD.top + cH} L ${PAD.left.toFixed(1)},${PAD.top + cH} Z`}
+            fill="url(#anxGrad)"
+            initial={{ opacity: 0 }}
+            animate={revealed ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 1.2, delay: 0.6 }}
+          />
+
+          {/* Anxiety curve */}
+          <motion.path
+            d={anxietyPath}
+            fill="none"
+            stroke={PALETTE.red}
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={revealed ? { pathLength: 1, opacity: 0.85 } : { pathLength: 0, opacity: 0 }}
+            transition={{ duration: 2, delay: 0.5, ease: 'easeInOut' }}
+          />
+
+          {/* Peak marker */}
+          {(() => {
+            const x = PAD.left + (peakIdx / Math.max(weeks.length - 1, 1)) * cW + barW / 2;
+            const y = PAD.top + cH - (smoothAnxiety[peakIdx] / maxAnxiety) * cH;
+            return (
+              <motion.g initial={{ opacity: 0, scale: 0 }} animate={revealed ? { opacity: 1, scale: 1 } : {}} transition={{ delay: 2.2 }}
+                style={{ transformOrigin: `${x}px ${y}px` }}>
+                <circle cx={x} cy={y} r={5} fill={PALETTE.red} />
+                <circle cx={x} cy={y} r={9} fill="none" stroke={PALETTE.red} strokeWidth={1} opacity={0.35} />
+                <text x={x + 12} y={y + 4} style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: PALETTE.red, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                  peak
+                </text>
+              </motion.g>
+            );
+          })()}
+
+          {/* Date labels */}
+          {weeks.map((week, i) => {
+            if (i % labelStep !== 0 && i !== weeks.length - 1) return null;
+            const x = PAD.left + (i / Math.max(weeks.length - 1, 1)) * cW + barW / 2;
+            const label = toDate(week.startDate).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' });
+            return (
+              <text key={`lbl-${i}`} x={x} y={PAD.top + cH + 18} textAnchor="middle"
+                style={{ fontFamily: TYPE.mono, fontSize: '10px', fill: 'rgba(26,24,20,0.4)', letterSpacing: '0.08em' }}>
+                {label}
+              </text>
+            );
+          })}
+
+          {/* Baseline */}
+          <line x1={PAD.left} y1={PAD.top + cH} x2={PAD.left + cW} y2={PAD.top + cH}
+            stroke={PALETTE.border} strokeWidth={0.5} />
+        </svg>
+
+        {/* Tooltip */}
+        {tooltip && (
+          <div style={{
+            position: 'absolute',
+            left: Math.min(tooltip.x + 12, svgWidth - 190),
+            top: Math.max(tooltip.y - 70, 0),
+            background: PALETTE.bgElevated,
+            border: `1px solid ${tooltip.week.crisisFlag ? PALETTE.red : PALETTE.border}`,
+            padding: '0.75rem 1rem',
+            pointerEvents: 'none',
+            zIndex: 20,
+            minWidth: 170,
+          }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, letterSpacing: '0.1em', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+              {toDate(tooltip.week.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </p>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink, marginBottom: '0.2rem', letterSpacing: '-0.01em' }}>
+              {tooltip.week.messageCount} messages
+            </p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: tooltip.week.avgAnxiety > 3 ? PALETTE.red : PALETTE.inkMuted }}>
+              Anxiety {tooltip.week.avgAnxiety.toFixed(1)} / 10
+            </p>
+            {tooltip.week.lateNightCount > 0 && (
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.25rem' }}>
+                {tooltip.week.lateNightCount} late-night
+              </p>
+            )}
+            {tooltip.week.crisisFlag && (
+              <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.red, marginTop: '0.4rem', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                ● Crisis period
+              </p>
+            )}
+            {tooltip.week.dominantTopic && (
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkFaint, marginTop: '0.25rem', textTransform: 'capitalize' }}>
+                {tooltip.week.dominantTopic}
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.75rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          {sample[0]?.weekKey ?? 'Earlier'}
-        </p>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          Most recent
-        </p>
-      </div>
-
-      {/* Crisis period callout */}
-      {timeline.crisisPeriods?.length > 0 && (
-        <motion.p
+      {/* Crisis callout strip */}
+      {timeline!.crisisPeriods.length > 0 && (
+        <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1.2 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.red, marginTop: '1rem' }}
+          transition={{ delay: 1.8 }}
+          style={{
+            marginTop: '1.5rem',
+            padding: '1rem 1.25rem',
+            borderLeft: `3px solid ${PALETTE.red}`,
+            background: 'rgba(190,40,30,0.04)',
+          }}
         >
-          ● {timeline.crisisPeriods.length} crisis period{timeline.crisisPeriods.length > 1 ? 's' : ''} detected — outlined in red above
-        </motion.p>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.red, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            {timeline!.crisisPeriods.length} crisis period{timeline!.crisisPeriods.length > 1 ? 's' : ''} detected
+          </p>
+          <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65, maxWidth: 560 }}>
+            These are the weeks when you needed help most. They are also the weeks that produced the most valuable data.
+          </p>
+        </motion.div>
       )}
     </div>
   );

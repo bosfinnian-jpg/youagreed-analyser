@@ -950,9 +950,10 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
         </>
       ) : (
         <div style={{
-          padding: 'clamp(2rem, 5vw, 3.5rem) 0',
+          maxWidth: 1000,
+          margin: '0 auto',
+          padding: 'clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 5vw, 4rem)',
           borderTop: `1px solid ${PALETTE.border}`,
-          marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
         }}>
           <p style={{
             fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.3em',

@@ -103,7 +103,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       { label: 'Late-night ratio', value: nightPct + '%', alarming: nightPct > 10 },
       { label: 'High-severity events', value: String(highSevEvents.length), alarming: highSevEvents.length > 0 },
     ],
-    precedent: { source: 'FTC v. BetterHelp, 2023', detail: 'BetterHelp shared therapy status data with Facebook and Snapchat for ad targeting. Fine: $7.8 million. Users had been told their data was private.', url: 'https://www.ftc.gov/news-events/news/press-releases/2023/03/ftc-action-against-betterhelp' },
+    precedent: { source: 'FTC v. BetterHelp, 2023', detail: 'BetterHelp shared therapy status data with Facebook and Snapchat for ad targeting. Fine: $7.8 million. Users had been told their data was private.', url: 'https://www.ftc.gov/news-events/news/press-releases/2023/03/ftc-ban-betterhelp-revealing-consumers-data-including-sensitive-mental-health-information-facebook' },
   });
 
   const careerEvents = lifeEvents.filter(e => ['job_loss', 'job_search'].includes(e.type));
@@ -123,7 +123,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       { label: 'Dependency score', value: depScore + '/100', alarming: depScore > 50 },
       { label: 'Top themes', value: themes.slice(0, 2).join(', ') || 'None flagged', alarming: false },
     ],
-    precedent: { source: 'Mobley v. Workday, 2024', detail: 'A US federal court allowed a discrimination case to proceed against Workday after a plaintiff was rejected from 100+ jobs by its AI screening tools.', url: 'https://www.bbc.co.uk/news/technology-68557264' },
+    precedent: { source: 'Mobley v. Workday, 2024', detail: 'A US federal court allowed a discrimination case to proceed against Workday after a plaintiff was rejected from 100+ jobs by its AI screening tools.', url: 'https://www.seyfarth.com/news-insights/mobley-v-workday-court-holds-ai-service-providers-could-be-directly-liable-for-employment-discrimination-under-agent-theory.html' },
   });
 
   const targetRelevance = segments.length * 8 + (nightPct > 5 ? 10 : 0) + sensitiveCount * 2;
@@ -142,7 +142,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       { label: 'Location exposed', value: homeLoc ? homeLoc.location : 'Not detected', alarming: !!homeLoc },
       { label: 'Named contacts', value: String(nameCount), alarming: nameCount > 3 },
     ],
-    precedent: { source: 'FTC v. Oracle, 2024', detail: 'Oracle settled for $115 million over tracking and selling user data from platforms users never interacted with directly.', url: 'https://www.ftc.gov/news-events/news/press-releases/2024/12/ftc-takes-action-against-oracle-exposing-sensitive-data-sale' },
+    precedent: { source: 'Oracle privacy settlement, 2024', detail: 'Oracle settled a $115 million class-action lawsuit over tracking and selling user data from platforms users never interacted with directly. The 9th Circuit upheld the settlement in February 2026.', url: 'https://www.mediapost.com/publications/article/412807/appeals-court-endorses-oracle-privacy-settlement.html' },
   });
 
   const breachRelevance = (r.privacyScore || 0) * 0.5 + nameCount * 3 + locCount * 4 + sensitiveCount * 2;
@@ -666,15 +666,15 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
 // Real incidents. Real scales. The question is not IF — it is when.
 
 const BREACHES = [
-  { year: 2021, month: 4,  name: 'Facebook',      records: 533,  detail: 'Phone numbers, names, and locations of 533M users published to a hacking forum. Data scraped before a 2019 vulnerability was patched.', url: 'https://www.businessinsider.com/stolen-data-of-533-million-facebook-users-leaked-online-2021-4' },
-  { year: 2021, month: 6,  name: 'LinkedIn',      records: 700,  detail: '700M user profiles scraped and listed for sale — 92% of total user base. Included emails, phone numbers, professional history.', url: 'https://www.privacysharks.com/linkedin-user-database-for-sale/' },
+  { year: 2021, month: 4,  name: 'Facebook',      records: 533,  detail: 'Phone numbers, names, and locations of 533M users published to a hacking forum. Data scraped before a 2019 vulnerability was patched.', url: 'https://www.wired.com/story/facebook-data-leak-500-million-users-phone-numbers/' },
+  { year: 2021, month: 6,  name: 'LinkedIn',      records: 700,  detail: '700M user profiles scraped and listed for sale — 92% of total user base. Included emails, phone numbers, professional history.', url: 'https://www.privacysharks.com/exclusive-700-million-linkedin-records-for-sale-on-hacker-forum-june-22nd-2021/' },
   { year: 2021, month: 10, name: 'Twitch',        records: 0.5,  detail: '125GB of source code, creator earnings data, and internal security tools leaked by anonymous hacker. Revenue data for top streamers made public.', url: 'https://www.theverge.com/2021/10/6/22712250/twitch-hack-data-leak-amazon' },
-  { year: 2022, month: 8,  name: 'Twitter/X',     records: 400,  detail: '400M unique user records including private email addresses and phone numbers, exploited via a 2021 API vulnerability.', url: 'https://techcrunch.com/2023/01/05/twitter-data-400m/' },
-  { year: 2023, month: 3,  name: 'OpenAI',        records: 0.1,  detail: 'A bug in the Redis client library exposed conversation titles, payment info, and the last four digits of credit cards of active users for ~9 hours.', url: 'https://openai.com/blog/march-20-chatgpt-outage' },
-  { year: 2023, month: 6,  name: 'MOVEit',        records: 60,   detail: '60M+ individuals affected across hundreds of organisations — including the BBC, British Airways, and the US Department of Energy — via a zero-day in file transfer software.', url: 'https://www.bbc.co.uk/news/technology-65814214' },
-  { year: 2024, month: 2,  name: 'Change Health', records: 190,  detail: '190M patient records including diagnoses, medications, and Social Security numbers. Largest US healthcare breach in history. UnitedHealth paid a $22M ransom.', url: 'https://www.theguardian.com/us-news/2024/feb/22/change-healthcare-cyberattack' },
+  { year: 2022, month: 8,  name: 'Twitter/X',     records: 400,  detail: '400M unique user records including private email addresses and phone numbers, exploited via a 2021 API vulnerability.', url: 'https://techcrunch.com/2023/01/19/twitters-data-leak-response-is-a-lesson-in-how-not-to-do-cybersecurity/' },
+  { year: 2023, month: 3,  name: 'OpenAI',        records: 0.1,  detail: 'A bug in the Redis client library exposed conversation titles, payment info, and the last four digits of credit cards of active users for ~9 hours.', url: 'https://thehackernews.com/2023/03/openai-reveals-redis-bug-behind-chatgpt.html' },
+  { year: 2023, month: 6,  name: 'MOVEit',        records: 60,   detail: '60M+ individuals affected across hundreds of organisations — including the BBC, British Airways, and the US Department of Energy — via a zero-day in file transfer software.', url: 'https://en.wikipedia.org/wiki/2023_MOVEit_data_breach' },
+  { year: 2024, month: 2,  name: 'Change Health', records: 190,  detail: '190M patient records including diagnoses, medications, and Social Security numbers. Largest US healthcare breach in history. UnitedHealth paid a $22M ransom.', url: 'https://www.wired.com/story/change-healthcare-ransomware-attack-2024/' },
   { year: 2024, month: 5,  name: 'Snowflake',     records: 50,   detail: 'Ticketmaster (560M users), Santander, AT&T, and 160+ other companies breached via stolen cloud credentials. Data sold on criminal forums.', url: 'https://www.wired.com/story/snowflake-breach-advanced-auto-parts-lendingtree/' },
-  { year: 2025, month: 1,  name: 'DeepSeek',      records: 1,    detail: 'AI chat logs, API keys, backend data, and system prompts exposed in an unsecured database. One million chat histories accessible without authentication.', url: 'https://www.wired.com/story/deepseek-database-leak/' },
+  { year: 2025, month: 1,  name: 'DeepSeek',      records: 1,    detail: 'AI chat logs, API keys, backend data, and system prompts exposed in an unsecured database. One million chat histories accessible without authentication.', url: 'https://techcrunch.com/2025/01/30/deepseek-exposed-internal-database-containing-chat-histories-and-sensitive-data/' },
 ];
 
 function BreachTimeline() {

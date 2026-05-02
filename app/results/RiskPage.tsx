@@ -818,13 +818,13 @@ function BreachTimeline() {
                 {/* Record count */}
                 {b.r >= 28 && (
                   <text x={b.x} y={b.cy + 17} textAnchor="middle"
-                    style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: `rgba(${baseRgb},0.55)`, pointerEvents: 'none' }}>
+                    style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: `rgba(${baseRgb},0.55)`, pointerEvents: 'none' }}>
                     {b.records >= 1 ? `${b.records}M` : '<1M'}
                   </text>
                 )}
                 {/* Click indicator */}
                 <text x={b.x + b.r - 4} y={b.cy - b.r + 10} textAnchor="middle"
-                  style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: `rgba(${baseRgb},0.5)`, pointerEvents: 'none' }}>
+                  style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: `rgba(${baseRgb},0.5)`, pointerEvents: 'none' }}>
                   ↗
                 </text>
               </motion.g>

@@ -179,12 +179,12 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
                       href={t.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.5, textDecoration: 'none', borderBottom: `1px solid ${PALETTE.border}`, paddingBottom: '1px' }}
+                      style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.5, textDecoration: 'none', borderBottom: `1px solid ${PALETTE.border}`, paddingBottom: '1px' }}
                     >
                       {t.work} →
                     </a>
                   ) : (
-                    <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.5 }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.5 }}>
                       {t.work}
                     </p>
                   )}

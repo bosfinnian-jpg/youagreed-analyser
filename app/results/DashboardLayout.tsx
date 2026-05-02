@@ -15,9 +15,9 @@ export const PALETTE = {
   border: 'rgba(26,24,20,0.14)',
   borderHover: 'rgba(26,24,20,0.22)',
   ink: '#1a1816',
-  inkMuted: 'rgba(26,24,20,0.58)',
-  inkFaint: 'rgba(26,24,20,0.40)',
-  inkGhost: 'rgba(26,24,20,0.07)',
+  inkMuted: 'rgba(26,24,20,0.62)',
+  inkFaint: 'rgba(26,24,20,0.48)',
+  inkGhost: 'rgba(26,24,20,0.22)',
   red: 'rgba(190,40,30,0.92)',
   redMuted: 'rgba(190,40,30,0.50)',
   redFaint: 'rgba(190,40,30,0.10)',
@@ -89,7 +89,7 @@ export function ActLabel({ roman, title, pageLabel }: { roman: string; title: st
     <div style={{ marginBottom: '1rem' }}>
       <p style={{
         fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.4em',
-        color: PALETTE.inkGhost, textTransform: 'uppercase', marginBottom: '0.2rem',
+        color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.2rem',
       }}>
         ACT {roman} — {title}
       </p>
@@ -153,14 +153,7 @@ export function PageFooter({
     <div style={{
       paddingTop: 'clamp(3rem, 7vw, 5rem)',
       paddingBottom: 'clamp(4rem, 10vw, 7rem)',
-      borderTop: `1px solid ${PALETTE.border}`,
-      marginTop: 'clamp(3rem, 7vw, 5rem)',
     }}>
-      {/* Animated rule */}
-      <div style={{
-        height: '1px', background: PALETTE.ink, opacity: 0.1,
-        marginBottom: 'clamp(2rem, 4vw, 3rem)',
-      }} />
 
       {/* Closing statement */}
       {statement && (
@@ -239,7 +232,7 @@ export function PageFooter({
       {/* End label */}
       <p style={{
         fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em',
-        color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.5,
+        color: PALETTE.inkFaint, textTransform: 'uppercase',
       }}>
         {endLabel}
       </p>
@@ -372,10 +365,10 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
             borderBottom: `1px solid ${PALETTE.border}`,
             display: 'flex', alignItems: 'center', gap: '0.6rem',
           }}>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.35em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.35em', color: PALETTE.redMuted, textTransform: 'uppercase' }}>
               ACT {act.roman}
             </span>
-            <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+            <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
               {act.title}
             </span>
           </div>
@@ -418,7 +411,7 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
                   </span>
                   <span style={{
                     display: 'block',
-                    fontFamily: TYPE.mono, fontSize: '8.5px',
+                    fontFamily: TYPE.mono, fontSize: '9px',
                     color: PALETTE.inkFaint, letterSpacing: '0.04em',
                     marginTop: '2px',
                     overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
@@ -427,7 +420,7 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
                   </span>
                 </div>
                 <span style={{
-                  fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em',
+                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em',
                   color: isActive ? PALETTE.redMuted : PALETTE.inkGhost,
                   textTransform: 'uppercase', flexShrink: 0,
                 }}>
@@ -473,7 +466,7 @@ function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) 
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.28em',
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.28em',
             textTransform: 'uppercase',
             color: isActive ? PALETTE.inkMuted : 'rgba(26,24,20,0.28)',
           }}>
@@ -525,7 +518,7 @@ function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) 
                       {item.label}
                     </span>
                     <span style={{
-                      display: 'block', fontFamily: TYPE.mono, fontSize: '8px',
+                      display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
                       color: 'rgba(26,24,20,0.25)', letterSpacing: '0.04em', marginTop: '1px',
                     }}>
                       {item.desc}
@@ -654,7 +647,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                   }}
                 >
                   <span style={{
-                    fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.2em',
+                    fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
                     color: isCurrentAct ? PALETTE.redMuted : PALETTE.inkGhost,
                     transition: 'color 0.15s',
                   }}>
@@ -789,7 +782,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                 display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
               }}>
                 <div>
-                  <span style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.3em', textTransform: 'uppercase', color: PALETTE.inkGhost, display: 'block', marginBottom: '0.15rem' }}>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.3em', textTransform: 'uppercase', color: PALETTE.inkGhost, display: 'block', marginBottom: '0.15rem' }}>
                     Exposure score
                   </span>
                   <span style={{ fontFamily: TYPE.serif, fontSize: '1.6rem', color: scoreColor, letterSpacing: '-0.04em', lineHeight: 1 }}>
@@ -813,15 +806,15 @@ function Nav({ page, setPage, results, exposureScore }: {
                       display: 'flex', alignItems: 'center', gap: '0.5rem',
                     }}>
                       <span style={{
-                        fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.45em',
+                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.45em',
                         color: 'rgba(190,40,30,0.4)', textTransform: 'uppercase',
                       }}>
                         {act.roman}
                       </span>
                       <div style={{ flex: 1, height: '1px', background: 'rgba(26,24,20,0.07)' }} />
                       <span style={{
-                        fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em',
-                        color: 'rgba(26,24,20,0.22)', textTransform: 'uppercase',
+                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
+                        color: 'rgba(26,24,20,0.38)', textTransform: 'uppercase',
                       }}>
                         {act.title}
                       </span>
@@ -861,7 +854,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                             </span>
                             <span style={{
                               display: 'block',
-                              fontFamily: TYPE.mono, fontSize: '8px',
+                              fontFamily: TYPE.mono, fontSize: '9px',
                               color: isActive ? 'rgba(26,24,20,0.35)' : PALETTE.inkGhost,
                               letterSpacing: '0.04em',
                               marginTop: '1px',
@@ -955,7 +948,7 @@ function ContextRail({ page, setPage }: { page: DashPage; setPage: (p: DashPage)
       width: '140px',
     }}>
       <p style={{
-        fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.28em',
+        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.28em',
         textTransform: 'uppercase', color: PALETTE.inkGhost,
         marginBottom: '0.75rem',
       }}>

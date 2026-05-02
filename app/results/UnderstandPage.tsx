@@ -1456,7 +1456,7 @@ function PrecedentCard({
                 onClick={e => e.stopPropagation()}
                 style={{
                   fontFamily: TYPE.mono,
-                  fontSize: '8px',
+                  fontSize: '9px',
                   letterSpacing: '0.12em',
                   color: C.textFaint,
                   textTransform: 'uppercase',

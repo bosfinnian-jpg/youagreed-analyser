@@ -86,7 +86,7 @@ function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[
           }}>
             <span style={{
               fontFamily: TYPE.mono,
-              fontSize: '8px',
+              fontSize: '9px',
               letterSpacing: '0.3em',
               color: isActive ? PALETTE.ink : PALETTE.inkFaint,
               textTransform: 'uppercase',
@@ -129,7 +129,7 @@ function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof
       paddingTop: '0.75rem',
     }}>
       <span style={{
-        fontFamily: TYPE.mono, fontSize: '8px',
+        fontFamily: TYPE.mono, fontSize: '9px',
         letterSpacing: '0.28em', color: PALETTE.inkFaint,
         textTransform: 'uppercase',
         transition: 'opacity 0.4s',
@@ -494,7 +494,7 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
           </p>
           <p style={{
             fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-            color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6,
+            color: PALETTE.inkFaint, textTransform: 'uppercase',
           }}>
             OpenAI Privacy Policy, June 2023 — April 2026
           </p>
@@ -589,7 +589,7 @@ function InferenceCard({ inf, index, revealed, onReveal }: {
             {inf.attribute}
           </span>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '8px',
+            fontFamily: TYPE.mono, fontSize: '9px',
             letterSpacing: '0.2em', color: PALETTE.redMuted,
             textTransform: 'uppercase', opacity: 0.7,
           }}>
@@ -853,7 +853,7 @@ function DisclosureChapter({ excerpt, date, onActive }: {
               background: PALETTE.red, flexShrink: 0,
             }} />
             <span style={{
-              fontFamily: TYPE.mono, fontSize: 'clamp(8px, 2.4vw, 9px)',
+              fontFamily: TYPE.mono, fontSize: 'clamp(9px, 2.4vw, 9px)',
               letterSpacing: '0.32em', color: PALETTE.red,
               textTransform: 'uppercase', fontWeight: 700,
               whiteSpace: 'nowrap',
@@ -1519,9 +1519,9 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
               them is covered by the terms you accepted.
             </p>
             <p style={{
-              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
               color: PALETTE.inkFaint, textTransform: 'uppercase',
-              marginTop: '1rem', opacity: 0.6,
+              marginTop: '1rem',
             }}>OpenAI Privacy Policy, April 2026 · Cooper et al., 2024 (machine unlearning)</p>
           </div>
         </div>

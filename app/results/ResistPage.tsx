@@ -383,7 +383,7 @@ function ProgressRail({ progress, currentAct }: { progress: MotionValue<number>;
           transition: 'opacity 0.5s',
         }}>
           <span style={{
-            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.25em',
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em',
             color: i === currentAct ? PALETTE.ink : PALETTE.inkFaint,
             textTransform: 'uppercase',
             writingMode: 'vertical-rl',
@@ -879,7 +879,7 @@ function TheStory({ analysis }: { analysis: DeepAnalysis }) {
       {/* Bottom act dots — mobile only */}
       <div className="resist-act-dots">
         <span style={{
-          fontFamily: TYPE.mono, fontSize: '8px',
+          fontFamily: TYPE.mono, fontSize: '9px',
           letterSpacing: '0.28em', color: PALETTE.inkFaint,
           textTransform: 'uppercase',
         }}>{ACT_LABELS[currentAct] || ''}</span>
@@ -1123,7 +1123,7 @@ function EchoPanel({ echo }: { echo: ReturnType<typeof useEchoGenerator> }) {
           position: 'relative',
         }}>
           <p style={{
-            fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.32em',
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.32em',
             color: PALETTE.inkGhost, textTransform: 'uppercase',
             marginBottom: '1.1rem',
           }}>

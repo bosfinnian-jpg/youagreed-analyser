@@ -122,7 +122,7 @@ function OneWayFlow({ setPage }: { setPage: (p: string) => void }) {
                 </text>
                 {/* Sub below */}
                 <text x={x} y={baseY + 22} textAnchor="middle"
-                  style={{ fontFamily: TYPE.mono, fontSize: '8px', fill: 'rgba(26,24,20,0.4)', letterSpacing: '0.06em' }}>
+                  style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: 'rgba(26,24,20,0.4)', letterSpacing: '0.06em' }}>
                   {stage.sub}
                 </text>
               </motion.g>

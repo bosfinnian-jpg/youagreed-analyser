@@ -546,7 +546,7 @@ export default function SourcesPage({
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '60ch', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)', fontStyle: 'italic' }}>
           The claims made throughout this installation are grounded in published research. The argument about irreversibility is not rhetorical — it is technical.
         </p>
-        {[
+        <div className="bordered-list">{[
           {
             authors: 'Carlini, N., Tramèr, F., Wallace, E., Jagielski, M., Herbert-Voss, A., Lee, K., Roberts, A., Brown, T., Song, D., Erlingsson, Ú., & Oprea, A.',
             year: '2021',
@@ -638,7 +638,7 @@ export default function SourcesPage({
               </p>
             </div>
           </motion.div>
-        ))}
+        ))}</div>
       </div>
 
       {/* FOOTER */}

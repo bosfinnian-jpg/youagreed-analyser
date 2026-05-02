@@ -887,6 +887,123 @@ export default function DashboardLayout({ results, children, page, setPage }: {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ────────────────────────────────────────────────────────
+           DESIGN TOKENS — single source of truth
+           All pages inherit these. Override only for intentional
+           deviations (e.g. dark ResistPage sections).
+           ──────────────────────────────────────────────────────── */
+        :root {
+          /* Spacing scale */
+          --space-xs:   clamp(0.5rem,  1vw,   0.75rem);
+          --space-sm:   clamp(0.75rem, 1.5vw, 1rem);
+          --space-md:   clamp(1rem,    2vw,   1.5rem);
+          --space-lg:   clamp(1.5rem,  3vw,   2.5rem);
+          --space-xl:   clamp(2.5rem,  5vw,   4rem);
+          --space-2xl:  clamp(3.5rem,  7vw,   6rem);
+          --space-3xl:  clamp(5rem,   10vw,   8rem);
+
+          /* Section rhythm — consistent between-section gap */
+          --section-gap: clamp(3rem, 7vw, 5.5rem);
+
+          /* Content widths */
+          --prose-width:   60ch;
+          --content-width: 1000px;
+          --wide-width:    1200px;
+
+          /* Typography — body prose */
+          --text-body:    clamp(1rem,   1.6vw, 1.1rem);
+          --text-body-lg: clamp(1.1rem, 2vw,  1.25rem);
+          --text-sm:      clamp(0.9rem, 1.4vw, 1rem);
+          --text-label:   10px;
+          --text-meta:    9px;
+
+          /* Line heights */
+          --lh-body:    1.78;
+          --lh-heading: 1.12;
+          --lh-label:   1.4;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           UTILITY CLASSES — use instead of inline style duplication
+           ──────────────────────────────────────────────────────── */
+
+        /* Section label — the 10px mono red uppercase */
+        .section-label {
+          font-family: 'Courier Prime', 'Courier New', monospace;
+          font-size: 10px;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          color: rgba(190,40,30,0.50);
+          display: block;
+          margin-bottom: var(--space-lg);
+        }
+
+        /* Body prose */
+        .prose {
+          font-family: 'EB Garamond', Georgia, serif;
+          font-size: var(--text-body-lg);
+          line-height: var(--lh-body);
+          color: rgba(26,24,20,0.85);
+          max-width: var(--prose-width);
+        }
+
+        /* Page inner container */
+        .page-inner {
+          max-width: var(--content-width);
+          margin: 0 auto;
+          padding: 0 clamp(1.5rem, 5vw, 4rem);
+          padding-bottom: clamp(5rem, 12vw, 9rem);
+        }
+
+        /* Section block — full-width divided section */
+        .section-block {
+          padding: var(--section-gap) 0;
+          border-bottom: 1px solid rgba(26,24,20,0.14);
+        }
+        .section-block:last-child {
+          border-bottom: none;
+        }
+
+        /* Source link — small mono underline */
+        .source-link {
+          font-family: 'Courier Prime', monospace;
+          font-size: 9px;
+          letter-spacing: 0.12em;
+          color: rgba(26,24,20,0.40);
+          text-decoration: none;
+          border-bottom: 1px solid rgba(26,24,20,0.14);
+          padding-bottom: 1px;
+          transition: color 0.15s, border-color 0.15s;
+        }
+        .source-link:hover {
+          color: rgba(190,40,30,0.80);
+          border-color: rgba(190,40,30,0.40);
+        }
+
+        /* Stat / metric label */
+        .metric-label {
+          font-family: 'Courier Prime', monospace;
+          font-size: 9px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: rgba(26,24,20,0.40);
+        }
+
+        /* List last-child border removal — apply to list containers */
+        .bordered-list > *:last-child {
+          border-bottom: none !important;
+        }
+        .bordered-list > *:first-child {
+          border-top: none !important;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           PROSE RHYTHM — paragraph spacing inside prose blocks
+           ──────────────────────────────────────────────────────── */
+        .prose-block p + p {
+          margin-top: var(--space-md);
+        }
         html {
           scroll-behavior: smooth;
           /* Prevent horizontal scroll surprises from oversized SVG/text */
@@ -1056,6 +1173,88 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         .safe-bottom-nav {
           padding-bottom: max(1rem, env(safe-area-inset-bottom));
         }
+
+        /* ────────────────────────────────────────────────────────
+           BORDERED LIST — removes orphan first/last borders
+           Apply .bordered-list to the wrapper of any list where
+           items have borderBottom. CSS handles the rest.
+           ──────────────────────────────────────────────────────── */
+        .bordered-list > *:last-child,
+        .bordered-list > *:last-child > * {
+          border-bottom: none !important;
+        }
+        .bordered-list > *:first-child,
+        .bordered-list > *:first-child > * {
+          border-top: none !important;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           FOCUS VISIBLE — keyboard nav accessibility
+           ──────────────────────────────────────────────────────── */
+        :focus-visible {
+          outline: 2px solid rgba(190,40,30,0.6);
+          outline-offset: 2px;
+        }
+        :focus:not(:focus-visible) {
+          outline: none;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           SMOOTH IMAGE RENDERING
+           ──────────────────────────────────────────────────────── */
+        img, svg {
+          display: block;
+          max-width: 100%;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           PREVENT LAYOUT SHIFT from scrollbar appearance
+           ──────────────────────────────────────────────────────── */
+        html {
+          scrollbar-gutter: stable;
+        }
+        @media (max-width: 768px) {
+          html { scrollbar-gutter: auto; }
+        }
+
+        /* ────────────────────────────────────────────────────────
+           MONO NUMBERS — tabular figures for aligned metrics
+           ──────────────────────────────────────────────────────── */
+        .tabular-nums {
+          font-variant-numeric: tabular-nums;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           DASH PAGE INNER — standard page container
+           Replaces scattered maxWidth: 1000 / margin: auto
+           ──────────────────────────────────────────────────────── */
+        .dash-page-inner {
+          max-width: var(--content-width, 1000px);
+          margin: 0 auto;
+          padding-left:  clamp(1.5rem, 5vw, 4rem);
+          padding-right: clamp(1.5rem, 5vw, 4rem);
+          padding-bottom: clamp(5rem, 12vw, 9rem);
+        }
+
+        /* ────────────────────────────────────────────────────────
+           SECTION DIVIDER — consistent ruled sections
+           ──────────────────────────────────────────────────────── */
+        .section-block {
+          padding-top:    var(--section-gap, clamp(3rem, 7vw, 5.5rem));
+          padding-bottom: var(--section-gap, clamp(3rem, 7vw, 5.5rem));
+          border-bottom:  1px solid rgba(26,24,20,0.14);
+        }
+        .section-block:last-child {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+
+        /* ────────────────────────────────────────────────────────
+           TRANSITION CONSISTENCY — all interactive elements
+           ──────────────────────────────────────────────────────── */
+        button, a {
+          transition: color 0.15s, background 0.15s, border-color 0.15s, opacity 0.15s;
+        }
       `}</style>
 
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />
@@ -1064,10 +1263,10 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         <AnimatePresence mode="wait">
           <motion.div
             key={page}
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.38, ease: [0.25, 0.1, 0.25, 1] }}
           >
             {children}
           </motion.div>

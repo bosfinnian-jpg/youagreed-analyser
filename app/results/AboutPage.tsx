@@ -116,7 +116,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
 
       {/* What this is */}
       <Block>
-        <div style={{ marginBottom: 'clamp(3.5rem, 7vw, 5rem)', paddingBottom: 'clamp(2.5rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+        <div style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
           <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
             What this is
           </p>
@@ -134,7 +134,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
 
       {/* The argument */}
       <Block delay={0.05}>
-        <div style={{ marginBottom: 'clamp(3.5rem, 7vw, 5rem)', paddingBottom: 'clamp(2.5rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+        <div style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
           <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
             The argument
           </p>
@@ -152,7 +152,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
 
       {/* Theoretical sources */}
       <Block delay={0.08}>
-        <div style={{ marginBottom: 'clamp(3.5rem, 7vw, 5rem)', paddingBottom: 'clamp(2.5rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+        <div style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
           <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
             Theoretical grounding
           </p>
@@ -203,7 +203,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
 
       {/* Data & privacy */}
       <Block delay={0.1}>
-        <div style={{ marginBottom: 'clamp(3.5rem, 7vw, 5rem)', paddingBottom: 'clamp(2.5rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+        <div style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
           <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
             Your data
           </p>

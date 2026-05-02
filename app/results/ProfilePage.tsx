@@ -401,7 +401,7 @@ function CoreBeliefsSection({ beliefs }: { beliefs: string[] }) {
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
         body="None of these are statements you made. They are the beliefs the model infers from how you frame yourself, other people, and the world. Written in first person because that is how a belief presents."
       />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {beliefs.map((belief, i) => (
           <Reveal key={i} delay={i * 0.08}>
             <div style={{
@@ -446,7 +446,7 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
         body="Each prediction was derived from writing patterns, topic distribution, and language markers. No questions were asked. This is the kind of profile data brokers build, without consent, at hundreds of millions of rows."
       />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {predictions.map((pred: any, i: number) => {
           const isExp = expanded === i;
           const confColor = pred.confidence >= 75 ? PALETTE.red : pred.confidence >= 55 ? PALETTE.amber : PALETTE.inkMuted;
@@ -530,7 +530,7 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
         body="Writing style has a fingerprint. These are the recurring phrases, hedges, and tics pulled from your corpus. Each one reveals something about how you think and what you protect yourself from."
       />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {tells.map((t: any, i: number) => (
           <Reveal key={i} delay={i * 0.08}>
             <div className="tells-row" style={{
@@ -587,7 +587,7 @@ function RecurringConcernsSection({ concerns }: { concerns: any[] }) {
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
         body="These are the preoccupations you returned to repeatedly, across different weeks and under different phrasings. A recurring pattern reveals more than any single conversation."
       />
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {concerns.map((c: any, i: number) => (
           <Reveal key={i} delay={i * 0.1}>
             <div style={{

@@ -204,7 +204,7 @@ function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
       initial={{ opacity: 0, y: 12 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8 }}
-      style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)', paddingBottom: 'clamp(3rem, 6vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
+      style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>
         What "in the weights" means
@@ -319,7 +319,7 @@ function MachineUnlearning() {
       initial={{ opacity: 0, y: 12 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8 }}
-      style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)', paddingBottom: 'clamp(3rem, 6vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
+      style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
@@ -420,7 +420,7 @@ function LegalGap() {
       initial={{ opacity: 0, y: 12 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8 }}
-      style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)', paddingBottom: 'clamp(3rem, 6vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
+      style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
@@ -494,7 +494,7 @@ function ConsentFailure() {
       initial={{ opacity: 0, y: 12 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8 }}
-      style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)', paddingBottom: 'clamp(3rem, 6vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
+      style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
@@ -539,7 +539,7 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
       initial={{ opacity: 0, y: 12 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8 }}
-      style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)', paddingBottom: 'clamp(3rem, 6vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}
+      style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}
     >
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',

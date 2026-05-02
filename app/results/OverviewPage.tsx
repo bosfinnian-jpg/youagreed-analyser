@@ -346,9 +346,8 @@ function ArrivalChapter({ name, date, onActive }: {
 
 // ════════════════════════════════════════════════════════════════════════════
 // CHAPTER 01 — VOLUME
-// 7×24 heatmap: rows = days of week, cols = hours.
-// Cells animate in staggered on scroll. Colour intensity = message density.
-// At a glance: when does this person talk to it, and how compulsively.
+// Horizontal bar per day of week. Width = message count that day.
+// Sparse data reads cleanly — the pattern is immediately visible.
 // ════════════════════════════════════════════════════════════════════════════
 function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
   count: number;
@@ -358,26 +357,14 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
 }) {
   const numRef     = useRef<HTMLSpanElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
-  const cellsRef   = useRef<HTMLDivElement[]>([]);
+  const barRefs    = useRef<HTMLDivElement[]>([]);
 
-  // Flatten to find global max for normalisation
-  const allVals = dayHourMatrix.flat();
-  const maxVal  = Math.max(...allVals, 1);
+  const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  // Peak cell
-  let peakDay = 0; let peakHour = 0; let peakVal = 0;
-  dayHourMatrix.forEach((row, d) => row.forEach((v, h) => {
-    if (v > peakVal) { peakVal = v; peakDay = d; peakHour = h; }
-  }));
-
-  const DAY_LABELS  = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const HOUR_LABELS = ['12a', '3a', '6a', '9a', '12p', '3p', '6p', '9p'];
-
-  const peakDayLabel  = DAY_LABELS[peakDay];
-  const peakHourLabel = peakHour === 0 ? 'midnight'
-    : peakHour < 12 ? `${peakHour}am`
-    : peakHour === 12 ? 'noon'
-    : `${peakHour - 12}pm`;
+  // Total per day
+  const dayTotals = dayHourMatrix.map(row => row.reduce((s, v) => s + v, 0));
+  const maxDay    = Math.max(...dayTotals, 1);
+  const peakDay   = dayTotals.indexOf(maxDay);
 
   useScrollTrigger(sectionRef, () => {
     // Count up
@@ -392,28 +379,26 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
       });
     }
 
-    // Cells fade + scale in staggered — row by row, left to right
-    const cells = cellsRef.current.filter(Boolean);
-    cells.forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'scale(0.4)';
+    // Bars grow from left
+    barRefs.current.filter(Boolean).forEach((el, i) => {
+      el.style.width = '0%';
+      setTimeout(() => {
+        animate(el, {
+          width: [`0%`, `${Math.max(2, (dayTotals[i] / maxDay) * 100)}%`],
+          duration: 800,
+          ease: createSpring({ stiffness: 120, damping: 18 }).ease,
+        });
+      }, 80 + i * 60);
     });
-    animate(cells, {
-      opacity: [0, 1],
-      scale:   [0.4, 1],
-      delay:   stagger(12, { grid: [24, 7], from: 'first' }),
-      duration: 400,
-      ease:    'outQuart',
-    });
-  }, [count, maxVal]);
+  }, [count, dayTotals]);
 
   return (
     <div ref={sectionRef}>
       <ChapterShell id="volume" num="01" label="Volume" onActive={onActive}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1rem,2.5vw,1.75rem)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.25rem,3vw,2rem)' }}>
 
-          {/* Top: count + copy */}
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem', flexWrap: 'wrap' }}>
+          {/* Count headline */}
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', flexWrap: 'wrap' }}>
             <h2 style={{
               fontFamily: TYPE.serif,
               fontSize: 'clamp(3.8rem,10vw,6rem)',
@@ -435,114 +420,84 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
             </p>
           </div>
 
-          {/* Heatmap */}
-          <div style={{ width: '100%' }}>
-            {/* Hour axis labels */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '28px repeat(24, 1fr)',
-              marginBottom: '4px',
-              paddingRight: '2px',
-            }}>
-              <div />
-              {Array.from({ length: 24 }).map((_, h) => (
-                <div key={h} style={{
-                  fontFamily: TYPE.mono,
-                  fontSize: '7px',
-                  letterSpacing: '0.05em',
-                  color: PALETTE.inkFaint,
-                  textAlign: 'center',
-                  opacity: h % 3 === 0 ? 1 : 0,
-                }}>
-                  {HOUR_LABELS[h / 3] || ''}
-                </div>
-              ))}
-            </div>
+          {/* Strip chart */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: 640 }}>
+            {DAY_LABELS.map((label, d) => {
+              const val      = dayTotals[d];
+              const isPeak   = d === peakDay;
+              const hasData  = val > 0;
 
-            {/* Grid rows */}
-            {dayHourMatrix.map((row, d) => (
-              <div key={d} style={{
-                display: 'grid',
-                gridTemplateColumns: '28px repeat(24, 1fr)',
-                gap: '2px',
-                marginBottom: '2px',
-              }}>
-                {/* Day label */}
-                <div style={{
-                  fontFamily: TYPE.mono,
-                  fontSize: '8px',
-                  letterSpacing: '0.08em',
-                  color: PALETTE.inkFaint,
-                  display: 'flex',
-                  alignItems: 'center',
-                  textTransform: 'uppercase',
-                }}>
-                  {DAY_LABELS[d]}
-                </div>
+              return (
+                <div key={d} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  {/* Day label */}
+                  <span style={{
+                    fontFamily: TYPE.mono,
+                    fontSize: '9px',
+                    letterSpacing: '0.2em',
+                    color: isPeak ? PALETTE.ink : PALETTE.inkFaint,
+                    textTransform: 'uppercase',
+                    width: '28px',
+                    flexShrink: 0,
+                    fontWeight: isPeak ? 700 : 400,
+                  }}>
+                    {label}
+                  </span>
 
-                {/* Hour cells */}
-                {row.map((val, h) => {
-                  const norm = val / maxVal;
-                  const isPeak = d === peakDay && h === peakHour;
-                  // Colour: warm paper → red, with 0 being almost invisible
-                  const alpha = norm === 0 ? 0.05 : 0.10 + norm * 0.90;
-                  const bg = isPeak
-                    ? PALETTE.red
-                    : norm === 0
-                      ? 'rgba(26,24,20,0.06)'
-                      : `rgba(190,40,30,${alpha})`;
-
-                  return (
+                  {/* Track + bar */}
+                  <div style={{
+                    flex: 1,
+                    height: isPeak ? 10 : 6,
+                    background: 'rgba(26,24,20,0.07)',
+                    position: 'relative',
+                    borderRadius: '1px',
+                  }}>
                     <div
-                      key={h}
-                      ref={el => {
-                        if (el) cellsRef.current[d * 24 + h] = el;
-                      }}
-                      title={val > 0 ? `${DAY_LABELS[d]} ${h}:00 — ${val} message${val !== 1 ? 's' : ''}` : undefined}
+                      ref={el => { if (el) barRefs.current[d] = el; }}
                       style={{
-                        aspectRatio: '1',
-                        background: bg,
+                        position: 'absolute',
+                        left: 0, top: 0, bottom: 0,
+                        width: '0%',
+                        background: isPeak ? PALETTE.red : hasData ? 'rgba(26,24,20,0.45)' : 'transparent',
                         borderRadius: '1px',
-                        transition: 'background 0.15s',
-                        outline: isPeak ? `1.5px solid ${PALETTE.red}` : 'none',
-                        outlineOffset: '1px',
                       }}
                     />
-                  );
-                })}
-              </div>
-            ))}
+                  </div>
+
+                  {/* Count */}
+                  <span style={{
+                    fontFamily: TYPE.mono,
+                    fontSize: '9px',
+                    letterSpacing: '0.1em',
+                    color: isPeak ? PALETTE.red : hasData ? PALETTE.inkFaint : 'rgba(26,24,20,0.18)',
+                    width: '18px',
+                    textAlign: 'right',
+                    flexShrink: 0,
+                  }}>
+                    {val > 0 ? val : '—'}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Peak callout + copy */}
-          <div style={{ display: 'flex', gap: 'clamp(1.5rem,4vw,3rem)', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-            <div>
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em',
-                color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.25rem',
-              }}>
-                Peak · {peakDayLabel} at {peakHourLabel}
-              </p>
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.14em',
-                color: PALETTE.inkFaint, textTransform: 'uppercase',
-              }}>
-                OpenAI Privacy Policy, June 2023 — April 2026
-              </p>
-            </div>
-            <p style={{
-              fontFamily: TYPE.serif,
-              fontSize: 'clamp(0.95rem,1.6vw,1.1rem)',
-              color: PALETTE.inkMuted,
-              lineHeight: 1.72,
-              maxWidth: '42ch',
-              flex: '1 1 240px',
-            }}>
-              Each message a permanent record. OpenAI's Privacy Policy permits use
-              of conversation content to improve its models. No version specifies
-              which conversations were used, or when.
-            </p>
-          </div>
+          {/* Copy */}
+          <p style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(0.95rem,1.6vw,1.1rem)',
+            color: PALETTE.inkMuted,
+            lineHeight: 1.78,
+            maxWidth: '44ch',
+          }}>
+            Each one a permanent record. OpenAI's Privacy Policy permits use
+            of conversation content to improve its models — no version specifies
+            which conversations were used, or when.
+          </p>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+            color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6,
+          }}>
+            OpenAI Privacy Policy, June 2023 — April 2026
+          </p>
 
         </div>
       </ChapterShell>

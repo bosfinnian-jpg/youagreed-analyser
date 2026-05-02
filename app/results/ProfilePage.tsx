@@ -1115,24 +1115,6 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
 function ProfileSection({ children, index }: { children: React.ReactNode; index?: number }) {
   return (
     <div style={{ padding: 'clamp(2.5rem, 8vw, 6rem) 0', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
-      {/* Ghost section number */}
-      {index !== undefined && (
-        <div className="section-ghost-num" style={{
-          position: 'absolute',
-          top: 'clamp(1.5rem, 5vw, 4rem)',
-          right: 'clamp(1rem, 5vw, 4rem)',
-          fontFamily: "'EB Garamond', serif",
-          fontSize: 'clamp(60px, 12vw, 140px)',
-          fontWeight: 400,
-          color: 'rgba(26,24,20,0.06)',
-          lineHeight: 1,
-          letterSpacing: '-0.04em',
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}>
-          {String(index).padStart(2, '0')}
-        </div>
-      )}
       {children}
     </div>
   );

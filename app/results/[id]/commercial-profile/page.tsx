@@ -53,23 +53,6 @@ function Section({ children, index }: { children: React.ReactNode; index?: numbe
       borderBottom: `1px solid ${PALETTE.border}`,
       position: 'relative',
     }}>
-      {index !== undefined && (
-        <div className="section-ghost-num" style={{
-          position: 'absolute',
-          top: 'clamp(1.5rem, 5vw, 4rem)',
-          right: 0,
-          fontFamily: "'EB Garamond', serif",
-          fontSize: 'clamp(60px, 12vw, 140px)',
-          fontWeight: 400,
-          color: 'rgba(26,24,20,0.04)',
-          lineHeight: 1,
-          letterSpacing: '-0.04em',
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}>
-          {String(index).padStart(2, '0')}
-        </div>
-      )}
       {children}
     </div>
   );

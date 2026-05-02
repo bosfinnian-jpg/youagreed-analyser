@@ -22,7 +22,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { animate, stagger, onScroll, createDrawable, createSpring, createTimeline } from 'animejs';
-import { PALETTE, TYPE, type DashPage, ActLabel, ThreadSentence } from './DashboardLayout';
+import { PALETTE, TYPE, type DashPage, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
 
 // ── Chapters ────────────────────────────────────────────────────────────────
 const CHAPTERS = [
@@ -1537,89 +1537,28 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 
 // ════════════════════════════════════════════════════════════════════════════
 // CHAPTER 07 — CONTINUE
-// Onward navigation. No special anime.js — this is the breath after.
 // ════════════════════════════════════════════════════════════════════════════
 function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
   return (
-    <section className="chapter-snap" style={{
-      minHeight: '100dvh',
-      padding: 'clamp(1.5rem,4vw,3rem) clamp(1.25rem,6vw,5rem)',
-      display: 'flex',
-      alignItems: 'center',
+    <div style={{
+      maxWidth: 880,
+      margin: '0 auto',
+      width: '100%',
+      padding: '0 clamp(1.25rem,6vw,5rem)',
       boxSizing: 'border-box',
     }}>
-      <div style={{
-        maxWidth: 880,
-        margin: '0 auto',
-        width: '100%',
-      }}>
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8 }}
-        >
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '10px',
-            letterSpacing: '0.32em', color: PALETTE.redMuted,
-            textTransform: 'uppercase',
-            marginBottom: '2rem',
-          }}>
-            End of Act I
-          </p>
-
-          <p style={{
-            fontFamily: TYPE.serif,
-            fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)',
-            color: PALETTE.ink,
-            lineHeight: 1.55,
-            maxWidth: '32ch',
-            marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
-            fontStyle: 'italic',
-          }}>
-            That was the record. What follows is the inference layer — what the system constructs from it.
-          </p>
-
-          <div className="continue-cta-row" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <button onClick={() => setPage('profile')}
-              className="continue-cta-primary"
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: 'clamp(1.05rem, 2vw, 1.2rem)',
-                letterSpacing: '-0.01em', color: PALETTE.ink,
-                background: PALETTE.bgPanel,
-                border: `1px solid ${PALETTE.border}`,
-                padding: 'clamp(1rem,2vw,1.4rem) clamp(1.5rem,3vw,2.2rem)',
-                cursor: 'pointer',
-                transition: 'border-color 0.15s, background 0.15s',
-                textAlign: 'left', lineHeight: 1.3,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.borderHover; e.currentTarget.style.background = PALETTE.bgElevated; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = PALETTE.border; e.currentTarget.style.background = PALETTE.bgPanel; }}
-            >
-              <span style={{
-                display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
-                letterSpacing: '0.28em', color: PALETTE.redMuted,
-                textTransform: 'uppercase', marginBottom: '0.4rem',
-              }}>ACT II — Inference</span>
-              The profile they built →
-            </button>
-            <button onClick={() => setPage('terms')}
-              style={{
-                fontFamily: TYPE.mono, fontSize: '10px',
-                letterSpacing: '0.18em', color: PALETTE.inkFaint,
-                background: 'none', border: 'none', cursor: 'pointer',
-                textTransform: 'uppercase', padding: '1rem 0',
-                textDecoration: 'underline', textDecorationColor: PALETTE.border,
-                textUnderlineOffset: '4px',
-              }}
-            >
-              Or skip to: the terms →
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    </section>
+      <PageFooter
+        statement="This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model."
+        followOn="The difference between the two is what makes it valuable."
+        endLabel="End of Act I."
+        setPage={setPage}
+        navItems={[
+          { page: 'profile', act: 'Act II / 03', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },
+          { page: 'risk',    act: 'Act II / 04', label: 'What it enables',    body: 'The scenarios that become possible once this record exists.' },
+          { page: 'terms',   act: 'Act III / 05', label: 'Why it persists',   body: 'Why this profile cannot be removed — even if you delete your account.' },
+        ]}
+      />
+    </div>
   );
 }
 

@@ -14,6 +14,7 @@ import CannotBeDeletedPage from './CannotBeDeletedPage';
 import HowItWorksPage from './HowItWorksPage';
 import AboutPage from './AboutPage';
 import PolicyDriftPage from './PolicyDriftPage';
+import ResistPage from './ResistPage';
 
 interface AnalysisResult {
   privacyScore: number;
@@ -113,6 +114,7 @@ export default function ResultsPage() {
       {page === 'permanent' && <CannotBeDeletedPage results={results} setPage={handleSetPage} />}
       {page === 'how-it-works' && <HowItWorksPage setPage={handleSetPage} />}
       {page === 'about' && <AboutPage setPage={handleSetPage} />}
+      {page === 'resist' && <ResistPage analysis={results} />}
     </DashboardLayout>
   );
 }

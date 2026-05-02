@@ -33,7 +33,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'policy-drift';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'policy-drift' | 'resist';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -77,6 +77,15 @@ const ACTS = [
     pages: [
       { id: 'how-it-works' as DashPage, label: 'How It Works', short: '07', desc: 'Why the inference is permanent' },
       { id: 'understand' as DashPage, label: 'Test', short: '08', desc: 'Watch the extraction happen live' },
+    ],
+  },
+  {
+    id: 'resist',
+    label: 'After',
+    roman: 'V',
+    title: 'After',
+    pages: [
+      { id: 'resist' as DashPage, label: 'After', short: '09', desc: 'What remains. What you can do.' },
     ],
   },
 ] as const;

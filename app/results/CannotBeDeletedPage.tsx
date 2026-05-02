@@ -788,9 +788,9 @@ export default function CannotBeDeletedPage({ results, setPage }: {
         followOn="This is not a policy failure. It is a consequence of how the technology works. The question that remains is whether the terms you agreed to were ever genuinely legible."
         navItems={[
           { page: 'terms',       act: 'ACT III / 06', label: 'What you agreed to',    body: 'The terms that made this legal. Parsed against what they actually permit.' },
+          { page: 'resist',      act: 'ACT V / 09',   label: 'What you can do',       body: 'Three actions that limit what happens from this point forward.' },
           { page: 'understand',  act: 'ACT IV / 08',  label: 'How the inference works', body: 'The methodology behind how your patterns were extracted and classified.' },
           { page: 'how-it-works',act: 'ACT IV / 07',  label: 'Why deletion fails',    body: 'The architecture that makes reversal impossible — gradient descent and machine unlearning.' },
-          { page: 'risk',        act: 'ACT II / 04',  label: 'What it enables',       body: 'The scenarios that become possible once this data exists.' },
         ]}
         endLabel="End of permanence record."
         setPage={setPage}

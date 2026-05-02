@@ -906,11 +906,11 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
 
       <PageFooter
         statement="What you consented to in 2023 is not what the policy says today. The document changed around you. You were not asked again."
-        followOn="The terms describe what was taken. The system that took it is explained next."
+        followOn="The terms describe what was taken. What you can do about it is next."
         navItems={[
           { page: 'permanent',   act: 'ACT III / 05', label: 'Why it cannot be removed', body: 'The data the terms authorised collecting cannot be returned. Deletion is structural fiction.' },
+          { page: 'resist',      act: 'ACT V / 09',   label: 'What you can do',          body: 'Three actions that limit what happens from this point forward.' },
           { page: 'understand',  act: 'ACT IV / 08',  label: 'Test the inference',       body: 'Watch the extraction happen on your own words.' },
-          { page: 'how-it-works',act: 'ACT IV / 07',  label: 'How it works',             body: 'Why gradient descent makes the right to erasure technically unenforceable.' },
         ]}
         endLabel="End of terms analysis."
         setPage={setPage}

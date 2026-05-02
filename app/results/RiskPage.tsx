@@ -944,7 +944,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
         }}
       >
         <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
-        <ThreadSentence>What the record enables. And why it does not need to leave the system to be used against you.</ThreadSentence>
+        <ThreadSentence>What this record makes possible — without leaving the system, without your knowledge.</ThreadSentence>
         
 
         {/* Active count — the big number */}

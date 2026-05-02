@@ -810,7 +810,7 @@ export default function CannotBeDeletedPage({ results, setPage }: {
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.25, duration: 0.7 }}
         >
-          <ThreadSentence>Deleting your account and removing yourself from the model are not the same thing. This page explains the difference.</ThreadSentence>
+          <ThreadSentence>Deleting your account and removing yourself from the model are not the same thing.</ThreadSentence>
         </motion.div>
 
         {/* Hero number — message count or a fixed weight count */}

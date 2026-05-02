@@ -275,7 +275,7 @@ function ArrivalChapter({ name, date, onActive }: {
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
       <div style={{ marginBottom: '2.5rem' }}>
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
-        <ThreadSentence>You agreed to terms that permitted this. What follows is what those terms allowed.</ThreadSentence>
+        <ThreadSentence>You agreed to terms that permitted this. What follows is what those terms extracted.</ThreadSentence>
       </div>
       <motion.p
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}

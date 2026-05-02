@@ -45,7 +45,7 @@ const ACTS = [
     roman: 'I',
     title: 'The Record',
     pages: [
-      { id: 'overview' as DashPage, label: 'Overview', short: '01', desc: 'What was extracted' },
+      { id: 'overview' as DashPage, label: 'Overview', short: '01', desc: 'Your data, extracted and mapped' },
     ],
   },
   {
@@ -54,9 +54,9 @@ const ACTS = [
     roman: 'II',
     title: 'The Inference',
     pages: [
-      { id: 'profile' as DashPage, label: 'Personal Profile', short: '02', desc: 'What the patterns reveal about you' },
-      { id: 'commercial-profile' as DashPage, label: 'Commercial Profile', short: '03', desc: 'How your data is valued' },
-      { id: 'risk' as DashPage, label: 'Risk', short: '04', desc: 'What the record enables' },
+      { id: 'profile' as DashPage, label: 'Personal Profile', short: '02', desc: 'What the pattern reveals about you' },
+      { id: 'commercial-profile' as DashPage, label: 'Commercial Profile', short: '03', desc: 'The product version of you, priced' },
+      { id: 'risk' as DashPage, label: 'Risk', short: '04', desc: 'What this record makes possible' },
     ],
   },
   {
@@ -65,8 +65,8 @@ const ACTS = [
     roman: 'III',
     title: 'The Permanence',
     pages: [
-      { id: 'permanent' as DashPage, label: 'Permanent', short: '05', desc: 'Why it cannot be removed' },
-      { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to' },
+      { id: 'permanent' as DashPage, label: 'Permanent', short: '05', desc: 'Why deletion changes nothing' },
+      { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to — and when it changed' },
     ],
   },
   {
@@ -75,8 +75,8 @@ const ACTS = [
     roman: 'IV',
     title: 'The Mechanism',
     pages: [
-      { id: 'how-it-works' as DashPage, label: 'How It Works', short: '07', desc: 'The architecture behind the inference' },
-      { id: 'understand' as DashPage, label: 'Test', short: '08', desc: 'See the inference in action' },
+      { id: 'how-it-works' as DashPage, label: 'How It Works', short: '07', desc: 'Why the inference is permanent' },
+      { id: 'understand' as DashPage, label: 'Test', short: '08', desc: 'Watch the extraction happen live' },
     ],
   },
 ] as const;
@@ -239,9 +239,9 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
             marginTop: '0px',
             background: PALETTE.bgPanel,
             border: `1px solid ${PALETTE.border}`,
-            minWidth: act.pages.length === 1 ? '180px' : '220px',
+            minWidth: act.pages.length === 1 ? '200px' : '240px',
             zIndex: 300,
-            boxShadow: '0 8px 24px rgba(26,24,20,0.08)',
+            boxShadow: '0 4px 20px rgba(26,24,20,0.10), 0 1px 4px rgba(26,24,20,0.06)',
           }}
         >
           {/* Act header */}
@@ -258,8 +258,9 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
             </span>
           </div>
           {/* Pages */}
-          {act.pages.map(p => {
+          {act.pages.map((p, idx) => {
             const isActive = currentPage === p.id;
+            const isLast = idx === act.pages.length - 1;
             return (
               <button
                 key={p.id}
@@ -267,20 +268,20 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
                 style={{
                   width: '100%', background: isActive ? PALETTE.bgElevated : 'none',
                   border: 'none', cursor: 'pointer', textAlign: 'left',
-                  padding: '0.7rem 1rem',
-                  display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+                  padding: '0.65rem 1rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   gap: '1rem',
                   transition: 'background 0.12s',
-                  borderBottom: `1px solid ${PALETTE.border}`,
+                  borderBottom: isLast ? 'none' : `1px solid ${PALETTE.border}`,
                 }}
                 onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = PALETTE.bgElevated; }}
                 onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'none'; }}
               >
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <span style={{
-                    display: 'block',
+                    display: 'flex', alignItems: 'center', gap: '0.4rem',
                     fontFamily: TYPE.serif,
-                    fontSize: '1rem',
+                    fontSize: '0.95rem',
                     color: isActive ? PALETTE.ink : PALETTE.inkMuted,
                     letterSpacing: '-0.01em',
                     lineHeight: 1.2,
@@ -288,23 +289,23 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
                     {p.label}
                     {isActive && (
                       <span style={{
-                        display: 'inline-block', width: '4px', height: '4px',
-                        borderRadius: '50%', background: PALETTE.red,
-                        marginLeft: '0.5rem', verticalAlign: 'middle',
+                        display: 'inline-block', width: '3px', height: '3px',
+                        borderRadius: '50%', background: PALETTE.red, flexShrink: 0,
                       }} />
                     )}
                   </span>
                   <span style={{
                     display: 'block',
-                    fontFamily: TYPE.mono, fontSize: '9px',
-                    color: PALETTE.inkFaint, letterSpacing: '0.06em',
+                    fontFamily: TYPE.mono, fontSize: '8.5px',
+                    color: PALETTE.inkFaint, letterSpacing: '0.04em',
                     marginTop: '2px',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }}>
                     {p.desc}
                   </span>
                 </div>
                 <span style={{
-                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
+                  fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.22em',
                   color: isActive ? PALETTE.redMuted : PALETTE.inkGhost,
                   textTransform: 'uppercase', flexShrink: 0,
                 }}>
@@ -326,9 +327,9 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
 // FURTHER READING — collapsible dropdown inside the drawer
 // ============================================================================
 const FURTHER_ITEMS = [
-  { id: 'about' as DashPage, label: 'About', desc: 'Theoretical framework' },
-  { id: 'sources' as DashPage, label: 'Sources', desc: 'Policy clause index' },
-  { id: 'policy-drift' as DashPage, label: 'Policy drift', desc: '2023 → 2025 → 2026 changes' },
+  { id: 'about' as DashPage, label: 'About', desc: 'The theoretical basis' },
+  { id: 'sources' as DashPage, label: 'Sources', desc: 'Every claim, sourced' },
+  { id: 'policy-drift' as DashPage, label: 'Policy drift', desc: 'How the terms shifted over time' },
 ] as const;
 
 function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) => void }) {
@@ -661,20 +662,20 @@ function Nav({ page, setPage, results, exposureScore }: {
 
               {/* Score strip */}
               <div style={{
-                padding: '1.1rem 1.5rem',
+                padding: '1rem 1.5rem',
                 borderBottom: `1px solid rgba(26,24,20,0.08)`,
                 display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
               }}>
                 <div>
-                  <span style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.3em', textTransform: 'uppercase', color: PALETTE.inkGhost, display: 'block', marginBottom: '0.2rem' }}>
-                    Exposure index
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.3em', textTransform: 'uppercase', color: PALETTE.inkGhost, display: 'block', marginBottom: '0.15rem' }}>
+                    Exposure score
                   </span>
-                  <span style={{ fontFamily: TYPE.serif, fontSize: '1.8rem', color: scoreColor, letterSpacing: '-0.04em', lineHeight: 1 }}>
-                    {exposureScore}<span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: PALETTE.inkGhost, marginLeft: '3px' }}>/100</span>
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '1.6rem', color: scoreColor, letterSpacing: '-0.04em', lineHeight: 1 }}>
+                    {exposureScore}<span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost, marginLeft: '2px' }}>/100</span>
                   </span>
                 </div>
                 {userName && (
-                  <span style={{ fontFamily: TYPE.serif, fontSize: '0.88rem', color: PALETTE.inkFaint, fontStyle: 'italic' }}>
+                  <span style={{ fontFamily: TYPE.serif, fontSize: '0.85rem', color: PALETTE.inkFaint, fontStyle: 'italic' }}>
                     {userName}
                   </span>
                 )}
@@ -686,7 +687,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                   <div key={act.id}>
                     {/* Act divider */}
                     <div style={{
-                      padding: '0.9rem 1.5rem 0.25rem',
+                      padding: '0.7rem 1.5rem 0.2rem',
                       display: 'flex', alignItems: 'center', gap: '0.5rem',
                     }}>
                       <span style={{
@@ -698,7 +699,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                       <div style={{ flex: 1, height: '1px', background: 'rgba(26,24,20,0.07)' }} />
                       <span style={{
                         fontFamily: TYPE.mono, fontSize: '7px', letterSpacing: '0.2em',
-                        color: 'rgba(26,24,20,0.25)', textTransform: 'uppercase',
+                        color: 'rgba(26,24,20,0.22)', textTransform: 'uppercase',
                       }}>
                         {act.title}
                       </span>
@@ -717,7 +718,7 @@ function Nav({ page, setPage, results, exposureScore }: {
                           style={{
                             width: '100%', background: isActive ? 'rgba(26,24,20,0.05)' : 'none',
                             border: 'none', cursor: 'pointer', textAlign: 'left',
-                            padding: '0.6rem 1.5rem',
+                            padding: '0.45rem 1.5rem',
                             minHeight: '44px',
                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                             transition: 'background 0.12s',
@@ -730,15 +731,15 @@ function Nav({ page, setPage, results, exposureScore }: {
                             <span style={{
                               display: 'block',
                               fontFamily: TYPE.serif,
-                              fontSize: '1.15rem',
+                              fontSize: '1.05rem',
                               color: isActive ? PALETTE.ink : PALETTE.inkMuted,
-                              letterSpacing: '-0.02em', lineHeight: 1.2,
+                              letterSpacing: '-0.015em', lineHeight: 1.2,
                             }}>
                               {p.label}
                             </span>
                             <span style={{
                               display: 'block',
-                              fontFamily: TYPE.mono, fontSize: '8.5px',
+                              fontFamily: TYPE.mono, fontSize: '8px',
                               color: isActive ? 'rgba(26,24,20,0.35)' : PALETTE.inkGhost,
                               letterSpacing: '0.04em',
                               marginTop: '1px',
@@ -780,44 +781,44 @@ function Nav({ page, setPage, results, exposureScore }: {
 // ============================================================================
 const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: string; page: DashPage }>>> = {
   overview: [
-    { label: 'How it works', desc: 'Why the model can infer what it does', page: 'how-it-works' },
-    { label: 'Test', desc: 'Interactive inference demo', page: 'understand' },
+    { label: 'How it works', desc: 'Why the inference is permanent', page: 'how-it-works' },
+    { label: 'Test', desc: 'Watch the extraction live', page: 'understand' },
   ],
   profile: [
-    { label: 'How it works', desc: 'The inference architecture', page: 'how-it-works' },
-    { label: 'Test', desc: 'Try it yourself', page: 'understand' },
+    { label: 'How it works', desc: 'Where these signals come from', page: 'how-it-works' },
+    { label: 'Test', desc: 'See it work on raw text', page: 'understand' },
   ],
   'commercial-profile': [
-    { label: 'Policy drift', desc: 'How the terms changed', page: 'policy-drift' },
+    { label: 'Policy drift', desc: 'When the terms authorised this', page: 'policy-drift' },
     { label: 'Sources', desc: 'Legal basis for each finding', page: 'sources' },
   ],
   risk: [
-    { label: 'Test', desc: 'How inference works', page: 'understand' },
+    { label: 'Test', desc: 'Watch inference happen', page: 'understand' },
     { label: 'Sources', desc: 'Policy basis for each risk', page: 'sources' },
     { label: 'Policy drift', desc: 'When the terms changed', page: 'policy-drift' },
   ],
   permanent: [
-    { label: 'Sources', desc: 'The policy clauses that permit this', page: 'sources' },
-    { label: 'How it works', desc: 'Why deletion is not reversal', page: 'how-it-works' },
-    { label: 'Policy drift', desc: 'How permanence crept in', page: 'policy-drift' },
+    { label: 'How it works', desc: 'The technical reason deletion fails', page: 'how-it-works' },
+    { label: 'Sources', desc: 'The clauses that permit this', page: 'sources' },
+    { label: 'Policy drift', desc: 'How permanence entered the terms', page: 'policy-drift' },
   ],
   terms: [
-    { label: 'Policy drift', desc: '2023 → 2025 → 2026 changes', page: 'policy-drift' },
-    { label: 'Sources', desc: 'Clause-by-clause breakdown', page: 'sources' },
+    { label: 'Policy drift', desc: '2023 → 2025 → 2026', page: 'policy-drift' },
+    { label: 'Sources', desc: 'Clause-by-clause', page: 'sources' },
   ],
   'policy-drift': [
-    { label: 'Sources', desc: 'Full clause index', page: 'sources' },
-    { label: 'Permanent', desc: 'Why this matters', page: 'permanent' },
+    { label: 'Sources', desc: 'Every clause, sourced', page: 'sources' },
+    { label: 'Permanent', desc: 'What the changes mean', page: 'permanent' },
   ],
   sources: [
     { label: 'Policy drift', desc: 'How the terms evolved', page: 'policy-drift' },
-    { label: 'About', desc: 'Theoretical framework', page: 'about' },
+    { label: 'About', desc: 'The theoretical basis', page: 'about' },
   ],
 };
 
 const DEFAULT_CONTEXT_LINKS = [
-  { label: 'About', desc: 'Theoretical framework', page: 'about' as DashPage },
-  { label: 'Sources', desc: 'Full clause index', page: 'sources' as DashPage },
+  { label: 'About', desc: 'The theoretical basis', page: 'about' as DashPage },
+  { label: 'Sources', desc: 'Every claim, sourced', page: 'sources' as DashPage },
 ];
 
 function ContextRail({ page, setPage }: { page: DashPage; setPage: (p: DashPage) => void }) {

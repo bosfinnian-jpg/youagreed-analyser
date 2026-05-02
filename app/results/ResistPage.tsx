@@ -418,7 +418,7 @@ function ResistHeader() {
         borderBottom: `1px solid ${PALETTE.border}`,
         marginBottom: 0,
       }}>
-      <ActLabel roman="IV" title="After" pageLabel="08 / Resist" />
+      <ActLabel roman="IV" title="The Mechanism" pageLabel="08 / Resist" />
       <ThreadSentence>The extraction is complete. This is what remains.</ThreadSentence>
       <motion.h1
         initial={{ opacity: 0, y: 12 }}

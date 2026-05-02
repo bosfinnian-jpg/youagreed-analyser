@@ -239,33 +239,24 @@ function ChapterShell({
         position: 'relative',
         zIndex: 1,
       }}>
-        {num && (
-          <div aria-hidden="true" style={{
-            width: '100%', height: 1,
-            background: PALETTE.border,
-            marginBottom: 'clamp(1.5rem,3vw,2.5rem)',
-            opacity: isActive ? 1 : 0.3,
-            transition: 'opacity 0.9s ease',
-          }} />
-        )}
         {(num || label) && (
           <div style={{
-            display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(1rem,2.5vw,2rem)',
+            display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: 'clamp(1.5rem,3vw,2.5rem)',
             opacity: isActive ? 1 : 0.3,
             transform: `translateX(${isActive ? 0 : -10}px)`,
             transition: 'opacity 0.9s ease, transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)',
           }}>
             {num && (
               <span style={{
-                fontFamily: TYPE.mono, fontSize: '10px',
-                letterSpacing: '0.3em', color: PALETTE.redMuted,
+                fontFamily: TYPE.mono, fontSize: '11px',
+                letterSpacing: '0.32em', color: PALETTE.redMuted,
                 textTransform: 'uppercase',
               }}>{num}</span>
             )}
-            {num && <span style={{ width: 24, height: 1, background: PALETTE.border }} />}
+            {num && <span style={{ flex: '0 0 64px', height: 1, background: PALETTE.border }} />}
             <span style={{
-              fontFamily: TYPE.mono, fontSize: '10px',
-              letterSpacing: '0.3em', color: PALETTE.ink,
+              fontFamily: TYPE.mono, fontSize: '11px',
+              letterSpacing: '0.32em', color: PALETTE.ink,
               textTransform: 'uppercase',
             }}>{label}</span>
           </div>
@@ -1645,7 +1636,7 @@ export default function OverviewPage({ results, sources, setPage }: {
 
   // Snap scroll — on while overview is mounted, removed on unmount
   useEffect(() => {
-    document.documentElement.style.scrollSnapType = 'y proximity';
+    document.documentElement.style.scrollSnapType = 'y mandatory';
     return () => { document.documentElement.style.scrollSnapType = ''; };
   }, []);
 

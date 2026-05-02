@@ -1536,13 +1536,13 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
   return (
     <section className="chapter-snap" style={{
-      padding: 'clamp(3rem,6vw,5rem) clamp(2rem,6vw,5rem)',
+      minHeight: '100dvh',
+      padding: 'clamp(1.5rem,4vw,3rem) clamp(1.25rem,6vw,5rem)',
       display: 'flex',
       alignItems: 'center',
       boxSizing: 'border-box',
     }}>
       <div style={{ maxWidth: 880, margin: '0 auto', width: '100%' }}>
-        <div aria-hidden="true" style={{ width: '100%', height: 1, background: PALETTE.border, marginBottom: 'clamp(2rem,4vw,3.5rem)' }} />
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -1779,46 +1779,6 @@ export default function OverviewPage({ results, sources, setPage }: {
           </button>
         </div>
       )}
-
-      {/* Disambiguation header */}
-      <div style={{
-        padding: `clamp(2rem, 5vw, 3.5rem) ${pad}`,
-        borderBottom: `2px solid ${PALETTE.ink}`,
-        maxWidth: 1200, margin: '0 auto',
-      }}>
-        <p style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-          fontWeight: 400,
-          color: PALETTE.ink,
-          letterSpacing: '-0.03em',
-          lineHeight: 1.1,
-          marginBottom: '0.4rem',
-        }}>
-          This is your data.
-        </p>
-        <p style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-          fontWeight: 400,
-          color: PALETTE.inkMuted,
-          letterSpacing: '-0.03em',
-          lineHeight: 1.1,
-        }}>
-          These are your conversations.
-        </p>
-        <p style={{
-          fontFamily: TYPE.mono,
-          fontSize: '10px',
-          letterSpacing: '0.25em',
-          color: PALETTE.inkFaint,
-          textTransform: 'uppercase',
-          marginTop: '1.25rem',
-          lineHeight: 1.6,
-        }}>
-          Extracted from your ChatGPT export · Processed locally · trace.ai stores nothing
-        </p>
-      </div>
 
       {/* Chapters */}
       <main>

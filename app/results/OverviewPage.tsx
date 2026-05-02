@@ -232,7 +232,15 @@ function ChapterShell({
           transition: 'color 1.4s ease, transform 1.6s cubic-bezier(0.25, 0.1, 0.25, 1)',
         }}>{num}</div>
       )}
-      <div style={{ maxWidth: 880, margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
+      <div style={{
+        maxWidth: 880,
+        margin: '0 auto',
+        width: '100%',
+        position: 'relative',
+        zIndex: 1,
+        paddingBottom: last ? 0 : 'clamp(1.5rem,4vw,3rem)',
+        borderBottom: last ? 'none' : `1px solid ${PALETTE.border}`,
+      }}>
         {(num || label) && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(1rem,2.5vw,2rem)',
@@ -1542,7 +1550,13 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
       alignItems: 'center',
       boxSizing: 'border-box',
     }}>
-      <div style={{ maxWidth: 880, margin: '0 auto', width: '100%' }}>
+      <div style={{
+        maxWidth: 880,
+        margin: '0 auto',
+        width: '100%',
+        paddingTop: 'clamp(1.5rem,4vw,3rem)',
+        borderTop: `1px solid ${PALETTE.border}`,
+      }}>
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}

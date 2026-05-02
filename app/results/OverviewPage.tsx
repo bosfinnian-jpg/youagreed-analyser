@@ -1425,7 +1425,7 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 
   return (
     <div ref={sectionRef}>
-      <ChapterShell id="permanence" num="06" label="Permanence" onActive={onActive}>
+      <ChapterShell id="permanence" num="06" label="Permanence" onActive={onActive} last>
         <div style={{ position: 'relative', minHeight: 'clamp(360px, 56vh, 520px)' }}>
           {/* RETAINED massive watermark */}
           <div ref={wmRef} className="permanence-watermark" style={{
@@ -1549,9 +1549,9 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
   return (
     <section className="chapter-snap" style={{
       padding: 'clamp(5rem,10vw,8rem) clamp(2rem,6vw,5rem) clamp(4rem,8vw,6rem)',
-      borderTop: `1px solid ${PALETTE.border}`,
     }}>
       <div style={{ maxWidth: 880, margin: '0 auto', width: '100%' }}>
+        <div aria-hidden="true" style={{ width: '100%', height: 1, background: PALETTE.border, marginBottom: 'clamp(3rem,6vw,5rem)' }} />
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}

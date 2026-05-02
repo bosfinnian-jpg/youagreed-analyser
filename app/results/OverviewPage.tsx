@@ -233,17 +233,6 @@ function ChapterShell({
         }}>{num}</div>
       )}
       <div style={{ maxWidth: 880, margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
-        {/* Section divider — constrained to content width, sits at bottom of section */}
-        {!last && (
-          <div aria-hidden="true" style={{
-            position: 'absolute',
-            bottom: `calc(-1 * clamp(1.5rem,4vw,3rem))`,
-            left: 0,
-            width: '100%',
-            height: 1,
-            background: PALETTE.border,
-          }} />
-        )}
         {(num || label) && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(1rem,2.5vw,2rem)',
@@ -268,6 +257,27 @@ function ChapterShell({
         )}
         {children}
       </div>
+      {/* Divider: sits at true bottom of section, width matches content column */}
+      {!last && (
+        <div aria-hidden="true" style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          padding: '0 clamp(1.25rem,6vw,5rem)',
+          pointerEvents: 'none',
+          zIndex: 3,
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: 880,
+            height: 1,
+            background: PALETTE.border,
+          }} />
+        </div>
+      )}
     </section>
   );
 }

@@ -204,10 +204,10 @@ function ChapterShell({
       className={`chapter-snap chapter-shell${last ? ' chapter-last' : ''}`}
       style={{
         height: '100dvh',
-        padding: 'clamp(1.5rem,4vw,3rem) clamp(1.25rem,6vw,5rem)',
+        padding: 'clamp(4rem,10vw,8rem) clamp(1.25rem,6vw,5rem) clamp(1.5rem,4vw,3rem)',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         position: 'relative',
         overflow: 'hidden',
         boxSizing: 'border-box',

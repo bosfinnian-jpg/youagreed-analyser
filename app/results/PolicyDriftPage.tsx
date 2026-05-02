@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence, type DashPage } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, type DashPage, PageFooter } from './DashboardLayout';
 
 // ============================================================================
 // POLICY DRIFT PAGE — 06 / Terms
@@ -904,48 +904,17 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
         ))}
       </div>
 
-      {/* Bridge to Permanent */}
-      <div style={{
-        borderTop: `1px solid ${PALETTE.border}`,
-        paddingTop: 'clamp(2rem, 4vw, 3rem)',
-      }}>
-        <p style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-          color: PALETTE.inkMuted, lineHeight: 1.75,
-          maxWidth: 560, marginBottom: '1.5rem',
-          fontStyle: 'italic',
-        }}>
-          The terms describe what was taken. The next section explains how the system works — how
-          inference operates, what it produces, and what it means that you cannot see it happening.
-        </p>
-        <button
-          onClick={() => setPage('understand')}
-          style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.1rem)',
-            letterSpacing: '-0.01em', color: PALETTE.ink,
-            background: 'none', border: `1px solid ${PALETTE.border}`,
-            padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
-            cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s',
-            textAlign: 'left', lineHeight: 1.3,
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = PALETTE.borderHover;
-            e.currentTarget.style.background = PALETTE.bgPanel;
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.borderColor = PALETTE.border;
-            e.currentTarget.style.background = 'none';
-          }}
-        >
-          <span style={{
-            display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
-            letterSpacing: '0.25em', color: PALETTE.redMuted,
-            textTransform: 'uppercase', marginBottom: '0.35rem',
-          }}>08 / Test</span>
-          How the system works →
-        </button>
-      </div>
+      <PageFooter
+        statement="What you consented to in 2023 is not what the policy says today. The document changed around you. You were not asked again."
+        followOn="The terms describe what was taken. The system that took it is explained next."
+        navItems={[
+          { page: 'permanent',   act: 'ACT III / 05', label: 'Why it cannot be removed', body: 'The data the terms authorised collecting cannot be returned. Deletion is structural fiction.' },
+          { page: 'understand',  act: 'ACT IV / 08',  label: 'Test the inference',       body: 'Watch the extraction happen on your own words.' },
+          { page: 'how-it-works',act: 'ACT IV / 07',  label: 'How it works',             body: 'Why gradient descent makes the right to erasure technically unenforceable.' },
+        ]}
+        endLabel="End of terms analysis."
+        setPage={setPage}
+      />
     </motion.div>
   );
 }

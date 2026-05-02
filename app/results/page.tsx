@@ -106,7 +106,7 @@ export default function ResultsPage() {
       {page === 'overview' && <OverviewPage results={results} sources={sources} setPage={handleSetPage} />}
       {page === 'profile' && <ProfilePage results={results} setPage={handleSetPage} />}
       {page === 'commercial-profile' && <CommercialProfilePage results={results} setPage={handleSetPage} />}
-      {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} />}
+      {page === 'sources' && <SourcesPage connectedSources={sources.reduce((acc, s) => ({ ...acc, [s.id]: s.connected }), {} as Record<string, boolean>)} onUpload={handleUpload} onAnalysisUpdate={handleAnalysisUpdate} setPage={handleSetPage} />}
       {page === 'risk' && <RiskPage results={results} setPage={handleSetPage} />}
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
       {page === 'terms' && <PolicyDriftPage setPage={handleSetPage} />}

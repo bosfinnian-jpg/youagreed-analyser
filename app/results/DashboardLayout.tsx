@@ -126,6 +126,129 @@ export function ThreadSentence({ children }: { children: React.ReactNode }) {
 }
 
 // ============================================================================
+// PAGE FOOTER — shared closing section used by every results page.
+// Closing text → italic follow-on → nav grid cards → end label.
+// ============================================================================
+export type FooterNavItem = {
+  page: string;
+  act: string;       // e.g. "ACT III / 05"
+  label: string;     // e.g. "Why it cannot be removed"
+  body: string;      // one-line description
+};
+
+export function PageFooter({
+  statement,
+  followOn,
+  navItems,
+  endLabel,
+  setPage,
+}: {
+  statement?: string;
+  followOn?: string;
+  navItems: FooterNavItem[];
+  endLabel: string;
+  setPage: (p: string) => void;
+}) {
+  return (
+    <div style={{
+      paddingTop: 'clamp(3rem, 7vw, 5rem)',
+      paddingBottom: 'clamp(4rem, 10vw, 7rem)',
+      borderTop: `1px solid ${PALETTE.border}`,
+      marginTop: 'clamp(3rem, 7vw, 5rem)',
+    }}>
+      {/* Animated rule */}
+      <div style={{
+        height: '1px', background: PALETTE.ink, opacity: 0.1,
+        marginBottom: 'clamp(2rem, 4vw, 3rem)',
+      }} />
+
+      {/* Closing statement */}
+      {statement && (
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(1.15rem, 2.2vw, 1.5rem)',
+          color: PALETTE.ink,
+          letterSpacing: '-0.02em',
+          lineHeight: 1.45,
+          maxWidth: '52ch',
+          marginBottom: '1rem',
+          fontWeight: 400,
+        }}>
+          {statement}
+        </p>
+      )}
+      {followOn && (
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(0.95rem, 1.6vw, 1.05rem)',
+          color: PALETTE.inkMuted,
+          lineHeight: 1.75,
+          maxWidth: '52ch',
+          fontStyle: 'italic',
+          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+        }}>
+          {followOn}
+        </p>
+      )}
+
+      {/* Nav grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '1px',
+        background: PALETTE.border,
+        marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
+      }}>
+        {navItems.map((item) => (
+          <button
+            key={item.page}
+            onClick={() => setPage(item.page)}
+            style={{
+              background: PALETTE.bgPanel, border: 'none', cursor: 'pointer',
+              padding: 'clamp(1.25rem, 3vw, 1.75rem)', textAlign: 'left',
+              transition: 'background 0.15s',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = PALETTE.bgElevated)}
+            onMouseLeave={e => (e.currentTarget.style.background = PALETTE.bgPanel)}
+          >
+            <span style={{
+              display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
+              letterSpacing: '0.25em', color: PALETTE.redMuted,
+              textTransform: 'uppercase', marginBottom: '0.6rem',
+            }}>
+              {item.act}
+            </span>
+            <span style={{
+              display: 'block', fontFamily: TYPE.serif,
+              fontSize: 'clamp(1rem, 1.8vw, 1.1rem)',
+              color: PALETTE.ink, letterSpacing: '-0.01em',
+              lineHeight: 1.2, marginBottom: '0.5rem',
+            }}>
+              {item.label} →
+            </span>
+            <span style={{
+              display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
+              letterSpacing: '0.06em', color: PALETTE.inkFaint, lineHeight: 1.55,
+            }}>
+              {item.body}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* End label */}
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em',
+        color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.5,
+      }}>
+        {endLabel}
+      </p>
+    </div>
+  );
+}
+}
+
+// ============================================================================
 // SHARE BUTTON — Web Share API with clipboard fallback
 // ============================================================================
 function ShareButton({ exposureScore, userName }: { exposureScore: number; userName?: string }) {

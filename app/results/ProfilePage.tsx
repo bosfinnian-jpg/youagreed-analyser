@@ -2,7 +2,7 @@
 
 import { useRef, useState, useMemo } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
 import { RetainedTag } from './CannotBeDeletedPage';
 
 // ============================================================================
@@ -1087,100 +1087,22 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
 
       {/* ════════════════════════════════════════════════════════════════════
           ACT TRANSITION — to Risk
-          ════════════════════════════════════════════════════════════════════ */}
-      {setPage && (
-        <div style={{
-          maxWidth: 1000, margin: '0 auto',
-          padding: 'clamp(2rem, 5vw, 4rem) 0',
-          borderTop: `1px solid ${PALETTE.border}`,
-        }}>
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-            color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 540,
-            marginBottom: '1.5rem', fontStyle: 'italic',
-          }}>
-            The profile is what the record reveals. Act II continues: how your data is priced, then what the profile enables.
-          </p>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button
-              onClick={() => setPage('commercial-profile')}
-              style={{
-                fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
-                letterSpacing: '-0.01em', color: PALETTE.ink,
-                background: 'none', border: `1px solid ${PALETTE.border}`,
-                padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
-                cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s', textAlign: 'left',
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.borderHover; (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
-            >
-              <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT II / 03</span>
-              What you're worth →
-            </button>
-            <button
-              onClick={() => setPage('risk')}
-              style={{
-                fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 2vw, 1.15rem)',
-                letterSpacing: '-0.01em', color: PALETTE.ink,
-                background: 'none', border: `1px solid ${PALETTE.border}`,
-                padding: 'clamp(0.85rem, 2vw, 1.25rem) clamp(1.25rem, 2.5vw, 2rem)',
-                cursor: 'pointer', transition: 'border-color 0.15s, background 0.15s', textAlign: 'left',
-              }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.borderHover; (e.currentTarget as HTMLElement).style.background = PALETTE.bgPanel; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = PALETTE.border; (e.currentTarget as HTMLElement).style.background = 'none'; }}
-            >
-              <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>ACT II / Continues</span>
-              What it enables →
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* ================================================================
           CLOSING
           ================================================================ */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-10%' }}
-        transition={{ duration: 1.2 }}
-        style={{ padding: 'clamp(3rem, 8vw, 5rem) 0' }}
-      >
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2, duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-          style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2.5rem', opacity: 0.12 }}
+      {setPage && (
+        <PageFooter
+          statement="This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model."
+          followOn="The difference between the two is what makes it valuable."
+          navItems={[
+            { page: 'commercial-profile', act: 'ACT II / 03', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },
+            { page: 'risk',               act: 'ACT II / 04', label: 'What it enables',    body: 'The scenarios that become possible once this record exists.' },
+            { page: 'permanent',          act: 'ACT III / 05', label: 'Why it persists',   body: 'Why this profile cannot be removed — even if you delete your account.' },
+          ]}
+          endLabel="End of profile."
+          setPage={setPage}
         />
-        <motion.p
-          initial={{ opacity: 0, y: 6 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4, duration: 1 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: '52ch', marginBottom: '1rem' }}
-        >
-          This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model.
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.8, duration: 1 }}
-          style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '52ch', fontStyle: 'italic' }}
-        >
-          The difference between the two is what makes it valuable.
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.55 }}
-          viewport={{ once: true }}
-          transition={{ delay: 1.4, duration: 1.2 }}
-          style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: '2.5rem' }}
-        >
-          End of product listing.
-        </motion.p>
-      </motion.div>
+      )}
 
     </div>
   );

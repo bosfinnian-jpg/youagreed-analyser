@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
 import type { DeepAnalysis } from './deepParser';
 
 // ============================================================================
@@ -670,94 +670,6 @@ function RetrainingBar() {
   );
 }
 
-function ClosingStatement({ setPage }: { setPage: (p: any) => void }) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-
-  const navItems = [
-    { page: 'terms', act: 'ACT III / 06', label: 'What you agreed to', body: 'The terms that made this legal. Parsed against what they actually permit.' },
-    { page: 'understand', act: 'Context', label: 'How the inference works', body: 'The methodology behind how your patterns were extracted and classified.' },
-    { page: 'how-it-works', act: 'Technical', label: 'Why deletion fails', body: 'The architecture that makes reversal impossible — gradient descent, machine unlearning, and consent frameworks.' },
-    { page: 'risk', act: 'ACT II / 04', label: 'What it enables', body: 'The scenarios that become possible once this data exists.' },
-  ];
-
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0 }}
-      animate={isInView ? { opacity: 1 } : {}}
-      transition={{ duration: 1 }}
-      style={{ paddingTop: 'clamp(3rem, 6vw, 5rem)', paddingBottom: 'clamp(4rem, 8vw, 6rem)' }}
-    >
-      {/* Divider */}
-      <motion.div
-        initial={{ scaleX: 0 }}
-        animate={isInView ? { scaleX: 1 } : {}}
-        transition={{ duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-        style={{ height: '1px', background: PALETTE.ink, transformOrigin: 'left', marginBottom: '2.5rem', opacity: 0.1 }}
-      />
-
-      {/* Closing lines */}
-      <motion.p
-        initial={{ opacity: 0, y: 6 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.3, duration: 0.8 }}
-        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.4rem, 3.5vw, 2.4rem)', color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.3, maxWidth: 600, marginBottom: '1.25rem', fontWeight: 400 }}
-      >
-        You can delete your conversations.<br />
-        You cannot delete what they taught.
-      </motion.p>
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 1 } : {}}
-        transition={{ delay: 0.6, duration: 0.8 }}
-        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 540, marginBottom: 'clamp(3rem, 6vw, 4rem)', fontStyle: 'italic' }}
-      >
-        This is not a policy failure. It is a consequence of how the technology works. The question that remains is whether the terms you agreed to were ever genuinely legible.
-      </motion.p>
-
-      {/* Nav grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1px', background: PALETTE.border }}>
-        {navItems.map((item, i) => (
-          <motion.button
-            key={item.page}
-            initial={{ opacity: 0, y: 8 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.5 + i * 0.08, duration: 0.5 }}
-            onClick={() => setPage(item.page)}
-            style={{
-              background: PALETTE.bgPanel, border: 'none', cursor: 'pointer',
-              padding: 'clamp(1.25rem, 3vw, 1.75rem)', textAlign: 'left',
-              transition: 'background 0.15s',
-            }}
-            onMouseEnter={e => (e.currentTarget.style.background = PALETTE.bgElevated)}
-            onMouseLeave={e => (e.currentTarget.style.background = PALETTE.bgPanel)}
-          >
-            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
-              {item.act}
-            </span>
-            <span style={{ display: 'block', fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.ink, letterSpacing: '-0.01em', lineHeight: 1.2, marginBottom: '0.5rem' }}>
-              {item.label} →
-            </span>
-            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.06em', color: PALETTE.inkFaint, lineHeight: 1.55 }}>
-              {item.body}
-            </span>
-          </motion.button>
-        ))}
-      </div>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={isInView ? { opacity: 0.45 } : {}}
-        transition={{ delay: 1.2, duration: 1 }}
-        style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginTop: 'clamp(2.5rem, 5vw, 4rem)' }}
-      >
-        End of permanence record.
-      </motion.p>
-    </motion.div>
-  );
-}
-
 // ============================================================================
 // MAIN PAGE
 // ============================================================================
@@ -871,7 +783,18 @@ export default function CannotBeDeletedPage({ results, setPage }: {
       <LegalGap />
       <ConsentFailure />
       <YourDataSpecifically analysis={results} />
-      <ClosingStatement setPage={setPage} />
+      <PageFooter
+        statement="You can delete your conversations. You cannot delete what they taught."
+        followOn="This is not a policy failure. It is a consequence of how the technology works. The question that remains is whether the terms you agreed to were ever genuinely legible."
+        navItems={[
+          { page: 'terms',       act: 'ACT III / 06', label: 'What you agreed to',    body: 'The terms that made this legal. Parsed against what they actually permit.' },
+          { page: 'understand',  act: 'ACT IV / 08',  label: 'How the inference works', body: 'The methodology behind how your patterns were extracted and classified.' },
+          { page: 'how-it-works',act: 'ACT IV / 07',  label: 'Why deletion fails',    body: 'The architecture that makes reversal impossible — gradient descent and machine unlearning.' },
+          { page: 'risk',        act: 'ACT II / 04',  label: 'What it enables',       body: 'The scenarios that become possible once this data exists.' },
+        ]}
+        endLabel="End of permanence record."
+        setPage={setPage}
+      />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE, type DashPage } from './DashboardLayout';
+import { PALETTE, TYPE, type DashPage, PageFooter } from './DashboardLayout';
 
 // ============================================================================
 // ABOUT — trace.ai
@@ -239,35 +239,17 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
         </div>
       </Block>
 
-      {/* Navigation out */}
-      <div style={{ paddingTop: 'clamp(2rem, 4vw, 3rem)', borderTop: `1px solid ${PALETTE.border}`, display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-        <button
-          onClick={() => setPage('overview')}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
-            color: PALETTE.ink, background: 'none',
-            border: `1px solid ${PALETTE.borderHover}`,
-            padding: '0.55rem 1.25rem', cursor: 'pointer', transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgPanel; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
-        >
-          Back to overview →
-        </button>
-        <button
-          onClick={() => setPage('understand')}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
-            color: PALETTE.inkFaint, background: 'none',
-            border: `1px solid ${PALETTE.border}`,
-            padding: '0.55rem 1.25rem', cursor: 'pointer', transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.borderHover; e.currentTarget.style.color = PALETTE.ink; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = PALETTE.border; e.currentTarget.style.color = PALETTE.inkFaint; }}
-        >
-          Understand the mechanism →
-        </button>
-      </div>
+      <PageFooter
+        statement="The tool is the argument."
+        followOn="Every claim made in this analysis is grounded in published research and verifiable policy text. The inference is real. The permanence is real. The consent gap is real."
+        navItems={[
+          { page: 'overview',   act: 'ACT I / 01',   label: 'Back to overview',    body: 'Your data, extracted and mapped.' },
+          { page: 'permanent',  act: 'ACT III / 05',  label: 'The permanence',      body: 'Why this profile cannot be removed even if you delete your account.' },
+          { page: 'understand', act: 'ACT IV / 08',   label: 'Test the inference',  body: 'Watch the extraction happen on your own words.' },
+        ]}
+        endLabel="trace.ai / 2026"
+        setPage={setPage}
+      />
 
     </div>
   );

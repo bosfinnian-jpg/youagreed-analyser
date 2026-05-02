@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
 
 // ============================================================================
 // HOW IT WORKS — Act IV, page 07
@@ -407,35 +407,17 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
         </p>
       </div>
 
-      {/* Navigation footer */}
-      <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
-        <button
-          onClick={() => setPage('permanent')}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
-            color: PALETTE.ink, background: 'none',
-            border: `1px solid ${PALETTE.borderHover}`,
-            padding: '0.55rem 1.25rem', cursor: 'pointer', transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgPanel; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
-        >
-          ← Permanence
-        </button>
-        <button
-          onClick={() => setPage('understand')}
-          style={{
-            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
-            color: PALETTE.inkFaint, background: 'none',
-            border: `1px solid ${PALETTE.border}`,
-            padding: '0.55rem 1.25rem', cursor: 'pointer', transition: 'all 0.2s',
-          }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.borderHover; e.currentTarget.style.color = PALETTE.ink; }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = PALETTE.border; e.currentTarget.style.color = PALETTE.inkFaint; }}
-        >
-          Understand the inference →
-        </button>
-      </div>
+      <PageFooter
+        statement="Cookie consent was designed for reversible systems. AI training is not reversible. That gap is not a policy failure. It is an architectural one."
+        followOn="The architecture makes the consent framework inapplicable. The terms you agreed to did not describe a system this page explains."
+        navItems={[
+          { page: 'permanent', act: 'ACT III / 05', label: 'Why deletion fails',    body: 'What this architecture means for your right to erasure — and why it cannot be fulfilled.' },
+          { page: 'terms',     act: 'ACT III / 06', label: 'What you agreed to',   body: 'The terms that authorised training on your data — and how they changed.' },
+          { page: 'understand',act: 'ACT IV / 08',  label: 'Test the inference',   body: 'Watch the extraction happen in real time on your own words.' },
+        ]}
+        endLabel="End of technical record."
+        setPage={setPage}
+      />
 
     </div>
   );

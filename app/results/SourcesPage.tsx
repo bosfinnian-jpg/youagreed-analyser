@@ -2,7 +2,7 @@
 
 import { useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { PALETTE, TYPE } from './DashboardLayout';
+import { PALETTE, TYPE, PageFooter } from './DashboardLayout';
 import { analyzeExport, storeRawJson, detectSourceType, type AnalyzeProgress } from './analyzeExport';
 
 // ============================================================================
@@ -303,10 +303,12 @@ export default function SourcesPage({
   connectedSources,
   onUpload,
   onAnalysisUpdate,
+  setPage,
 }: {
   connectedSources: Record<string, boolean>;
   onUpload: (id: string, file: File) => void;
   onAnalysisUpdate?: (results: any) => void;
+  setPage?: (p: string) => void;
 }) {
   const pad = 'clamp(2rem, 6vw, 5rem)';
 
@@ -640,13 +642,17 @@ export default function SourcesPage({
         ))}</div>
       </div>
 
-      {/* FOOTER */}
-      <div style={{ borderTop: `1px solid ${PALETTE.border}`, paddingTop: '2rem' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.8rem' }}>About your data</p>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.15rem)', color: PALETTE.inkFaint, lineHeight: 1.8, maxWidth: '52ch' }}>
-          All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists — not to collect it.
-        </p>
-      </div>
+      <PageFooter
+        statement="Every claim made in this analysis is verifiable. The sources are the argument."
+        followOn="All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists — not to collect it."
+        navItems={[
+          { page: 'about',      act: 'Reference',     label: 'About this tool',     body: 'The theoretical basis, the argument, and how the inference pipeline works.' },
+          { page: 'permanent',  act: 'ACT III / 05',  label: 'The permanence',      body: 'The technical and legal basis for why your data cannot be returned.' },
+          { page: 'understand', act: 'ACT IV / 08',   label: 'Test the inference',  body: 'See these frameworks in action on your own words.' },
+        ]}
+        endLabel="End of sources."
+        setPage={(p) => setPage?.(p)}
+      />
 
     </div>
   );

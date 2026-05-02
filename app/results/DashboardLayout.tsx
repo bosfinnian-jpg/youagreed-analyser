@@ -246,7 +246,6 @@ export function PageFooter({
     </div>
   );
 }
-}
 
 // ============================================================================
 // SHARE BUTTON — Web Share API with clipboard fallback

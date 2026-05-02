@@ -111,7 +111,7 @@ export default function ResultsPage() {
       {page === 'understand' && <UnderstandPage setPage={handleSetPage} />}
       {page === 'terms' && <PolicyDriftPage setPage={handleSetPage} />}
       {page === 'permanent' && <CannotBeDeletedPage results={results} setPage={handleSetPage} />}
-      {page === 'how-it-works' && <HowItWorksPage />}
+      {page === 'how-it-works' && <HowItWorksPage setPage={handleSetPage} />}
       {page === 'about' && <AboutPage setPage={handleSetPage} />}
     </DashboardLayout>
   );

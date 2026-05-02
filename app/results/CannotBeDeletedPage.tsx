@@ -677,7 +677,7 @@ function ClosingStatement({ setPage }: { setPage: (p: any) => void }) {
   const navItems = [
     { page: 'terms', act: 'ACT III / 06', label: 'What you agreed to', body: 'The terms that made this legal. Parsed against what they actually permit.' },
     { page: 'understand', act: 'Context', label: 'How the inference works', body: 'The methodology behind how your patterns were extracted and classified.' },
-    { page: 'how-it-works', act: 'Technical', label: 'How this tool works', body: 'The pipeline that built your profile — pattern matching, scoring, AI enrichment.' },
+    { page: 'how-it-works', act: 'Technical', label: 'Why deletion fails', body: 'The architecture that makes reversal impossible — gradient descent, machine unlearning, and consent frameworks.' },
     { page: 'risk', act: 'ACT II / 04', label: 'What it enables', body: 'The scenarios that become possible once this data exists.' },
   ];
 

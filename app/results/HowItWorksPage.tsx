@@ -321,7 +321,7 @@ function PageSection({ number, title, body, children, finding }: {
 // ============================================================================
 // MAIN EXPORT
 // ============================================================================
-export default function HowItWorksPage() {
+export default function HowItWorksPage({ setPage }: { setPage: (p: string) => void }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const pad = 'clamp(2rem, 6vw, 5rem)';
@@ -335,7 +335,24 @@ export default function HowItWorksPage() {
         <motion.div initial={{ opacity: 0, y: 6 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.15, duration: 0.6 }} style={{ marginBottom: '0.75rem' }}>
           <ActLabel roman="IV" title="After" pageLabel="08 / How It Works" />
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.25, duration: 0.7 }}>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 10 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.25, duration: 0.8 }}
+          style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(2.8rem, 8vw, 5.5rem)',
+            fontWeight: 400, color: PALETTE.ink,
+            letterSpacing: '-0.04em', lineHeight: 0.97,
+            marginBottom: 'clamp(1.5rem, 4vw, 2.5rem)',
+            maxWidth: '18ch',
+          }}
+        >
+          Why deletion<br />is not reversal.
+        </motion.h1>
+
+        <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.5, duration: 0.7 }}>
           <ThreadSentence>
             Consent was designed for reversible systems. AI training is not reversible.
             That gap is not a policy failure. It is an architectural one.
@@ -346,7 +363,7 @@ export default function HowItWorksPage() {
       <PageSection
         number="The mechanism"
         title="How training works"
-        body="Every conversation followed this sequence. A sentence passed through a model during training is not retained as a record. It dissolves into incremental adjustments across billions of parameters. The sentence cannot subsequently be located or removed."
+        body="A sentence passed through a model during training is not retained as a record. It dissolves into incremental adjustments across billions of parameters. The sentence cannot subsequently be located or removed."
         finding="Training does not store what it learns from. It dissolves data into weight adjustments across billions of parameters. The data cannot be located, so it cannot be removed."
       >
         <NeuralNetworkDiagram />
@@ -356,7 +373,7 @@ export default function HowItWorksPage() {
         number="The impossibility"
         title="Why deletion fails"
         body="The influence of a single training example is distributed across thousands of non-contiguous parameters. There is no clean boundary to excise. You cannot remove what was never discretely inserted."
-        finding="Approximate unlearning methods exist. They degrade model performance unpredictably and cannot provide the guarantees that legal deletion requires. The alternative, retraining from scratch, takes months and costs tens of millions of dollars."
+        finding="Approximate unlearning methods exist. They degrade model performance unpredictably and cannot provide the guarantees legal deletion requires. The alternative — retraining from scratch — takes months and costs tens of millions."
       >
         <UnlearningDiagram />
       </PageSection>
@@ -370,13 +387,43 @@ export default function HowItWorksPage() {
       </PageSection>
 
       {/* Sources footnote */}
-      <div style={{ paddingTop: 'clamp(2rem, 4vw, 3rem)' }}>
+      <div style={{ paddingTop: 'clamp(2rem, 4vw, 3rem)', borderTop: `1px solid ${PALETTE.border}`, marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 2, margin: 0 }}>
           Sources — Cooper et al. (2022), machine unlearning impossibility &nbsp;&middot;&nbsp;
           Zuboff (2019), surveillance capitalism stages &nbsp;&middot;&nbsp;
           Nissenbaum (2004), contextual integrity &nbsp;&middot;&nbsp;
           Gumusel et al. (2024), conversational AI privacy harms
         </p>
+      </div>
+
+      {/* Navigation footer */}
+      <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
+        <button
+          onClick={() => setPage('permanent')}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: PALETTE.ink, background: 'none',
+            border: `1px solid ${PALETTE.borderHover}`,
+            padding: '0.55rem 1.25rem', cursor: 'pointer', transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgPanel; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+        >
+          ← Permanence
+        </button>
+        <button
+          onClick={() => setPage('understand')}
+          style={{
+            fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', textTransform: 'uppercase',
+            color: PALETTE.inkFaint, background: 'none',
+            border: `1px solid ${PALETTE.border}`,
+            padding: '0.55rem 1.25rem', cursor: 'pointer', transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = PALETTE.borderHover; e.currentTarget.style.color = PALETTE.ink; }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = PALETTE.border; e.currentTarget.style.color = PALETTE.inkFaint; }}
+        >
+          Understand the inference →
+        </button>
       </div>
 
     </div>

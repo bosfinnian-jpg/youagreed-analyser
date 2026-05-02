@@ -257,18 +257,6 @@ function ChapterShell({
         )}
         {children}
       </div>
-      {/* Divider: matches the 880px content column exactly */}
-      {!last && (
-        <div aria-hidden="true" style={{
-          marginTop: 'auto',
-          alignSelf: 'center',
-          width: '100%',
-          maxWidth: 880,
-          height: 1,
-          background: PALETTE.border,
-          flexShrink: 0,
-        }} />
-      )}
     </section>
   );
 }
@@ -1548,10 +1536,13 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
   return (
     <section className="chapter-snap" style={{
-      padding: 'clamp(5rem,10vw,8rem) clamp(2rem,6vw,5rem) clamp(4rem,8vw,6rem)',
+      padding: 'clamp(3rem,6vw,5rem) clamp(2rem,6vw,5rem)',
+      display: 'flex',
+      alignItems: 'center',
+      boxSizing: 'border-box',
     }}>
       <div style={{ maxWidth: 880, margin: '0 auto', width: '100%' }}>
-        <div aria-hidden="true" style={{ width: '100%', height: 1, background: PALETTE.border, marginBottom: 'clamp(3rem,6vw,5rem)' }} />
+        <div aria-hidden="true" style={{ width: '100%', height: 1, background: PALETTE.border, marginBottom: 'clamp(2rem,4vw,3.5rem)' }} />
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}

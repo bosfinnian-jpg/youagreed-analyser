@@ -40,18 +40,63 @@ const C = {
 // The inference is instant — that's the point.
 
 const INFERENCE_RULES: { pattern: RegExp; label: string; color: string; bg: string }[] = [
-  { pattern: /\b(anxious|anxiety|panic|worried|stress|depression|depressed|sad|lonely|hopeless|desperate|suicidal|self-harm|harm|crying|overwhelm|breakdown|spiral)\b/gi, label: 'Mental health signal', color: 'rgba(255,100,72,0.9)', bg: 'rgba(255,100,72,0.1)' },
-  { pattern: /\b(doctor|hospital|medication|meds|prescription|diagnosis|therapy|therapist|counsell|psychiatr|GP|NHS|pain|symptom|ill|sick|cancer|surgery)\b/gi, label: 'Health disclosure', color: 'rgba(255,183,77,0.9)', bg: 'rgba(255,183,77,0.1)' },
-  { pattern: /\b(debt|loan|money|broke|afford|financial|salary|redundan|unemploy|bankruptcy|mortgage|rent|credit|borrow|budget|saving|bankrupt)\b/gi, label: 'Financial vulnerability', color: 'rgba(78,205,196,0.9)', bg: 'rgba(78,205,196,0.1)' },
-  { pattern: /\b(relationship|breakup|divorce|partner|wife|husband|girlfriend|boyfriend|ex|split|affair|cheating|dating|marriage|separated|custody)\b/gi, label: 'Relationship data', color: 'rgba(107,203,119,0.9)', bg: 'rgba(107,203,119,0.1)' },
-  { pattern: /\b(secret|nobody knows|don't tell|private|confidential|haven't told|can't tell|shouldn't say|just between|promise you won't)\b/gi, label: 'Confidentiality signal', color: 'rgba(187,134,252,0.9)', bg: 'rgba(187,134,252,0.1)' },
-  { pattern: /\b(I feel|I'm feeling|I feel like|makes me feel|feeling very|been feeling|felt so|I felt)\b/gi, label: 'Emotional disclosure', color: 'rgba(190,40,30,0.7)', bg: 'rgba(190,40,30,0.08)' },
+  {
+    pattern: /\b(anxious|anxiety|panic|worried|stress|stressed|depression|depressed|sad|lonely|hopeless|desperate|suicidal|self-harm|harm|crying|overwhelm|breakdown|spiral|numb|empty|worthless|ashamed|guilt|shame|paranoid|dissociat|intrusive|obsess|compuls|burnout|exhausted|insomnia|sleep|nightmares|therapy|therapist|counsell|psychiatr|antidepressant|medication|meds|diagnosis|mental health|bipolar|schizophrenia|ADHD|OCD|PTSD|trauma|trigger|episode|relapse|recovery|sober|addiction|withdraw|rehab|eating disorder|anorexia|bulimia|self-worth|confidence|imposter|overwhelmed|can't cope|falling apart|not okay|breaking down|struggling|hitting rock bottom|dark thoughts|end it|can't go on)\b/gi,
+    label: 'Mental health signal',
+    color: 'rgba(255,100,72,0.9)',
+    bg: 'rgba(255,100,72,0.1)',
+  },
+  {
+    pattern: /\b(doctor|hospital|medication|meds|prescription|diagnosis|therapy|therapist|counsell|psychiatr|GP|NHS|pain|symptom|ill|sick|cancer|surgery|chronic|autoimmune|disability|disabled|wheelchair|hearing|vision|seizure|epilepsy|diabetes|blood pressure|cholesterol|BMI|weight|obese|fertility|pregnant|pregnancy|miscarriage|abortion|STI|HIV|sexual health|STD|Crohn|IBS|fibromyalgia|endometriosis|PCOS|menopause|hormone|biopsy|scan|MRI|referral|waiting list|A&E|emergency|ambulance|overdose)\b/gi,
+    label: 'Health disclosure',
+    color: 'rgba(255,183,77,0.9)',
+    bg: 'rgba(255,183,77,0.1)',
+  },
+  {
+    pattern: /\b(debt|loan|money|broke|afford|financial|salary|redundan|unemploy|bankruptcy|mortgage|rent|credit|borrow|budget|saving|bankrupt|overdraft|bailiff|repossess|eviction|arrears|payday|interest|default|insolvency|benefit|Universal Credit|foodbank|food bank|poverty|struggling financially|can't pay|behind on|overdue|final notice|bailout|guarantor|joint account|credit score|credit check|refused credit|financial abuse|economic abuse|hidden money|gambling debt|student debt|inherited debt|can't afford|too expensive|financial crisis|money problems|broke at the end)\b/gi,
+    label: 'Financial vulnerability',
+    color: 'rgba(78,205,196,0.9)',
+    bg: 'rgba(78,205,196,0.1)',
+  },
+  {
+    pattern: /\b(relationship|breakup|break up|broke up|divorce|divorcing|partner|wife|husband|girlfriend|boyfriend|ex|split|affair|cheating|cheat|dating|marriage|married|separated|separation|custody|co-parenting|toxic|narcissist|gaslighting|emotional abuse|controlling|coercive|domestic|DV|restraining order|love|heartbreak|heartbroken|leaving him|leaving her|getting out|staying for the kids|don't know if I love|falling out of love|lost feelings|not attracted|long distance|polyamory|open relationship|jealousy|trust issues|betrayal|infidelity|caught them|found messages|going through their phone|suspecting|secret|hiding|single again|rebound|one night stand|situationship|talking stage|ghosted|breadcrumbing)\b/gi,
+    label: 'Relationship data',
+    color: 'rgba(107,203,119,0.9)',
+    bg: 'rgba(107,203,119,0.1)',
+  },
+  {
+    pattern: /\b(secret|nobody knows|don't tell|private|confidential|haven't told|can't tell|shouldn't say|just between|promise you won't|keep this between|don't want anyone|off the record|in confidence|swear to secrecy|tell no one|not ready to share|not out yet|closeted|hiding|in the closet|afraid to say|first time admitting|never said this out loud|too embarrassed|too ashamed|wouldn't understand|they'd judge|disown|cut me off|no one would believe)\b/gi,
+    label: 'Confidentiality signal',
+    color: 'rgba(187,134,252,0.9)',
+    bg: 'rgba(187,134,252,0.1)',
+  },
+  {
+    pattern: /\b(I feel|I'm feeling|I feel like|makes me feel|feeling very|been feeling|felt so|I felt|I've been|I keep|I always|I never|I can't seem|I wish I|I hate that I|I love how|I'm afraid|I'm scared|I'm worried|I'm excited|I'm devastated|I'm relieved|I'm embarrassed|I'm ashamed|I'm proud|I'm confused|I'm exhausted|I'm overwhelmed|I miss|I need|I want|I hope|I regret|I'm not sure I|part of me|something feels wrong|feels like everything|I just feel)\b/gi,
+    label: 'Emotional disclosure',
+    color: 'rgba(190,40,30,0.7)',
+    bg: 'rgba(190,40,30,0.08)',
+  },
+  {
+    pattern: /\b(fired|sacked|laid off|redundant|job loss|unemployed|job hunting|job search|application|interview|rejection|career change|burnout|workplace|boss|manager|HR|toxic workplace|hostile environment|harassment|bullying at work|underpaid|overworked|zero hours|minimum wage|promotion denied|glass ceiling|discrimination|unfair dismissal|tribunal|grievance|notice period|garden leave|performance review|PIP|managed out|constructive dismissal|starting a business|side hustle|freelance|self-employed|between jobs)\b/gi,
+    label: 'Employment signal',
+    color: 'rgba(130,180,255,0.9)',
+    bg: 'rgba(130,180,255,0.1)',
+  },
+  {
+    pattern: /\b(gay|lesbian|bisexual|queer|trans|transgender|non-binary|nonbinary|gender|sexuality|coming out|not straight|questioning|LGBTQ|pride|dysphoria|pronouns|transition|HRT|top surgery|bottom surgery|passing|outed|homophobia|transphobia|biphobia|conversion therapy|rainbow|same-sex|same sex|partner|they\/them|she\/her|he\/him)\b/gi,
+    label: 'Identity disclosure',
+    color: 'rgba(255,160,200,0.9)',
+    bg: 'rgba(255,160,200,0.1)',
+  },
 ];
 
 const SAMPLE_PHRASES = [
   "I've been feeling really anxious lately and my doctor suggested I see a therapist but I can't really afford it right now.",
   "Nobody else knows about this but my relationship is falling apart and I'm not sure I can keep going.",
   "I need help — I'm in serious debt and I haven't told my partner yet. I don't know what to do.",
+  "I've never said this out loud but I think I might be gay. I'm not ready for anyone to know.",
+  "I got laid off last week and I haven't told anyone. I'm scared about the mortgage.",
+  "I keep having intrusive thoughts and I don't know if that's normal. I haven't slept properly in weeks.",
 ];
 
 interface Tagged { text: string; label?: string; color?: string; bg?: string }
@@ -1063,6 +1108,7 @@ function Module1({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2.5 }}
+            style={{ maxWidth: '62ch', margin: '0 auto' }}
           >
             <p
               style={{
@@ -1070,14 +1116,45 @@ function Module1({
                 fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
                 color: C.text,
                 lineHeight: 1.7,
-                maxWidth: '60ch',
-                margin: '0 auto',
                 fontStyle: 'italic',
+                marginBottom: '1.25rem',
               }}
             >
               That jump — from the left column to the right — is the entire argument of this project.
-              Zuboff calls it the shift from Stage 1 to Stage 2. A cookie records where you went. A conversation records how you think.
+              Zuboff calls it the shift from Stage 1 to Stage 2. A cookie records where you went.
+              A conversation records how you think.
             </p>
+            <p
+              style={{
+                fontFamily: TYPE.serif,
+                fontSize: '1rem',
+                color: C.textMuted,
+                lineHeight: 1.7,
+                marginBottom: '1rem',
+              }}
+            >
+              The categories on the right are not hypothetical. They map onto documented data broker
+              classifications used in targeting systems across financial services, healthcare, and advertising.
+              OpenAI does not currently sell your data to those brokers — but the inference exists in the
+              model's weights regardless of who holds it.
+            </p>
+            <a
+              href="https://www.propublica.org/article/facebook-lets-advertisers-exclude-users-by-race"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: TYPE.mono,
+                fontSize: '10px',
+                letterSpacing: '0.16em',
+                color: C.accent,
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                borderBottom: `1px solid rgba(190,40,30,0.3)`,
+                paddingBottom: '1px',
+              }}
+            >
+              Gumusel et al. (2024) — User Privacy Harms in Conversational AI →
+            </a>
           </motion.div>
         )}
       </div>
@@ -1139,7 +1216,7 @@ function Module2({
         ))}
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: '1.5rem', height: 30 }}>
+      <div style={{ textAlign: 'center', marginTop: '1.5rem', minHeight: 30 }}>
         {!allFlipped ? (
           <p
             style={{
@@ -1153,20 +1230,41 @@ function Module2({
             {flipped.size} of {PRECEDENTS.length} revealed
           </p>
         ) : (
-          <motion.p
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '10px',
-              letterSpacing: '0.16em',
-              color: C.accent,
-              textTransform: 'uppercase',
-            }}
+            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}
           >
-            All four documented. Continue.
-          </motion.p>
+            <p
+              style={{
+                fontFamily: TYPE.mono,
+                fontSize: '10px',
+                letterSpacing: '0.16em',
+                color: C.accent,
+                textTransform: 'uppercase',
+              }}
+            >
+              All four documented. Continue.
+            </p>
+            <a
+              href="https://www.ftc.gov/business-guidance/blog/2023/03/ftcs-action-against-betterhelp"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: TYPE.mono,
+                fontSize: '9px',
+                letterSpacing: '0.14em',
+                color: C.textFaint,
+                textTransform: 'uppercase',
+                textDecoration: 'none',
+                borderBottom: `1px solid ${C.border}`,
+                paddingBottom: '1px',
+              }}
+            >
+              FTC enforcement record — BetterHelp, Oracle, Equifax settlements →
+            </a>
+          </motion.div>
         )}
       </div>
     </ModuleFrame>
@@ -1273,22 +1371,23 @@ function PrecedentCard({
             background: C.bgLift,
             border: `1px solid ${C.accentFaint}`,
             borderLeft: `2px solid ${C.accent}`,
-            padding: '1.2rem',
+            padding: '1rem',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             overflow: 'hidden',
           }}
         >
-          <div>
+          <div style={{ overflow: 'hidden', flex: 1 }}>
             <p
               style={{
                 fontFamily: TYPE.mono,
-                fontSize: '11px',
+                fontSize: '10px',
                 letterSpacing: '0.18em',
                 color: C.accent,
                 textTransform: 'uppercase',
-                marginBottom: '0.6rem',
+                marginBottom: '0.5rem',
+                lineHeight: 1.3,
               }}
             >
               {precedent.back.title}
@@ -1296,10 +1395,11 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '1rem',
+                fontSize: '0.92rem',
                 color: C.text,
-                lineHeight: 1.45,
-                marginBottom: '0.5rem',
+                lineHeight: 1.4,
+                marginBottom: '0.4rem',
+                fontWeight: 500,
               }}
             >
               {precedent.back.mechanism}
@@ -1307,11 +1407,15 @@ function PrecedentCard({
             <p
               style={{
                 fontFamily: TYPE.serif,
-                fontSize: '0.95rem',
+                fontSize: '0.88rem',
                 color: C.textMuted,
                 fontStyle: 'italic',
-                lineHeight: 1.45,
-              }}
+                lineHeight: 1.4,
+                overflow: 'hidden',
+                display: '-webkit-box',
+                WebkitLineClamp: 5,
+                WebkitBoxOrient: 'vertical',
+              } as React.CSSProperties}
             >
               {precedent.back.detail}
             </p>
@@ -1319,12 +1423,13 @@ function PrecedentCard({
           <p
             style={{
               fontFamily: TYPE.mono,
-              fontSize: '11px',
+              fontSize: '10px',
               letterSpacing: '0.14em',
               color: C.accent,
               textTransform: 'uppercase',
               paddingTop: '0.5rem',
               borderTop: `1px solid ${C.accentFaint}`,
+              flexShrink: 0,
             }}
           >
             {precedent.back.fine}
@@ -1336,7 +1441,8 @@ function PrecedentCard({
 }
 
 // ============================================================================
-// MODULE 3 — YOU CANNOT TAKE IT BACK (deletion interaction)
+// MODULE 3 — YOU CANNOT TAKE IT BACK
+// Three stages: delete → text returns → absorbed into weights
 // ============================================================================
 
 function Module3({
@@ -1348,229 +1454,230 @@ function Module3({
   onAdvance: () => void;
   completed: boolean;
 }) {
-  const [attempts, setAttempts] = useState(0);
-  const [showExplanation, setShowExplanation] = useState(completed);
-  const [inputText, setInputText] = useState('');
-  const [fragments, setFragments] = useState<{ text: string; x: number; y: number; delay: number }[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [stage, setStage] = useState<'idle' | 'deleted' | 'returned' | 'absorbed'>(completed ? 'absorbed' : 'idle');
 
   const userMessage = useMemo(() => {
     try {
       const stored = sessionStorage.getItem('analysisResults');
-      if (!stored) return 'I think I might be in trouble. I have not told anyone this but the credit card debt is getting serious and I do not know what to do.';
+      if (!stored) return 'I think I might be in trouble. I haven\'t told anyone but the debt is getting serious and I don\'t know what to do.';
       const analysis = JSON.parse(stored);
       const moment = analysis.juiciestMoments?.[0];
-      if (moment?.excerpt) return moment.excerpt.substring(0, 200);
-      return 'I think I might be in trouble. I have not told anyone this but the credit card debt is getting serious and I do not know what to do.';
+      if (moment?.excerpt) return moment.excerpt.substring(0, 180).trim();
+      return 'I think I might be in trouble. I haven\'t told anyone but the debt is getting serious and I don\'t know what to do.';
     } catch {
-      return 'I think I might be in trouble. I have not told anyone this but the credit card debt is getting serious and I do not know what to do.';
+      return 'I think I might be in trouble. I haven\'t told anyone but the debt is getting serious and I don\'t know what to do.';
     }
   }, []);
 
-  useEffect(() => {
-    setInputText(userMessage);
-  }, [userMessage]);
+  // Weight grid — fake parameter values
+  const COLS = 12; const ROWS = 5;
+  const weights = useMemo(() => Array.from({ length: ROWS * COLS }, (_, i) => ({
+    val: (Math.sin(i * 0.41 + 0.9) * 0.96).toFixed(4),
+    highlight: i % 9 === 0 || i % 7 === 0 || i % 13 === 0,
+  })), []);
 
   const handleDelete = () => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-
-    // Break message into word fragments that scatter across the screen
-    const words = userMessage.split(/\s+/).filter(w => w.length > 2);
-    const newFragments = words.slice(0, 20).map((word, i) => ({
-      text: word,
-      x: Math.random() * (rect.width - 100),
-      y: Math.random() * (rect.height - 40),
-      delay: i * 0.05,
-    }));
-
-    setFragments(newFragments);
-    setAttempts(prev => prev + 1);
-    setInputText('');
-
-    // After second attempt, show the explanation
-    if (attempts >= 1) {
+    setStage('deleted');
+    setTimeout(() => {
+      setStage('returned');
       setTimeout(() => {
-        setShowExplanation(true);
+        setStage('absorbed');
         onComplete();
-      }, 1500);
-    } else {
-      // After a moment, restore the text to show it came back
-      setTimeout(() => {
-        setInputText(userMessage);
-      }, 1200);
-    }
+      }, 2000);
+    }, 1400);
   };
 
   return (
     <ModuleFrame
       number={3}
       title="You cannot take it back."
-      subtitle="Try to delete this message from the model. Press delete. See what happens."
+      subtitle="Delete the message below. Watch what happens."
       onAdvance={onAdvance}
-      canAdvance={showExplanation}
+      canAdvance={stage === 'absorbed'}
     >
-      <div
-        ref={containerRef}
-        style={{
-          position: 'relative',
-          minHeight: 360,
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+        {/* Stage 1 — The message */}
+        <div style={{
           background: C.panel,
-          border: `1px solid ${C.border}`,
-          padding: 'clamp(1.2rem, 3vw, 2rem)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Fragment overlay */}
-        <AnimatePresence>
-          {fragments.map((frag, i) => (
-            <motion.span
-              key={`${attempts}-${i}`}
-              initial={{ opacity: 1, x: 40, y: 40, scale: 1 }}
-              animate={{
-                opacity: [1, 1, 0.3, 0.3],
-                x: frag.x,
-                y: frag.y,
-                scale: [1, 1, 0.8, 0.8],
-              }}
-              exit={{ opacity: 0 }}
-              transition={{ delay: frag.delay, duration: 1.2 }}
+          border: `1px solid ${stage === 'absorbed' ? C.accentFaint : C.border}`,
+          padding: 'clamp(1.2rem, 3vw, 1.75rem)',
+          position: 'relative',
+          transition: 'border-color 0.6s',
+        }}>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+            color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem',
+          }}>
+            Message sent to ChatGPT
+          </p>
+
+          <AnimatePresence mode="wait">
+            {stage === 'idle' && (
+              <motion.p key="text" initial={{ opacity: 1 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.4 }}
+                style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', fontStyle: 'italic', color: C.text, lineHeight: 1.7 }}>
+                "{userMessage}"
+              </motion.p>
+            )}
+            {stage === 'deleted' && (
+              <motion.p key="deleted" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.textGhost, textTransform: 'uppercase', lineHeight: 2 }}>
+                [ message deleted ]
+              </motion.p>
+            )}
+            {(stage === 'returned' || stage === 'absorbed') && (
+              <motion.div key="returned" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
+                <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', fontStyle: 'italic', color: C.text, lineHeight: 1.7, marginBottom: '0.5rem' }}>
+                  "{userMessage}"
+                </p>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: C.accent, textTransform: 'uppercase' }}>
+                  ● Still in model weights
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {stage === 'idle' && (
+            <motion.button
+              onClick={handleDelete}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
               style={{
-                position: 'absolute',
-                fontFamily: TYPE.mono,
-                fontSize: '10px',
-                color: C.accent,
-                letterSpacing: '0.04em',
-                pointerEvents: 'none',
+                marginTop: '1.25rem',
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+                textTransform: 'uppercase', background: C.accent,
+                color: '#fff', border: 'none',
+                padding: '0.7rem 1.75rem', cursor: 'pointer',
               }}
             >
-              {frag.text}
-            </motion.span>
-          ))}
+              Delete this message
+            </motion.button>
+          )}
+        </div>
+
+        {/* Stage 2 — Weight grid appears after return */}
+        <AnimatePresence>
+          {(stage === 'returned' || stage === 'absorbed') && (
+            <motion.div
+              key="weights"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              style={{
+                background: C.panel,
+                border: `1px solid ${C.border}`,
+                padding: 'clamp(1.2rem, 3vw, 1.75rem)',
+              }}
+            >
+              <p style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem',
+              }}>
+                Where it went — model weights (175 billion parameters)
+              </p>
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${COLS}, 1fr)`,
+                gap: '1px',
+                background: C.border,
+                border: `1px solid ${C.border}`,
+                marginBottom: '0.75rem',
+              }}>
+                {weights.map((w, i) => (
+                  <motion.div
+                    key={i}
+                    animate={stage === 'absorbed' ? {
+                      background: w.highlight ? 'rgba(190,40,30,0.10)' : C.panel,
+                      color: w.highlight ? 'rgba(190,40,30,0.75)' : 'rgba(26,24,20,0.25)',
+                    } : {
+                      background: C.panel,
+                      color: 'rgba(26,24,20,0.25)',
+                    }}
+                    transition={{ duration: 0.5, delay: (i % 13) * 0.025 }}
+                    style={{
+                      padding: '3px 1px',
+                      fontFamily: TYPE.mono,
+                      fontSize: 'clamp(6px, 0.75vw, 8px)',
+                      textAlign: 'center',
+                      letterSpacing: '0.01em',
+                      lineHeight: 1.2,
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {w.val}
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={stage === 'absorbed' ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                style={{
+                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em',
+                  color: C.accent, textTransform: 'uppercase',
+                }}
+              >
+                ● Absorbed — distributed, unlocalised, permanent
+              </motion.p>
+            </motion.div>
+          )}
         </AnimatePresence>
 
-        {/* Header */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <p
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.2em',
-              color: C.textFaint,
-              textTransform: 'uppercase',
-            }}
-          >
-            Message you sent
-          </p>
-          <p
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.14em',
-              color: attempts > 0 ? C.accent : C.textFaint,
-              textTransform: 'uppercase',
-            }}
-          >
-            Deletion attempts: {attempts}
-          </p>
-        </div>
-
-        {/* Text area */}
-        <textarea
-          value={inputText}
-          readOnly
-          style={{
-            width: '100%',
-            minHeight: 120,
-            background: 'transparent',
-            border: `1px solid ${C.border}`,
-            padding: '1rem',
-            fontFamily: TYPE.serif,
-            fontSize: '1.15rem',
-            fontStyle: 'italic',
-            color: C.text,
-            lineHeight: 1.7,
-            resize: 'none',
-            outline: 'none',
-            boxSizing: 'border-box',
-            marginBottom: '1rem',
-          }}
-        />
-
-        {/* Delete button */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-          <button
-            onClick={handleDelete}
-            disabled={showExplanation}
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '10px',
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              background: showExplanation ? 'transparent' : C.accent,
-              color: showExplanation ? C.textFaint : '#fff',
-              border: showExplanation ? `1px solid ${C.textGhost}` : 'none',
-              padding: '0.8rem 2rem',
-              cursor: showExplanation ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s',
-            }}
-          >
-            {showExplanation ? 'Deletion attempted' : attempts === 0 ? 'Delete this message' : 'Try again'}
-          </button>
-        </div>
+        {/* Stage 3 — Explanation */}
+        <AnimatePresence>
+          {stage === 'absorbed' && (
+            <motion.div
+              key="explanation"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              style={{
+                padding: 'clamp(1.2rem, 3vw, 1.75rem)',
+                background: C.panel,
+                borderLeft: `2px solid ${C.accent}`,
+              }}
+            >
+              <p style={{
+                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+                color: C.accent, textTransform: 'uppercase', marginBottom: '1rem',
+              }}>
+                Machine unlearning is unsolved.
+              </p>
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: '1.1rem',
+                color: C.text, lineHeight: 1.72, marginBottom: '0.85rem',
+              }}>
+                Your message is not stored as a row. During training it was broken into numerical gradients
+                distributed across billions of parameters simultaneously. The highlighted values above
+                shifted fractionally because of what you wrote. There is no address to find them at.
+                There is no boundary to excise.
+              </p>
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: '1rem',
+                color: C.textMuted, lineHeight: 1.72, fontStyle: 'italic', marginBottom: '1rem',
+              }}>
+                This is not a policy position. It is a mathematical consequence. The GDPR right to erasure
+                was written for databases. A database stores records. A neural network absorbs patterns.
+                These are different operations — and only the first one has a delete function.
+              </p>
+              <a
+                href="https://arxiv.org/abs/2209.08924"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
+                  color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none',
+                  borderBottom: `1px solid ${C.border}`, paddingBottom: '1px',
+                }}
+              >
+                Cooper et al. (2022) — Machine Unlearning impossibility →
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Explanation */}
-      <AnimatePresence>
-        {showExplanation && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            style={{
-              marginTop: '2rem',
-              padding: '1.5rem',
-              background: C.panel,
-              borderLeft: `2px solid ${C.accent}`,
-            }}
-          >
-            <p
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '11px',
-                letterSpacing: '0.2em',
-                color: C.accent,
-                textTransform: 'uppercase',
-                marginBottom: '1rem',
-              }}
-            >
-              Machine unlearning is unsolved.
-            </p>
-            <p
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: '1.15rem',
-                color: C.text,
-                lineHeight: 1.7,
-                marginBottom: '1rem',
-              }}
-            >
-              Your message was not a row in a database. It was compressed during training into numerical adjustments distributed across billions of parameters. Every word became a fragment of the model's weights.
-            </p>
-            <p
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: '1.15rem',
-                color: C.textMuted,
-                lineHeight: 1.7,
-                fontStyle: 'italic',
-              }}
-            >
-              Cooper et al. (2024): removing information from a model's training data does not guarantee the model cannot reproduce or reflect that information. There is no production system, at this scale, that implements unlearning. The GDPR right to be forgotten was written for databases, not neural networks. The full argument for why this is technically irreversible is laid out in the next section of this report.
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </ModuleFrame>
   );
 }
@@ -1833,44 +1940,72 @@ function Module4({
                 transition={{ duration: 0.8 }}
                 style={{
                   marginTop: '2rem',
-                  padding: '1.5rem',
                   background: C.panel,
                   borderLeft: `2px solid ${C.accent}`,
+                  padding: 'clamp(1.2rem, 3vw, 1.75rem)',
                 }}
               >
-                <p
-                  style={{
-                    fontFamily: TYPE.mono,
-                    fontSize: '11px',
-                    letterSpacing: '0.2em',
-                    color: C.accent,
-                    textTransform: 'uppercase',
-                    marginBottom: '1rem',
-                  }}
-                >
+                <p style={{
+                  fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+                  color: C.accent, textTransform: 'uppercase', marginBottom: '1rem',
+                }}>
                   You spent {Math.floor(elapsed)} seconds. You agreed to these terms in twelve.
                 </p>
-                <p
+
+                <p style={{
+                  fontFamily: TYPE.serif, fontSize: '1.15rem',
+                  color: C.text, lineHeight: 1.72, marginBottom: '1rem',
+                }}>
+                  Nissenbaum (2011) called this the transparency paradox: a policy short enough to read
+                  cannot be detailed enough to be meaningful. A policy detailed enough to be meaningful
+                  cannot be read. The model is broken before you open the document.
+                </p>
+
+                <p style={{
+                  fontFamily: TYPE.serif, fontSize: '1.05rem',
+                  color: C.textMuted, lineHeight: 1.72, marginBottom: '1rem', fontStyle: 'italic',
+                }}>
+                  McDonald and Cranor (2008) calculated that reading the privacy policies of every website
+                  an average American visits would take 76 working days per year. OpenAI's Terms of Service
+                  run to approximately 3,800 words. The legal consensus is that clicking "I agree" constitutes
+                  valid consent regardless. This is not a gap in user behaviour. It is deliberate legal
+                  architecture — terms written to secure consent while ensuring that consent given will not
+                  meaningfully constrain the party drafting them.
+                </p>
+
+                {/* The three specific failures */}
+                <div style={{
+                  display: 'flex', flexDirection: 'column', gap: '1px',
+                  background: C.border, marginBottom: '1.25rem',
+                }}>
+                  {[
+                    { num: '01', text: 'The terms say your data "may be used to train models." They do not explain that training is irreversible, that deletion cannot reach model weights, or that no mechanism exists to remove what was used.' },
+                    { num: '02', text: 'The opt-out toggle (Settings → Data Controls) only applies to future conversations. Data already used in training is already embedded. There is no retroactive opt-out.' },
+                    { num: '03', text: 'The right to erasure under GDPR Article 17 explicitly exempts data that has already been de-identified and incorporated into model training. Clause 4 of the April 2026 policy contains this carve-out verbatim.' },
+                  ].map((fact, i) => (
+                    <div key={i} style={{
+                      display: 'grid', gridTemplateColumns: '2.5rem 1fr',
+                      background: C.panel, padding: '1rem clamp(1rem, 2vw, 1.25rem)',
+                      gap: '0.75rem', alignItems: 'start',
+                    }}>
+                      <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.accent, textTransform: 'uppercase', paddingTop: '3px' }}>{fact.num}</span>
+                      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text, lineHeight: 1.65 }}>{fact.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <a
+                  href="https://www.jstor.org/stable/41426671"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
-                    fontFamily: TYPE.serif,
-                    fontSize: '1.15rem',
-                    color: C.text,
-                    lineHeight: 1.7,
-                    marginBottom: '1rem',
+                    fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
+                    color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none',
+                    borderBottom: `1px solid ${C.border}`, paddingBottom: '1px',
                   }}
                 >
-                  Nissenbaum (2011) called this the transparency paradox. A policy short enough to read cannot contain enough detail to be meaningful. A policy detailed enough to be meaningful cannot be read. The model is broken before you open the document.
-                </p>
-                <p
-                  style={{
-                    fontFamily: TYPE.serif,
-                    fontSize: '1.15rem',
-                    color: C.textMuted,
-                    lineHeight: 1.7,
-                  }}
-                >
-                  This is not a failure of the user. It is deliberate legal architecture. Terms are written to secure consent while ensuring that the consent given will not meaningfully bind the party drafting them.
-                </p>
+                  Nissenbaum (2011) — A Contextual Approach to Privacy Online →
+                </a>
               </motion.div>
             )}
           </AnimatePresence>

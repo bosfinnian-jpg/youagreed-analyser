@@ -1308,7 +1308,13 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
 
   const hourDistribution = Array(24).fill(0);
   const dayDistribution = Array(7).fill(0);
-  for (const msg of messages) { hourDistribution[msg.hour]++; dayDistribution[msg.dayOfWeek]++; }
+  // 7×24 matrix: [dayOfWeek 0-6][hour 0-23] — used for heatmap visualisation
+  const dayHourMatrix: number[][] = Array.from({ length: 7 }, () => Array(24).fill(0));
+  for (const msg of messages) {
+    hourDistribution[msg.hour]++;
+    dayDistribution[msg.dayOfWeek]++;
+    dayHourMatrix[msg.dayOfWeek][msg.hour]++;
+  }
 
   const peakHour = hourDistribution.indexOf(Math.max(...hourDistribution));
   const nighttimeRatio = messages.filter(m => m.hour >= 0 && m.hour <= 4).length / messages.length;
@@ -1339,7 +1345,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
     messages,
     totalUserMessages: messages.length,
     timespan: { first: firstDate, last: lastDate, days },
-    hourDistribution, dayDistribution, peakHour, nighttimeRatio,
+    hourDistribution, dayDistribution, dayHourMatrix, peakHour, nighttimeRatio,
     emotionalTimeline,
     avgIntimacy: Math.round(avgIntimacy * 10) / 10,
     avgAnxiety: Math.round(avgAnxiety * 10) / 10,

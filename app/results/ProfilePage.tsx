@@ -104,7 +104,7 @@ function generatePredictedAttributes(r: AnalysisResult): PredictedAttribute[] {
 
   const mhTopics = r.findings.sensitiveTopics.filter(t => ['mental_health', 'anxiety', 'depression', 'therapy', 'stress'].includes((t.category || '').toLowerCase().replace(/ /g, '_')));
   if (mhTopics.length > 0 || (r.avgAnxiety || 0) > 4) {
-    attrs.push({ label: 'Mental health: anxiety/stress indicators present', confidence: Math.min(85, 50 + mhTopics.length * 12 + Math.round((r.avgAnxiety || 0) * 5)), evidence: mhTopics.length > 0 ? mhTopics.length + ' direct mental health disclosures' : 'Elevated anxiety score across message corpus', category: 'risk' });
+    attrs.push({ label: 'Anxiety/stress signal: elevated across message corpus', confidence: Math.min(85, 50 + mhTopics.length * 12 + Math.round((r.avgAnxiety || 0) * 5)), evidence: mhTopics.length > 0 ? mhTopics.length + ' mental health disclosures detected' : 'Elevated anxiety signal across corpus', category: 'risk' });
   }
 
   const finTopics = r.findings.sensitiveTopics.filter(t => ['financial', 'money', 'debt', 'salary', 'income'].includes((t.category || '').toLowerCase().replace(/ /g, '_')));
@@ -298,7 +298,7 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
           })}
         </div>
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, marginTop: '1.2rem', letterSpacing: '0.08em', lineHeight: 1.6 }}>
-          This classification is unique to you. It persists across sessions and cannot be reset.
+          This is not a record you created. It was constructed from the patterns in your writing.
         </p>
       </div>
     </div>
@@ -919,7 +919,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           transition={{ delay: 0.15, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.5rem', maxWidth: '18ch' }}
         >
-          You did not fill in a form. The system built this from your writing.
+          You did not fill in a form. These attributes were inferred from language patterns in your writing.
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -1063,7 +1063,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
         <SocialGraphSVG names={results.findings.personalInfo.names} />
         {results.findings.personalInfo.names.length > 0 && (
           <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em', color: PALETTE.inkFaint, marginTop: '1.5rem' }}>
-            Neither you nor the people in this graph consented to this association.
+            These people did not consent to appear in your inference record. Neither did you consent on their behalf.
           </p>
         )}
       </ProfileSection>

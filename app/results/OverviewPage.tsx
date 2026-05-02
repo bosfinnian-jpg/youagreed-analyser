@@ -1565,7 +1565,7 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
             marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
             fontStyle: 'italic',
           }}>
-            That was the record. What follows is what the record reveals about who you are.
+            That was the record. What follows is the inference layer — what the system constructs from it.
           </p>
 
           <div className="continue-cta-row" style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', alignItems: 'center' }}>

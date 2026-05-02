@@ -15,37 +15,43 @@ const THEORISTS = [
     name: 'Shoshana Zuboff',
     work: 'The Age of Surveillance Capitalism (2019)',
     url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/',
-    contribution: 'The framework for understanding AI data extraction as a two-stage process: Stage 1 (reversible behavioural tracking) and Stage 2 (irreversible cognitive extraction). Cookie-era consent was designed for Stage 1 and was never adequate for Stage 2.',
+    contribution: 'The Stage 1 / Stage 2 distinction: cookie-era consent was designed for reversible behavioural tracking. Conversational AI training is irreversible cognitive extraction. The consent architecture was never adequate for Stage 2 — its failure here is structural, not incidental.',
   },
   {
     name: 'Helen Nissenbaum',
     work: 'A Contextual Approach to Privacy Online. Daedalus 140(4):32–48 (2011)',
     url: 'https://doi.org/10.1162/DAED_a_00113',
-    contribution: 'The contextual integrity argument: consent frameworks fail not because users lie, but because the context in which data is collected is structurally different from the context in which it is used. Notice-and-consent was broken before AI arrived.',
+    contribution: 'Contextual integrity: privacy is violated not when data is collected, but when it flows outside the context in which it was shared. A conversation with a chatbot flows into a training corpus, a weight update, and a commercial product. That flow was never consented to.',
   },
   {
     name: 'A. Feder Cooper et al.',
-    work: 'Machine Unlearning Doesn\'t Do What You Think: Lessons for Generative AI Policy, Research, and Practice. arXiv:2412.06966 (2024)',
+    work: 'Machine Unlearning Doesn\'t Do What You Think. arXiv:2412.06966 (NeurIPS 2024)',
     url: 'https://arxiv.org/abs/2412.06966',
-    contribution: 'The machine unlearning impossibility argument: removing information from a model\'s training data does not guarantee the model cannot reproduce or reflect that information. The GDPR right to erasure was written for databases, not neural networks.',
+    contribution: 'The technical basis for the permanence argument: machine unlearning methods cannot guarantee removal of a data point\'s influence from a trained model. The GDPR right to erasure was written for databases with rows to delete. Neural networks have no equivalent operation.',
   },
   {
     name: 'Gumusel, Zhou & Sanfilippo',
     work: 'User Privacy Harms and Risks in Conversational AI: A Proposed Framework. arXiv:2402.09716 (2024)',
     url: 'https://arxiv.org/abs/2402.09716',
-    contribution: 'A taxonomy of privacy harms specific to conversational AI, identifying 9 privacy harms and 9 privacy risks across interaction stages. The framework used to structure the dossier you just read.',
+    contribution: 'A taxonomy of 9 privacy harms and 9 privacy risks specific to conversational AI systems, across four interaction stages. The framework that structures the inference categories used throughout this analysis — including disclosure harms, aggregation harms, and secondary use.',
   },
   {
     name: 'McDonald & Cranor',
     work: 'The Cost of Reading Privacy Policies. I/S: A Journal of Law and Policy 4(3):543–568 (2008)',
     url: 'https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf',
-    contribution: 'Estimated that reading the privacy policies of every website an average American visits would take 76 working days per year. The foundational empirical study underpinning the consent failure argument.',
+    contribution: 'Empirical basis for the consent failure argument: reading the privacy policies of every site an average American visits would require 76 working days per year. Notice-and-consent is not meaningfully possible at this scale. The system relies on that impossibility.',
   },
   {
     name: 'Daniel J. Solove',
     work: 'A Taxonomy of Privacy. University of Pennsylvania Law Review 154(3):477–564 (2006)',
     url: 'https://scholarship.law.gwu.edu/cgi/viewcontent.cgi?article=2074&context=faculty_publications',
-    contribution: 'The privacy taxonomy extended by Gumusel et al. to conversational AI contexts. Provides the categorical framework for understanding disclosure harms, aggregation harms, and secondary use — all of which are present in AI training data.',
+    contribution: 'The foundational privacy taxonomy extended by Gumusel et al. to conversational AI. The categorical framework for disclosure harms, aggregation harms, and secondary use — all three of which are structurally present in AI training pipelines.',
+  },
+  {
+    name: 'Hickman et al.',
+    work: 'Automated Text-Based Assessment of Psychological Constructs: A Systematic Review. Psychological Bulletin 148(12):1–30 (2022)',
+    url: 'https://doi.org/10.1037/bul0000362',
+    contribution: 'Systematic review of text-based personality and psychological inference at scale, finding 78–85% accuracy claims across commercial systems. The empirical basis for the employment screening scenario: personality inference from language patterns is operational, not theoretical.',
   },
 ];
 
@@ -94,7 +100,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
           letterSpacing: '-0.025em', lineHeight: 1.15,
           marginBottom: '1.5rem', maxWidth: '24ch',
         }}>
-          A tool that shows what you agreed to.
+          A tool that makes the consent gap visible.
         </h1>
         <div style={{ borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.25rem', maxWidth: '56ch' }}>
           <p style={{
@@ -103,7 +109,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             color: PALETTE.inkMuted, fontStyle: 'italic',
             lineHeight: 1.75, margin: 0,
           }}>
-            trace.ai analyses your ChatGPT conversation export and produces a structured account of what that data reveals: what was inferred, what was disclosed, and what cannot be removed. The dossier is not a prediction about you specifically. It is a demonstration of what commercial AI inference produces from conversational data at scale.
+            trace.ai analyses your ChatGPT conversation export and produces a structured account of what that data makes possible: what was inferred, what was disclosed, and what cannot be removed. The outputs are demonstrations of inference logic, not definitive claims about any individual. The argument is about the system, not about you.
           </p>
         </div>
       </motion.div>
@@ -118,10 +124,10 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             The inference analysis runs in your browser. The AI enrichment calls, which extract psychological signals from your messages, are made via the Anthropic API during your session only. Conversation content is not logged or retained beyond your current session.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem' }}>
-            The inferences are demonstrations, not definitive claims. They show what commercial profiling systems can plausibly derive from language patterns. The categories used, including vulnerability windows and commercial segments, are drawn from documented industry profiling frameworks.
+            The inferences are demonstrations of inference mechanics, not definitive claims. They show what commercial profiling systems plausibly derive from language patterns — using the same categorical frameworks documented in industry practice and academic research. The confidence scores are derived from signal intensity, not diagnostic certainty.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660 }}>
-            The argument is structural. The question is not "what does this reveal about you?" but "what does this reveal about the system you agreed to participate in?"
+            The question this tool asks is not "what does this reveal about you?" It is: "what kind of system produces outputs like these — and what did you agree to when you signed up?"
           </p>
         </div>
       </Block>
@@ -133,13 +139,13 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             The argument
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem' }}>
-            Consent frameworks, GDPR, cookie banners, privacy policies, were designed for reversible behavioural tracking. The data they govern can be deleted, corrected, or withdrawn. The right to erasure makes technical sense in that context.
+            Consent frameworks — GDPR, cookie banners, privacy policies — were designed for reversible behavioural tracking. The data they govern can be deleted, corrected, or withdrawn. The right to erasure makes technical sense in that context.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem' }}>
-            Conversational AI training is not reversible. A sentence processed during training dissolves into weight adjustments across hundreds of billions of parameters. There is no bounded object to return. The right to erasure cannot be technically fulfilled for training data.
+            Conversational AI training is not reversible. A sentence processed during training dissolves into weight adjustments across hundreds of billions of parameters — distributed, non-contiguous, structurally non-isolable. Cooper et al. (2024) demonstrate that no current machine unlearning method can guarantee removal. The right to erasure cannot be technically fulfilled for training data.
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660 }}>
-            That gap is not a policy failure. It is an architectural one. trace.ai makes it visible.
+            That gap is not a policy failure. It is an architectural one. The consent framework was applied to a system it was never designed for. trace.ai makes the gap visible.
           </p>
         </div>
       </Block>

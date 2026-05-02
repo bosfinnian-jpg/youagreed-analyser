@@ -789,7 +789,7 @@ function ExtractionWaffle({ results }: { results: AnalysisResult }) {
   }
 
   return (
-    <div ref={ref} style={{ padding: 'clamp(2.5rem, 6vw, 4rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+    <div ref={ref} style={{ padding: 'clamp(2.5rem, 6vw, 4rem) 0', borderBottom: `1px solid ${PALETTE.border}` }}>
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
         What was extracted
       </p>
@@ -888,8 +888,10 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
     risk: PALETTE.red,
   };
 
+  const pad = 'clamp(2rem, 6vw, 5rem)';
+
   return (
-    <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', position: 'relative' }}>
+    <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', padding: `0 ${pad}`, paddingBottom: 'clamp(4rem, 10vw, 8rem)', position: 'relative' }}>
 
       {/* Classification geometry — top right */}
       <svg className="deco-svg" style={{
@@ -910,7 +912,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       {/* ================================================================
           OPENING — full-width statement that sets up everything below
           ================================================================ */}
-      <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+      <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}`, marginBottom: 'clamp(3rem, 6vw, 5rem)' }}>
         <ActLabel roman="II" title="The Inference" pageLabel="02 / Personal Profile" />
         <ThreadSentence>Not what you said. What the pattern of saying it reveals about you.</ThreadSentence>
         <motion.h1
@@ -952,7 +954,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
         <div style={{
           maxWidth: 1000,
           margin: '0 auto',
-          padding: 'clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 5vw, 4rem)',
+          padding: 'clamp(2rem, 5vw, 3.5rem) 0',
           borderTop: `1px solid ${PALETTE.border}`,
         }}>
           <p style={{
@@ -1089,7 +1091,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       {setPage && (
         <div style={{
           maxWidth: 1000, margin: '0 auto',
-          padding: 'clamp(2rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem)',
+          padding: 'clamp(2rem, 5vw, 4rem) 0',
           borderTop: `1px solid ${PALETTE.border}`,
         }}>
           <p style={{
@@ -1142,7 +1144,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-10%' }}
         transition={{ duration: 1.2 }}
-        style={{ padding: 'clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem)' }}
+        style={{ padding: 'clamp(3rem, 8vw, 5rem) 0' }}
       >
         <motion.div
           initial={{ scaleX: 0 }}
@@ -1190,7 +1192,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
 
 function ProfileSection({ children, index }: { children: React.ReactNode; index?: number }) {
   return (
-    <div style={{ padding: 'clamp(2.5rem, 8vw, 6rem) clamp(1.25rem, 5vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
+    <div style={{ padding: 'clamp(2.5rem, 8vw, 6rem) 0', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
       {/* Ghost section number */}
       {index !== undefined && (
         <div className="section-ghost-num" style={{

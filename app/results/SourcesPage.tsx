@@ -454,9 +454,8 @@ export default function SourcesPage({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
         style={{
-          paddingTop: 'clamp(3rem, 8vw, 6rem)',
-          paddingBottom: 'clamp(2rem, 5vw, 3.5rem)',
-          marginBottom: 'clamp(2rem, 4vw, 3rem)',
+          padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)',
+          marginBottom: 'clamp(3rem, 6vw, 5rem)',
           borderBottom: `1px solid ${PALETTE.border}`,
         }}
       >

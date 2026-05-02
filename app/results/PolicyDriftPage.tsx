@@ -1025,7 +1025,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
 
       {/* Hero */}
       <div ref={ref} style={{
-        padding: 'clamp(2rem, 5vw, 4rem) 0 clamp(2rem, 4vw, 3rem)',
+        padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)',
         borderBottom: `1px solid ${PALETTE.border}`,
         marginBottom: 'clamp(3rem, 6vw, 5rem)',
         position: 'relative',

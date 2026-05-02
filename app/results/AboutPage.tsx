@@ -87,9 +87,6 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
           marginBottom: 'clamp(3rem, 6vw, 5rem)',
         }}
       >
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.4em', color: PALETTE.inkGhost, textTransform: 'uppercase', marginBottom: '0.3rem' }}>
-          trace.ai
-        </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.2rem' }}>
           About this tool
         </p>

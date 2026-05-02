@@ -303,7 +303,7 @@ function PageSection({ number, title, body, children, finding }: {
   const isInView = useInView(ref, { once: true, margin: '-60px' });
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6 }}
-      style={{ marginBottom: 'clamp(4rem, 8vw, 6rem)', paddingBottom: 'clamp(3rem, 6vw, 4rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+      style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem' }}>{number}</p>
       <h2 style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', marginBottom: '0.75rem', lineHeight: 1.25 }}>{title}</h2>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 540, marginBottom: 'clamp(2rem, 5vw, 3rem)' }}>{body}</p>

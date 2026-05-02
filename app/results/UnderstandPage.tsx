@@ -711,19 +711,25 @@ function ProgressBar({
 // ============================================================================
 
 function CourseIntro({ onStart }: { onStart: () => void }) {
+  const pad = 'clamp(2rem, 6vw, 5rem)';
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.6 }}
+      className="dash-page-inner"
       style={{
         maxWidth: 1000,
         margin: '0 auto',
-        padding: 'clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem) clamp(4rem, 10vw, 8rem)',
+        padding: `0 ${pad}`,
+        paddingBottom: 'clamp(4rem, 10vw, 8rem)',
       }}
     >
 
+      {/* Hero */}
+      <div style={{ padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)', borderBottom: `1px solid ${C.border}`, marginBottom: 'clamp(3rem, 6vw, 5rem)' }}>
       <ActLabel roman="IV" title="The Mechanism" pageLabel="08 / Test" />
       <ThreadSentence>Inference does not require intent. The system does not need to mean anything by it.</ThreadSentence>
 
@@ -806,6 +812,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           ~10 minutes
         </p>
       </motion.div>
+      </div>
     </motion.div>
   );
 }

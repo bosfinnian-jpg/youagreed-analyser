@@ -940,12 +940,11 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
         style={{
           padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)',
           borderBottom: `1px solid ${PALETTE.border}`,
-          marginBottom: 'clamp(3rem, 7vw, 5rem)',
+          marginBottom: 'clamp(3rem, 6vw, 5rem)',
         }}
       >
         <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
         <ThreadSentence>What this record makes possible — without leaving the system, without your knowledge.</ThreadSentence>
-        
 
         {/* Active count — the big number */}
         <motion.div

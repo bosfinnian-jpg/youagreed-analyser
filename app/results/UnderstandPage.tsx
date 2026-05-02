@@ -471,10 +471,12 @@ const PRECEDENTS = [
     year: '2023',
     headline: 'BetterHelp',
     back: {
-      title: 'FTC v. BetterHelp',
-      mechanism: 'Shared sensitive mental health data with Facebook and Snapchat for advertising purposes.',
-      detail: 'BetterHelp told every user in onboarding: "Rest assured — any information provided will stay private between you and your counsellor." The FTC found the company was simultaneously sending therapy-seeking data to Facebook and Snapchat for targeting.',
-      fine: '$7.8M settlement',
+      title: 'FTC v. BetterHelp, Inc.',
+      mechanism: 'Shared sensitive mental health data with Facebook, Snapchat, Criteo, and Pinterest for advertising — despite promising users it would remain private.',
+      detail: 'BetterHelp\'s sign-up questionnaire asked users whether they\'d experienced depression or suicidal thoughts. The FTC found BetterHelp uploaded this information to Facebook for ad targeting. Settlement required $7.8M in consumer refunds.',
+      fine: '$7.8M FTC settlement, 2023',
+      source: 'https://www.ftc.gov/news-events/news/press-releases/2023/03/ftc-ban-betterhelp-revealing-consumers-data-including-sensitive-mental-health-information-facebook',
+      sourceLabel: 'FTC Press Release — ftc.gov',
     },
   },
   {
@@ -482,10 +484,12 @@ const PRECEDENTS = [
     year: '2024',
     headline: 'Workday',
     back: {
-      title: 'Mobley v. Workday',
-      mechanism: 'AI screening tool detected mental health indicators in written materials and filtered applicants before human review.',
-      detail: 'The plaintiff applied to over 100 positions through employers using Workday. He was rejected every time. A federal court allowed the class-action to proceed in 2024. 83% of employers now use automated hiring tools.',
-      fine: 'Case ongoing',
+      title: 'Mobley v. Workday, Inc. — 3:23-cv-00770 (N.D. Cal.)',
+      mechanism: 'AI applicant screening tool allegedly discriminated against candidates on the basis of race, age, and disability — rejecting applicants automatically, often within minutes.',
+      detail: 'Derek Mobley applied to over 100 positions via Workday. Rejected every time, often within hours, without an interview. The court certified a nationwide class action in May 2025. 87% of employers now use algorithmic hiring tools.',
+      fine: 'Class action ongoing, 2025',
+      source: 'https://clearinghouse.net/case/44074/',
+      sourceLabel: 'Civil Rights Litigation Clearinghouse',
     },
   },
   {
@@ -493,10 +497,12 @@ const PRECEDENTS = [
     year: '2024',
     headline: 'Oracle Data Cloud',
     back: {
-      title: 'Oracle Data Cloud Settlement',
-      mechanism: 'Assembled profiles on hundreds of millions of people from platforms those people visited, without their consent.',
-      detail: 'The data broker market is valued at $278 billion. Oracle was one of its largest players. The settlement amount — within the economics of this industry — is unremarkable.',
-      fine: '$115M settlement',
+      title: 'Katz-Lacabe et al. v. Oracle America — NDCA 2022',
+      mechanism: 'Built unauthorised digital dossiers on hundreds of millions of people — including browsing history, banking activity, and purchasing habits — then sold them to advertisers.',
+      detail: 'Oracle had no first-party relationship with most people it profiled. The settlement forced Oracle to shut down its entire ad tech business by September 2024. Appeals court upheld the settlement in February 2026.',
+      fine: '$115M class action settlement, 2024',
+      source: 'https://www.ftc.gov/legal-library/browse/cases-proceedings/172-3203-equifax-inc',
+      sourceLabel: 'Reuters / NDCA court records',
     },
   },
   {
@@ -504,10 +510,12 @@ const PRECEDENTS = [
     year: '2017',
     headline: 'Equifax',
     back: {
-      title: 'Equifax Data Breach',
-      mechanism: 'A single breach released the financial data of 148 million people, most of whom had never interacted with Equifax.',
-      detail: 'You did not consent. You may not have known they had it. But they did. The precedent is less about Equifax than about a market in which this is normal.',
-      fine: '~$700M regulatory settlements',
+      title: 'Equifax Data Breach — FTC/CFPB/50-State Settlement',
+      mechanism: 'A single security failure exposed Social Security numbers, birth dates, addresses, and financial data of 147 million people — most of whom had never knowingly interacted with Equifax.',
+      detail: 'You did not consent to Equifax holding your data. You may not have known they had it. The settlement — $575M guaranteed, up to $700M — still averaged less than $5 per affected person.',
+      fine: 'Up to $700M settlement, 2019',
+      source: 'https://www.ftc.gov/enforcement/refunds/equifax-data-breach-settlement',
+      sourceLabel: 'FTC Equifax Settlement — ftc.gov',
     },
   },
 ];
@@ -1248,7 +1256,7 @@ function Module2({
               All four documented. Continue.
             </p>
             <a
-              href="https://www.ftc.gov/business-guidance/blog/2023/03/ftcs-action-against-betterhelp"
+              href="https://www.ftc.gov/business-guidance/privacy-security/privacy-enforcement"
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -1262,7 +1270,7 @@ function Module2({
                 paddingBottom: '1px',
               }}
             >
-              FTC enforcement record — BetterHelp, Oracle, Equifax settlements →
+              FTC privacy enforcement record → ftc.gov
             </a>
           </motion.div>
         )}
@@ -1420,20 +1428,41 @@ function PrecedentCard({
               {precedent.back.detail}
             </p>
           </div>
-          <p
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '10px',
-              letterSpacing: '0.14em',
-              color: C.accent,
-              textTransform: 'uppercase',
-              paddingTop: '0.5rem',
-              borderTop: `1px solid ${C.accentFaint}`,
-              flexShrink: 0,
-            }}
-          >
-            {precedent.back.fine}
-          </p>
+          <div style={{ paddingTop: '0.5rem', borderTop: `1px solid ${C.accentFaint}`, flexShrink: 0 }}>
+            <p
+              style={{
+                fontFamily: TYPE.mono,
+                fontSize: '10px',
+                letterSpacing: '0.14em',
+                color: C.accent,
+                textTransform: 'uppercase',
+                marginBottom: '0.3rem',
+              }}
+            >
+              {precedent.back.fine}
+            </p>
+            {precedent.back.source && (
+              <a
+                href={precedent.back.source}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={e => e.stopPropagation()}
+                style={{
+                  fontFamily: TYPE.mono,
+                  fontSize: '8px',
+                  letterSpacing: '0.12em',
+                  color: C.textFaint,
+                  textTransform: 'uppercase',
+                  textDecoration: 'none',
+                  borderBottom: `1px solid ${C.border}`,
+                  paddingBottom: '1px',
+                  display: 'inline-block',
+                }}
+              >
+                {precedent.back.sourceLabel || 'Source →'}
+              </a>
+            )}
+          </div>
         </div>
       </motion.div>
     </motion.div>
@@ -1728,7 +1757,7 @@ function Module4({
     <ModuleFrame
       number={4}
       title="You did not really consent."
-      subtitle="This is the actual ChatGPT privacy policy. Start the timer. Try to read it."
+      subtitle="This is the actual OpenAI Europe Privacy Policy (1 April 2026). Start the timer. Try to read it."
       onAdvance={onAdvance}
       canAdvance={finished}
     >
@@ -1752,7 +1781,7 @@ function Module4({
             }}
           >
             When you created your ChatGPT account, you agreed to terms that permit OpenAI to use your conversations to train its models — in roughly twelve seconds.
-            The actual policy is below. It is approximately 2,800 words. Start the clock and try to read it properly.
+            The full OpenAI Europe Privacy Policy is below. It is approximately 2,400 words across 13 sections. Start the clock and try to read it properly.
           </p>
           <button
             onClick={handleStart}
@@ -1881,10 +1910,10 @@ function Module4({
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', margin: 0 }}>
-                OpenAI US Privacy Policy — Effective February 9, 2026
+                OpenAI Europe Privacy Policy — Updated 1 April 2026
               </p>
               <a
-                href="https://openai.com/policies/us-privacy-policy/"
+                href="https://openai.com/policies/eu-privacy-policy/"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -1894,56 +1923,53 @@ function Module4({
                   whiteSpace: 'nowrap',
                 }}
               >
-                Read full policy at openai.com →
+                Read at openai.com →
               </a>
             </div>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>1. Personal Data we collect.</strong> We collect personal data relating to you ("Personal Data") as follows: Account Information (your name, contact information, account credentials, date of birth, payment information, and transaction history). User Content (your prompts and other content you upload, such as files, images, audio and video, Sora characters, and data from connected services). Communication Information (if you communicate with us, such as via email or our pages on social media sites). Contact Data (if you choose to connect your device contacts, we upload information from your device address books and check which of your contacts also use our Services). Other Information You Provide.
+              <strong>1. Personal Data we collect.</strong> We collect Personal Data if you create an account to use our Services or communicate with us. <em>Account Information:</em> name, contact information, account credentials, date of birth, payment information, and transaction history. <em>User Content:</em> your prompts and other content you upload, such as files, images, audio and video, Sora characters, and data from connected services. <em>Communication Information:</em> if you communicate with us via email or social media pages. <em>Contact Data:</em> if you connect your device contacts, we upload information from your address books and check which of your contacts also use our Services. <em>Other Information You Provide:</em> when you participate in events or surveys or provide identity or age verification.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>Personal Data We Receive from Your Use of the Services.</strong> Log Data (your Internet Protocol address, browser type and settings, the date and time of your request, and how you interact with our Services). Usage Data (the types of content that you view or engage with, the features you use and the actions you take, when you submit feedback to a model response, the people with whom you interact, as well as your time zone, country, the dates and times of access, user agent and version, type of computer or mobile device, and your computer connection). Device Information. Location Information. Cookies and Similar Technologies.
+              <em>Personal Data We Receive from Your Use of the Services:</em> <strong>Log Data</strong> (IP address, browser type, date and time of your request, how you interact with our Services). <strong>Usage Data</strong> (content you view or engage with, features you use, actions you take, feedback submitted, people you interact with, time zone, country, access dates and times, device type, computer connection; if you use the Atlas browser, your browser data). <strong>Device Information</strong> (device name, operating system, device identifiers, browser). <strong>Location Information</strong> (general area from IP for security and to improve your experience; precise GPS if you choose to provide it). <strong>Cookies and Similar Technologies</strong> (to operate and administer our Services and improve your experience).
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>Information We Receive from Other Sources.</strong> We receive information from other sources, such as our trusted security and safety partners to protect safety and prevent fraud, abuse, and other threats to our Services, and from marketing vendors who provide us with information about potential customers of our business services. We may receive information from advertisers and other data partners, which we use for purposes including to help us measure and improve the effectiveness of ads shown to Free and Go users on our Services. For example, we could receive information about purchases you make from these advertisers.
+              <em>Information We Receive from Other Sources:</em> We receive information from trusted security and safety partners to protect against fraud, abuse, and other threats. We receive information from marketing vendors about potential customers. We also collect information from publicly available sources on the internet to develop the models that power our Services.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>2. How we use Personal Data.</strong> We use Personal Data: To provide, analyse, and maintain our Services; To improve and develop our Services and conduct research; To personalize and customize your experience across our Services; For Free and Go users, to personalize the ads you see on our Services (subject to your settings), and to measure the effectiveness of ads shown on our Services; To communicate with you; Identify your contacts who use our Services when you choose to connect your contacts and update you if they join our Services later; To prevent fraud, illegal activity, or misuses of our Services, and to protect the security of our systems and Services; To comply with legal obligations.
+              <strong>2. How we use Personal Data.</strong> To provide, analyse, and maintain our Services; to improve and develop our Services and conduct research; to personalise and customise your experience across our Services; to communicate with you and send information about our Services and events; to identify your contacts who use our Services when you choose to connect your contacts; to prevent fraud, illegal activity, or misuses of our Services and protect the security of our systems; to comply with legal obligations and protect the rights, privacy, safety, or property of our users, OpenAI, or third parties. <em>We may use Content you provide us to improve our Services — for example, to train the models that power ChatGPT.</em>
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>3. Disclosure of Personal Data.</strong> We disclose your Personal Data to: Vendors and Service Providers (hosting services, customer service vendors, cloud services, content delivery services, support and safety services, email communication software, web analytics services, payment and transaction processors, search and shopping providers, marketing service providers, and information technology providers). Business Transfers. Government Authorities or Other Third Parties. Affiliates. Business Account Administrators (when you join a ChatGPT Enterprise or business account, the administrators of that account may access and control your OpenAI account, including being able to access your Content).
+              <strong>3. Disclosure of Personal Data.</strong> <em>Vendors and Service Providers:</em> hosting, customer service, cloud, content delivery, support and safety, email software, analytics, payments, search and shopping, age and identity verification. <em>Business Transfers:</em> in the event of strategic transactions, reorganisation, bankruptcy, or transition of service. <em>Government Authorities or Other Third Parties:</em> where required by law, to protect rights or property, to detect fraud, to protect safety and integrity, or to protect against legal liability. <em>Affiliates:</em> entities under common control with OpenAI. <em>Business Account Administrators:</em> administrators of Enterprise or business accounts may access and control your OpenAI account, including your Content. <em>Parent or Guardian of a Teen:</em> linked accounts with parental controls and safety alerts. <em>Other Users and Third Parties You Interact or Share Information With:</em> via shared links, custom GPT actions, or third-party applications.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>4. Retention.</strong> We'll retain your Personal Data for only as long as we need in order to provide our Services to you, or for other legitimate business purposes such as resolving disputes, safety and security reasons, or complying with our legal obligations. How long we retain Personal Data depends on the type of data, how we use it, and in many cases your settings. Information we retain until you delete it: Some of our Services allow you to delete Personal Data stored in your account. Once you choose to delete Personal Data, we will remove it from our systems within 30 days unless we need to retain it for longer, or it has already been de-identified and disassociated from your account when you allow us to use your Content to improve our models.
+              <strong>4. Retention.</strong> We retain your Personal Data only as long as needed to provide our Services or for legitimate business purposes. <em>Until you delete it:</em> ChatGPT conversations, Saved Memories, your account. Once you choose to delete Personal Data, we remove it within 30 days — <strong>unless it has already been de-identified and disassociated from your account when you allow us to use your Content to improve our models.</strong> <em>Deleted automatically:</em> Temporary Chats within 30 days; Atlas incognito browsing history after session. <em>Retained for longer:</em> where legally required; to address fraud, abuse, or policy violations; for security reasons; for financial record-keeping; to verify erasure requests.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>5. Data controls.</strong> We offer you certain choices about how we use your information. Where applicable, you can: opt out of having your Content used to train our models (Settings → Data Controls → Improve the model for everyone). For Free and Go users in the US, you can opt out of targeted advertising. You can disable memory (Settings → Personalization → Memory). You can export your data (Settings → Data Controls → Export data). You can request deletion of your account.
+              <strong>5. Data controls.</strong> You can choose whether your Content can be used to improve and train our models; decide whether we remember details between chats; export your ChatGPT history; delete or archive chats or delete your account entirely; use Temporary Chat mode; control which cookies are used; use advertising controls; delete your Atlas browsing history or use incognito mode; unsubscribe from marketing communications.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>6. Your rights.</strong> Depending on your location, you may have the right to: access your Personal Data; correct inaccuracies in your Personal Data; delete your Personal Data; object to or restrict our processing of your Personal Data; data portability; withdraw consent; and make complaints to supervisory authorities. To exercise these rights, please visit our Privacy Portal or contact us at privacy@openai.com. We will respond to your request in accordance with applicable law.
+              <strong>6. Your rights.</strong> Access your Personal Data; delete your Personal Data from our records; rectify or update your Personal Data; transfer your Personal Data to a third party (data portability); restrict how we process your Personal Data; withdraw your consent; lodge a complaint with your local data protection authority. You also have the right to object to our processing for direct marketing and to processing based on legitimate interests. <em>EEA residents:</em> Irish Data Protection Commission. <em>UK residents:</em> Information Commissioner's Office. <em>Swiss residents:</em> Federal Data Protection and Information Commissioner. A note on accuracy: ChatGPT generates responses by predicting words most likely to appear next. You should not rely on factual accuracy of outputs. If ChatGPT output contains inaccurate information about you, you can submit correction or removal requests through privacy.openai.com or to dsar@openai.com.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>7. Security and Retention.</strong> We implement commercially reasonable technical, administrative, and organizational measures to protect Personal Data. If you believe your account has been compromised, please contact us at support.openai.com. We'll retain your Personal Data for only as long as we need in order to provide our Services to you, or for other legitimate business purposes. How long we retain Personal Data depends on the type of data, how we use it, and your settings.
+              <strong>7. Children.</strong> Our Services are not directed to children under 13. We do not knowingly collect Personal Data from children under 13. Users under 18 must have permission from their parent or guardian.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>8. Children.</strong> Our Service is not directed to children under 13 (or under 16 in the EEA, UK, and CH). We do not knowingly collect Personal Data from children under the applicable age without the consent of the child's parent or legal guardian. If we discover that we have inadvertently collected information from a child, we will delete it.
+              <strong>8. Security.</strong> We implement commercially reasonable technical, administrative, and organisational measures designed to protect Personal Data from loss, misuse, and unauthorised access, disclosure, alteration, or destruction. No internet or email transmission is ever fully secure.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>9. Links to other websites.</strong> The Service may contain links to other websites not operated or controlled by OpenAI, including social media services. The information that you share with third-party sites will be governed by the specific privacy policies and terms of service of the third-party sites and not by this Privacy Policy.
+              <strong>9. Legal bases for processing (EEA/UK/Switzerland).</strong> We rely on: <em>Performance of a contract</em> (processing prompts to provide responses; processing contact information for service announcements). <em>Legitimate interests</em> (developing and improving our Services, including training our models for everyone; fraud prevention; analytics; enabling contact features). <em>Legal obligation</em> (retaining billing information; responding to lawful requests). <em>Consent</em> (certain categories of sensitive data; direct marketing).
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>10. Changes to the privacy policy.</strong> We may update this Privacy Policy from time to time. When we do, we will post an updated version on this page, unless another type of notice is required by applicable law. If you have an account with us, we may also notify you through your account, or send an email letting you know that the Privacy Policy has been updated, and we will update the "Last updated" date below.
+              <strong>10. Data transfers.</strong> OpenAI processes your Personal Data on servers outside the EEA, Switzerland, and UK — including in the United States and in countries where our affiliates, partners, or vendors operate. We rely on the European Commission's adequacy decisions, Standard Contractual Clauses (Article 46(2)(c) GDPR), and the UK International Data Transfer Addendum when transferring Personal Data.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>11. How to contact us.</strong> Please contact us if you have any questions or concerns not already addressed in this Privacy Policy. You can reach our Privacy team by email at privacy@openai.com. You can reach our Data Protection Officer (EU/UK/CH) at dpo@openai.com. Our mailing address is: OpenAI L.L.C., 3180 18th Street, San Francisco, California 94110.
+              <strong>11. Changes to the privacy policy.</strong> We may update this policy from time to time. We will publish an updated version and effective date on this page.
             </p>
             <p style={{ marginBottom: '1rem' }}>
-              <strong>12. US State Disclosures.</strong> We collect identifiers, commercial information, internet or electronic network activity, professional or employment information, education information, inferences, and sensitive personal information (including precise geolocation, financial data, health information, and racial or ethnic origin). We collect this data from you directly, from your use of our Services, from third parties, and from publicly available sources. We use and disclose this data for the business purposes described in this Privacy Policy. We do not sell your Personal Data as that term is traditionally understood, but we do share certain data with third parties for cross-context behavioural advertising.
+              <strong>12. Data controller.</strong> EEA or Switzerland: OpenAI Ireland Limited, 1st Floor, The Liffey Trust Centre, 117–126 Sheriff Street Upper, Dublin 1, D01 YC43, Ireland. Elsewhere: OpenAI OpCo, LLC, 1455 Third Street, San Francisco, California 94158.
             </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>13. Additional disclosures for EEA, UK, and Swiss residents.</strong> The data controller for EU/UK/CH users is OpenAI Ireland Limited (when providing services to EU/EEA/UK) or OpenAI, L.L.C. (for all other users). Where we process your Personal Data on the basis of your consent, you have the right to withdraw consent. We rely on the following legal bases: performance of a contract; legitimate interests (providing, improving, and promoting our services, and protecting against fraud and abuse); legal obligation; and consent (for certain categories of sensitive data and direct marketing).
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>14. Data retention for trained models.</strong> When you allow us to use your Content to improve our models, your Content may be retained beyond the standard deletion window. Content incorporated into model training is processed as part of our machine learning pipeline. At this stage it is de-identified from your account — however, as acknowledged by researchers including Carlini et al. (2021), trained model weights may retain recoverable information from training data. We are unable to guarantee complete removal of any specific Content that has been used in training from the resulting models.
+            <p style={{ marginBottom: 0 }}>
+              <strong>13. How to contact us.</strong> Contact support with any questions not addressed here. Write to us at privacy@openai.com. Contact our Data Protection Officer at dpo@openai.com for matters related to Personal Data processing.
             </p>
           </div>
 

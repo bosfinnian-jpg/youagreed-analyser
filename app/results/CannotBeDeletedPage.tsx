@@ -382,7 +382,7 @@ function MachineUnlearning() {
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
           color: PALETTE.inkFaint, textTransform: 'uppercase',
         }}>
-          Cooper et al., 2024 — Machine Unlearning for Large Language Models
+          Cooper et al., 2024 — Machine Unlearning Doesn't Do What You Think (arXiv:2412.06966)
         </p>
       </div>
     </motion.div>
@@ -433,7 +433,7 @@ function LegalGap() {
         fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
         color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '2rem',
       }}>
-        In March 2023, Italy's data protection authority temporarily banned ChatGPT. The concern: OpenAI could not demonstrate that users' personal data, once embedded in model weights, had been or could be erased on request. OpenAI added opt-out controls and the ban was lifted. The underlying technical problem was not resolved.
+        In March 2023, Italy's data protection authority (the Garante) temporarily banned ChatGPT. The concern: OpenAI could not demonstrate that users' personal data, once embedded in model weights, had been or could be erased on request. OpenAI added opt-out controls and the ban was lifted. In December 2024, the Garante issued a €15 million fine — subsequently annulled by the Court of Rome on procedural grounds. The underlying technical problem was never resolved.
       </p>
 
       {/* Rights vs reality table */}
@@ -519,7 +519,7 @@ function ConsentFailure() {
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
           color: PALETTE.inkFaint, textTransform: 'uppercase',
         }}>
-          Nissenbaum, 2011 — A Contextual Approach to Privacy Online
+          Nissenbaum, 2011 — A Contextual Approach to Privacy Online, Daedalus 140(4):32–48
         </p>
       </div>
     </motion.div>

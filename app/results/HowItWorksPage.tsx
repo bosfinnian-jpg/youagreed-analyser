@@ -388,11 +388,22 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
 
       {/* Sources footnote */}
       <div style={{ paddingTop: 'clamp(2rem, 4vw, 3rem)', borderTop: `1px solid ${PALETTE.border}`, marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 2, margin: 0 }}>
-          Sources — Cooper et al. (2022), machine unlearning impossibility &nbsp;&middot;&nbsp;
-          Zuboff (2019), surveillance capitalism stages &nbsp;&middot;&nbsp;
-          Nissenbaum (2004), contextual integrity &nbsp;&middot;&nbsp;
-          Gumusel et al. (2024), conversational AI privacy harms
+        <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 2.2, margin: 0 }}>
+          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>
+            Cooper et al. (2024) — Machine Unlearning Doesn't Do What You Think, arXiv:2412.06966
+          </a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>
+            Zuboff (2019) — The Age of Surveillance Capitalism
+          </a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>
+            Nissenbaum (2011) — A Contextual Approach to Privacy Online, Daedalus 140(4):32–48
+          </a>
+          &nbsp;&middot;&nbsp;
+          <a href="https://arxiv.org/abs/2402.09716" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>
+            Gumusel, Zhou &amp; Sanfilippo (2024) — User Privacy Harms in Conversational AI, arXiv:2402.09716
+          </a>
         </p>
       </div>
 

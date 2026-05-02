@@ -14,22 +14,38 @@ const THEORISTS = [
   {
     name: 'Shoshana Zuboff',
     work: 'The Age of Surveillance Capitalism (2019)',
+    url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/',
     contribution: 'The framework for understanding AI data extraction as a two-stage process: Stage 1 (reversible behavioural tracking) and Stage 2 (irreversible cognitive extraction). Cookie-era consent was designed for Stage 1 and was never adequate for Stage 2.',
   },
   {
     name: 'Helen Nissenbaum',
-    work: 'A Contextual Approach to Privacy Online (2011)',
+    work: 'A Contextual Approach to Privacy Online. Daedalus 140(4):32–48 (2011)',
+    url: 'https://doi.org/10.1162/DAED_a_00113',
     contribution: 'The contextual integrity argument: consent frameworks fail not because users lie, but because the context in which data is collected is structurally different from the context in which it is used. Notice-and-consent was broken before AI arrived.',
   },
   {
-    name: 'Cooper et al.',
-    work: 'Challenges and Opportunities of Machine Unlearning (2022)',
+    name: 'A. Feder Cooper et al.',
+    work: 'Machine Unlearning Doesn\'t Do What You Think: Lessons for Generative AI Policy, Research, and Practice. arXiv:2412.06966 (2024)',
+    url: 'https://arxiv.org/abs/2412.06966',
     contribution: 'The machine unlearning impossibility argument: removing information from a model\'s training data does not guarantee the model cannot reproduce or reflect that information. The GDPR right to erasure was written for databases, not neural networks.',
   },
   {
-    name: 'Gumusel et al.',
-    work: 'User Privacy Harms and Risks in Conversational AI (2024)',
-    contribution: 'A taxonomy of privacy harms specific to conversational AI: inference harms, aggregation harms, and secondary use harms. The framework used to structure the dossier you just read.',
+    name: 'Gumusel, Zhou & Sanfilippo',
+    work: 'User Privacy Harms and Risks in Conversational AI: A Proposed Framework. arXiv:2402.09716 (2024)',
+    url: 'https://arxiv.org/abs/2402.09716',
+    contribution: 'A taxonomy of privacy harms specific to conversational AI, identifying 9 privacy harms and 9 privacy risks across interaction stages. The framework used to structure the dossier you just read.',
+  },
+  {
+    name: 'McDonald & Cranor',
+    work: 'The Cost of Reading Privacy Policies. I/S: A Journal of Law and Policy 4(3):543–568 (2008)',
+    url: 'https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf',
+    contribution: 'Estimated that reading the privacy policies of every website an average American visits would take 76 working days per year. The foundational empirical study underpinning the consent failure argument.',
+  },
+  {
+    name: 'Daniel J. Solove',
+    work: 'A Taxonomy of Privacy. University of Pennsylvania Law Review 154(3):477–564 (2006)',
+    url: 'https://scholarship.law.gwu.edu/cgi/viewcontent.cgi?article=2074&context=faculty_publications',
+    contribution: 'The privacy taxonomy extended by Gumusel et al. to conversational AI contexts. Provides the categorical framework for understanding disclosure harms, aggregation harms, and secondary use — all of which are present in AI training data.',
   },
 ];
 
@@ -155,9 +171,20 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
                   <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.ink, marginBottom: '0.2rem', lineHeight: 1.3 }}>
                     {t.name}
                   </p>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.5 }}>
-                    {t.work}
-                  </p>
+                  {t.url ? (
+                    <a
+                      href={t.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.5, textDecoration: 'none', borderBottom: `1px solid ${PALETTE.border}`, paddingBottom: '1px' }}
+                    >
+                      {t.work} →
+                    </a>
+                  ) : (
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.12em', color: PALETTE.inkFaint, lineHeight: 1.5 }}>
+                      {t.work}
+                    </p>
+                  )}
                 </div>
                 <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.7, fontStyle: 'italic' }}>
                   {t.contribution}

@@ -1139,7 +1139,7 @@ function Module1({
               model's weights regardless of who holds it.
             </p>
             <a
-              href="https://www.propublica.org/article/facebook-lets-advertisers-exclude-users-by-race"
+              href="https://arxiv.org/abs/2402.09716"
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -1153,7 +1153,7 @@ function Module1({
                 paddingBottom: '1px',
               }}
             >
-              Gumusel et al. (2024) — User Privacy Harms in Conversational AI →
+              Gumusel, Zhou &amp; Sanfilippo (2024) — User Privacy Harms in Conversational AI, arXiv:2402.09716 →
             </a>
           </motion.div>
         )}
@@ -1663,7 +1663,7 @@ function Module3({
                 These are different operations — and only the first one has a delete function.
               </p>
               <a
-                href="https://arxiv.org/abs/2209.08924"
+                href="https://arxiv.org/abs/2412.06966"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
@@ -1672,7 +1672,7 @@ function Module3({
                   borderBottom: `1px solid ${C.border}`, paddingBottom: '1px',
                 }}
               >
-                Cooper et al. (2022) — Machine Unlearning impossibility →
+                Cooper et al. (2024) — Machine Unlearning Doesn't Do What You Think, arXiv:2412.06966 →
               </a>
             </motion.div>
           )}
@@ -1879,9 +1879,24 @@ function Module4({
               marginBottom: finished ? '2rem' : 0,
             }}
           >
-            <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
-              OpenAI US Privacy Policy / April 2026 / Excerpt
-            </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', margin: 0 }}>
+                OpenAI US Privacy Policy — Effective February 9, 2026
+              </p>
+              <a
+                href="https://openai.com/policies/us-privacy-policy/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
+                  color: C.accent, textTransform: 'uppercase', textDecoration: 'none',
+                  borderBottom: `1px solid rgba(190,40,30,0.3)`, paddingBottom: '1px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Read full policy at openai.com →
+              </a>
+            </div>
             <p style={{ marginBottom: '1rem' }}>
               <strong>1. Personal Data we collect.</strong> We collect personal data relating to you ("Personal Data") as follows: Account Information (your name, contact information, account credentials, date of birth, payment information, and transaction history). User Content (your prompts and other content you upload, such as files, images, audio and video, Sora characters, and data from connected services). Communication Information (if you communicate with us, such as via email or our pages on social media sites). Contact Data (if you choose to connect your device contacts, we upload information from your device address books and check which of your contacts also use our Services). Other Information You Provide.
             </p>
@@ -1995,7 +2010,7 @@ function Module4({
                 </div>
 
                 <a
-                  href="https://www.jstor.org/stable/41426671"
+                  href="https://doi.org/10.1162/DAED_a_00113"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
@@ -2004,7 +2019,7 @@ function Module4({
                     borderBottom: `1px solid ${C.border}`, paddingBottom: '1px',
                   }}
                 >
-                  Nissenbaum (2011) — A Contextual Approach to Privacy Online →
+                  Nissenbaum (2011) — A Contextual Approach to Privacy Online, Daedalus 140(4):32–48. doi:10.1162/DAED_a_00113 →
                 </a>
               </motion.div>
             )}
@@ -2156,19 +2171,29 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
         >
           {[
             {
-              label: 'Cooper et al. (2022)',
-              desc: 'Challenges and opportunities of machine unlearning — the impossibility argument.',
-              url: 'https://arxiv.org/abs/2209.08924',
+              label: 'Cooper et al. (2024)',
+              desc: 'Machine Unlearning Doesn\'t Do What You Think — the impossibility argument for generative AI policy. arXiv:2412.06966.',
+              url: 'https://arxiv.org/abs/2412.06966',
             },
             {
               label: 'Nissenbaum (2011)',
-              desc: 'A contextual approach to privacy online — why notice-and-consent was structurally broken before AI arrived.',
-              url: 'https://www.jstor.org/stable/41426671',
+              desc: 'A Contextual Approach to Privacy Online — why notice-and-consent was structurally broken before AI arrived. Daedalus 140(4):32–48.',
+              url: 'https://doi.org/10.1162/DAED_a_00113',
             },
             {
               label: 'Zuboff (2019)',
-              desc: 'The Age of Surveillance Capitalism — the two-stage extraction model that frames this tool.',
+              desc: 'The Age of Surveillance Capitalism — the two-stage extraction model (behavioural tracking vs. cognitive extraction) that frames this tool.',
               url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/',
+            },
+            {
+              label: 'Gumusel, Zhou & Sanfilippo (2024)',
+              desc: 'User Privacy Harms and Risks in Conversational AI — the taxonomy of 9 privacy harms and 9 risks used in this analysis. arXiv:2402.09716.',
+              url: 'https://arxiv.org/abs/2402.09716',
+            },
+            {
+              label: 'McDonald & Cranor (2008)',
+              desc: 'The Cost of Reading Privacy Policies — estimated 76 work days per year to read every policy. I/S Journal 4(3):543–568.',
+              url: 'https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf',
             },
           ].map(r => (
             <a

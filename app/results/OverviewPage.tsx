@@ -201,7 +201,7 @@ function ChapterShell({
     <section
       ref={ref}
       id={`chapter-${id}`}
-      className="chapter-snap chapter-shell"
+      className={`chapter-snap chapter-shell${last ? ' chapter-last' : ''}`}
       style={{
         height: '100dvh',
         padding: 'clamp(1.5rem,4vw,3rem) clamp(1.25rem,6vw,5rem)',
@@ -238,8 +238,6 @@ function ChapterShell({
         width: '100%',
         position: 'relative',
         zIndex: 1,
-        paddingBottom: last ? 0 : 'clamp(1.5rem,4vw,3rem)',
-        borderBottom: last ? 'none' : `1px solid ${PALETTE.border}`,
       }}>
         {(num || label) && (
           <div style={{
@@ -1711,6 +1709,18 @@ export default function OverviewPage({ results, sources, setPage }: {
         .chapter-shell {
           min-height: 100vh;
           min-height: 100dvh;
+        }
+        /* Divider at the true bottom edge of each section, constrained to 880px content column */
+        .chapter-shell:not(.chapter-last)::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: min(880px, calc(100% - 2 * clamp(1.25rem, 6vw, 5rem)));
+          height: 1px;
+          background: rgba(26,24,20,0.14);
+          pointer-events: none;
         }
         @media (max-width: 768px) {
           .ov-right-rail { display: none !important; }

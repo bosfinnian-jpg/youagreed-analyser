@@ -527,65 +527,160 @@ function VolumeChapter({ count, days, hourDist, onActive }: {
 
 // ════════════════════════════════════════════════════════════════════════════
 // CHAPTER 02 — INFERENCE
-// Attributes stamped onto the page with spring-scale + slight rotation.
-// Each one feels like a rubber stamp on a dossier.
+// 4 cards max. Closed by default — click to reveal each one.
+// The act of clicking mirrors the act of consenting: you open it yourself.
 // ════════════════════════════════════════════════════════════════════════════
+function InferenceCard({ inf, index, revealed, onReveal }: {
+  inf: { attribute: string; value: string; confidence: number };
+  index: number;
+  revealed: boolean;
+  onReveal: (i: number) => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const barRef  = useRef<HTMLDivElement>(null);
+  const confRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!revealed) return;
+    const card = cardRef.current;
+    const bar  = barRef.current;
+    const conf = confRef.current;
+    if (!card || !bar) return;
+
+    animate(card, {
+      scale:   [0.96, 1],
+      opacity: [0.6, 1],
+      rotate:  ['-1.5deg', '0deg'],
+      duration: 500,
+      ease: createSpring({ stiffness: 220, damping: 14 }).ease,
+    });
+
+    bar.style.transform = 'scaleX(0)';
+    animate(bar, {
+      scaleX:   [0, 1],
+      duration: 700,
+      ease:     'outQuart',
+      delay:    80,
+    });
+
+    if (conf) {
+      const target = inf.confidence;
+      const obj = { v: 0 };
+      setTimeout(() => {
+        animate(obj, {
+          v: target,
+          duration: 700,
+          ease: 'outQuart',
+          onUpdate: () => { conf.textContent = obj.v.toFixed(2); },
+        });
+      }, 120);
+    }
+  }, [revealed, inf.confidence]);
+
+  return (
+    <div
+      ref={cardRef}
+      onClick={() => !revealed && onReveal(index)}
+      style={{
+        border: `1px solid ${revealed ? PALETTE.border : 'rgba(26,24,20,0.12)'}`,
+        padding: 'clamp(1.1rem, 2vw, 1.4rem)',
+        background: revealed ? PALETTE.bgPanel : 'rgba(26,24,20,0.025)',
+        cursor: revealed ? 'default' : 'pointer',
+        transformOrigin: 'center',
+        transition: 'background 0.3s, border-color 0.3s',
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: revealed ? 'auto' : '5.5rem',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+      }}
+      onMouseEnter={e => { if (!revealed) (e.currentTarget as HTMLDivElement).style.background = 'rgba(26,24,20,0.055)'; }}
+      onMouseLeave={e => { if (!revealed) (e.currentTarget as HTMLDivElement).style.background = 'rgba(26,24,20,0.025)'; }}
+    >
+      {/* Closed state */}
+      {!revealed && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '9px',
+            letterSpacing: '0.25em', color: PALETTE.inkFaint,
+            textTransform: 'uppercase',
+          }}>
+            {inf.attribute}
+          </span>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '8px',
+            letterSpacing: '0.2em', color: PALETTE.redMuted,
+            textTransform: 'uppercase', opacity: 0.7,
+          }}>
+            tap to reveal →
+          </span>
+        </div>
+      )}
+
+      {/* Revealed state */}
+      {revealed && (
+        <>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '9px',
+            letterSpacing: '0.22em', color: PALETTE.inkFaint,
+            textTransform: 'uppercase', marginBottom: '0.5rem',
+          }}>
+            {inf.attribute}
+          </p>
+          <p style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
+            color: PALETTE.ink,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.3,
+            marginBottom: '1rem',
+          }}>
+            {inf.value}
+          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{
+              flex: 1, height: 1,
+              background: 'rgba(26,24,20,0.10)',
+              position: 'relative',
+            }}>
+              <div ref={barRef} style={{
+                position: 'absolute', inset: 0,
+                background: PALETTE.red,
+                transformOrigin: 'left center',
+                width: `${Math.max(8, Math.min(100, inf.confidence * 100))}%`,
+              }} />
+            </div>
+            <span style={{
+              fontFamily: TYPE.mono, fontSize: '10px',
+              letterSpacing: '0.1em', color: PALETTE.inkFaint,
+            }}>
+              <span ref={confRef}>0.00</span>
+            </span>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function InferenceChapter({ inferences, onActive }: {
   inferences: { attribute: string; value: string; confidence: number }[];
   onActive: (id: ChapterId) => void;
 }) {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const stampsRef = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState<boolean[]>([]);
+  const capped = inferences.slice(0, 4);
 
-  useScrollTrigger(sectionRef, () => {
-    const wrap = stampsRef.current;
-    if (!wrap) return;
-    const stamps = Array.from(wrap.querySelectorAll('.inf-stamp'));
-    const bars   = Array.from(wrap.querySelectorAll('.inf-bar'));
+  useEffect(() => {
+    setRevealed(Array(capped.length).fill(false));
+  }, [capped.length]);
 
-    stamps.forEach(s => {
-      const el = s as HTMLElement;
-      el.style.opacity = '0';
-      el.style.transform = 'scale(0.85) rotate(-2deg)';
-    });
-    bars.forEach(b => {
-      (b as HTMLElement).style.transform = 'scaleX(0)';
-    });
+  const handleReveal = (i: number) => {
+    setRevealed(prev => prev.map((v, idx) => idx === i ? true : v));
+  };
 
-    // Stamp each attribute in with a spring, slight random rotate per element
-    animate(stamps, {
-      opacity:  [0, 1],
-      scale:    [0.85, 1],
-      rotate:   (_el: any, i: number) => [(-2 + (i % 3)) + 'deg', '0deg'],
-      delay:    stagger(180),
-      ease:     createSpring({ stiffness: 200, damping: 14 }).ease,
-      duration: 700,
-    });
-
-    // Confidence bars fill after the stamp lands
-    animate(bars, {
-      scaleX:   [0, 1],
-      delay:    stagger(180, { start: 220 }),
-      duration: 900,
-      ease:     'outQuart',
-    });
-
-    // Count up confidence numbers
-    bars.forEach((bar, i) => {
-      const numEl = (bar.parentElement?.parentElement?.querySelector('.inf-conf') as HTMLElement) || null;
-      if (!numEl) return;
-      const target = inferences[i]?.confidence ?? 0;
-      const obj = { v: 0 };
-      setTimeout(() => {
-        animate(obj, {
-          v: target,
-          duration: 800,
-          ease: 'outQuart',
-          onUpdate: () => { numEl.textContent = obj.v.toFixed(2); },
-        });
-      }, 220 + i * 180);
-    });
-  }, [inferences]);
+  const allRevealed = revealed.every(Boolean) && revealed.length > 0;
 
   return (
     <div ref={sectionRef}>
@@ -595,64 +690,36 @@ function InferenceChapter({ inferences, onActive }: {
           fontSize: 'clamp(1.6rem,3.5vw,2.4rem)',
           fontWeight: 400, color: PALETTE.ink,
           letterSpacing: '-0.03em', lineHeight: 1.1,
-          marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
+          marginBottom: 'clamp(0.5rem,1.5vw,1rem)',
           maxWidth: '20ch',
         }}>
           From these messages, the model learned:
         </h2>
 
-        <div ref={stampsRef} className="inf-grid" style={{
+        <p style={{
+          fontFamily: TYPE.mono, fontSize: '9px',
+          letterSpacing: '0.22em', color: PALETTE.redMuted,
+          textTransform: 'uppercase', marginBottom: 'clamp(0.85rem,2vw,1.25rem)',
+          opacity: allRevealed ? 0 : 1,
+          transition: 'opacity 0.6s',
+        }}>
+          {revealed.filter(Boolean).length} of {capped.length} revealed
+        </p>
+
+        <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 'clamp(0.85rem, 2vw, 1.5rem)',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: 'clamp(0.6rem, 1.5vw, 1rem)',
           marginBottom: 'clamp(1rem,2vw,1.5rem)',
         }}>
-          {inferences.map((inf, i) => (
-            <div key={i} className="inf-stamp" style={{
-              border: `1px solid ${PALETTE.border}`,
-              padding: 'clamp(1.1rem, 2vw, 1.5rem)',
-              background: PALETTE.bgPanel,
-              transformOrigin: 'center',
-            }}>
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '9px',
-                letterSpacing: '0.22em', color: PALETTE.inkFaint,
-                textTransform: 'uppercase', marginBottom: '0.5rem',
-              }}>
-                {inf.attribute}
-              </p>
-              <p style={{
-                fontFamily: TYPE.serif,
-                fontSize: 'clamp(1.05rem, 1.8vw, 1.25rem)',
-                color: PALETTE.ink,
-                letterSpacing: '-0.01em',
-                lineHeight: 1.3,
-                marginBottom: '1rem',
-                minHeight: '2.6em',
-              }}>
-                {inf.value}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{
-                  flex: 1, height: 1,
-                  background: 'rgba(26,24,20,0.10)',
-                  position: 'relative',
-                }}>
-                  <div className="inf-bar" style={{
-                    position: 'absolute', inset: 0,
-                    background: PALETTE.red,
-                    transformOrigin: 'left center',
-                    width: `${Math.max(8, Math.min(100, inf.confidence * 100))}%`,
-                  }} />
-                </div>
-                <span style={{
-                  fontFamily: TYPE.mono, fontSize: '10px',
-                  letterSpacing: '0.1em', color: PALETTE.inkFaint,
-                }}>
-                  <span className="inf-conf">0.00</span>
-                </span>
-              </div>
-            </div>
+          {capped.map((inf, i) => (
+            <InferenceCard
+              key={i}
+              inf={inf}
+              index={i}
+              revealed={revealed[i] ?? false}
+              onReveal={handleReveal}
+            />
           ))}
         </div>
 
@@ -662,6 +729,8 @@ function InferenceChapter({ inferences, onActive }: {
           color: PALETTE.inkMuted,
           lineHeight: 1.78,
           maxWidth: '50ch',
+          opacity: allRevealed ? 1 : 0.35,
+          transition: 'opacity 0.8s ease',
         }}>
           None of these attributes were stated. All were inferred.
           OpenAI's terms permit the use of conversation content to improve
@@ -1597,7 +1666,7 @@ export default function OverviewPage({ results, sources, setPage }: {
   const portrait = results?.psychologicalPortrait;
 
   if (synth?.demographicPredictions?.length) {
-    inferences = synth.demographicPredictions.slice(0, 6).map((d: any) => ({
+    inferences = synth.demographicPredictions.slice(0, 4).map((d: any) => ({
       attribute:  d.attribute || 'Attribute',
       value:      d.value || '—',
       confidence: typeof d.confidence === 'number' ? d.confidence : 0.7,
@@ -1612,7 +1681,7 @@ export default function OverviewPage({ results, sources, setPage }: {
       p.dominantNarrative && { attribute: 'Dominant narrative', value: p.dominantNarrative, confidence: 0.68 },
       p.relationshipDynamics && { attribute: 'Relationship dynamics', value: p.relationshipDynamics, confidence: 0.66 },
     ].filter(Boolean) as any[];
-    inferences = candidates.slice(0, 6);
+    inferences = candidates.slice(0, 4);
   }
 
   // Disclosure excerpt

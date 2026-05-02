@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
-import type { DeepAnalysis } from './deepParser';
+import type { DeepAnalysis } from '@/lib/analysis/deepParser';
 
 // ============================================================================
 // CANNOT BE DELETED — the central argument of the site

@@ -4,7 +4,7 @@ import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence, useMotionValueEvent } from 'framer-motion';
 import type { MotionValue } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
-import type { DeepAnalysis } from './deepParser';
+import type { DeepAnalysis } from '@/lib/analysis/deepParser';
 
 interface ResistPageProps {
   analysis: DeepAnalysis;

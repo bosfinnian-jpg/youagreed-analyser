@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { analyzeExport, type AnalyzeProgress } from '@/app/results/analyzeExport';
+import { analyzeExport, type AnalyzeProgress } from '@/lib/analysis/analyzeExport';
 
 // ============================================================================
 // TRACE.AI — Upload

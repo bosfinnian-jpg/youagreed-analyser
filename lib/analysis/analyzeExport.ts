@@ -6,7 +6,7 @@
 
 import { analyzeDeep, type DeepAnalysis } from './deepParser';
 import { enrichAnalysisWithAI, type EnrichmentProgress } from './aiEnrichment';
-import { isClaudeExport, normaliseClaude } from './claudeParser';
+import { isClaudeExport, normaliseClaude } from '@/lib/parser/claudeParser';
 
 export interface AnalyzeProgress {
   phase: 'parsing' | 'ai_enriching' | 'storing' | 'done';

@@ -942,7 +942,7 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
             display: 'block', fontFamily: TYPE.mono, fontSize: '9px',
             letterSpacing: '0.25em', color: PALETTE.redMuted,
             textTransform: 'uppercase', marginBottom: '0.35rem',
-          }}>07 / Understand</span>
+          }}>08 / Test</span>
           How the system works →
         </button>
       </div>

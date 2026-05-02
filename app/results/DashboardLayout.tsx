@@ -33,7 +33,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'ai-enrichment' | 'policy-drift';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'policy-drift';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -67,6 +67,16 @@ const ACTS = [
     pages: [
       { id: 'permanent' as DashPage, label: 'Permanent', short: '05', desc: 'Why it cannot be removed' },
       { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to' },
+    ],
+  },
+  {
+    id: 'understand',
+    label: 'Understand',
+    roman: 'IV',
+    title: 'The Mechanism',
+    pages: [
+      { id: 'how-it-works' as DashPage, label: 'How It Works', short: '07', desc: 'The architecture behind the inference' },
+      { id: 'understand' as DashPage, label: 'Test', short: '08', desc: 'See the inference in action' },
     ],
   },
 ] as const;
@@ -316,11 +326,9 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
 // FURTHER READING — collapsible dropdown inside the drawer
 // ============================================================================
 const FURTHER_ITEMS = [
-  { id: 'ai-enrichment' as DashPage, label: 'AI enrichment', desc: 'How Claude read your messages' },
-  { id: 'how-it-works' as DashPage, label: 'How it works', desc: 'The inference architecture' },
-  { id: 'understand' as DashPage, label: 'Understand', desc: 'Interactive inference demo' },
   { id: 'about' as DashPage, label: 'About', desc: 'Theoretical framework' },
   { id: 'sources' as DashPage, label: 'Sources', desc: 'Policy clause index' },
+  { id: 'policy-drift' as DashPage, label: 'Policy drift', desc: '2023 → 2025 → 2026 changes' },
 ] as const;
 
 function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) => void }) {
@@ -773,21 +781,18 @@ function Nav({ page, setPage, results, exposureScore }: {
 const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: string; page: DashPage }>>> = {
   overview: [
     { label: 'How it works', desc: 'Why the model can infer what it does', page: 'how-it-works' },
-    { label: 'AI enrichment', desc: 'The Claude calls made on your messages', page: 'ai-enrichment' },
-    { label: 'Understand', desc: 'Interactive inference demo', page: 'understand' },
+    { label: 'Test', desc: 'Interactive inference demo', page: 'understand' },
   ],
   profile: [
-    { label: 'AI enrichment', desc: 'How your profile was built', page: 'ai-enrichment' },
     { label: 'How it works', desc: 'The inference architecture', page: 'how-it-works' },
-    { label: 'Understand', desc: 'Try it yourself', page: 'understand' },
+    { label: 'Test', desc: 'Try it yourself', page: 'understand' },
   ],
   'commercial-profile': [
-    { label: 'AI enrichment', desc: 'The signals that built this', page: 'ai-enrichment' },
     { label: 'Policy drift', desc: 'How the terms changed', page: 'policy-drift' },
     { label: 'Sources', desc: 'Legal basis for each finding', page: 'sources' },
   ],
   risk: [
-    { label: 'Understand', desc: 'How inference works', page: 'understand' },
+    { label: 'Test', desc: 'How inference works', page: 'understand' },
     { label: 'Sources', desc: 'Policy basis for each risk', page: 'sources' },
     { label: 'Policy drift', desc: 'When the terms changed', page: 'policy-drift' },
   ],
@@ -803,11 +808,6 @@ const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: strin
   'policy-drift': [
     { label: 'Sources', desc: 'Full clause index', page: 'sources' },
     { label: 'Permanent', desc: 'Why this matters', page: 'permanent' },
-  ],
-  'ai-enrichment': [
-    { label: 'How it works', desc: 'The inference architecture', page: 'how-it-works' },
-    { label: 'Understand', desc: 'Interactive demo', page: 'understand' },
-    { label: 'Commercial profile', desc: 'What was inferred about you', page: 'commercial-profile' },
   ],
   sources: [
     { label: 'Policy drift', desc: 'How the terms evolved', page: 'policy-drift' },

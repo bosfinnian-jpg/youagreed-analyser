@@ -724,7 +724,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
       }}
     >
 
-      <ActLabel roman="IV" title="After" pageLabel="07 / Understand" />
+      <ActLabel roman="IV" title="The Mechanism" pageLabel="08 / Test" />
       <ThreadSentence>Inference does not require intent. The system does not need to mean anything by it.</ThreadSentence>
 
       <motion.h1
@@ -742,7 +742,7 @@ function CourseIntro({ onStart }: { onStart: () => void }) {
           marginBottom: '1.5rem',
         }}
       >
-        Understand what just happened.
+        Test the inference.
       </motion.h1>
 
       <motion.p

@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
 
 // ============================================================================
-// HOW IT WORKS — Act IV, page 08
+// HOW IT WORKS — Act IV, page 07
 // ============================================================================
 
 const LAYERS = [1, 4, 5, 4, 1];
@@ -333,7 +333,7 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
       <motion.div ref={ref} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.9 }}
         style={{ padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}`, marginBottom: 'clamp(3rem, 6vw, 5rem)' }}>
         <motion.div initial={{ opacity: 0, y: 6 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.15, duration: 0.6 }} style={{ marginBottom: '0.75rem' }}>
-          <ActLabel roman="IV" title="After" pageLabel="08 / How It Works" />
+          <ActLabel roman="IV" title="The Mechanism" pageLabel="07 / How It Works" />
         </motion.div>
 
         <motion.h1

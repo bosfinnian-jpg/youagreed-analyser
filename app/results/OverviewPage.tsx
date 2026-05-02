@@ -257,18 +257,13 @@ function ChapterShell({
         )}
         {children}
       </div>
-      {/* Divider: sits at true bottom of section, width matches content column */}
+      {/* Divider: normal-flow, pushed to bottom via wrapper, width matches content column */}
       {!last && (
         <div aria-hidden="true" style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
+          marginTop: 'auto',
           display: 'flex',
           justifyContent: 'center',
-          padding: '0 clamp(1.25rem,6vw,5rem)',
           pointerEvents: 'none',
-          zIndex: 3,
         }}>
           <div style={{
             width: '100%',

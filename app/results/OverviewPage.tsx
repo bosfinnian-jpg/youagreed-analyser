@@ -239,6 +239,15 @@ function ChapterShell({
         position: 'relative',
         zIndex: 1,
       }}>
+        {num && (
+          <div aria-hidden="true" style={{
+            width: '100%', height: 1,
+            background: PALETTE.border,
+            marginBottom: 'clamp(1.5rem,3vw,2.5rem)',
+            opacity: isActive ? 1 : 0.3,
+            transition: 'opacity 0.9s ease',
+          }} />
+        )}
         {(num || label) && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: 'clamp(1rem,2.5vw,2rem)',

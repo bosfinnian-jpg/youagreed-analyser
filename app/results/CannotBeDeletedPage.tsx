@@ -77,11 +77,8 @@ function OneWayFlow({ setPage }: { setPage: (p: string) => void }) {
         }
       `}</style>
 
-      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
         The pipeline
-      </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 540, marginBottom: 'clamp(2rem, 4vw, 2.5rem)' }}>
-        Every conversation you had followed this sequence. Each stage was irreversible. There was no return function built into it.
       </p>
 
       <div style={{ overflowX: 'auto', paddingBottom: '0.5rem' }}>
@@ -213,10 +210,7 @@ function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
         What "in the weights" means
       </p>
 
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.25rem' }}>
-        A model weight is a number. GPT-4 has hundreds of billions of them. When your conversations were processed, those numbers shifted fractionally — across all of them simultaneously.
-      </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 620, marginBottom: 'clamp(2rem, 4vw, 2.5rem)' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
         Your data did not go into a box. It dissolved into the mathematics of the system. There is no row to delete. Your influence is distributed across every parameter — everywhere and nowhere simultaneously.
       </p>
 
@@ -293,15 +287,6 @@ function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
         </motion.div>
       </div>
 
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={dissolved ? { opacity: 1 } : {}}
-        transition={{ delay: 1.8, duration: 0.8 }}
-        style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 600, borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.25rem', marginBottom: '1.5rem' }}
-      >
-        Each highlighted value shifted fractionally when your data passed through. The shift is real. It cannot be measured. It cannot be located. It cannot be reversed.
-      </motion.p>
-
       {/* Contextual link */}
       <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.8 }}
         style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -341,13 +326,6 @@ function MachineUnlearning() {
         color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
       }}>
         Machine unlearning: the state of the science
-      </p>
-
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-        color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
-      }}>
-        Machine unlearning is the technical discipline of removing specific training examples from a trained model. It is formally defined as: given model M trained on dataset D, produce model M′ that behaves as if trained on D minus your specific data.
       </p>
 
       {/* Two approaches */}
@@ -407,13 +385,6 @@ function MachineUnlearning() {
           Cooper et al., 2024 — Machine Unlearning for Large Language Models
         </p>
       </div>
-
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 640,
-      }}>
-        The delete button on your ChatGPT account removes your conversations from your account view. This is a separate operation from unlearning. These are categorically different. One is a database query. The other is an unsolved problem in machine learning research.
-      </p>
     </motion.div>
   );
 }
@@ -506,29 +477,6 @@ function LegalGap() {
       </div>
 
       {/* OpenAI's own words */}
-      <div style={{
-        background: PALETTE.bgPanel, border: `1px solid ${PALETTE.border}`,
-        padding: 'clamp(1rem, 3vw, 1.75rem)', marginBottom: '1.5rem',
-      }}>
-        <p style={{
-          fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-          color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.75rem',
-        }}>
-          OpenAI Help Centre — verbatim
-        </p>
-        <p style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-          color: PALETTE.inkMuted, lineHeight: 1.75, marginBottom: '0.75rem',
-        }}>
-          "Models do not store or retain copies of the data they are trained on."
-        </p>
-        <p style={{
-          fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
-          color: PALETTE.red, lineHeight: 1.65,
-        }}>
-          This is technically accurate and structurally evasive. The model does not store a copy. It absorbed the data into its parameters. That distinction allows OpenAI to claim compliance with deletion requests while the model, and your contribution to it, remains entirely unchanged.
-        </p>
-      </div>
     </motion.div>
   );
 }
@@ -555,20 +503,6 @@ function ConsentFailure() {
         What you were told and what you actually agreed to
       </p>
 
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-        color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
-      }}>
-        The terms you accepted stated that your conversations might be used to train AI models. That disclosure was accurate. It was not comprehensible.
-      </p>
-
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 640, marginBottom: '1.5rem',
-      }}>
-        "Training" sounds like a stage that concludes. The terms did not explain that your patterns of thought would become part of the permanent architecture of a commercial AI system. They did not explain that deleting your account would not remove your contribution. They did not explain that no known method exists to remove it.
-      </p>
-
       {/* Nissenbaum */}
       <div style={{
         borderLeft: `3px solid ${PALETTE.border}`,
@@ -588,13 +522,6 @@ function ConsentFailure() {
           Nissenbaum, 2011 — A Contextual Approach to Privacy Online
         </p>
       </div>
-
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 640,
-      }}>
-        McDonald and Cranor (2008) estimated that reading the privacy policies of every website an average American visits would take 76 work days per year. OpenAI's Terms of Service run to approximately 3,800 words. The academic consensus is that no one reads them. The legal consensus is that clicking "I agree" constitutes consent anyway.
-      </p>
     </motion.div>
   );
 }
@@ -605,9 +532,6 @@ function ConsentFailure() {
 function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  const messages = analysis?.totalUserMessages || 0;
-  const days = analysis?.timespan?.days || 0;
-  const topics = analysis?.findings?.repetitiveThemes?.slice(0, 3).map(t => t.theme) || [];
 
   return (
     <motion.div
@@ -622,29 +546,6 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
         color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '1.5rem',
       }}>
         What this means for your data specifically
-      </p>
-
-      {messages > 0 ? (
-        <p style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-          color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
-        }}>
-          You sent {messages.toLocaleString()} messages over {days > 0 ? `${days} days` : 'this period'}. {topics.length > 0 && `Your dominant patterns, ${topics.join(', ')}, shaped, in some small but real way, how the model that processed them now responds to questions in those areas. That influence cannot be measured, located, or removed.`}
-        </p>
-      ) : (
-        <p style={{
-          fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-          color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '1.5rem',
-        }}>
-          The conversations you uploaded to this tool have already been processed by an AI model. Their patterns, how you think, what you disclose, how you phrase things under pressure, are now part of that model's understanding of human language.
-        </p>
-      )}
-
-      <p style={{
-        fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-        color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: 640, marginBottom: '1.5rem',
-      }}>
-        OpenAI allows you to delete your account. This removes your access to your conversations. The model does not change. The model does not know you deleted your account. The model does not have a record of you. Only an influence from you, diffused across its parameters, permanent and unlocalised.
       </p>
 
       {/* The three facts */}
@@ -949,31 +850,16 @@ export default function CannotBeDeletedPage({ results, setPage }: {
           )}
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 8 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.55, duration: 0.8 }}
-          style={{
-            fontFamily: TYPE.serif,
-            fontSize: 'clamp(1.8rem, 4.5vw, 3rem)',
-            fontWeight: 400, color: PALETTE.ink,
-            letterSpacing: '-0.025em', lineHeight: 1.2,
-            maxWidth: 700, marginBottom: '1.25rem',
-          }}
-        >
-          Your conversations cannot be removed from the model.
-        </motion.h1>
-
         <motion.p
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.85, duration: 0.8 }}
+          transition={{ delay: 0.55, duration: 0.8 }}
           style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)',
-            color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580,
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.35rem)',
+            color: PALETTE.ink, lineHeight: 1.75, maxWidth: 580,
           }}
         >
-          Not because OpenAI refuses to act. Because gradient descent, the process by which AI models learn, has no reverse function. Deleting your account removes your conversations from your account view. It does not remove your contribution from the model's weights. These are different operations. One is a database query. The other is an unsolved problem in machine learning research.
+          Not because OpenAI refuses to act. Because gradient descent has no reverse function. Deleting your account removes your conversations from your account view. It does not remove your contribution from the model's weights. One is a database query. The other is an unsolved problem in machine learning research.
         </motion.p>
       </motion.div>
 

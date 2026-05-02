@@ -1717,18 +1717,6 @@ export default function OverviewPage({ results, sources, setPage }: {
           min-height: 100vh;
           min-height: 100dvh;
         }
-        /* Divider at the true bottom edge of each section, constrained to 880px content column */
-        .chapter-shell:not(.chapter-last)::after {
-          content: '';
-          position: absolute;
-          bottom: 0;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(880px, calc(100% - 2 * clamp(1.25rem, 6vw, 5rem)));
-          height: 1px;
-          background: rgba(26,24,20,0.14);
-          pointer-events: none;
-        }
         @media (max-width: 768px) {
           .ov-right-rail { display: none !important; }
         }

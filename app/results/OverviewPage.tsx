@@ -257,21 +257,17 @@ function ChapterShell({
         )}
         {children}
       </div>
-      {/* Divider: normal-flow, pushed to bottom via wrapper, width matches content column */}
+      {/* Divider: matches the 880px content column exactly */}
       {!last && (
         <div aria-hidden="true" style={{
           marginTop: 'auto',
-          display: 'flex',
-          justifyContent: 'center',
-          pointerEvents: 'none',
-        }}>
-          <div style={{
-            width: '100%',
-            maxWidth: 880,
-            height: 1,
-            background: PALETTE.border,
-          }} />
-        </div>
+          alignSelf: 'center',
+          width: '100%',
+          maxWidth: 880,
+          height: 1,
+          background: PALETTE.border,
+          flexShrink: 0,
+        }} />
       )}
     </section>
   );

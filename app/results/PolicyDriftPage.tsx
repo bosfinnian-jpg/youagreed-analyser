@@ -787,26 +787,36 @@ function DeletionCarveOut({ isInView }: { isInView: boolean }) {
 // ── Nissenbaum consent failure ────────────────────────────────────────────
 
 function ConsentFailure({ isInView }: { isInView: boolean }) {
+  const [expanded, setExpanded] = useState<number | null>(null);
+
   const arguments_ = [
     {
+      num: '01',
       source: 'Nissenbaum, 2011',
-      claim: 'OpenAI\'s policy cannot be both readable and honest',
-      text: 'OpenAI\'s privacy policy grew from 3,417 words to 9,241 words between 2023 and 2026. Nissenbaum\'s transparency paradox explains why this is not accidental: a policy detailed enough to accurately describe OpenAI\'s data practices is too long to read. A version short enough to read omits the clauses that matter. The consent it generates is not meaningful.',
+      claim: 'Cannot be both readable and honest',
+      stat: '3,417 → 9,241 words',
+      text: 'Nissenbaum\'s transparency paradox: a policy detailed enough to accurately describe OpenAI\'s data practices is too long to read. A version short enough to read omits the clauses that matter. OpenAI\'s privacy policy grew 170% in three years. The consent it generates is not meaningful.',
     },
     {
+      num: '02',
       source: 'McDonald & Cranor, 2008',
-      claim: 'OpenAI\'s policy was designed not to be read',
-      text: 'Reading every privacy policy a typical internet user encounters would take 76 full work-days per year. OpenAI knows this. Every large platform knows this. The consent model depends on people not reading the document — and then treats the absence of objection as agreement. OpenAI\'s three policy versions in three years are a case study in that structure.',
+      claim: 'Designed not to be read',
+      stat: '76 work-days per year',
+      text: 'Reading every privacy policy a typical internet user encounters would take 76 full work-days per year. OpenAI knows this. Every large platform knows this. The consent model depends on people not reading the document — and then treats the absence of objection as agreement.',
     },
     {
-      source: 'OpenAI Terms of Service, 2023',
-      claim: 'OpenAI\'s terms updated themselves',
-      text: '"Your continued use of the Services following the posting of updated Terms constitutes your acceptance of such changes." This sentence appears in the 2023 Terms of Service. It means OpenAI could — and did — add advertising, contact list upload, and a deletion carve-out to its policy without asking you again. Continued use was treated as a new signature.',
+      num: '03',
+      source: 'OpenAI ToS, 2023',
+      claim: 'Updated itself without asking',
+      stat: '"Continued use = acceptance"',
+      text: 'This sentence appears in the 2023 Terms of Service. It means OpenAI could — and did — add advertising, contact list upload, and a deletion carve-out to its policy without re-asking you. Continued use was treated as a new signature. You were opted in by inertia.',
     },
     {
+      num: '04',
       source: 'Zuboff, 2022',
-      claim: 'OpenAI\'s opacity is a feature, not a failure',
-      text: 'Zuboff argues that the opacity of data extraction under surveillance capitalism is structural: the system requires that subjects do not fully understand what is being taken. OpenAI\'s three-year expansion of its privacy policy — adding clauses, burying exceptions, introducing new data categories — fits this pattern. The consent framework is not broken. It is working as intended.',
+      claim: 'Opacity is a feature, not a failure',
+      stat: 'Surveillance capitalism',
+      text: 'Zuboff argues that opacity is structural: the system requires subjects do not fully understand what is being taken. OpenAI\'s three-year expansion — adding clauses, burying exceptions, introducing new data categories — fits this pattern. The consent framework is not broken. It is working as intended.',
     },
   ];
 
@@ -819,40 +829,116 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
       }}>The consent failure — four arguments</p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
-        {arguments_.map((arg, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -8 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
-            style={{
-              background: PALETTE.bgPanel,
-              padding: 'clamp(1.25rem, 2.5vw, 1.75rem) clamp(1.4rem, 3vw, 2rem)',
-              display: 'grid',
-              gridTemplateColumns: '160px 1fr',
-              gap: '2rem',
-              alignItems: 'start',
-            }}
-            className="policy-claim-row"
-          >
-            <div>
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-                color: PALETTE.redMuted, textTransform: 'uppercase',
-                marginBottom: '0.35rem', lineHeight: 1.4,
-              }}>{arg.source}</p>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: '1.1rem',
-                color: PALETTE.ink, lineHeight: 1.3,
-                letterSpacing: '-0.01em',
-              }}>{arg.claim}</p>
-            </div>
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.6vw, 1.05rem)',
-              color: PALETTE.inkMuted, lineHeight: 1.75,
-            }}>{arg.text}</p>
-          </motion.div>
-        ))}
+        {arguments_.map((arg, i) => {
+          const isExpanded = expanded === i;
+          return (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -8 }}
+              animate={isInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ delay: 0.1 + i * 0.08, duration: 0.5 }}
+              style={{
+                background: PALETTE.bgPanel,
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+              }}
+              onClick={() => setExpanded(isExpanded ? null : i)}
+              onMouseEnter={(e) => { e.currentTarget.style.background = PALETTE.bgHover; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = PALETTE.bgPanel; }}
+            >
+              {/* Collapsed state — hero number + claim */}
+              <div style={{
+                padding: 'clamp(1.1rem, 2.2vw, 1.5rem) clamp(1.4rem, 3vw, 2rem)',
+                display: 'grid',
+                gridTemplateColumns: 'auto 1fr auto',
+                gap: 'clamp(1.25rem, 2.5vw, 2rem)',
+                alignItems: 'center',
+              }}>
+                {/* Giant number */}
+                <div style={{
+                  fontFamily: TYPE.serif,
+                  fontSize: 'clamp(3rem, 5vw, 4rem)',
+                  fontWeight: 400,
+                  color: 'rgba(26,24,20,0.08)',
+                  lineHeight: 1,
+                  letterSpacing: '-0.03em',
+                  userSelect: 'none',
+                }}>
+                  {arg.num}
+                </div>
+
+                {/* Claim + source */}
+                <div>
+                  <p style={{
+                    fontFamily: TYPE.serif,
+                    fontSize: 'clamp(1.15rem, 2vw, 1.35rem)',
+                    color: PALETTE.ink,
+                    lineHeight: 1.25,
+                    letterSpacing: '-0.015em',
+                    marginBottom: '0.4rem',
+                  }}>
+                    {arg.claim}
+                  </p>
+                  <p style={{
+                    fontFamily: TYPE.mono,
+                    fontSize: '9px',
+                    letterSpacing: '0.18em',
+                    color: PALETTE.inkFaint,
+                    textTransform: 'uppercase',
+                  }}>
+                    {arg.source}
+                  </p>
+                </div>
+
+                {/* Stat badge */}
+                <div style={{
+                  padding: '0.5rem 0.9rem',
+                  background: 'rgba(26,24,20,0.04)',
+                  border: `1px solid ${PALETTE.border}`,
+                }}>
+                  <p style={{
+                    fontFamily: TYPE.mono,
+                    fontSize: '10px',
+                    letterSpacing: '0.08em',
+                    color: PALETTE.inkMuted,
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {arg.stat}
+                  </p>
+                </div>
+              </div>
+
+              {/* Expanded body */}
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <div style={{
+                      padding: '0 clamp(1.4rem, 3vw, 2rem) clamp(1.4rem, 2.5vw, 1.75rem)',
+                      borderTop: `1px solid ${PALETTE.border}`,
+                      paddingTop: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+                    }}>
+                      <p style={{
+                        fontFamily: TYPE.serif,
+                        fontSize: 'clamp(1rem, 1.7vw, 1.12rem)',
+                        color: PALETTE.inkMuted,
+                        lineHeight: 1.75,
+                        maxWidth: '72ch',
+                      }}>
+                        {arg.text}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
       </div>
     </div>
   );
@@ -864,15 +950,15 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
   const panels = [
     {
       label: 'The legal fiction',
-      text: 'In contract law, consent is specific to the terms in force at the moment of agreement. When OpenAI changes its privacy policy, your continued use of the service is treated as fresh consent. But you were not shown the changes. You were not asked to accept them. You were simply opted in by inertia.',
+      text: 'When OpenAI changes its policy, your continued use is treated as fresh consent. But you were not shown the changes. You were not asked to accept them. You were opted in by inertia.',
     },
     {
       label: 'What changed most',
-      text: 'Three categories of data collection were introduced between 2023 and 2026 that did not exist in the original policy: advertising data, contact list upload, and data received from third-party advertisers and data partners. These were not there when you started.',
+      text: 'Three categories of data collection were introduced between 2023 and 2026 that did not exist in the original policy: advertising data, contact list upload, and data from third-party partners. These were not there when you started.',
     },
     {
-      label: 'The carve-out and what follows',
-      text: 'The 2026 deletion carve-out — data used in model training is exempt from the right to deletion — connects directly to the next argument. Because that data is not just stored. It was learned from. And what a model has learned, it cannot unlearn.',
+      label: 'The carve-out',
+      text: 'The 2026 deletion carve-out — data used in model training is exempt from the right to deletion. That data is not just stored. It was learned from. And what a model has learned, it cannot unlearn.',
     },
   ];
 

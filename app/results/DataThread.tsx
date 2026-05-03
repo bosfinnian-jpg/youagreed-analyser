@@ -27,6 +27,10 @@ export const PAGE_COLORS: Record<DashPage, { r: number; g: number; b: number; na
   resist:          { r: 107, g: 203, b: 119, name: 'sage' },        // sage green
   sources:         { r: 168, g: 218, b: 220, name: 'ice' },         // ice blue
   'sources-detail':{ r: 168, g: 218, b: 220, name: 'ice' },
+  'how-it-works':  { r: 99,  g: 102, b: 241, name: 'indigo' },
+  about:           { r: 168, g: 218, b: 220, name: 'ice' },
+  'policy-drift':  { r: 187, g: 134, b: 252, name: 'violet' },
+  method:          { r: 180, g: 180, b: 175, name: 'stone' },
 };
 
 // Data packet labels — tiny text labels that travel down the strand

@@ -399,7 +399,7 @@ function ActionAlternatives() {
 // ============================================================================
 // CLOSING — honest, not dramatic
 // ============================================================================
-function Closing({ messageCount, days }: { messageCount: number; days: number }) {
+function Closing({ messageCount, days, setPage }: { messageCount: number; days: number; setPage?: (p: string) => void }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-15%' });
 
@@ -430,6 +430,28 @@ function Closing({ messageCount, days }: { messageCount: number; days: number })
       >
         YOU AGREED · TRACE.AI · 2026
       </motion.p>
+      {setPage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 2.4, duration: 1 }}
+          style={{ marginTop: '3rem' }}
+        >
+          <button
+            onClick={() => setPage('method')}
+            style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+              textTransform: 'uppercase', background: 'none', border: '1px solid rgba(26,24,20,0.15)',
+              color: 'rgba(26,24,20,0.35)', padding: '0.6rem 1.2rem', cursor: 'pointer',
+              transition: 'color 0.2s, border-color 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'rgba(26,24,20,0.7)'; e.currentTarget.style.borderColor = 'rgba(26,24,20,0.4)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(26,24,20,0.35)'; e.currentTarget.style.borderColor = 'rgba(26,24,20,0.15)'; }}
+          >
+            A note on method →
+          </button>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
@@ -437,7 +459,7 @@ function Closing({ messageCount, days }: { messageCount: number; days: number })
 // ============================================================================
 // MAIN
 // ============================================================================
-export default function ResistPage({ analysis }: ResistPageProps) {
+export default function ResistPage({ analysis, setPage }: ResistPageProps & { setPage?: (p: string) => void }) {
   const messageCount = analysis?.totalUserMessages || 0;
   const days = analysis?.timespan?.days || 0;
   const pad = 'clamp(2rem, 6vw, 5rem)';
@@ -468,7 +490,7 @@ export default function ResistPage({ analysis }: ResistPageProps) {
         <ActionAlternatives />
       </div>
 
-      <Closing messageCount={messageCount} days={days} />
+      <Closing messageCount={messageCount} days={days} setPage={setPage} />
     </div>
   );
 }

@@ -33,7 +33,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'policy-drift' | 'resist';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'policy-drift' | 'resist' | 'method';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -86,6 +86,7 @@ const ACTS = [
     title: 'After',
     pages: [
       { id: 'resist' as DashPage, label: 'After', short: '09', desc: 'What remains. What you can do.' },
+      { id: 'method' as DashPage, label: 'Method', short: '10', desc: 'A note on how this system should be read.' },
     ],
   },
 ] as const;

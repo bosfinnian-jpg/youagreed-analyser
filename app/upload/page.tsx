@@ -6,12 +6,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { analyzeExport, type AnalyzeProgress } from '@/lib/analysis/analyzeExport';
 
-// ============================================================================
-// TRACE.AI — Upload
-// The procedural beat between consent and reveal.
-// One job: take the file, show honest progress, move on.
-// ============================================================================
-
 const COLOR = {
   bg: '#eeece5',
   ink: '#1a1816',
@@ -25,7 +19,6 @@ const COLOR = {
 
 const SERIF = "'EB Garamond', 'Times New Roman', Georgia, serif";
 const MONO = "'Courier Prime', 'Courier New', ui-monospace, monospace";
-
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
 export default function UploadPage() {
@@ -35,6 +28,7 @@ export default function UploadPage() {
   const [progress, setProgress] = useState(0);
   const [stage, setStage] = useState<string>('');
   const [detail, setDetail] = useState<string>('');
+  const [showTooltip, setShowTooltip] = useState(false);
   const router = useRouter();
 
   const handleFile = useCallback(async (file: File) => {
@@ -176,55 +170,23 @@ export default function UploadPage() {
     <>
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
-        html, body {
-          background: ${COLOR.bg};
-          margin: 0;
-          padding: 0;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-        ::selection {
-          background: ${COLOR.accent};
-          color: ${COLOR.bg};
-        }
-        @media (max-width: 640px) {
-          .ya-header, .ya-footer {
-            padding-left: 24px !important;
-            padding-right: 24px !important;
-            font-size: 11px !important;
-          }
-          .ya-main {
-            padding: 48px 24px !important;
-          }
-          .ya-dropzone {
-            padding: 56px 24px !important;
-          }
-        }
-        .ya-upload-page {
-          min-height: 100vh;
-          min-height: 100dvh;
-        }
+        html, body { background: ${COLOR.bg}; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        ::selection { background: ${COLOR.accent}; color: ${COLOR.bg}; }
       `}</style>
 
-      <main
-        className="ya-upload-page"
-        style={{
-          background: COLOR.bg,
-          color: COLOR.ink,
-          fontFamily: SERIF,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {/* Header — unified site header */}
-        <header
-          className="ya-header"
-          style={{
-            height: '52px', padding: '0 clamp(1.5rem, 4vw, 3rem)',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            borderBottom: `1px solid ${COLOR.inkTrace}`,
-          }}
-        >
+      <main style={{
+        minHeight: '100vh',
+        background: COLOR.bg,
+        color: COLOR.ink,
+        fontFamily: SERIF,
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        <header style={{
+          height: '52px', padding: '0 clamp(1.5rem, 4vw, 3rem)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          borderBottom: `1px solid ${COLOR.inkTrace}`,
+        }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontFamily: SERIF, fontSize: '1.1rem', letterSpacing: '-0.02em', color: COLOR.ink }}>
               trace<span style={{ color: COLOR.accent }}>.ai</span>
@@ -239,18 +201,14 @@ export default function UploadPage() {
           </div>
         </header>
 
-        {/* Main content */}
-        <section
-          className="ya-main"
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '64px 48px',
-          }}
-        >
+        <section style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 'clamp(3rem, 7vw, 5rem) clamp(1.5rem, 4vw, 3rem)',
+        }}>
           <AnimatePresence mode="wait">
             {!isAnalysing ? (
               <motion.div
@@ -261,64 +219,41 @@ export default function UploadPage() {
                 transition={{ duration: 0.8, ease: EASE }}
                 style={{ width: '100%', maxWidth: '720px' }}
               >
-                {/* Instruction */}
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1.2, delay: 0.2, ease: EASE }}
-                  style={{ marginBottom: '48px', textAlign: 'center' }}
+                  style={{ marginBottom: '56px', textAlign: 'center' }}
                 >
-                  <h1
-                    style={{
-                      fontFamily: SERIF,
-                      fontWeight: 400,
-                      fontSize: 'clamp(36px, 5vw, 56px)',
-                      lineHeight: 1.1,
-                      letterSpacing: '-0.015em',
-                      margin: '0 0 24px 0',
-                      color: COLOR.ink,
-                    }}
-                  >
+                  <h1 style={{
+                    fontFamily: SERIF,
+                    fontWeight: 400,
+                    fontSize: 'clamp(2.5rem, 5.5vw, 4rem)',
+                    lineHeight: 1.1,
+                    letterSpacing: '-0.02em',
+                    margin: '0 0 1.5rem 0',
+                    color: COLOR.ink,
+                  }}>
                     Upload your export
                   </h1>
-                  <p
-                    style={{
-                      fontFamily: SERIF,
-                      fontSize: '17px',
-                      lineHeight: 1.6,
-                      color: COLOR.inkMuted,
-                      maxWidth: '480px',
-                      margin: '0 auto 1.5rem',
-                    }}
-                  >
-                    The file is called <span style={{ fontFamily: MONO, fontSize: '14px', color: COLOR.ink }}>conversations.json</span>.
-                    Obtain it from ChatGPT under Settings &rarr; Data Controls &rarr; Export Data.
-                  </p>
-                  <ol style={{
-                    fontFamily: MONO,
-                    fontSize: '12px',
-                    letterSpacing: '0.05em',
-                    color: COLOR.inkFaint,
-                    lineHeight: 1.9,
-                    maxWidth: '420px',
+                  <p style={{
+                    fontFamily: SERIF,
+                    fontSize: 'clamp(1.05rem, 1.9vw, 1.25rem)',
+                    lineHeight: 1.65,
+                    color: COLOR.inkMuted,
+                    maxWidth: '520px',
                     margin: '0 auto',
-                    paddingLeft: '1.25rem',
-                    textAlign: 'left',
                   }}>
-                    <li>Open ChatGPT and go to <span style={{ color: COLOR.ink }}>Settings</span></li>
-                    <li>Select <span style={{ color: COLOR.ink }}>Data Controls</span></li>
-                    <li>Click <span style={{ color: COLOR.ink }}>Export data</span> → Confirm</li>
-                    <li>Wait for the email from OpenAI (usually a few minutes)</li>
-                    <li>Download the zip file and unzip it</li>
-                    <li>Upload <span style={{ color: COLOR.ink }}>conversations.json</span> below</li>
-                  </ol>
+                    The file is called <span style={{ fontFamily: MONO, fontSize: '0.9em', color: COLOR.ink }}>conversations.json</span>.
+                    Obtain it from ChatGPT under Settings → Data Controls → Export Data.
+                  </p>
                 </motion.div>
 
                 {/* Drop zone */}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 1.2, delay: 0.5, ease: EASE }}
+                  transition={{ duration: 1.2, delay: 0.4, ease: EASE }}
                 >
                   <input
                     type="file"
@@ -329,78 +264,128 @@ export default function UploadPage() {
                   />
                   <label
                     htmlFor="file-upload"
-                    style={{ cursor: 'pointer', display: 'block' }}
+                    style={{ cursor: 'pointer', display: 'block', position: 'relative' }}
+                    onMouseEnter={() => setShowTooltip(true)}
+                    onMouseLeave={() => setShowTooltip(false)}
                   >
                     <div
-                      className="ya-dropzone"
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
                       style={{
-                        padding: '88px 48px',
-                        border: `1px dashed ${isDragging ? COLOR.accent : COLOR.rule}`,
+                        padding: 'clamp(4rem, 9vw, 6.5rem) clamp(2rem, 5vw, 3.5rem)',
+                        border: `2px dashed ${isDragging ? COLOR.accent : COLOR.rule}`,
                         background: isDragging ? COLOR.accentFaint : 'transparent',
-                        transition: 'border-color 300ms cubic-bezier(0.22, 1, 0.36, 1), background 300ms cubic-bezier(0.22, 1, 0.36, 1)',
+                        transition: 'all 0.3s cubic-bezier(0.22, 1, 0.36, 1)',
                         textAlign: 'center',
                         position: 'relative',
                       }}
-                      onMouseEnter={(e) => {
-                        if (!isDragging) {
-                          (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(26,24,20,0.35)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isDragging) {
-                          (e.currentTarget as HTMLDivElement).style.borderColor = COLOR.rule;
-                        }
-                      }}
                     >
-                      {/* Corner bracket marks — document scanning aesthetic */}
-                      <svg style={{ position: 'absolute', top: 12, left: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 0 16 L 0 0 L 16 0" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
-                      </svg>
-                      <svg style={{ position: 'absolute', top: 12, right: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 4 0 L 20 0 L 20 16" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
-                      </svg>
-                      <svg style={{ position: 'absolute', bottom: 12, left: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 0 4 L 0 20 L 16 20" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
-                      </svg>
-                      <svg style={{ position: 'absolute', bottom: 12, right: 12, pointerEvents: 'none' }} width="20" height="20">
-                        <path d="M 4 20 L 20 20 L 20 4" fill="none" stroke={isDragging ? COLOR.accent : 'rgba(26,24,20,0.18)'} strokeWidth="1" style={{ transition: 'stroke 300ms' }} />
-                      </svg>
-                      <div
-                        style={{
-                          fontFamily: MONO,
-                          fontSize: '11px',
-                          letterSpacing: '0.2em',
-                          textTransform: 'uppercase',
-                          color: isDragging ? COLOR.accent : COLOR.inkFaint,
-                          marginBottom: '16px',
-                          transition: 'color 300ms',
-                        }}
-                      >
+                      {/* Corner brackets */}
+                      {[
+                        { top: 14, left: 14, d: 'M 0 18 L 0 0 L 18 0' },
+                        { top: 14, right: 14, d: 'M 4 0 L 22 0 L 22 18' },
+                        { bottom: 14, left: 14, d: 'M 0 4 L 0 22 L 18 22' },
+                        { bottom: 14, right: 14, d: 'M 4 22 L 22 22 L 22 4' },
+                      ].map((corner, i) => (
+                        <svg key={i} style={{ position: 'absolute', ...corner, pointerEvents: 'none' }} width="22" height="22">
+                          <path d={corner.d} fill="none" stroke={isDragging ? COLOR.accent : COLOR.inkTrace} strokeWidth="2" style={{ transition: 'stroke 0.3s' }} />
+                        </svg>
+                      ))}
+
+                      <div style={{
+                        fontFamily: MONO,
+                        fontSize: '11px',
+                        letterSpacing: '0.2em',
+                        textTransform: 'uppercase',
+                        color: isDragging ? COLOR.accent : COLOR.inkFaint,
+                        marginBottom: '1rem',
+                        transition: 'color 0.3s',
+                      }}>
                         {isDragging ? 'Release to upload' : 'Drop file here'}
                       </div>
-                      <div
-                        style={{
-                          fontFamily: SERIF,
-                          fontSize: '18px',
-                          color: COLOR.inkMuted,
-                          fontStyle: 'italic',
-                        }}
-                      >
+                      <div style={{
+                        fontFamily: SERIF,
+                        fontSize: 'clamp(1.05rem, 1.8vw, 1.25rem)',
+                        color: COLOR.inkMuted,
+                        fontStyle: 'italic',
+                      }}>
                         or click to browse
                       </div>
                     </div>
+
+                    {/* Hover tooltip */}
+                    <AnimatePresence>
+                      {showTooltip && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 4 }}
+                          transition={{ duration: 0.25 }}
+                          style={{
+                            position: 'absolute',
+                            top: '-6px',
+                            left: '50%',
+                            transform: 'translateX(-50%) translateY(-100%)',
+                            background: COLOR.ink,
+                            color: COLOR.bg,
+                            padding: '0.9rem 1.35rem',
+                            borderRadius: '2px',
+                            pointerEvents: 'none',
+                            zIndex: 10,
+                            width: 'max-content',
+                            maxWidth: '420px',
+                          }}
+                        >
+                          <div style={{
+                            fontFamily: MONO,
+                            fontSize: '9px',
+                            letterSpacing: '0.2em',
+                            textTransform: 'uppercase',
+                            color: 'rgba(238,236,229,0.45)',
+                            marginBottom: '0.5rem',
+                          }}>
+                            How to get the file
+                          </div>
+                          <ol style={{
+                            fontFamily: MONO,
+                            fontSize: '11px',
+                            letterSpacing: '0.04em',
+                            color: 'rgba(238,236,229,0.88)',
+                            lineHeight: 1.7,
+                            margin: 0,
+                            paddingLeft: '1.2rem',
+                            textAlign: 'left',
+                          }}>
+                            <li>ChatGPT → Settings → Data Controls</li>
+                            <li>Export data → Confirm</li>
+                            <li>Wait for email (usually 2–5 minutes)</li>
+                            <li>Download zip, unzip, upload conversations.json</li>
+                          </ol>
+                          {/* Arrow */}
+                          <div style={{
+                            position: 'absolute',
+                            bottom: '-6px',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: 0,
+                            height: 0,
+                            borderLeft: '6px solid transparent',
+                            borderRight: '6px solid transparent',
+                            borderTop: `6px solid ${COLOR.ink}`,
+                          }} />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </label>
                 </motion.div>
 
-                {/* Demo mode */}
+                {/* Demo button */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 0.8, ease: EASE }}
-                  style={{ marginTop: '20px', textAlign: 'center' }}
+                  transition={{ duration: 1, delay: 0.7, ease: EASE }}
+                  style={{ marginTop: '1.75rem', textAlign: 'center' }}
                 >
                   <button
                     onClick={handleDemo}
@@ -408,36 +393,17 @@ export default function UploadPage() {
                       fontFamily: MONO, fontSize: '10px', letterSpacing: '0.2em',
                       textTransform: 'uppercase', color: COLOR.inkFaint,
                       background: 'none', border: 'none', cursor: 'pointer',
-                      padding: '0.4rem 0', borderBottom: `1px solid ${COLOR.rule}`,
-                      transition: 'color 0.15s, border-color 0.15s',
+                      padding: '0.5rem 0', borderBottom: `1px solid ${COLOR.rule}`,
+                      transition: 'color 0.2s, border-color 0.2s',
                     }}
                     onMouseEnter={e => { e.currentTarget.style.color = COLOR.inkMuted; e.currentTarget.style.borderColor = COLOR.inkFaint; }}
                     onMouseLeave={e => { e.currentTarget.style.color = COLOR.inkFaint; e.currentTarget.style.borderColor = COLOR.rule; }}
                   >
-                    No file? Load demo data →
+                    No file? Try demo data →
                   </button>
                 </motion.div>
 
-                {/* Quiet procedural note */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 1, ease: EASE }}
-                  style={{
-                    marginTop: '24px',
-                    textAlign: 'center',
-                    fontFamily: MONO,
-                    fontSize: '10px',
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    color: COLOR.inkFaint,
-                    lineHeight: 1.8,
-                  }}
-                >
-                  File is parsed in your browser. AI enrichment takes 20–40 seconds.
-                </motion.div>
-
-                {/* Error state */}
+                {/* Error */}
                 <AnimatePresence>
                   {error && (
                     <motion.div
@@ -446,32 +412,28 @@ export default function UploadPage() {
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.4, ease: EASE }}
                       style={{
-                        marginTop: '32px',
-                        padding: '20px 24px',
+                        marginTop: '2.5rem',
+                        padding: '1.4rem 1.75rem',
                         border: `1px solid ${COLOR.accent}`,
                         background: COLOR.accentFaint,
                       }}
                     >
-                      <div
-                        style={{
-                          fontFamily: MONO,
-                          fontSize: '10px',
-                          letterSpacing: '0.2em',
-                          textTransform: 'uppercase',
-                          color: COLOR.accent,
-                          marginBottom: '8px',
-                        }}
-                      >
+                      <div style={{
+                        fontFamily: MONO,
+                        fontSize: '10px',
+                        letterSpacing: '0.2em',
+                        textTransform: 'uppercase',
+                        color: COLOR.accent,
+                        marginBottom: '0.6rem',
+                      }}>
                         Upload failed
                       </div>
-                      <div
-                        style={{
-                          fontFamily: SERIF,
-                          fontSize: '15px',
-                          color: COLOR.ink,
-                          lineHeight: 1.5,
-                        }}
-                      >
+                      <div style={{
+                        fontFamily: SERIF,
+                        fontSize: '15px',
+                        color: COLOR.ink,
+                        lineHeight: 1.6,
+                      }}>
                         {error}
                       </div>
                     </motion.div>
@@ -485,64 +447,53 @@ export default function UploadPage() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.8, ease: EASE }}
-                style={{ width: '100%', maxWidth: '560px', textAlign: 'center' }}
+                style={{ width: '100%', maxWidth: '640px', textAlign: 'center' }}
               >
-                {/* Stage label */}
-                <div
-                  style={{
-                    fontFamily: MONO,
-                    fontSize: '10px',
-                    letterSpacing: '0.25em',
-                    textTransform: 'uppercase',
-                    color: COLOR.inkFaint,
-                    marginBottom: '24px',
-                  }}
-                >
+                <div style={{
+                  fontFamily: MONO,
+                  fontSize: '10px',
+                  letterSpacing: '0.26em',
+                  textTransform: 'uppercase',
+                  color: COLOR.inkFaint,
+                  marginBottom: '2rem',
+                }}>
                   In progress
                 </div>
 
-                {/* Current stage */}
-                <h2
-                  style={{
-                    fontFamily: SERIF,
-                    fontWeight: 400,
-                    fontSize: 'clamp(28px, 4vw, 40px)',
-                    lineHeight: 1.2,
-                    letterSpacing: '-0.01em',
-                    margin: '0 0 12px 0',
-                    color: COLOR.ink,
-                    minHeight: '48px',
-                  }}
-                >
+                <h2 style={{
+                  fontFamily: SERIF,
+                  fontWeight: 400,
+                  fontSize: 'clamp(2rem, 4.5vw, 3rem)',
+                  lineHeight: 1.15,
+                  letterSpacing: '-0.015em',
+                  margin: '0 0 0.75rem 0',
+                  color: COLOR.ink,
+                  minHeight: '56px',
+                }}>
                   {stage}
                   <span style={{ color: COLOR.accent }}>.</span>
                 </h2>
 
-                {/* Batch detail */}
-                <div
-                  style={{
-                    fontFamily: MONO,
-                    fontSize: '11px',
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    color: COLOR.inkFaint,
-                    minHeight: '16px',
-                    marginBottom: '48px',
-                  }}
-                >
+                <div style={{
+                  fontFamily: MONO,
+                  fontSize: '11px',
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: COLOR.inkFaint,
+                  minHeight: '18px',
+                  marginBottom: '3.5rem',
+                }}>
                   {detail || '\u00A0'}
                 </div>
 
-                {/* Progress bar — thin, no gradient */}
-                <div
-                  style={{
-                    position: 'relative',
-                    height: '1px',
-                    background: COLOR.inkTrace,
-                    marginBottom: '16px',
-                    overflow: 'hidden',
-                  }}
-                >
+                {/* Progress bar — segmented scanning line */}
+                <div style={{
+                  position: 'relative',
+                  height: '3px',
+                  background: COLOR.inkTrace,
+                  marginBottom: '1.25rem',
+                  overflow: 'hidden',
+                }}>
                   <motion.div
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.6, ease: EASE }}
@@ -551,57 +502,64 @@ export default function UploadPage() {
                       top: 0,
                       left: 0,
                       height: '100%',
-                      background: COLOR.ink,
+                      background: `linear-gradient(90deg, ${COLOR.accent} 0%, ${COLOR.ink} 100%)`,
+                    }}
+                  />
+                  {/* Scanning overlay */}
+                  <motion.div
+                    animate={{
+                      x: ['0%', '100%'],
+                      opacity: [0.6, 0.3, 0.6],
+                    }}
+                    transition={{
+                      x: { duration: 2, repeat: Infinity, ease: 'linear' },
+                      opacity: { duration: 1, repeat: Infinity, ease: 'easeInOut' },
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '20%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(190,40,30,0.4), transparent)',
+                      pointerEvents: 'none',
                     }}
                   />
                 </div>
 
-                {/* Percentage */}
-                <div
-                  style={{
-                    fontFamily: MONO,
-                    fontSize: '10px',
-                    letterSpacing: '0.15em',
-                    color: COLOR.inkFaint,
-                    textAlign: 'right',
-                  }}
-                >
+                <div style={{
+                  fontFamily: MONO,
+                  fontSize: '11px',
+                  letterSpacing: '0.18em',
+                  color: COLOR.inkFaint,
+                  textAlign: 'right',
+                }}>
                   {progress}%
                 </div>
 
-                {/* Honest note */}
-                <div
-                  style={{
-                    marginTop: '64px',
-                    fontFamily: SERIF,
-                    fontStyle: 'italic',
-                    fontSize: '14px',
-                    color: COLOR.inkFaint,
-                    lineHeight: 1.6,
-                    maxWidth: '360px',
-                    margin: '64px auto 0',
-                  }}
-                >
-                  The file is parsed locally. A sample of messages is sent to
-                  the analysis model to produce the report.
+                <div style={{
+                  marginTop: '4.5rem',
+                  fontFamily: SERIF,
+                  fontStyle: 'italic',
+                  fontSize: '15px',
+                  color: COLOR.inkFaint,
+                  lineHeight: 1.6,
+                }}>
+                  This will redirect automatically when complete.
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         </section>
 
-        {/* Footer */}
-        <footer
-          className="ya-footer"
-          style={{
-            height: '44px', padding: '0 clamp(1.5rem, 4vw, 3rem)',
-            display: 'flex', alignItems: 'center',
-            fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
-            textTransform: 'uppercase', color: COLOR.inkFaint,
-            borderTop: `1px solid ${COLOR.inkTrace}`,
-          }}
-        >
-          <span>2026</span>
+        <footer style={{
+          height: '44px', padding: '0 clamp(1.5rem, 4vw, 3rem)',
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          fontFamily: MONO, fontSize: '10px', letterSpacing: '0.18em',
+          textTransform: 'uppercase', color: COLOR.inkFaint,
+          borderTop: `1px solid ${COLOR.inkTrace}`,
+        }}>
+          File parsed in browser · AI enrichment takes 20–40 seconds
         </footer>
       </main>
     </>

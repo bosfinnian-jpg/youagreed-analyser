@@ -3,11 +3,6 @@
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 
-// ============================================================================
-// TRACE.AI — Terms of Service
-// No exhibition clauses. Just the consent needed for the tool to work.
-// ============================================================================
-
 const termsContent: Array<{ title: string; content: string }> = [
   {
     title: '1. What This Tool Does',
@@ -108,12 +103,21 @@ For questions about the project, contact the School of Media and Communication.`
   },
 ];
 
-// ============================================================================
-// COMPONENT
-// ============================================================================
+const COLOR = {
+  bg: '#eeece5',
+  ink: '#1a1816',
+  inkMuted: 'rgba(26,24,20,0.58)',
+  inkFaint: 'rgba(26,24,20,0.32)',
+  inkTrace: 'rgba(26,24,20,0.10)',
+  rule: 'rgba(26,24,20,0.15)',
+  accent: 'rgba(190,40,30,0.90)',
+} as const;
+
+const SERIF = "'EB Garamond', 'Times New Roman', Georgia, serif";
+const MONO = "'Courier Prime', 'Courier New', ui-monospace, monospace";
+
 export default function TermsPage() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [hasScrolled, setHasScrolled] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -124,14 +128,13 @@ export default function TermsPage() {
       const total = el.scrollHeight - el.clientHeight;
       const pct = total > 0 ? scrolled / total : 0;
       setScrollProgress(pct);
-      if (pct > 0.05 && !hasScrolled) setHasScrolled(true);
     };
     const el = contentRef.current;
     if (el) {
       el.addEventListener('scroll', handleScroll);
       return () => el.removeEventListener('scroll', handleScroll);
     }
-  }, [hasScrolled]);
+  }, []);
 
   const canAgree = scrollProgress > 0.85;
 
@@ -140,87 +143,83 @@ export default function TermsPage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Courier+Prime:wght@400;700&display=swap');
         html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
-        body { background: #1a1816; color: rgba(238,236,229,0.88); -webkit-font-smoothing: antialiased; }
-        ::selection { background: rgba(190,40,30,0.85); color: #eeece5; }
+        body { background: ${COLOR.bg}; -webkit-font-smoothing: antialiased; }
+        ::selection { background: ${COLOR.accent}; color: ${COLOR.bg}; }
       `}</style>
 
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: '#1a1816' }}>
-        {/* Header */}
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: COLOR.bg }}>
         <header style={{
-          padding: '0 clamp(1.5rem, 4vw, 2rem)',
+          padding: '0 clamp(1.5rem, 4vw, 3rem)',
           height: '52px',
-          borderBottom: '1px solid rgba(238,236,229,0.10)',
+          borderBottom: `1px solid ${COLOR.inkTrace}`,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
             <span style={{
-              fontFamily: '"EB Garamond", Georgia, serif',
+              fontFamily: SERIF,
               fontSize: '1.1rem',
               letterSpacing: '-0.02em',
-              color: 'rgba(238,236,229,0.88)',
+              color: COLOR.ink,
             }}>
-              trace<span style={{ color: 'rgba(190,40,30,0.85)' }}>.ai</span>
+              trace<span style={{ color: COLOR.accent }}>.ai</span>
             </span>
           </Link>
           <span style={{
-            fontFamily: '"Courier Prime", monospace',
+            fontFamily: MONO,
             fontSize: '10px',
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
-            color: 'rgba(238,236,229,0.32)',
+            color: COLOR.inkFaint,
           }}>
             Terms of Service
           </span>
         </header>
 
-        {/* Main */}
         <main
           ref={contentRef}
           style={{
             flex: 1,
             overflowY: 'auto',
-            padding: 'clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 4vw, 2rem)',
+            padding: 'clamp(3rem, 6vw, 5rem) clamp(1.5rem, 4vw, 3rem)',
           }}
         >
           <div style={{ maxWidth: '760px', margin: '0 auto' }}>
-            {/* Title */}
-            <div style={{ marginBottom: 'clamp(2.5rem, 5vw, 4rem)' }}>
+            <div style={{ marginBottom: 'clamp(3rem, 6vw, 4.5rem)' }}>
               <h1 style={{
-                fontFamily: '"EB Garamond", Georgia, serif',
-                fontSize: 'clamp(2rem, 4.5vw, 3.2rem)',
+                fontFamily: SERIF,
+                fontSize: 'clamp(2.4rem, 5vw, 3.6rem)',
                 fontWeight: 400,
-                color: 'rgba(238,236,229,0.92)',
+                color: COLOR.ink,
                 letterSpacing: '-0.025em',
-                lineHeight: 1.15,
-                marginBottom: '1rem',
+                lineHeight: 1.1,
+                marginBottom: '1.2rem',
               }}>
                 Terms of Service
               </h1>
               <p style={{
-                fontFamily: '"Courier Prime", monospace',
+                fontFamily: MONO,
                 fontSize: '11px',
                 letterSpacing: '0.2em',
                 textTransform: 'uppercase',
-                color: 'rgba(238,236,229,0.38)',
+                color: COLOR.inkFaint,
               }}>
                 Effective 2 May 2026
               </p>
             </div>
 
-            {/* Preamble */}
             <div style={{
-              marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)',
-              padding: '1.5rem',
-              background: 'rgba(238,236,229,0.04)',
-              border: '1px solid rgba(238,236,229,0.08)',
+              marginBottom: 'clamp(3rem, 6vw, 4rem)',
+              padding: '1.75rem 2rem',
+              background: 'rgba(26,24,20,0.03)',
+              border: `1px solid ${COLOR.inkTrace}`,
             }}>
               <p style={{
-                fontFamily: '"EB Garamond", Georgia, serif',
-                fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-                color: 'rgba(238,236,229,0.78)',
-                lineHeight: 1.7,
+                fontFamily: SERIF,
+                fontSize: 'clamp(1.05rem, 1.9vw, 1.2rem)',
+                color: COLOR.inkMuted,
+                lineHeight: 1.75,
                 margin: 0,
               }}>
                 By using this tool, you agree to these terms. Read them carefully.
@@ -229,33 +228,32 @@ export default function TermsPage() {
               </p>
             </div>
 
-            {/* Terms sections */}
             {termsContent.map((section, i) => (
               <section
                 key={section.title}
                 style={{
-                  marginBottom: 'clamp(2.5rem, 4vw, 3.5rem)',
-                  paddingBottom: 'clamp(2rem, 4vw, 3rem)',
+                  marginBottom: 'clamp(2.75rem, 5vw, 3.75rem)',
+                  paddingBottom: 'clamp(2.25rem, 4vw, 3.25rem)',
                   borderBottom: i < termsContent.length - 1
-                    ? '1px solid rgba(238,236,229,0.06)'
+                    ? `1px solid ${COLOR.inkTrace}`
                     : 'none',
                 }}
               >
                 <h2 style={{
-                  fontFamily: '"Courier Prime", monospace',
-                  fontSize: '13px',
-                  letterSpacing: '0.12em',
+                  fontFamily: MONO,
+                  fontSize: '12px',
+                  letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  color: 'rgba(190,40,30,0.75)',
+                  color: COLOR.accent,
                   marginBottom: '1.25rem',
                   fontWeight: 700,
                 }}>
                   {section.title}
                 </h2>
                 <div style={{
-                  fontFamily: '"EB Garamond", Georgia, serif',
-                  fontSize: 'clamp(1rem, 1.7vw, 1.08rem)',
-                  color: 'rgba(238,236,229,0.72)',
+                  fontFamily: SERIF,
+                  fontSize: 'clamp(1rem, 1.75vw, 1.1rem)',
+                  color: COLOR.inkMuted,
                   lineHeight: 1.85,
                   whiteSpace: 'pre-line',
                 }}>
@@ -264,16 +262,14 @@ export default function TermsPage() {
               </section>
             ))}
 
-            {/* Bottom spacer */}
             <div style={{ height: 'clamp(3rem, 6vw, 5rem)' }} />
           </div>
         </main>
 
-        {/* Footer — sticky CTA */}
         <footer style={{
-          borderTop: '1px solid rgba(238,236,229,0.10)',
-          padding: 'clamp(1.25rem, 2.5vw, 1.75rem) clamp(1.5rem, 4vw, 2rem)',
-          background: '#1a1816',
+          borderTop: `1px solid ${COLOR.inkTrace}`,
+          padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.5rem, 4vw, 3rem)',
+          background: COLOR.bg,
         }}>
           <div style={{
             maxWidth: '760px',
@@ -286,11 +282,11 @@ export default function TermsPage() {
           }}>
             <div style={{ flex: '1 1 auto', minWidth: '200px' }}>
               <p style={{
-                fontFamily: '"Courier Prime", monospace',
+                fontFamily: MONO,
                 fontSize: '10px',
-                letterSpacing: '0.16em',
+                letterSpacing: '0.18em',
                 textTransform: 'uppercase',
-                color: canAgree ? 'rgba(238,236,229,0.50)' : 'rgba(190,40,30,0.65)',
+                color: canAgree ? COLOR.inkMuted : COLOR.accent,
                 margin: 0,
               }}>
                 {canAgree
@@ -299,17 +295,18 @@ export default function TermsPage() {
               </p>
             </div>
 
-            <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
               <Link
                 href="/"
                 style={{
-                  fontFamily: '"Courier Prime", monospace',
+                  fontFamily: MONO,
                   fontSize: '10px',
                   letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: 'rgba(238,236,229,0.38)',
+                  color: COLOR.inkFaint,
                   textDecoration: 'none',
                   padding: '0.4rem 0',
+                  borderBottom: `1px solid ${COLOR.rule}`,
                 }}
               >
                 ← Back
@@ -319,20 +316,20 @@ export default function TermsPage() {
                 <Link
                   href="/upload"
                   style={{
-                    padding: '0.6rem 1.4rem',
-                    fontFamily: '"Courier Prime", monospace',
+                    padding: '0.75rem 1.75rem',
+                    fontFamily: MONO,
                     fontSize: '10px',
-                    letterSpacing: '0.14em',
+                    letterSpacing: '0.16em',
                     textTransform: 'uppercase',
-                    color: 'rgba(26,24,20,0.92)',
-                    background: 'rgba(238,236,229,0.92)',
+                    color: COLOR.bg,
+                    background: COLOR.ink,
                     border: 'none',
                     textDecoration: 'none',
                     display: 'inline-block',
                     transition: 'background 0.2s',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(238,236,229,1)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(238,236,229,0.92)'; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(26,24,20,0.85)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = COLOR.ink; }}
                 >
                   I Agree
                 </Link>
@@ -341,14 +338,14 @@ export default function TermsPage() {
                   type="button"
                   disabled
                   style={{
-                    padding: '0.6rem 1.4rem',
-                    fontFamily: '"Courier Prime", monospace',
+                    padding: '0.75rem 1.75rem',
+                    fontFamily: MONO,
                     fontSize: '10px',
-                    letterSpacing: '0.14em',
+                    letterSpacing: '0.16em',
                     textTransform: 'uppercase',
-                    color: 'rgba(26,24,20,0.18)',
-                    background: 'rgba(238,236,229,0.08)',
-                    border: '1px solid rgba(238,236,229,0.06)',
+                    color: 'rgba(26,24,20,0.20)',
+                    background: 'rgba(26,24,20,0.05)',
+                    border: `1px solid ${COLOR.inkTrace}`,
                     cursor: 'not-allowed',
                   }}
                 >

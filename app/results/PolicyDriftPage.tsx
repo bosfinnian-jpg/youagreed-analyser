@@ -944,24 +944,9 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
   );
 }
 
-// ── Closing argument three-panel ──────────────────────────────────────────
+// ── Closing argument ─────────────────────────────────────────────────────
 
 function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p: DashPage) => void }) {
-  const panels = [
-    {
-      label: 'The legal fiction',
-      text: 'When OpenAI changes its policy, your continued use is treated as fresh consent. But you were not shown the changes. You were not asked to accept them. You were opted in by inertia.',
-    },
-    {
-      label: 'What changed most',
-      text: 'Three categories of data collection were introduced between 2023 and 2026 that did not exist in the original policy: advertising data, contact list upload, and data from third-party partners. These were not there when you started.',
-    },
-    {
-      label: 'The carve-out',
-      text: 'The 2026 deletion carve-out — data used in model training is exempt from the right to deletion. That data is not just stored. It was learned from. And what a model has learned, it cannot unlearn.',
-    },
-  ];
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -969,34 +954,89 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
       transition={{ delay: 0.4, duration: 0.7 }}
       style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)' }}
     >
+      {/* Single-column flow instead of grid */}
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-        gap: 'clamp(1.5rem, 3vw, 2.5rem)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1px',
+        background: PALETTE.border,
         marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)',
       }}>
-        {panels.map((panel, i) => (
-          <div key={i}>
-            <p style={{
-              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-              color: PALETTE.redMuted, textTransform: 'uppercase',
-              marginBottom: '0.85rem',
-            }}>{panel.label}</p>
-            <p style={{
-              fontFamily: TYPE.serif, fontSize: '1.05rem',
-              color: PALETTE.inkMuted, lineHeight: 1.8,
-            }}>{panel.text}</p>
-          </div>
-        ))}
+        {/* Panel 1 */}
+        <div style={{
+          background: PALETTE.bgPanel,
+          padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.75rem, 3.5vw, 2.5rem)',
+          borderLeft: `3px solid ${PALETTE.coral}`,
+        }}>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.24em',
+            color: PALETTE.coral, textTransform: 'uppercase',
+            marginBottom: '0.9rem',
+          }}>The legal fiction</p>
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
+            color: PALETTE.ink, lineHeight: 1.7, maxWidth: '68ch',
+          }}>
+            When OpenAI changes its policy, your continued use is treated as fresh consent. 
+            But you were not shown the changes. You were not asked to accept them. You were opted in by inertia.
+          </p>
+        </div>
+
+        {/* Panel 2 */}
+        <div style={{
+          background: PALETTE.bgPanel,
+          padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.75rem, 3.5vw, 2.5rem)',
+          borderLeft: `3px solid ${PALETTE.amber}`,
+        }}>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.24em',
+            color: PALETTE.amber, textTransform: 'uppercase',
+            marginBottom: '0.9rem',
+          }}>What was added</p>
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
+            color: PALETTE.ink, lineHeight: 1.7, maxWidth: '68ch',
+          }}>
+            Three categories of data collection appeared between 2023 and 2026 that did not exist 
+            in the original policy: advertising data, contact list upload, and data from third-party partners.
+          </p>
+        </div>
+
+        {/* Panel 3 */}
+        <div style={{
+          background: PALETTE.bgPanel,
+          padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.75rem, 3.5vw, 2.5rem)',
+          borderLeft: `3px solid ${PALETTE.redMuted}`,
+        }}>
+          <p style={{
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.24em',
+            color: PALETTE.redMuted, textTransform: 'uppercase',
+            marginBottom: '0.9rem',
+          }}>The deletion carve-out</p>
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
+            color: PALETTE.ink, lineHeight: 1.7, maxWidth: '68ch',
+            marginBottom: '0.75rem',
+          }}>
+            The 2026 policy states that data used in model training is exempt from the right to deletion.
+          </p>
+          <p style={{
+            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
+            color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: '68ch',
+            fontStyle: 'italic',
+          }}>
+            That data is not just stored. It was learned from. And what a model has learned, it cannot unlearn.
+          </p>
+        </div>
       </div>
 
       <PageFooter
         statement="What you consented to in 2023 is not what the policy says today. The document changed around you. You were not asked again."
         followOn="The terms describe what was taken. What you can do about it is next."
         navItems={[
-          { page: 'permanent',   act: 'ACT III / 05', label: 'Why it cannot be removed', body: 'The data the terms authorised collecting cannot be returned. Deletion is structural fiction.' },
-          { page: 'resist',      act: 'ACT V / 09',   label: 'What you can do',          body: 'Three actions that limit what happens from this point forward.' },
-          { page: 'understand',  act: 'ACT IV / 08',  label: 'Test the inference',       body: 'Watch the extraction happen on your own words.' },
+          { page: 'permanent',   act: 'ACT III / 05', label: 'Why it persists',   body: 'The data cannot be removed once embedded in model weights.' },
+          { page: 'how-it-works',act: 'ACT IV / 07',  label: 'How it works',      body: 'Why gradient descent makes erasure technically impossible.' },
+          { page: 'resist',      act: 'ACT V / 09',   label: 'What you can do',   body: 'Three actions that limit what happens from this point forward.' },
         ]}
         endLabel="End of terms analysis."
         setPage={setPage}

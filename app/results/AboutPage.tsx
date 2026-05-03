@@ -197,30 +197,12 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
         <div style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
           <SectionLabel>What this is</SectionLabel>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(1.5rem, 4vw, 3rem)', alignItems: 'start' }}>
-            <div>
-              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.25rem)', color: PALETTE.ink, lineHeight: 1.8, marginBottom: '1.25rem' }}>
-                This tool analyses your ChatGPT or Claude conversation export and produces a structured account of what that data makes possible: what was inferred, what was disclosed, and what cannot be removed.
-              </p>
-              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.25rem)', color: PALETTE.ink, lineHeight: 1.8 }}>
-                The question it asks is not "what does this reveal about you?" It is: "what kind of system produces outputs like these — and what did you agree to when you signed up?"
-              </p>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
-              {[
-                { label: 'Form', value: 'Critical digital media installation' },
-                { label: 'Module', value: 'COMM3705 — 40 credits' },
-                { label: 'Assessment', value: 'AI Green category' },
-                { label: 'Exhibition', value: 'Leeds Television Studio, May 2026' },
-                { label: 'Site', value: 'youagreed.co.uk' },
-              ].map(item => (
-                <div key={item.label} style={{ background: PALETTE.bgPanel, padding: '0.9rem 1.1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '1rem' }}>
-                  <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', flexShrink: 0 }}>{item.label}</p>
-                  <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.9rem, 1.4vw, 1rem)', color: PALETTE.ink, textAlign: 'right' }}>{item.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.25rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 620, marginBottom: '1.25rem' }}>
+            This tool analyses your ChatGPT or Claude conversation export and produces a structured account of what that data makes possible: what was inferred, what was disclosed, and what cannot be removed.
+          </p>
+          <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.25rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 620 }}>
+            The question it asks is not "what does this reveal about you?" It is: "what kind of system produces outputs like these — and what did you agree to when you signed up?"
+          </p>
         </div>
       </Block>
 
@@ -385,7 +367,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 'clamp(2rem, 5vw, 4rem)', alignItems: 'end' }}>
             <div>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 500, marginBottom: '1rem' }}>
-                Finnian Bos is a Digital Media student at the University of Leeds. This project is assessed under the AI Green category — a category that explicitly encourages generative AI use, creating a deliberate meta-commentary: a tool critical of AI, built with AI.
+                Finnian Bos is a Digital Media student at the University of Leeds. YOU AGREED is a critical practice project that uses AI as both subject and instrument — a tool critical of AI, built with AI.
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, fontStyle: 'italic', maxWidth: 480 }}>
                 The tool is the argument. The experience is the critique.

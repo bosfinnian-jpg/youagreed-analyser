@@ -169,7 +169,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
         >
           <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
           <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-            you agreed — critical digital media practice
+            trace.ai — critical digital media practice
           </span>
           <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
         </motion.div>
@@ -188,7 +188,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
             fontStyle: 'italic',
           }}
         >
-          YOU AGREED is a critical art installation and interactive web experience examining how consent frameworks designed for reversible behavioural tracking fail catastrophically when applied to irreversible AI cognitive extraction.
+          Trace.ai is a critical art installation and interactive web experience examining how consent frameworks designed for reversible behavioural tracking fail catastrophically when applied to irreversible AI cognitive extraction.
         </motion.p>
       </motion.div>
 
@@ -367,7 +367,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 'clamp(2rem, 5vw, 4rem)', alignItems: 'end' }}>
             <div>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 500, marginBottom: '1rem' }}>
-                Finnian Bos is a Digital Media student at the University of Leeds. YOU AGREED is a critical practice project that uses AI as both subject and instrument — a tool critical of AI, built with AI.
+                Finnian Bos is a Digital Media student at the University of Leeds. Trace.ai is a critical practice project that uses AI as both subject and instrument — a tool critical of AI, built with AI.
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, fontStyle: 'italic', maxWidth: 480 }}>
                 The tool is the argument. The experience is the critique.

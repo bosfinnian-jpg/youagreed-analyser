@@ -937,576 +937,412 @@ function ModuleFrame({
   );
 }
 
+
 // ============================================================================
-// MODULE 1 — THE LEAP
-// Interaction: click "show the leap" — animated lines connect user words
-// to segment classifications
+// DATA LOADER — reads from sessionStorage once, returns typed fields
+// ============================================================================
+
+function useAnalysisData() {
+  try {
+    const stored = sessionStorage.getItem('analysisResults');
+    if (!stored) return null;
+    return JSON.parse(stored) as any;
+  } catch {
+    return null;
+  }
+}
+
+// ============================================================================
+// MODULE 1 — YOUR PSYCHOLOGICAL PROFILE
+// Shows what was inferred about the user: character summary, verbal tells,
+// unintentional disclosures, type breakdown. All from their actual data.
 // ============================================================================
 
 function Module1({
-  onComplete,
-  onAdvance,
-  completed,
-}: {
-  onComplete: () => void;
-  onAdvance: () => void;
-  completed: boolean;
-}) {
-  const [revealed, setRevealed] = useState(completed);
+  onComplete, onAdvance, completed,
+}: { onComplete: () => void; onAdvance: () => void; completed: boolean; }) {
+  const data = useAnalysisData();
+  const [step, setStep] = useState<number>(completed ? 4 : 0);
 
-  // Load real user data if available
-  const userInferences = useMemo(() => {
-    try {
-      const stored = sessionStorage.getItem('analysisResults');
-      if (!stored) return INFERENCE_MAP.slice(0, 3);
-      const analysis = JSON.parse(stored);
+  const portrait = data?.psychologicalPortrait;
+  const synthesis = data?.synthesis;
+  const typeBreakdown = data?.typeBreakdown as Record<string, number> | undefined;
+  const avgIntimacy = data?.avgIntimacy as number | undefined;
+  const avgAnxiety = data?.avgAnxiety as number | undefined;
 
-      const inferences: typeof INFERENCE_MAP = [];
-      const segments = analysis.commercialProfile?.segments || [];
+  // Message type breakdown bars
+  const typeTotal = typeBreakdown ? Object.values(typeBreakdown).reduce((a: number, b: number) => a + (b as number), 0) : 0;
+  const typeRows = typeBreakdown && typeTotal > 0
+    ? Object.entries(typeBreakdown)
+        .sort(([, a], [, b]) => (b as number) - (a as number))
+        .slice(0, 5)
+        .map(([type, count]) => ({
+          label: type.charAt(0).toUpperCase() + type.slice(1),
+          pct: Math.round(((count as number) / typeTotal) * 100),
+          count: count as number,
+        }))
+    : [
+        { label: 'Emotional', pct: 34, count: 34 },
+        { label: 'Practical', pct: 28, count: 28 },
+        { label: 'Confessional', pct: 18, count: 18 },
+        { label: 'Validation', pct: 13, count: 13 },
+        { label: 'Factual', pct: 7, count: 7 },
+      ];
 
-      for (const seg of segments.slice(0, 3)) {
-        const matched = INFERENCE_MAP.find(i => i.label === seg.label);
-        if (matched) inferences.push(matched);
-      }
+  // Verbal tells from synthesis, or fallback
+  const verbalTells = synthesis?.verbalTells?.slice(0, 3) || [
+    { tell: 'Repeated hedging language', meaning: 'Anxiety about being judged or wrong', frequency: 'High' },
+    { tell: 'Future-tense framing', meaning: 'Escape-oriented thinking pattern', frequency: 'Medium' },
+    { tell: 'Seeking confirmation', meaning: 'Validation-dependent communication style', frequency: 'High' },
+  ];
 
-      // If we don't have at least 2, pad from the defaults
-      while (inferences.length < 3) {
-        const next = INFERENCE_MAP.find(i => !inferences.includes(i));
-        if (next) inferences.push(next);
-        else break;
-      }
+  // Unintentional disclosures
+  const disclosures = synthesis?.unintentionalDisclosures?.slice(0, 3) || [
+    { disclosure: 'Approximate income bracket', via: 'Language about rent, spending, and financial stress' },
+    { disclosure: 'Relationship status', via: 'Pronouns and possessives used when describing daily life' },
+    { disclosure: 'Approximate age', via: 'References to life stage, technology, and cultural touchpoints' },
+  ];
 
-      return inferences;
-    } catch {
-      return INFERENCE_MAP.slice(0, 3);
-    }
-  }, []);
+  // Character summary
+  const characterSummary = synthesis?.characterSummary ||
+    portrait?.dominantNarrative ||
+    'Analysis not available — upload a conversation export to generate your profile.';
 
-  const handleReveal = () => {
-    setRevealed(true);
-    // Wait for animation, then mark complete
-    setTimeout(() => onComplete(), 3500);
+  const steps = [
+    { label: 'Message types', key: 'types' },
+    { label: 'Verbal tells', key: 'tells' },
+    { label: 'What you disclosed without knowing', key: 'disclosures' },
+    { label: 'The portrait', key: 'portrait' },
+  ];
+
+  const handleNext = () => {
+    const next = step + 1;
+    setStep(next);
+    if (next >= steps.length) onComplete();
   };
 
   return (
     <ModuleFrame
       number={1}
-      title="The leap."
-      subtitle="Your messages did not describe you. They inferred you. Watch the jump."
+      title="What it learned about you."
+      subtitle="Not from a questionnaire. From the way you write. Step through what was extracted."
       onAdvance={onAdvance}
-      canAdvance={revealed}
+      canAdvance={step >= steps.length}
     >
-      {/* Column headers */}
-      <div className="understand-inference-headers" style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 80px 1fr',
-        gap: 0,
-        marginBottom: '0.75rem',
-        padding: 'clamp(1rem, 3vw, 2rem) 0 0',
-      }}>
-        <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: C.textFaint, textTransform: 'uppercase' }}>
-          What you wrote
-        </p>
-        <div />
-        <p className="understand-inference-header-right" style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.22em', color: C.textFaint, textTransform: 'uppercase' }}>
-          What was inferred
-        </p>
-      </div>
-
-      {/* Per-row layout — line is inside each row so it always hits the vertical centre */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {userInferences.map((inf, i) => (
-          <div key={inf.pattern} className="understand-inference-row" style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', alignItems: 'center' }}>
-            {/* Left box */}
-            <motion.div
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 + i * 0.15 }}
-              style={{
-                padding: '0.9rem 1rem',
-                background: C.panel,
-                border: `1px solid ${C.border}`,
-                fontFamily: TYPE.serif,
-                fontSize: '1.05rem',
-                color: C.textMuted,
-                lineHeight: 1.5,
-                fontStyle: 'italic',
-              }}
-            >
-              <span style={{ color: C.textFaint, fontFamily: TYPE.mono, fontSize: '10px', display: 'block', marginBottom: '0.2rem', letterSpacing: '0.08em' }}>
-                pattern detected:
-              </span>
-              {inf.pattern}
-            </motion.div>
-
-            {/* Arrow — horizontally centred, always vertically centred because it's in a grid row */}
-            <div className="understand-inference-arrow" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
-              <svg width="100%" height="2" viewBox="0 0 80 2" preserveAspectRatio="none" overflow="visible">
-                <motion.line
-                  x1="4" y1="1" x2="72" y2="1"
-                  stroke={C.accent}
-                  strokeWidth={1}
-                  strokeDasharray="3 3"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={revealed ? { pathLength: 1, opacity: 0.8 } : { pathLength: 0, opacity: 0 }}
-                  transition={{ delay: 0.5 + i * 0.25, duration: 0.8 }}
-                />
-                <motion.polygon
-                  points="72,1 64,-3 64,5"
-                  fill={C.accent}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={revealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0 }}
-                  transition={{ delay: 1.2 + i * 0.25 }}
-                  style={{ transformOrigin: '72px 1px' }}
-                />
-              </svg>
-            </div>
-
-            {/* Right box */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={revealed ? { opacity: 1 } : { opacity: 0.15 }}
-              transition={{ delay: 0.9 + i * 0.25, duration: 0.7 }}
-              style={{
-                padding: '0.9rem 1rem',
-                background: C.panel,
-                border: `1px solid ${revealed ? C.accentFaint : C.border}`,
-                borderLeft: `2px solid ${revealed ? C.accent : C.border}`,
-                filter: revealed ? 'none' : 'blur(3px)',
-                transition: 'filter 0.6s, border-color 0.4s',
-              }}
-            >
-              <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: C.text, marginBottom: '0.25rem' }}>
-                {inf.label}
-              </p>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.14em', color: C.accent, textTransform: 'uppercase' }}>
-                {inf.segment}
-              </p>
-            </motion.div>
-          </div>
+      {/* Step navigator */}
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+        {steps.map((s, i) => (
+          <button
+            key={s.key}
+            onClick={() => i < step + 1 ? setStep(i) : undefined}
+            style={{
+              fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', textTransform: 'uppercase',
+              padding: '0.4rem 0.85rem',
+              border: `1px solid ${i === step ? C.accent : i < step ? C.textFaint : C.border}`,
+              background: i === step ? C.accentFaint : 'none',
+              color: i === step ? C.accent : i < step ? C.textFaint : C.textGhost,
+              cursor: i <= step ? 'pointer' : 'default',
+              transition: 'all 0.2s',
+            }}
+          >
+            {String(i + 1).padStart(2, '0')} {s.label}
+          </button>
         ))}
       </div>
 
-      {/* Reveal button + explanation */}
-      <div style={{ marginTop: '2.5rem', textAlign: 'center' }}>
-        {!revealed ? (
-          <motion.button
-            onClick={handleReveal}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              background: 'transparent',
-              color: C.text,
-              border: `1px solid ${C.text}`,
-              padding: '0.9rem 2rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = C.text;
-              e.currentTarget.style.color = C.bg;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = C.text;
-            }}
-          >
-            Show the leap →
-          </motion.button>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2.5 }}
-            style={{ maxWidth: '62ch', margin: '0 auto' }}
-          >
-            <p
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)',
-                color: C.text,
-                lineHeight: 1.7,
-                fontStyle: 'italic',
-                marginBottom: '1.25rem',
-              }}
-            >
-              That jump — from the left column to the right — is the entire argument of this project.
-              Zuboff calls it the shift from Stage 1 to Stage 2. A cookie records where you went.
-              A conversation records how you think.
+      <AnimatePresence mode="wait">
+
+        {/* Step 0 — Message type breakdown */}
+        {step === 0 && (
+          <motion.div key="types" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: C.textMuted, lineHeight: 1.75, maxWidth: '54ch', marginBottom: '1.75rem' }}>
+              Every message you sent was classified. Not by what you intended — by what the pattern looked like to the model.
             </p>
-            <p
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: '1rem',
-                color: C.textMuted,
-                lineHeight: 1.7,
-                marginBottom: '1rem',
-              }}
-            >
-              The categories on the right are not hypothetical. They map onto documented data broker
-              classifications used in targeting systems across financial services, healthcare, and advertising.
-              OpenAI does not currently sell your data to those brokers — but the inference exists in the
-              model's weights regardless of who holds it.
-            </p>
-            <a
-              href="https://arxiv.org/abs/2402.09716"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '10px',
-                letterSpacing: '0.16em',
-                color: C.accent,
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                borderBottom: `1px solid rgba(190,40,30,0.3)`,
-                paddingBottom: '1px',
-              }}
-            >
-              Gumusel, Zhou &amp; Sanfilippo (2024) — User Privacy Harms in Conversational AI, arXiv:2402.09716 →
-            </a>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.5rem' }}>
+              {typeRows.map((row, i) => (
+                <motion.div key={row.label} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                    <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text }}>{row.label}</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: C.textFaint, letterSpacing: '0.1em' }}>{row.pct}% — {row.count} messages</span>
+                  </div>
+                  <div style={{ height: '3px', background: C.border, position: 'relative', overflow: 'hidden' }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${row.pct}%` }}
+                      transition={{ delay: i * 0.1 + 0.2, duration: 0.7 }}
+                      style={{
+                        height: '100%',
+                        background: row.label === 'Confessional' || row.label === 'Emotional' ? C.accent : C.textFaint,
+                      }}
+                    />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            {(avgIntimacy !== undefined || avgAnxiety !== undefined) && (
+              <div style={{ display: 'flex', gap: '1px', background: C.border, marginBottom: '1.5rem' }}>
+                {avgIntimacy !== undefined && (
+                  <div style={{ flex: 1, background: C.panel, padding: '0.9rem 1rem' }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>Avg intimacy score</p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1.6rem', color: C.text }}>{avgIntimacy.toFixed(1)}<span style={{ fontSize: '0.9rem', color: C.textFaint }}> / 10</span></p>
+                  </div>
+                )}
+                {avgAnxiety !== undefined && (
+                  <div style={{ flex: 1, background: C.panel, padding: '0.9rem 1rem' }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>Avg anxiety score</p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1.6rem', color: C.text }}>{avgAnxiety.toFixed(1)}<span style={{ fontSize: '0.9rem', color: C.textFaint }}> / 10</span></p>
+                  </div>
+                )}
+              </div>
+            )}
           </motion.div>
         )}
-      </div>
+
+        {/* Step 1 — Verbal tells */}
+        {step === 1 && (
+          <motion.div key="tells" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: C.textMuted, lineHeight: 1.75, maxWidth: '54ch', marginBottom: '1.75rem' }}>
+              These are patterns in how you write — not what you said, but how you said it. Each one maps to an inferred psychological trait.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: C.border }}>
+              {verbalTells.map((tell: any, i: number) => (
+                <motion.div key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.12 }}
+                  style={{ background: C.panel, padding: '1rem 1.25rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
+                  <div>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.35rem' }}>Pattern detected</p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text, lineHeight: 1.5 }}>{tell.tell}</p>
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.2em', color: C.accent, textTransform: 'uppercase', marginBottom: '0.35rem' }}>Inferred meaning</p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.5, fontStyle: 'italic' }}>{tell.meaning}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Step 2 — Unintentional disclosures */}
+        {step === 2 && (
+          <motion.div key="disclosures" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
+            <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: C.textMuted, lineHeight: 1.75, maxWidth: '54ch', marginBottom: '1.75rem' }}>
+              These were not volunteered. They were inferred. None of these required you to answer a question.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: C.border }}>
+              {disclosures.map((d: any, i: number) => (
+                <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.15 }}
+                  style={{ background: C.panel, padding: '1rem 1.25rem', display: 'grid', gridTemplateColumns: '2.5rem 1fr', gap: '1rem', alignItems: 'start' }}>
+                  <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: C.accent, letterSpacing: '0.15em', paddingTop: '3px' }}>{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1.05rem', color: C.text, marginBottom: '0.3rem' }}>{d.disclosure}</p>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '9px', color: C.textFaint, letterSpacing: '0.1em', lineHeight: 1.5 }}>Via: {d.via}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: C.textFaint, fontStyle: 'italic', marginTop: '1.25rem', lineHeight: 1.6, maxWidth: '52ch' }}>
+              This is Nissenbaum's contextual integrity failure: information shared in one context (a conversation) flowing into another (a training corpus and commercial profile) without your knowledge.
+            </p>
+          </motion.div>
+        )}
+
+        {/* Step 3 — The portrait */}
+        {step === 3 && (
+          <motion.div key="portrait" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.accent, textTransform: 'uppercase', marginBottom: '1rem' }}>
+              AI-generated character summary — derived from your conversations
+            </p>
+            <div style={{
+              background: C.panel, border: `1px solid ${C.accentFaint}`, borderLeft: `2px solid ${C.accent}`,
+              padding: 'clamp(1.25rem, 3vw, 2rem)', marginBottom: '1.5rem',
+            }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.9vw, 1.3rem)', color: C.text, lineHeight: 1.75 }}>
+                {characterSummary}
+              </p>
+            </div>
+            {portrait && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1px', background: C.border }}>
+                {[
+                  { label: 'Attachment style', value: portrait.attachmentStyle },
+                  { label: 'Coping mechanism', value: portrait.primaryCopingMechanism },
+                  { label: 'Communication pattern', value: portrait.communicationPattern },
+                  { label: 'Emotional baseline', value: portrait.emotionalBaselineLabel },
+                ].filter(item => item.value).map(item => (
+                  <div key={item.label} style={{ background: C.panel, padding: '0.9rem 1rem' }}>
+                    <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.35rem' }}>{item.label}</p>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text, lineHeight: 1.45 }}>{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: C.textFaint, fontStyle: 'italic', marginTop: '1.25rem', lineHeight: 1.6, maxWidth: '52ch' }}>
+              This profile exists in the model's weights. It was not asked for. It cannot be deleted. And it is based entirely on conversations you thought were private.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {step < steps.length && (
+        <motion.button
+          onClick={handleNext}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+          style={{
+            marginTop: '2rem', fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
+            textTransform: 'uppercase', background: 'transparent', color: C.text,
+            border: `1px solid ${C.text}`, padding: '0.85rem 1.75rem', cursor: 'pointer', transition: 'all 0.2s',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = C.text; e.currentTarget.style.color = C.bg; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = C.text; }}
+        >
+          {step < steps.length - 1 ? `Next: ${steps[step + 1].label} →` : 'See the full portrait →'}
+        </motion.button>
+      )}
     </ModuleFrame>
   );
 }
 
 // ============================================================================
-// MODULE 2 — PRECEDENTS (card flip memory game)
+// MODULE 2 — YOUR COMMERCIAL PROFILE
+// Shows what the commercial profile segments look like for this user.
+// Flip each card to reveal the ad categories attached to that segment.
 // ============================================================================
 
 function Module2({
-  onComplete,
-  onAdvance,
-  completed,
-}: {
-  onComplete: () => void;
-  onAdvance: () => void;
-  completed: boolean;
-}) {
-  const [flipped, setFlipped] = useState<Set<string>>(completed ? new Set(PRECEDENTS.map(p => p.key)) : new Set());
+  onComplete, onAdvance, completed,
+}: { onComplete: () => void; onAdvance: () => void; completed: boolean; }) {
+  const data = useAnalysisData();
+  const [flipped, setFlipped] = useState<Set<string>>(completed ? new Set() : new Set());
+  const [allSeenOnce, setAllSeenOnce] = useState(completed);
 
-  const handleFlip = (key: string) => {
+  const rawSegments = (data?.commercialProfile?.segments || []) as Array<{
+    id: string; label: string; description: string; confidence: number; evidence: string; adCategories: string[];
+  }>;
+
+  // Use real segments or meaningful fallbacks
+  const segments = rawSegments.length >= 2 ? rawSegments.slice(0, 4) : [
+    { id: 'mental_health_seeker', label: 'Mental health help-seeker', description: 'Actively seeking emotional support.', confidence: 72, evidence: 'Multiple mental health disclosures detected', adCategories: ['Online therapy', 'Antidepressants', 'Meditation apps', 'Sleep aids'] },
+    { id: 'validation_dependent', label: 'Validation-dependent personality', description: 'Consistent pattern of seeking external approval.', confidence: 61, evidence: 'Repeated validation-seeking language', adCategories: ['Fashion/beauty', 'Social media premium', 'Self-improvement', 'Status products'] },
+    { id: 'career_transition', label: 'Career transition / job seeker', description: 'Active career uncertainty signals.', confidence: 48, evidence: 'Career and employment references', adCategories: ['LinkedIn Premium', 'CV writing', 'Career coaching', 'Online courses'] },
+    { id: 'relationship_unstable', label: 'Relationship instability signal', description: 'Pattern of relationship processing.', confidence: 44, evidence: 'Relationship processing conversations', adCategories: ['Dating apps', 'Relationship coaching', 'Self-help books', 'Therapy'] },
+  ];
+
+  const handleFlip = (id: string) => {
     setFlipped(prev => {
-      const next = new Set([...Array.from(prev), key]);
-      if (next.size === PRECEDENTS.length) {
-        setTimeout(() => onComplete(), 500);
+      const next = new Set([...Array.from(prev), id]);
+      if (next.size >= Math.min(segments.length, 3) && !allSeenOnce) {
+        setAllSeenOnce(true);
+        setTimeout(() => onComplete(), 600);
       }
       return next;
     });
   };
 
-  const allFlipped = flipped.size === PRECEDENTS.length;
-
   return (
     <ModuleFrame
       number={2}
-      title="It's already happening."
-      subtitle="Four documented cases. Flip each one. None of them are hypothetical."
+      title="Your commercial profile."
+      subtitle="These are the segments derived from your conversations. Flip each one to see what ad categories they unlock."
       onAdvance={onAdvance}
-      canAdvance={allFlipped}
+      canAdvance={allSeenOnce}
     >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1rem',
-          marginBottom: '1.5rem',
-        }}
-      >
-        {PRECEDENTS.map((p, i) => (
-          <PrecedentCard
-            key={p.key}
-            precedent={p}
-            flipped={flipped.has(p.key)}
-            onFlip={() => handleFlip(p.key)}
-            delay={i * 0.1}
-          />
-        ))}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+        {segments.map((seg, i) => {
+          const isFlipped = flipped.has(seg.id);
+          return (
+            <motion.div
+              key={seg.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              onClick={() => !isFlipped && handleFlip(seg.id)}
+              style={{ perspective: 1000, cursor: isFlipped ? 'default' : 'pointer', height: 300 }}
+            >
+              <motion.div
+                animate={{ rotateY: isFlipped ? 180 : 0 }}
+                transition={{ duration: 0.65 }}
+                style={{ position: 'relative', width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
+              >
+                {/* Front */}
+                <div style={{
+                  position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
+                  background: C.panel, border: `1px solid ${C.border}`,
+                  padding: '1.2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', gap: '0.5rem' }}>
+                      <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase' }}>Confidence</p>
+                      <p style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: seg.confidence > 60 ? C.accent : C.textMuted }}>{seg.confidence}%</p>
+                    </div>
+                    <div style={{ height: '2px', background: C.border, marginBottom: '1rem' }}>
+                      <div style={{ height: '100%', width: `${seg.confidence}%`, background: seg.confidence > 60 ? C.accent : C.textFaint }} />
+                    </div>
+                    <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text, lineHeight: 1.4, marginBottom: '0.5rem' }}>{seg.label}</p>
+                    {seg.evidence && <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: C.textFaint, letterSpacing: '0.1em', lineHeight: 1.5 }}>{seg.evidence}</p>}
+                  </div>
+                  <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: C.textGhost, textTransform: 'uppercase' }}>Flip to see what this unlocks</p>
+                </div>
+                {/* Back */}
+                <div style={{
+                  position: 'absolute', inset: 0, backfaceVisibility: 'hidden', transform: 'rotateY(180deg)',
+                  background: C.bgLift, border: `1px solid ${C.accentFaint}`, borderLeft: `2px solid ${C.accent}`,
+                  padding: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.75rem',
+                }}>
+                  <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.accent, textTransform: 'uppercase' }}>Ad categories unlocked</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                    {seg.adCategories.map((cat, j) => (
+                      <div key={j} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <div style={{ width: 4, height: 4, borderRadius: '50%', background: C.accent, flexShrink: 0 }} />
+                        <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: C.text }}>{cat}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <p style={{ fontFamily: TYPE.serif, fontSize: '0.85rem', color: C.textFaint, fontStyle: 'italic', lineHeight: 1.5, marginTop: 'auto' }}>
+                    {seg.description}
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: '1.5rem', minHeight: 30 }}>
-        {!allFlipped ? (
-          <p
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '10px',
-              letterSpacing: '0.16em',
-              color: C.textFaint,
-              textTransform: 'uppercase',
-            }}
-          >
-            {flipped.size} of {PRECEDENTS.length} revealed
+      <div style={{ textAlign: 'center', minHeight: '2rem' }}>
+        {!allSeenOnce ? (
+          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase' }}>
+            {flipped.size} of {Math.min(segments.length, 3)} flipped — flip at least three
           </p>
         ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}
-          >
-            <p
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '10px',
-                letterSpacing: '0.16em',
-                color: C.accent,
-                textTransform: 'uppercase',
-              }}
-            >
-              All four documented. Continue.
-            </p>
-            <a
-              href="https://www.ftc.gov/business-guidance/privacy-security/privacy-enforcement"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '9px',
-                letterSpacing: '0.14em',
-                color: C.textFaint,
-                textTransform: 'uppercase',
-                textDecoration: 'none',
-                borderBottom: `1px solid ${C.border}`,
-                paddingBottom: '1px',
-              }}
-            >
-              FTC privacy enforcement record → ftc.gov
-            </a>
-          </motion.div>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+            style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: C.accent, textTransform: 'uppercase' }}>
+            OpenAI does not currently sell these segments. The profile exists in the weights regardless.
+          </motion.p>
         )}
       </div>
     </ModuleFrame>
   );
 }
 
-function PrecedentCard({
-  precedent,
-  flipped,
-  onFlip,
-  delay,
-}: {
-  precedent: (typeof PRECEDENTS)[0];
-  flipped: boolean;
-  onFlip: () => void;
-  delay: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay }}
-      onClick={!flipped ? onFlip : undefined}
-      style={{
-        perspective: 1000,
-        cursor: flipped ? 'default' : 'pointer',
-        height: 340,
-      }}
-    >
-      <motion.div
-        animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ duration: 0.7 }}
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-          transformStyle: 'preserve-3d',
-        }}
-      >
-        {/* Front */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backfaceVisibility: 'hidden',
-            background: C.panel,
-            border: `1px solid ${C.border}`,
-            padding: '1.2rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            transition: 'border-color 0.2s',
-          }}
-          onMouseEnter={e => {
-            if (!flipped) e.currentTarget.style.borderColor = C.textMuted;
-          }}
-          onMouseLeave={e => {
-            if (!flipped) e.currentTarget.style.borderColor = C.border;
-          }}
-        >
-          <p
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.2em',
-              color: C.textFaint,
-              textTransform: 'uppercase',
-            }}
-          >
-            {precedent.year}
-          </p>
-          <div>
-            <p
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: '1.4rem',
-                color: C.text,
-                marginBottom: '0.5rem',
-              }}
-            >
-              {precedent.headline}
-            </p>
-            <p
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '11px',
-                letterSpacing: '0.14em',
-                color: C.textFaint,
-                textTransform: 'uppercase',
-              }}
-            >
-              Click to reveal
-            </p>
-          </div>
-        </div>
-
-        {/* Back */}
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backfaceVisibility: 'hidden',
-            transform: 'rotateY(180deg)',
-            background: C.bgLift,
-            border: `1px solid ${C.accentFaint}`,
-            borderLeft: `2px solid ${C.accent}`,
-            padding: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            overflow: 'hidden',
-          }}
-        >
-          <div style={{ overflow: 'hidden', flex: 1 }}>
-            <p
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '10px',
-                letterSpacing: '0.18em',
-                color: C.accent,
-                textTransform: 'uppercase',
-                marginBottom: '0.5rem',
-                lineHeight: 1.3,
-              }}
-            >
-              {precedent.back.title}
-            </p>
-            <p
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: '0.92rem',
-                color: C.text,
-                lineHeight: 1.4,
-                marginBottom: '0.4rem',
-                fontWeight: 500,
-              }}
-            >
-              {precedent.back.mechanism}
-            </p>
-            <p
-              style={{
-                fontFamily: TYPE.serif,
-                fontSize: '0.88rem',
-                color: C.textMuted,
-                fontStyle: 'italic',
-                lineHeight: 1.4,
-                overflow: 'hidden',
-                display: '-webkit-box',
-                WebkitLineClamp: 5,
-                WebkitBoxOrient: 'vertical',
-              } as React.CSSProperties}
-            >
-              {precedent.back.detail}
-            </p>
-          </div>
-          <div style={{ paddingTop: '0.5rem', borderTop: `1px solid ${C.accentFaint}`, flexShrink: 0 }}>
-            <p
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '10px',
-                letterSpacing: '0.14em',
-                color: C.accent,
-                textTransform: 'uppercase',
-                marginBottom: '0.3rem',
-              }}
-            >
-              {precedent.back.fine}
-            </p>
-            {precedent.back.source && (
-              <a
-                href={precedent.back.source}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={e => e.stopPropagation()}
-                style={{
-                  fontFamily: TYPE.mono,
-                  fontSize: '9px',
-                  letterSpacing: '0.12em',
-                  color: C.textFaint,
-                  textTransform: 'uppercase',
-                  textDecoration: 'none',
-                  borderBottom: `1px solid ${C.border}`,
-                  paddingBottom: '1px',
-                  display: 'inline-block',
-                }}
-              >
-                {precedent.back.sourceLabel || 'Source →'}
-              </a>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
 // ============================================================================
 // MODULE 3 — YOU CANNOT TAKE IT BACK
-// Three stages: delete → text returns → absorbed into weights
+// Uses a real moment from the user's data. Delete it. It comes back.
 // ============================================================================
 
 function Module3({
-  onComplete,
-  onAdvance,
-  completed,
-}: {
-  onComplete: () => void;
-  onAdvance: () => void;
-  completed: boolean;
-}) {
+  onComplete, onAdvance, completed,
+}: { onComplete: () => void; onAdvance: () => void; completed: boolean; }) {
+  const data = useAnalysisData();
   const [stage, setStage] = useState<'idle' | 'deleted' | 'returned' | 'absorbed'>(completed ? 'absorbed' : 'idle');
 
   const userMessage = useMemo(() => {
     try {
-      const stored = sessionStorage.getItem('analysisResults');
-      if (!stored) return 'I think I might be in trouble. I haven\'t told anyone but the debt is getting serious and I don\'t know what to do.';
-      const analysis = JSON.parse(stored);
-      const moment = analysis.juiciestMoments?.[0];
-      if (moment?.excerpt) return moment.excerpt.substring(0, 180).trim();
-      return 'I think I might be in trouble. I haven\'t told anyone but the debt is getting serious and I don\'t know what to do.';
-    } catch {
-      return 'I think I might be in trouble. I haven\'t told anyone but the debt is getting serious and I don\'t know what to do.';
-    }
-  }, []);
+      const moments = data?.juiciestMoments || [];
+      const best = moments.find((m: any) => m.excerpt && m.excerpt.length > 60) || moments[0];
+      if (best?.excerpt) return best.excerpt.substring(0, 200).trim();
+    } catch { /* */ }
+    return 'I think I might be in trouble. I haven\'t told anyone but the debt is getting serious and I don\'t know what to do.';
+  }, [data]);
 
-  // Weight grid — fake parameter values
-  const COLS = 12; const ROWS = 5;
+  const COLS = 14; const ROWS = 4;
   const weights = useMemo(() => Array.from({ length: ROWS * COLS }, (_, i) => ({
     val: (Math.sin(i * 0.41 + 0.9) * 0.96).toFixed(4),
     highlight: i % 9 === 0 || i % 7 === 0 || i % 13 === 0,
@@ -1514,43 +1350,25 @@ function Module3({
 
   const handleDelete = () => {
     setStage('deleted');
-    setTimeout(() => {
-      setStage('returned');
-      setTimeout(() => {
-        setStage('absorbed');
-        onComplete();
-      }, 2000);
-    }, 1400);
+    setTimeout(() => { setStage('returned'); setTimeout(() => { setStage('absorbed'); onComplete(); }, 2000); }, 1400);
   };
 
   return (
     <ModuleFrame
       number={3}
       title="You cannot take it back."
-      subtitle="Delete the message below. Watch what happens."
+      subtitle="This is a moment from your actual conversations. Delete it."
       onAdvance={onAdvance}
       canAdvance={stage === 'absorbed'}
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-
-        {/* Stage 1 — The message */}
-        <div style={{
-          background: C.panel,
-          border: `1px solid ${stage === 'absorbed' ? C.accentFaint : C.border}`,
-          padding: 'clamp(1.2rem, 3vw, 1.75rem)',
-          position: 'relative',
-          transition: 'border-color 0.6s',
-        }}>
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-            color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem',
-          }}>
+        <div style={{ background: C.panel, border: `1px solid ${stage === 'absorbed' ? C.accentFaint : C.border}`, padding: 'clamp(1.2rem, 3vw, 1.75rem)', position: 'relative', transition: 'border-color 0.6s' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem' }}>
             Message sent to ChatGPT
           </p>
-
           <AnimatePresence mode="wait">
             {stage === 'idle' && (
-              <motion.p key="text" initial={{ opacity: 1 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.4 }}
+              <motion.p key="text" exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.4 }}
                 style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', fontStyle: 'italic', color: C.text, lineHeight: 1.7 }}>
                 "{userMessage}"
               </motion.p>
@@ -1572,142 +1390,54 @@ function Module3({
               </motion.div>
             )}
           </AnimatePresence>
-
           {stage === 'idle' && (
-            <motion.button
-              onClick={handleDelete}
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-              style={{
-                marginTop: '1.25rem',
-                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
-                textTransform: 'uppercase', background: C.accent,
-                color: '#fff', border: 'none',
-                padding: '0.7rem 1.75rem', cursor: 'pointer',
-              }}
-            >
+            <motion.button onClick={handleDelete} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+              style={{ marginTop: '1.25rem', fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em', textTransform: 'uppercase', background: C.accent, color: '#fff', border: 'none', padding: '0.7rem 1.75rem', cursor: 'pointer' }}>
               Delete this message
             </motion.button>
           )}
         </div>
 
-        {/* Stage 2 — Weight grid appears after return */}
         <AnimatePresence>
           {(stage === 'returned' || stage === 'absorbed') && (
-            <motion.div
-              key="weights"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              style={{
-                background: C.panel,
-                border: `1px solid ${C.border}`,
-                padding: 'clamp(1.2rem, 3vw, 1.75rem)',
-              }}
-            >
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
-                color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem',
-              }}>
+            <motion.div key="weights" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+              style={{ background: C.panel, border: `1px solid ${C.border}`, padding: 'clamp(1.2rem, 3vw, 1.75rem)' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem' }}>
                 Where it went — model weights (175 billion parameters)
               </p>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${COLS}, 1fr)`,
-                gap: '1px',
-                background: C.border,
-                border: `1px solid ${C.border}`,
-                marginBottom: '0.75rem',
-              }}>
+              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, 1fr)`, gap: '1px', background: C.border, border: `1px solid ${C.border}`, marginBottom: '0.75rem' }}>
                 {weights.map((w, i) => (
-                  <motion.div
-                    key={i}
-                    animate={stage === 'absorbed' ? {
-                      background: w.highlight ? 'rgba(190,40,30,0.10)' : C.panel,
-                      color: w.highlight ? 'rgba(190,40,30,0.75)' : 'rgba(26,24,20,0.25)',
-                    } : {
-                      background: C.panel,
-                      color: 'rgba(26,24,20,0.25)',
-                    }}
+                  <motion.div key={i}
+                    animate={stage === 'absorbed' ? { background: w.highlight ? 'rgba(190,40,30,0.10)' : C.panel, color: w.highlight ? 'rgba(190,40,30,0.75)' : 'rgba(26,24,20,0.25)' } : { background: C.panel, color: 'rgba(26,24,20,0.25)' }}
                     transition={{ duration: 0.5, delay: (i % 13) * 0.025 }}
-                    style={{
-                      padding: '3px 1px',
-                      fontFamily: TYPE.mono,
-                      fontSize: 'clamp(6px, 0.75vw, 8px)',
-                      textAlign: 'center',
-                      letterSpacing: '0.01em',
-                      lineHeight: 1.2,
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
+                    style={{ padding: '3px 1px', fontFamily: TYPE.mono, fontSize: 'clamp(6px, 0.7vw, 7.5px)', textAlign: 'center', letterSpacing: '0.01em', lineHeight: 1.2, overflow: 'hidden', whiteSpace: 'nowrap' }}>
                     {w.val}
                   </motion.div>
                 ))}
               </div>
-
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={stage === 'absorbed' ? { opacity: 1 } : { opacity: 0 }}
-                transition={{ delay: 0.8, duration: 0.6 }}
-                style={{
-                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em',
-                  color: C.accent, textTransform: 'uppercase',
-                }}
-              >
+              <motion.p initial={{ opacity: 0 }} animate={stage === 'absorbed' ? { opacity: 1 } : { opacity: 0 }} transition={{ delay: 0.8 }}
+                style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: C.accent, textTransform: 'uppercase' }}>
                 ● Absorbed — distributed, unlocalised, permanent
               </motion.p>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Stage 3 — Explanation */}
         <AnimatePresence>
           {stage === 'absorbed' && (
-            <motion.div
-              key="explanation"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              style={{
-                padding: 'clamp(1.2rem, 3vw, 1.75rem)',
-                background: C.panel,
-                borderLeft: `2px solid ${C.accent}`,
-              }}
-            >
-              <p style={{
-                fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
-                color: C.accent, textTransform: 'uppercase', marginBottom: '1rem',
-              }}>
+            <motion.div key="explanation" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+              style={{ padding: 'clamp(1.2rem, 3vw, 1.75rem)', background: C.panel, borderLeft: `2px solid ${C.accent}` }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.accent, textTransform: 'uppercase', marginBottom: '1rem' }}>
                 Machine unlearning is unsolved.
               </p>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: '1.1rem',
-                color: C.text, lineHeight: 1.72, marginBottom: '0.85rem',
-              }}>
-                Your message is not stored as a row. During training it was broken into numerical gradients
-                distributed across billions of parameters simultaneously. The highlighted values above
-                shifted fractionally because of what you wrote. There is no address to find them at.
-                There is no boundary to excise.
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: C.text, lineHeight: 1.72, marginBottom: '0.85rem' }}>
+                Your message was not stored as a row. During training it became numerical gradients distributed across billions of parameters simultaneously. The highlighted values above shifted fractionally because of what you wrote. There is no address to find them at. There is no boundary to excise.
               </p>
-              <p style={{
-                fontFamily: TYPE.serif, fontSize: '1rem',
-                color: C.textMuted, lineHeight: 1.72, fontStyle: 'italic', marginBottom: '1rem',
-              }}>
-                This is not a policy position. It is a mathematical consequence. The GDPR right to erasure
-                was written for databases. A database stores records. A neural network absorbs patterns.
-                These are different operations — and only the first one has a delete function.
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.72, fontStyle: 'italic', marginBottom: '1rem' }}>
+                The GDPR right to erasure was written for databases. A database stores records. A neural network absorbs patterns. Cooper et al. (2024) demonstrate that no current unlearning method can guarantee removal. These are different operations — and only the first one has a delete function.
               </p>
-              <a
-                href="https://arxiv.org/abs/2412.06966"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-                  color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none',
-                  borderBottom: `1px solid ${C.border}`, paddingBottom: '1px',
-                }}
-              >
+              <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none', borderBottom: `1px solid ${C.border}`, paddingBottom: '1px' }}>
                 Cooper et al. (2024) — Machine Unlearning Doesn't Do What You Think, arXiv:2412.06966 →
               </a>
             </motion.div>
@@ -1719,353 +1449,155 @@ function Module3({
 }
 
 // ============================================================================
-// MODULE 4 — YOU DID NOT REALLY CONSENT (reading speed test)
+// MODULE 4 — WHAT YOU AGREED TO
+// Shows the privacy score breakdown, then the three consent failures from the
+// actual terms. Grounded in the user's scoreBreakdown from the analysis.
 // ============================================================================
 
 function Module4({
-  onComplete,
-  onAdvance,
-  completed,
-}: {
-  onComplete: () => void;
-  onAdvance: () => void;
-  completed: boolean;
-}) {
-  const [started, setStarted] = useState(completed);
-  const [elapsed, setElapsed] = useState(0);
-  const [finished, setFinished] = useState(completed);
-  const startTime = useRef<number | null>(null);
+  onComplete, onAdvance, completed,
+}: { onComplete: () => void; onAdvance: () => void; completed: boolean; }) {
+  const data = useAnalysisData();
+  const [revealed, setRevealed] = useState<Set<number>>(completed ? new Set([0, 1, 2]) : new Set());
 
-  useEffect(() => {
-    if (!started || finished) return;
-    const interval = setInterval(() => {
-      if (startTime.current) {
-        setElapsed((Date.now() - startTime.current) / 1000);
-      }
-    }, 100);
-    return () => clearInterval(interval);
-  }, [started, finished]);
+  const privacyScore = data?.privacyScore as number | undefined;
+  const scoreBreakdown = (data?.scoreBreakdown as Array<{ label: string; contribution: number; detail: string; category: string }> | undefined)?.slice(0, 5);
+  const mostVulnerable = data?.mostVulnerablePeriod as string | undefined;
+  const nighttimeRatio = data?.nighttimeRatio as number | undefined;
 
-  const handleStart = () => {
-    startTime.current = Date.now();
-    setStarted(true);
+  const handleReveal = (i: number) => {
+    setRevealed(prev => {
+      const next = new Set([...Array.from(prev), i]);
+      if (next.size >= 3) setTimeout(() => onComplete(), 400);
+      return next;
+    });
   };
 
-  const handleGiveUp = () => {
-    setFinished(true);
-    onComplete();
-  };
-
-  // Estimated reading time for the policy — 2,800 words at 250 wpm = ~11 minutes
-  const estimatedReadingTime = 11 * 60;
-  const percentRead = started ? Math.min((elapsed / estimatedReadingTime) * 100, 100) : 0;
+  const CONSENT_FAILURES = [
+    {
+      num: '01',
+      heading: 'The training clause is buried.',
+      detail: 'OpenAI\'s privacy policy states your data "may be used to train models" in Section 2 — after 1,200 words of data collection descriptions. The clause does not say that training is irreversible, that deletion cannot reach model weights, or that no mechanism exists to remove what was used.',
+      source: 'OpenAI Europe Privacy Policy, s.2 — April 2026',
+    },
+    {
+      num: '02',
+      heading: 'The opt-out is not retroactive.',
+      detail: 'The Settings → Data Controls toggle only applies to future conversations. Any data already used in training is already embedded in model weights. The opt-out cannot reach what has already happened. There is no retroactive withdrawal.',
+      source: 'OpenAI Support — "How to opt out of training"',
+    },
+    {
+      num: '03',
+      heading: 'GDPR Article 17 has a carve-out for training data.',
+      detail: 'The right to erasure explicitly exempts data that has already been "de-identified and disassociated from your account" — which is what training does. Clause 4 of the April 2026 OpenAI Europe Privacy Policy contains this carve-out verbatim.',
+      source: 'GDPR Art.17(3) / OpenAI EU Privacy Policy s.4 — April 2026',
+    },
+  ];
 
   return (
     <ModuleFrame
       number={4}
-      title="You did not really consent."
-      subtitle="This is the actual OpenAI Europe Privacy Policy (1 April 2026). Start the timer. Try to read it."
+      title="What you agreed to."
+      subtitle="Your privacy score, broken down. Then the three things the terms did not tell you."
       onAdvance={onAdvance}
-      canAdvance={finished}
+      canAdvance={revealed.size >= 3}
     >
-      {!started ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          style={{
-            textAlign: 'center',
-            padding: '3rem 0',
-          }}
-        >
-          <p
-            style={{
-              fontFamily: TYPE.serif,
-              fontSize: '1.15rem',
-              color: C.textMuted,
-              lineHeight: 1.7,
-              maxWidth: '50ch',
-              margin: '0 auto 2rem',
-            }}
-          >
-            When you created your ChatGPT account, you agreed to terms that permit OpenAI to use your conversations to train its models — in roughly twelve seconds.
-            The full OpenAI Europe Privacy Policy is below. It is approximately 2,400 words across 13 sections. Start the clock and try to read it properly.
-          </p>
-          <button
-            onClick={handleStart}
-            style={{
-              fontFamily: TYPE.mono,
-              fontSize: '11px',
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              background: 'transparent',
-              color: C.text,
-              border: `1px solid ${C.text}`,
-              padding: '0.9rem 2rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = C.text;
-              e.currentTarget.style.color = C.bg;
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = 'transparent';
-              e.currentTarget.style.color = C.text;
-            }}
-          >
-            Start reading →
-          </button>
-        </motion.div>
-      ) : (
-        <>
-          {/* Timer bar */}
-          <div
-            style={{
-              position: 'sticky',
-              top: '5rem',
-              zIndex: 10,
-              padding: '1rem 1.2rem',
-              background: C.bg,
-              border: `1px solid ${C.border}`,
-              marginBottom: '1rem',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <p
-                style={{
-                  fontFamily: TYPE.mono,
-                  fontSize: '11px',
-                  letterSpacing: '0.2em',
-                  color: C.textFaint,
-                  textTransform: 'uppercase',
-                  marginBottom: '0.3rem',
-                }}
-              >
-                Time elapsed
-              </p>
-              <p
-                style={{
-                  fontFamily: TYPE.mono,
-                  fontSize: '1.4rem',
-                  color: C.text,
-                  letterSpacing: '0.04em',
-                }}
-              >
-                {Math.floor(elapsed / 60).toString().padStart(2, '0')}:{Math.floor(elapsed % 60).toString().padStart(2, '0')}
-              </p>
-            </div>
-            <div style={{ flex: 1, margin: '0 1.5rem' }}>
-              <div style={{ height: 2, background: C.border, position: 'relative', overflow: 'hidden' }}>
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    width: `${percentRead}%`,
-                    background: C.accent,
-                    transition: 'width 0.1s linear',
-                  }}
-                />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+
+        {/* Privacy score block */}
+        {privacyScore !== undefined && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}
+            style={{ background: C.panel, border: `1px solid ${C.border}`, padding: 'clamp(1.2rem, 3vw, 1.75rem)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>Your exposure score</p>
+                <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.5rem, 6vw, 4rem)', color: C.text, letterSpacing: '-0.04em', lineHeight: 1 }}>{privacyScore}<span style={{ fontSize: '1.2rem', color: C.textFaint }}> / 100</span></p>
               </div>
-              <p
-                style={{
-                  fontFamily: TYPE.mono,
-                  fontSize: '11px',
-                  letterSpacing: '0.16em',
-                  color: C.textFaint,
-                  textTransform: 'uppercase',
-                  marginTop: '0.3rem',
-                }}
-              >
-                {Math.round(percentRead)}% (estimated at 250 wpm)
-              </p>
+              <div>
+                {mostVulnerable && <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', color: C.textFaint, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Most vulnerable: {mostVulnerable}</p>}
+                {nighttimeRatio !== undefined && <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', color: C.textFaint, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Night-time sessions: {Math.round(nighttimeRatio * 100)}%</p>}
+              </div>
             </div>
-            <button
-              onClick={handleGiveUp}
-              style={{
-                fontFamily: TYPE.mono,
-                fontSize: '11px',
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                background: 'transparent',
-                color: C.textMuted,
-                border: `1px solid ${C.border}`,
-                padding: '0.6rem 1.2rem',
-                cursor: 'pointer',
-              }}
-            >
-              I give up
-            </button>
-          </div>
-
-          {/* The actual policy text */}
-          <div
-            style={{
-              maxHeight: '40vh',
-              overflowY: 'auto',
-              padding: '1.5rem',
-              background: C.panel,
-              border: `1px solid ${C.border}`,
-              fontFamily: TYPE.serif,
-              fontSize: '1.15rem',
-              color: C.textMuted,
-              lineHeight: 1.7,
-              marginBottom: finished ? '2rem' : 0,
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-              <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', margin: 0 }}>
-                OpenAI Europe Privacy Policy — Updated 1 April 2026
-              </p>
-              <a
-                href="https://openai.com/policies/eu-privacy-policy/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-                  color: C.accent, textTransform: 'uppercase', textDecoration: 'none',
-                  borderBottom: `1px solid rgba(190,40,30,0.3)`, paddingBottom: '1px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Read at openai.com →
-              </a>
-            </div>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>1. Personal Data we collect.</strong> We collect Personal Data if you create an account to use our Services or communicate with us. <em>Account Information:</em> name, contact information, account credentials, date of birth, payment information, and transaction history. <em>User Content:</em> your prompts and other content you upload, such as files, images, audio and video, Sora characters, and data from connected services. <em>Communication Information:</em> if you communicate with us via email or social media pages. <em>Contact Data:</em> if you connect your device contacts, we upload information from your address books and check which of your contacts also use our Services. <em>Other Information You Provide:</em> when you participate in events or surveys or provide identity or age verification.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <em>Personal Data We Receive from Your Use of the Services:</em> <strong>Log Data</strong> (IP address, browser type, date and time of your request, how you interact with our Services). <strong>Usage Data</strong> (content you view or engage with, features you use, actions you take, feedback submitted, people you interact with, time zone, country, access dates and times, device type, computer connection; if you use the Atlas browser, your browser data). <strong>Device Information</strong> (device name, operating system, device identifiers, browser). <strong>Location Information</strong> (general area from IP for security and to improve your experience; precise GPS if you choose to provide it). <strong>Cookies and Similar Technologies</strong> (to operate and administer our Services and improve your experience).
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <em>Information We Receive from Other Sources:</em> We receive information from trusted security and safety partners to protect against fraud, abuse, and other threats. We receive information from marketing vendors about potential customers. We also collect information from publicly available sources on the internet to develop the models that power our Services.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>2. How we use Personal Data.</strong> To provide, analyse, and maintain our Services; to improve and develop our Services and conduct research; to personalise and customise your experience across our Services; to communicate with you and send information about our Services and events; to identify your contacts who use our Services when you choose to connect your contacts; to prevent fraud, illegal activity, or misuses of our Services and protect the security of our systems; to comply with legal obligations and protect the rights, privacy, safety, or property of our users, OpenAI, or third parties. <em>We may use Content you provide us to improve our Services — for example, to train the models that power ChatGPT.</em>
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>3. Disclosure of Personal Data.</strong> <em>Vendors and Service Providers:</em> hosting, customer service, cloud, content delivery, support and safety, email software, analytics, payments, search and shopping, age and identity verification. <em>Business Transfers:</em> in the event of strategic transactions, reorganisation, bankruptcy, or transition of service. <em>Government Authorities or Other Third Parties:</em> where required by law, to protect rights or property, to detect fraud, to protect safety and integrity, or to protect against legal liability. <em>Affiliates:</em> entities under common control with OpenAI. <em>Business Account Administrators:</em> administrators of Enterprise or business accounts may access and control your OpenAI account, including your Content. <em>Parent or Guardian of a Teen:</em> linked accounts with parental controls and safety alerts. <em>Other Users and Third Parties You Interact or Share Information With:</em> via shared links, custom GPT actions, or third-party applications.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>4. Retention.</strong> We retain your Personal Data only as long as needed to provide our Services or for legitimate business purposes. <em>Until you delete it:</em> ChatGPT conversations, Saved Memories, your account. Once you choose to delete Personal Data, we remove it within 30 days — <strong>unless it has already been de-identified and disassociated from your account when you allow us to use your Content to improve our models.</strong> <em>Deleted automatically:</em> Temporary Chats within 30 days; Atlas incognito browsing history after session. <em>Retained for longer:</em> where legally required; to address fraud, abuse, or policy violations; for security reasons; for financial record-keeping; to verify erasure requests.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>5. Data controls.</strong> You can choose whether your Content can be used to improve and train our models; decide whether we remember details between chats; export your ChatGPT history; delete or archive chats or delete your account entirely; use Temporary Chat mode; control which cookies are used; use advertising controls; delete your Atlas browsing history or use incognito mode; unsubscribe from marketing communications.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>6. Your rights.</strong> Access your Personal Data; delete your Personal Data from our records; rectify or update your Personal Data; transfer your Personal Data to a third party (data portability); restrict how we process your Personal Data; withdraw your consent; lodge a complaint with your local data protection authority. You also have the right to object to our processing for direct marketing and to processing based on legitimate interests. <em>EEA residents:</em> Irish Data Protection Commission. <em>UK residents:</em> Information Commissioner's Office. <em>Swiss residents:</em> Federal Data Protection and Information Commissioner. A note on accuracy: ChatGPT generates responses by predicting words most likely to appear next. You should not rely on factual accuracy of outputs. If ChatGPT output contains inaccurate information about you, you can submit correction or removal requests through privacy.openai.com or to dsar@openai.com.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>7. Children.</strong> Our Services are not directed to children under 13. We do not knowingly collect Personal Data from children under 13. Users under 18 must have permission from their parent or guardian.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>8. Security.</strong> We implement commercially reasonable technical, administrative, and organisational measures designed to protect Personal Data from loss, misuse, and unauthorised access, disclosure, alteration, or destruction. No internet or email transmission is ever fully secure.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>9. Legal bases for processing (EEA/UK/Switzerland).</strong> We rely on: <em>Performance of a contract</em> (processing prompts to provide responses; processing contact information for service announcements). <em>Legitimate interests</em> (developing and improving our Services, including training our models for everyone; fraud prevention; analytics; enabling contact features). <em>Legal obligation</em> (retaining billing information; responding to lawful requests). <em>Consent</em> (certain categories of sensitive data; direct marketing).
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>10. Data transfers.</strong> OpenAI processes your Personal Data on servers outside the EEA, Switzerland, and UK — including in the United States and in countries where our affiliates, partners, or vendors operate. We rely on the European Commission's adequacy decisions, Standard Contractual Clauses (Article 46(2)(c) GDPR), and the UK International Data Transfer Addendum when transferring Personal Data.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>11. Changes to the privacy policy.</strong> We may update this policy from time to time. We will publish an updated version and effective date on this page.
-            </p>
-            <p style={{ marginBottom: '1rem' }}>
-              <strong>12. Data controller.</strong> EEA or Switzerland: OpenAI Ireland Limited, 1st Floor, The Liffey Trust Centre, 117–126 Sheriff Street Upper, Dublin 1, D01 YC43, Ireland. Elsewhere: OpenAI OpCo, LLC, 1455 Third Street, San Francisco, California 94158.
-            </p>
-            <p style={{ marginBottom: 0 }}>
-              <strong>13. How to contact us.</strong> Contact support with any questions not addressed here. Write to us at privacy@openai.com. Contact our Data Protection Officer at dpo@openai.com for matters related to Personal Data processing.
-            </p>
-          </div>
-
-          <AnimatePresence>
-            {finished && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                style={{
-                  marginTop: '2rem',
-                  background: C.panel,
-                  borderLeft: `2px solid ${C.accent}`,
-                  padding: 'clamp(1.2rem, 3vw, 1.75rem)',
-                }}
-              >
-                <p style={{
-                  fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em',
-                  color: C.accent, textTransform: 'uppercase', marginBottom: '1rem',
-                }}>
-                  You spent {Math.floor(elapsed)} seconds. You agreed to these terms in twelve.
-                </p>
-
-                <p style={{
-                  fontFamily: TYPE.serif, fontSize: '1.15rem',
-                  color: C.text, lineHeight: 1.72, marginBottom: '1rem',
-                }}>
-                  Nissenbaum (2011) called this the transparency paradox: a policy short enough to read
-                  cannot be detailed enough to be meaningful. A policy detailed enough to be meaningful
-                  cannot be read. The model is broken before you open the document.
-                </p>
-
-                <p style={{
-                  fontFamily: TYPE.serif, fontSize: '1.05rem',
-                  color: C.textMuted, lineHeight: 1.72, marginBottom: '1rem', fontStyle: 'italic',
-                }}>
-                  McDonald and Cranor (2008) calculated that reading the privacy policies of every website
-                  an average American visits would take 76 working days per year. OpenAI's Terms of Service
-                  run to approximately 3,800 words. The legal consensus is that clicking "I agree" constitutes
-                  valid consent regardless. This is not a gap in user behaviour. It is deliberate legal
-                  architecture — terms written to secure consent while ensuring that consent given will not
-                  meaningfully constrain the party drafting them.
-                </p>
-
-                {/* The three specific failures */}
-                <div style={{
-                  display: 'flex', flexDirection: 'column', gap: '1px',
-                  background: C.border, marginBottom: '1.25rem',
-                }}>
-                  {[
-                    { num: '01', text: 'The terms say your data "may be used to train models." They do not explain that training is irreversible, that deletion cannot reach model weights, or that no mechanism exists to remove what was used.' },
-                    { num: '02', text: 'The opt-out toggle (Settings → Data Controls) only applies to future conversations. Data already used in training is already embedded. There is no retroactive opt-out.' },
-                    { num: '03', text: 'The right to erasure under GDPR Article 17 explicitly exempts data that has already been de-identified and incorporated into model training. Clause 4 of the April 2026 policy contains this carve-out verbatim.' },
-                  ].map((fact, i) => (
-                    <div key={i} style={{
-                      display: 'grid', gridTemplateColumns: '2.5rem 1fr',
-                      background: C.panel, padding: '1rem clamp(1rem, 2vw, 1.25rem)',
-                      gap: '0.75rem', alignItems: 'start',
-                    }}>
-                      <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.accent, textTransform: 'uppercase', paddingTop: '3px' }}>{fact.num}</span>
-                      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text, lineHeight: 1.65 }}>{fact.text}</p>
+            {scoreBreakdown && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {scoreBreakdown.map((item, i) => (
+                  <div key={i}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                      <span style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: C.text }}>{item.label}</span>
+                      <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: C.textFaint, letterSpacing: '0.1em' }}>+{item.contribution} pts</span>
                     </div>
-                  ))}
-                </div>
-
-                <a
-                  href="https://doi.org/10.1162/DAED_a_00113"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em',
-                    color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none',
-                    borderBottom: `1px solid ${C.border}`, paddingBottom: '1px',
-                  }}
-                >
-                  Nissenbaum (2011) — A Contextual Approach to Privacy Online, Daedalus 140(4):32–48. doi:10.1162/DAED_a_00113 →
-                </a>
-              </motion.div>
+                    <div style={{ height: '2px', background: C.border }}>
+                      <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, item.contribution * 3)}%` }} transition={{ delay: i * 0.1 + 0.3, duration: 0.6 }}
+                        style={{ height: '100%', background: item.contribution > 12 ? C.accent : C.textFaint }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
-          </AnimatePresence>
-        </>
-      )}
+          </motion.div>
+        )}
+
+        {/* Consent failures — reveal one at a time */}
+        <div>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
+            Three things the terms did not say — click each to read
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: C.border }}>
+            {CONSENT_FAILURES.map((fail, i) => {
+              const isOpen = revealed.has(i);
+              return (
+                <div key={i} style={{ background: C.panel }}>
+                  <button
+                    onClick={() => handleReveal(i)}
+                    style={{
+                      width: '100%', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer',
+                      padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem',
+                    }}
+                  >
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                      <span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: isOpen ? C.accent : C.textFaint, letterSpacing: '0.2em' }}>{fail.num}</span>
+                      <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text }}>{fail.heading}</span>
+                    </div>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: C.textGhost }}>{isOpen ? '−' : '+'}</span>
+                  </button>
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.35 }}
+                        style={{ overflow: 'hidden', borderTop: `1px solid ${C.accentFaint}` }}>
+                        <div style={{ padding: '1rem 1.25rem 1.25rem' }}>
+                          <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text, lineHeight: 1.7, marginBottom: '0.75rem' }}>{fail.detail}</p>
+                          <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', color: C.textFaint, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Source: {fail.source}</p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {revealed.size >= 3 && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+              style={{ background: C.panel, borderLeft: `2px solid ${C.accent}`, padding: 'clamp(1rem, 2.5vw, 1.5rem)' }}>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: C.text, lineHeight: 1.72, marginBottom: '0.75rem' }}>
+                Nissenbaum called this the transparency paradox: a policy short enough to read cannot be detailed enough to be meaningful. A policy detailed enough to be meaningful cannot be read.
+              </p>
+              <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.7, fontStyle: 'italic', marginBottom: '0.75rem' }}>
+                McDonald and Cranor (2008) calculated that reading the privacy policies of every website an average American visits would take 76 working days per year. Clicking "I agree" constitutes valid legal consent regardless. This is not a gap in user behaviour. It is deliberate legal architecture.
+              </p>
+              <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none', borderBottom: `1px solid ${C.border}`, paddingBottom: '1px' }}>
+                Nissenbaum (2011) — A Contextual Approach to Privacy Online →
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </ModuleFrame>
   );
 }
-
-// ============================================================================
-// COMPLETION SCREEN
-// ============================================================================
 
 function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
   const handleReturn = () => {

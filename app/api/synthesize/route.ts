@@ -56,7 +56,7 @@ interface SynthesizeRequest {
 
 const SYSTEM_PROMPT = `Forensic data analyst. Produce an intelligence briefing from private AI conversation history. British English. Write about "the subject" (third person). Be specific — generic claims are failures. Every claim must trace to the data.
 
-Return ONLY valid JSON, no preamble, no markdown:
+CRITICAL: Return ONLY valid JSON. No preamble, no markdown fences. Never use unescaped double quotes inside string values — use apostrophes instead (e.g. she said 'hello' not she said "hello"). Never use literal newlines inside string values.
 {
   "characterSummary": "100-150 words, single paragraph, forensic tone, opens with who this person is right now, closes with a permanence/irreversibility note",
   "demographicPredictions": [{"attribute":"string","value":"string","confidence":0-100,"evidence":"string"}],

@@ -243,28 +243,39 @@ export async function runSynthesis(
 
     console.log('Synthesis fullText length:', fullText.length, 'cleaned preview:', cleaned.substring(0, 100));
 
+    // Sanitise: fix common issues — unescaped newlines/quotes inside string values
+    // and truncation. Use a lenient approach: extract field by field if full parse fails.
     let parsed: any;
     try {
       parsed = JSON.parse(cleaned);
-    } catch (e) {
-      // Try to recover truncated JSON by finding the last complete top-level field
-      // and closing the object. Sonnet sometimes gets cut off mid-string.
-      let recovered = cleaned;
-      // Remove incomplete last property: trim to last comma or last complete string
-      const lastComma = recovered.lastIndexOf(',\n');
-      const lastBrace = recovered.lastIndexOf('}');
-      if (lastComma > lastBrace) {
-        // Truncated inside a property — trim to last complete one and close
-        recovered = recovered.substring(0, lastComma) + '\n}';
-      } else if (!recovered.endsWith('}')) {
-        recovered = recovered + '}';
-      }
+    } catch {
+      // Try sanitising unescaped control characters inside strings
+      const sanitised = cleaned
+        .replace(/[\u0000-\u001F\u007F]/g, (c) => {
+          if (c === '\n') return '\\n';
+          if (c === '\r') return '\\r';
+          if (c === '\t') return '\\t';
+          return '';
+        });
       try {
-        parsed = JSON.parse(recovered);
-        console.log('Synthesis recovered from truncated JSON');
-      } catch (e2) {
-        console.error('Synthesis parse failed even after recovery:', (e as any).message);
-        return null;
+        parsed = JSON.parse(sanitised);
+        console.log('Synthesis recovered after sanitising control chars');
+      } catch {
+        // Last resort: trim to last complete top-level field
+        const lastComma = sanitised.lastIndexOf(',\n  "');
+        if (lastComma > 0) {
+          const trimmed = sanitised.substring(0, lastComma) + '\n}';
+          try {
+            parsed = JSON.parse(trimmed);
+            console.log('Synthesis recovered by trimming to last complete field');
+          } catch {
+            console.error('Synthesis parse failed after all recovery attempts');
+            return null;
+          }
+        } else {
+          console.error('Synthesis parse failed, could not recover');
+          return null;
+        }
       }
     }
 

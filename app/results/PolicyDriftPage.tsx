@@ -178,8 +178,8 @@ function ConsentMoment({ isInView }: { isInView: boolean }) {
         overflow: 'hidden',
       }}
     >
-      {/* Corner stamp */}
-      <div style={{
+      {/* Corner stamp — hidden on mobile to prevent overflow */}
+      <div className="deco-svg" style={{
         position: 'absolute', top: '1.2rem', right: '1.4rem',
         fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em',
         color: PALETTE.inkGhost, textTransform: 'uppercase',

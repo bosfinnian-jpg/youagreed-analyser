@@ -911,6 +911,7 @@ function ModuleFrame({
           marginTop: 'clamp(2rem, 4vw, 3rem)',
           display: 'flex',
           justifyContent: 'flex-end',
+          width: '100%',
         }}
       >
         <motion.button
@@ -928,6 +929,10 @@ function ModuleFrame({
             padding: '0.9rem 2rem',
             cursor: canAdvance ? 'pointer' : 'not-allowed',
             transition: 'all 0.2s',
+            whiteSpace: 'normal',
+            textAlign: 'center',
+            lineHeight: 1.5,
+            maxWidth: '100%',
           }}
         >
           {canAdvance ? advanceLabel || 'Continue →' : 'Complete the module above to continue'}

@@ -694,7 +694,7 @@ function InferenceChapter({ inferences, onActive }: {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(160px, 100%), 1fr))',
           gap: 'clamp(0.6rem, 1.5vw, 1rem)',
           marginBottom: 'clamp(1rem,2vw,1.5rem)',
         }}>

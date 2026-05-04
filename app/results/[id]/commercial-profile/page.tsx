@@ -254,7 +254,7 @@ export default function CommercialProfilePage({ results, setPage }: {
 
             <div style={{ height: '1px', background: PALETTE.border, marginBottom: '1rem' }} />
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(130px, 100%), 1fr))', gap: '0.8rem' }}>
               {[
                 { l: 'Data points', v: totalMsgs.toLocaleString('en-GB') },
                 { l: 'Quality', v: results.privacyScore >= 70 ? 'Premium' : results.privacyScore >= 40 ? 'Standard' : 'Sparse' },

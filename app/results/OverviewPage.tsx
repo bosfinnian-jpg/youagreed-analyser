@@ -310,7 +310,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
           marginBottom: 'clamp(1.5rem,5vw,2.5rem)',
         }}
       >
-        The Record<br/>of {name ? <span style={{ color: PALETTE.red }}>{name}</span> : 'You'}.
+        The Record<br/>of You.
       </motion.h1>
 
       <motion.p

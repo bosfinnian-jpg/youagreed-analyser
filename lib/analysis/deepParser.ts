@@ -833,8 +833,9 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     /\b([A-Z][a-z]{2,14})[,\s]+(?:is|was)\s+my\s+(?:girlfriend|boyfriend|partner|wife|husband|ex|friend|boss|colleague|therapist)/g,
   ];
   const INTRO_PATTERNS_WEAK = [
-    /\b(?:texted|messaged|called|rang|met|saw|told|asked)\s+([A-Z][a-z]{2,14})\b/g,
-    /\b([A-Z][a-z]{2,14})\s+(?:said|told me|thinks|asked|texted|messaged|called|rang|keeps)\b/g,
+    /\b(?:texted|messaged|called|rang|met|saw|told|asked|spoke to|talked to|with|about)\s+([A-Z][a-z]{2,14})\b/g,
+    /\b([A-Z][a-z]{2,14})\s+(?:said|told me|thinks|asked|texted|messaged|called|rang|keeps|doesn't|isn't|wants|needs|thinks|feels|knows)\b/g,
+    /\b([A-Z][a-z]{2,14})'s\s+(?:place|house|flat|car|job|mum|dad|sister|brother|friend|partner|ex|phone|number|account|profile)\b/g,
   ];
 
   const candidateNames = new Map<string, { mentions: number; relationshipMentions: number; contexts: string[] }>();
@@ -878,9 +879,9 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     }
   }
 
-  // Promote weak candidates appearing 5+ times
+  // Promote weak candidates appearing 3+ times
   for (const [name, count] of weakCandidates.entries()) {
-    if (count >= 5 && !HARD_STOP_NAMES.has(name)) {
+    if (count >= 3 && !HARD_STOP_NAMES.has(name)) {
       const contexts = messages.filter(m => m.text.includes(name)).slice(0, 2).map(m => m.text.substring(0, 180));
       candidateNames.set(name, { mentions: count, relationshipMentions: 0, contexts });
     }
@@ -1266,7 +1267,7 @@ export function computeScoreFactors(
     (totalMsgs > 4000 ? 2 : 0) +
     Math.min(7, intimacyWeightedVolume)
   );
-  if (volumeScore > 2) {
+  if (volumeScore > 0) {
     factors.push({
       label: 'Volume × intimacy',
       contribution: volumeScore,
@@ -1290,14 +1291,16 @@ function computePrivacyScore(
   avgIntimacy: number,
 ): number {
   const factors = computeScoreFactors(messages, lifeEvents, commercial, dependency, nighttimeRatio, typeBreakdown, avgAnxiety, avgIntimacy);
-  // Express as percentage of total possible maximum across all factor categories
-  // This prevents the score from always saturating at 100 for any substantial export
-  const TOTAL_MAX = 40 + 15 + 20 + 10 + 12 + 8 + 12 + 8 + 25 + 15; // = 165
   const raw = factors.reduce((s, f) => s + f.contribution, 0);
-  // Apply a gentle compression curve so mid-range users score in the 40–70 band
-  // rather than clustering near 100. Sqrt curve, then scale to 0–100.
-  const normalised = raw / TOTAL_MAX;        // 0–1
-  const compressed = Math.sqrt(normalised);  // sqrt curve — spreads the distribution
+
+  // TOTAL_MAX is the realistic upper bound for a heavy user with multiple life events.
+  // 165 is the theoretical ceiling across all factors simultaneously — unachievable in practice.
+  // Using 100 as the practical ceiling means scores spread across the full 0–100 range
+  // rather than clustering in the 20–50 band. The sqrt curve still provides compression
+  // so low-disclosure users score proportionally lower.
+  const TOTAL_MAX = 100;
+  const normalised = Math.min(1, raw / TOTAL_MAX);
+  const compressed = Math.sqrt(normalised);
   return Math.round(Math.min(100, Math.max(1, compressed * 100)));
 }
 

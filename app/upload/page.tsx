@@ -476,71 +476,32 @@ export default function UploadPage() {
                 </h2>
 
 
-                {/* Progress — segmented stage track */}
-                {(() => {
-                  const STAGES = [
-                    { key: 'read',       label: 'Read',       threshold: 10  },
-                    { key: 'parse',      label: 'Parse',      threshold: 25  },
-                    { key: 'enrich',     label: 'Enrich',     threshold: 88  },
-                    { key: 'synthesise', label: 'Synthesise', threshold: 96  },
-                    { key: 'complete',   label: 'Complete',   threshold: 100 },
-                  ];
-                  const activeIdx = STAGES.findLastIndex(s => progress >= s.threshold - (s.threshold - (STAGES[STAGES.indexOf(s) - 1]?.threshold ?? 0)) * 0.9) ?? 0;
-                  return (
-                    <div style={{ marginBottom: '2.5rem' }}>
-                      {/* Stage labels */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-                        {STAGES.map((s, i) => {
-                          const done = progress >= s.threshold;
-                          const active = !done && progress >= (STAGES[i - 1]?.threshold ?? 0);
-                          return (
-                            <span key={s.key} style={{
-                              fontFamily: MONO, fontSize: '9px', letterSpacing: '0.18em',
-                              textTransform: 'uppercase',
-                              color: done ? COLOR.ink : active ? COLOR.accent : COLOR.inkFaint,
-                              transition: 'color 0.4s',
-                            }}>
-                              {s.label}
-                            </span>
-                          );
-                        })}
-                      </div>
-                      {/* Track */}
-                      <div style={{ position: 'relative', height: '2px', background: COLOR.inkTrace }}>
-                        <motion.div
-                          animate={{ width: `${progress}%` }}
-                          transition={{ duration: 0.5, ease: EASE }}
-                          style={{
-                            position: 'absolute', top: 0, left: 0,
-                            height: '100%', background: COLOR.accent,
-                          }}
-                        />
-                        {/* Stage tick marks */}
-                        {STAGES.slice(0, -1).map(s => (
-                          <div key={s.key} style={{
-                            position: 'absolute', top: '-3px',
-                            left: `${s.threshold}%`,
-                            width: '1px', height: '8px',
-                            background: progress >= s.threshold ? COLOR.accent : COLOR.inkTrace,
-                            transition: 'background 0.4s',
-                          }} />
-                        ))}
-                      </div>
-                      {/* Percent */}
-                      <div style={{
-                        display: 'flex', justifyContent: 'space-between',
-                        marginTop: '0.5rem',
-                      }}>
-                        <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.12em', color: COLOR.inkFaint }}>
-                          {detail || '\u00A0'}
-                        </span>
-                        <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.12em', color: COLOR.accent }}>
-                          {progress}%
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })()}
+                {/* Progress — clean single bar */}
+                <div style={{ marginBottom: '2.5rem' }}>
+                  {/* Track */}
+                  <div style={{ position: 'relative', height: '1px', background: COLOR.inkTrace }}>
+                    <motion.div
+                      animate={{ width: `${progress}%` }}
+                      transition={{ duration: 0.5, ease: EASE }}
+                      style={{
+                        position: 'absolute', top: 0, left: 0,
+                        height: '100%', background: COLOR.accent,
+                      }}
+                    />
+                  </div>
+                  {/* Detail + percent */}
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    marginTop: '0.5rem',
+                  }}>
+                    <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.12em', color: COLOR.inkFaint }}>
+                      {detail || '\u00A0'}
+                    </span>
+                    <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.12em', color: COLOR.accent }}>
+                      {progress}%
+                    </span>
+                  </div>
+                </div>
 
                 <div style={{
                   marginTop: '4.5rem',

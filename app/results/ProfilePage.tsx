@@ -922,7 +922,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           transition={{ delay: 0.15, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(2.2rem, 5vw, 3.4rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.03em', lineHeight: 1.08, marginBottom: '1.5rem', maxWidth: '18ch' }}
         >
-          You did not fill in a form. These attributes were inferred from language patterns in your writing.
+          You did not fill in a form. These attributes were inferred from your writing.
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}

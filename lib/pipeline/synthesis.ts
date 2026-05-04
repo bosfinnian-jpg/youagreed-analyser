@@ -214,23 +214,27 @@ export async function runSynthesis(
 
     const decoder = new TextDecoder();
     let fullText = '';
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      const chunk = decoder.decode(value, { stream: true });
-      // Parse SSE lines — each starts with "data: "
-      for (const line of chunk.split('\n')) {
+      buffer += decoder.decode(value, { stream: true });
+
+      // Process complete lines only — keep incomplete line in buffer
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? ''; // last element may be incomplete
+
+      for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         const data = line.slice(6).trim();
-        if (data === '[DONE]') break;
+        if (data === '[DONE]') continue;
         try {
           const event = JSON.parse(data);
-          // Anthropic streaming: content_block_delta events contain the text
           if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
             fullText += event.delta.text;
           }
-        } catch { /* skip malformed lines */ }
+        } catch { /* skip malformed SSE lines */ }
       }
     }
 

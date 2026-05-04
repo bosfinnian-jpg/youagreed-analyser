@@ -279,7 +279,7 @@ export default function CommercialProfilePage({ results, setPage }: {
           }}
         >
           <Src href="https://openai.com/policies/privacy-policy/">OpenAI</Src> does not sell your data to advertisers — but your conversations
-          helped train a model <Src href="https://www.ft.com/content/81ac4f0b-3d9f-4699-9a82-f5a22a49e9f3">now valued at over $300 billion</Src>. That
+          helped train a model <Src href="https://fortune.com/2025/04/01/openai-finalizes-40-billion-funding-at-300-billion-value/">now valued at over $300 billion</Src>. That
           contribution is not easily undone. What follows is the
           commercial shape of what you gave away.
         </motion.p>

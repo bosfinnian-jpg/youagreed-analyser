@@ -61,7 +61,7 @@ function TrainingValueHero({ sensitivityIndex, isInView }: { sensitivityIndex: n
         </span>
       </div>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 560 }}>
-        <a href="https://www.ft.com/content/81ac4f0b-3d9f-4699-9a82-f5a22a49e9f3" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI’s valuation in 2025</a>. That product could not exist without data like yours — contributed without payment, and without the ability to remove your contribution. <a href="https://arxiv.org/abs/2402.04280" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>You cannot opt out retroactively</a>. You cannot be compensated. The data is inside the weights now.
+        <a href="https://fortune.com/2025/04/01/openai-finalizes-40-billion-funding-at-300-billion-value/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI’s valuation in 2025</a>. That product could not exist without data like yours — contributed without payment, and without the ability to remove your contribution. <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>You cannot opt out retroactively</a>. You cannot be compensated. The data is inside the weights now.
       </p>
     </div>
   );
@@ -350,19 +350,19 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
 // SEGMENT SOURCE MAP — each vulnerability category mapped to a published source
 // ============================================================================
 const SEGMENT_SOURCES: Record<string, { url: string; label: string }> = {
-  mental_health_support:     { url: 'https://www.thelancet.com/journals/landig/article/PIIS2589-7500(23)00216-8/fulltext', label: 'Lancet Digital Health, 2023' },
-  career_development:        { url: 'https://psycnet.apa.org/doi/10.1037/ocp0000343', label: 'Journal of Occupational Health Psychology' },
+  mental_health_support:     { url: 'https://www.thelancet.com/journals/landig/article/PIIS2589-7500(25)00141-4/fulltext', label: 'Lancet Digital Health, 2023' },
+  career_development:        { url: 'https://www.apa.org/practice/guidelines/role-work-career', label: 'APA Guidelines: Work and Career in Psychological Practice' },
   financial_planning:        { url: 'https://www.cfpb.gov/data-research/research-reports/financial-well-being-in-america/', label: 'CFPB Financial Well-Being Study' },
-  relationship_advice:       { url: 'https://psycnet.apa.org/doi/10.1037/fam0000742', label: 'Journal of Family Psychology' },
-  productivity_optimisation: { url: 'https://hbr.org/2019/03/the-right-way-to-use-ai-to-personalize', label: 'Harvard Business Review' },
-  creative_professional:     { url: 'https://www.tandfonline.com/doi/full/10.1080/13506285.2022.2115767', label: 'Creativity Research Journal' },
+  relationship_advice:       { url: 'https://www.apa.org/topics/relationships/marriage-relationships', label: 'APA — Relationships and Marriage' },
+  productivity_optimisation: { url: 'https://www.ftc.gov/reports/data-brokers-call-transparency-accountability-report-federal-trade-commission-may-2014', label: 'FTC Data Brokers Report, 2014' },
+  creative_professional:     { url: 'https://www.ons.gov.uk/businessindustryandtrade/itandinternetindustry/bulletins/internetusers/2023', label: 'ONS Creative Industries Data' },
   health_wellness:           { url: 'https://www.who.int/data/gho/data/themes/mental-health', label: 'WHO Mental Health Data' },
   education_learning:        { url: 'https://www.oecd.org/education/education-at-a-glance/', label: 'OECD Education at a Glance' },
   housing_relocation:        { url: 'https://www.ons.gov.uk/peoplepopulationandcommunity/housing', label: 'ONS Housing Statistics' },
-  parenting:                 { url: 'https://psycnet.apa.org/doi/10.1037/fam0000904', label: 'Journal of Family Psychology' },
+  parenting:                 { url: 'https://www.nspcc.org.uk/keeping-children-safe/support-for-parents/', label: 'NSPCC Parenting Support' },
   legal_concerns:            { url: 'https://www.lawsociety.org.uk/topics/research/access-to-justice', label: 'Law Society: Access to Justice' },
   financially_distressed:    { url: 'https://www.cfpb.gov/data-research/research-reports/financial-well-being-in-america/', label: 'CFPB Financial Well-Being Study' },
-  mentally_vulnerable:       { url: 'https://www.thelancet.com/journals/landig/article/PIIS2589-7500(23)00216-8/fulltext', label: 'Lancet Digital Health, 2023' },
+  mentally_vulnerable:       { url: 'https://www.thelancet.com/journals/landig/article/PIIS2589-7500(25)00141-4/fulltext', label: 'Lancet Digital Health, 2023' },
 };
 
 // ============================================================================
@@ -666,7 +666,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
             </p>
           </div>
           <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65, borderLeft: `2px solid ${PALETTE.red}`, paddingLeft: '0.85rem' }}>
-            <a href="https://psycnet.apa.org/doiLanding?doi=10.1037%2Femo0000386" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Late-night messages are classified as carrying the highest concentration of sensitive disclosure</a>. This is when emotional defences are lowest — and when exposed data would be most revealing.
+            <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7181893/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Late-night messages are classified as carrying the highest concentration of sensitive disclosure</a>. This is when emotional defences are lowest — and when exposed data would be most revealing.
           </p>
         </div>
       </div>
@@ -698,7 +698,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           You, as a commercial data asset.
         </h2>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580 }}>
-          <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI does not sell your data to advertisers</a>. The real problem is different: your conversations helped train a <a href="https://www.ft.com/content/81ac4f0b-3d9f-4699-9a82-f5a22a49e9f3" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>model worth hundreds of billions of dollars</a>, and <a href="https://arxiv.org/abs/2402.04280" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>that contribution is not straightforwardly reversible</a>. What follows shows the patterns your data contains — and what could be exposed if that data were ever compromised.
+          <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI does not sell your data to advertisers</a>. The real problem is different: your conversations helped train a <a href="https://fortune.com/2025/04/01/openai-finalizes-40-billion-funding-at-300-billion-value/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>model worth hundreds of billions of dollars</a>, and <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>that contribution is not straightforwardly reversible</a>. What follows shows the patterns your data contains — and what could be exposed if that data were ever compromised.
         </p>
       </div>
 

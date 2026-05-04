@@ -164,6 +164,7 @@ function storeAnalysis(analysis: DeepAnalysis): void {
   };
 
   try {
+    console.log('storeAnalysis: synthesis present?', !!(storableAnalysis as any).synthesis);
     sessionStorage.setItem('analysisResults', JSON.stringify(storableAnalysis));
   } catch (err) {
     console.error('Failed to store analysis in sessionStorage:', err);

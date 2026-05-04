@@ -10,77 +10,123 @@ import { PALETTE, TYPE } from './DashboardLayout';
 // The last thing the user reads. Simple. Still. Heavy.
 // ============================================================================
 
-const PARAGRAPHS = [
+const SECTIONS = [
   {
-    body: `Trace.ai is a critical reconstruction, not a forensic simulation. It compresses and amplifies — by design.`,
-    isLead: true,
-  },
-  {
+    id: 'compression',
+    label: 'Compression',
+    lead: `Trace.ai is a critical reconstruction, not a forensic simulation. It compresses and amplifies — by design.`,
     body: `The system condenses several distinct technical processes: data transmission, storage, statistical training, inference, and downstream commercial use. These processes are temporally separated, architecturally distinct, and distributed across different institutional actors. Trace.ai presents them as a single, continuous extraction. This compression is a deliberate design strategy, not a technical error.`,
-    isLead: false,
   },
   {
+    id: 'amplification',
+    label: 'Amplification',
+    lead: null,
     body: `The project amplifies irreversibility. In reality, machine learning systems are statistical and distributed; they do not store identifiable personal data as a discrete, localisable object. No model contains you in any literal sense. What the system does contain is influence — diffuse, non-traceable, structurally non-withdrawable. Trace.ai may overstate the permanence of identifiable data. It accurately reflects the loss of user control, traceability, and the practical impossibility of meaningful withdrawal.`,
-    isLead: false,
   },
   {
+    id: 'translation',
+    label: 'Translation',
+    lead: null,
     body: `The technical reality of modern AI training is not intuitively legible. Gradient descent, weight distributions, and approximate unlearning are not experientially accessible concepts. This project translates them into a form that is — prioritising experiential legibility over technical fidelity. The psychological profiles produced here are plausible reconstructions, not accurate records. They are demonstrations of what inference can do, and of how system authority makes that inference feel inevitable and exposing.`,
-    isLead: false,
   },
   {
-    body: `The underlying argument is precise: contemporary consent frameworks are structurally misaligned with AI systems. User input becomes distributed statistical influence that cannot be meaningfully traced, understood, or fully withdrawn. The mechanisms designed to protect that process — notice, consent, erasure — were built for a different kind of data entirely.`,
-    isLead: false,
-  },
-  {
-    body: `What matters is not whether this system is literally accurate. What matters is that it reveals something true about how people experience data systems they cannot see, cannot understand, and cannot leave.`,
-    isLead: true,
-    isFinal: true,
+    id: 'argument',
+    label: 'The Argument',
+    lead: `The underlying argument is precise.`,
+    body: `Contemporary consent frameworks are structurally misaligned with AI systems. User input becomes distributed statistical influence that cannot be meaningfully traced, understood, or fully withdrawn. The mechanisms designed to protect that process — notice, consent, erasure — were built for a different kind of data entirely.`,
   },
 ];
 
-function FadeParagraph({ text, delay, isLead, isFinal }: {
-  text: string; delay: number; isLead?: boolean; isFinal?: boolean;
+const CLOSING = `What matters is not whether this system is literally accurate. What matters is that it reveals something true about how people experience data systems they cannot see, cannot understand, and cannot leave.`;
+
+function SectionBlock({ section, index }: {
+  section: typeof SECTIONS[number];
+  index: number;
 }) {
-  const ref = useRef<HTMLParagraphElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-40px' });
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-60px' });
 
   return (
-    <motion.p
+    <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.75, delay }}
+      transition={{ duration: 0.75, delay: index * 0.06 }}
       style={{
-        fontFamily: TYPE.serif,
-        fontSize: isFinal
-          ? 'clamp(1.2rem, 2.2vw, 1.5rem)'
-          : isLead
-          ? 'clamp(1.1rem, 2vw, 1.35rem)'
-          : 'clamp(1rem, 1.7vw, 1.15rem)',
-        color: isFinal ? PALETTE.ink : isLead ? PALETTE.ink : PALETTE.inkMuted,
-        lineHeight: 1.85,
-        letterSpacing: isFinal ? '-0.01em' : 'normal',
-        fontStyle: isFinal ? 'italic' : 'normal',
-        maxWidth: isFinal ? '46ch' : '58ch',
-        borderLeft: isFinal ? `2px solid ${PALETTE.red}` : 'none',
-        paddingLeft: isFinal ? 'clamp(1.25rem, 3vw, 2rem)' : 0,
+        display: 'grid',
+        gridTemplateColumns: 'clamp(80px, 14vw, 140px) 1fr',
+        gap: 'clamp(1.5rem, 3vw, 3rem)',
+        paddingTop: 'clamp(2rem, 4vw, 3rem)',
+        paddingBottom: 'clamp(2rem, 4vw, 3rem)',
+        borderTop: `1px solid ${PALETTE.border}`,
+        alignItems: 'start',
       }}
     >
-      {text}
-    </motion.p>
+      {/* Left: label column */}
+      <div style={{ paddingTop: '0.2rem' }}>
+        <span style={{
+          display: 'block',
+          fontFamily: TYPE.mono,
+          fontSize: '9px',
+          letterSpacing: '0.28em',
+          color: PALETTE.redMuted,
+          textTransform: 'uppercase',
+          marginBottom: '0.4rem',
+        }}>
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <span style={{
+          display: 'block',
+          fontFamily: TYPE.mono,
+          fontSize: '9px',
+          letterSpacing: '0.18em',
+          color: PALETTE.inkFaint,
+          textTransform: 'uppercase',
+        }}>
+          {section.label}
+        </span>
+      </div>
+
+      {/* Right: content */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {section.lead && (
+          <p style={{
+            fontFamily: TYPE.serif,
+            fontSize: 'clamp(1.1rem, 1.9vw, 1.3rem)',
+            color: PALETTE.ink,
+            lineHeight: 1.65,
+            letterSpacing: '-0.01em',
+            margin: 0,
+          }}>
+            {section.lead}
+          </p>
+        )}
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(0.95rem, 1.6vw, 1.1rem)',
+          color: PALETTE.inkMuted,
+          lineHeight: 1.85,
+          margin: 0,
+        }}>
+          {section.body}
+        </p>
+      </div>
+    </motion.div>
   );
 }
 
 export default function MethodPage({ setPage }: { setPage: (p: string) => void }) {
   const heroRef = useRef(null);
-  const isInView = useInView(heroRef, { once: true });
-  const pad = 'clamp(2rem, 6vw, 5rem)';
+  const closingRef = useRef<HTMLDivElement>(null);
+  const isHeroInView = useInView(heroRef, { once: true });
+  const isClosingInView = useInView(closingRef, { once: true, margin: '-60px' });
+  const pad = 'clamp(1.5rem, 6vw, 5rem)';
 
   return (
     <div
       className="dash-page-inner"
       style={{
-        maxWidth: 860,
+        maxWidth: 1000,
         margin: '0 auto',
         padding: `0 ${pad}`,
         paddingBottom: 'clamp(6rem, 14vw, 12rem)',
@@ -94,20 +140,19 @@ export default function MethodPage({ setPage }: { setPage: (p: string) => void }
         transition={{ duration: 1 }}
         style={{
           padding: 'clamp(4rem, 10vw, 8rem) 0 clamp(3rem, 7vw, 6rem)',
-          borderBottom: `1px solid ${PALETTE.border}`,
-          marginBottom: 'clamp(4rem, 8vw, 7rem)',
+          marginBottom: 'clamp(1rem, 3vw, 2rem)',
         }}
       >
         {/* Act label */}
         <motion.p
           initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
+          animate={isHeroInView ? { opacity: 1 } : {}}
           transition={{ delay: 0.1, duration: 0.5 }}
           style={{
             fontFamily: TYPE.mono,
             fontSize: '10px',
             letterSpacing: '0.3em',
-            color: PALETTE.inkFaint,
+            color: PALETTE.redMuted,
             textTransform: 'uppercase',
             marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
           }}
@@ -115,48 +160,100 @@ export default function MethodPage({ setPage }: { setPage: (p: string) => void }
           Act V · After · A note on method
         </motion.p>
 
-        {/* Title */}
-        <motion.h1
-          initial={{ opacity: 0, y: 12 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.2, duration: 0.8 }}
-          style={{
-            fontFamily: TYPE.serif,
-            fontSize: 'clamp(2.8rem, 8vw, 5.5rem)',
-            fontWeight: 400,
-            color: PALETTE.ink,
-            letterSpacing: '-0.04em',
-            lineHeight: 0.97,
-            marginBottom: 'clamp(2rem, 4vw, 3rem)',
-            maxWidth: '16ch',
-          }}
-        >
-          A Note<br />on Method.
-        </motion.h1>
+        {/* Title + subtitle row */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr clamp(200px, 35%, 380px)',
+          gap: 'clamp(2rem, 5vw, 4rem)',
+          alignItems: 'end',
+        }}>
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
+            animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(3rem, 9vw, 6rem)',
+              fontWeight: 400,
+              color: PALETTE.ink,
+              letterSpacing: '-0.04em',
+              lineHeight: 0.95,
+              margin: 0,
+            }}
+          >
+            A Note<br />on Method.
+          </motion.h1>
 
-        {/* Thin rule */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={isHeroInView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            style={{
+              fontFamily: TYPE.serif,
+              fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
+              color: PALETTE.inkMuted,
+              lineHeight: 1.75,
+              margin: 0,
+              paddingBottom: '0.4rem',
+            }}
+          >
+            This is a work of critical design. What follows is an account of how
+            it operates, where it departs from technical reality, and why those
+            departures are intentional.
+          </motion.p>
+        </div>
+
+        {/* Red accent rule */}
         <motion.div
-          initial={{ scaleX: 0, originX: 0 }}
-          animate={isInView ? { scaleX: 1 } : {}}
-          transition={{ delay: 0.6, duration: 0.8 }}
-          style={{ height: '1px', background: PALETTE.border, maxWidth: 320 }}
+          initial={{ scaleX: 0 }}
+          animate={isHeroInView ? { scaleX: 1 } : {}}
+          transition={{ delay: 0.7, duration: 0.9, ease: [0.25, 0.1, 0.25, 1] }}
+          style={{
+            height: '2px',
+            background: PALETTE.red,
+            width: 'clamp(3rem, 8vw, 6rem)',
+            marginTop: 'clamp(2rem, 4vw, 3.5rem)',
+            transformOrigin: 'left center',
+          }}
         />
       </motion.div>
 
-      {/* Body paragraphs */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(1.75rem, 3.5vw, 2.5rem)' }}>
-        {PARAGRAPHS.map((p, i) => (
-          <FadeParagraph
-            key={i}
-            text={p.body}
-            delay={i * 0.05}
-            isLead={p.isLead}
-            isFinal={p.isFinal}
-          />
+      {/* Sections */}
+      <div>
+        {SECTIONS.map((section, i) => (
+          <SectionBlock key={section.id} section={section} index={i} />
         ))}
       </div>
 
-      {/* Footer — minimal, no nav. This is the end. */}
+      {/* Closing statement */}
+      <motion.div
+        ref={closingRef}
+        initial={{ opacity: 0, y: 12 }}
+        animate={isClosingInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.9 }}
+        style={{
+          marginTop: 'clamp(3rem, 7vw, 6rem)',
+          paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
+          paddingLeft: 'clamp(1.5rem, 4vw, 3rem)',
+          borderTop: `1px solid ${PALETTE.border}`,
+          borderLeft: `3px solid ${PALETTE.red}`,
+        }}
+      >
+        <p style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(1.2rem, 2.2vw, 1.55rem)',
+          color: PALETTE.ink,
+          lineHeight: 1.6,
+          letterSpacing: '-0.015em',
+          fontStyle: 'italic',
+          maxWidth: '52ch',
+          margin: 0,
+        }}>
+          {CLOSING}
+        </p>
+      </motion.div>
+
+      {/* Footer */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -174,7 +271,7 @@ export default function MethodPage({ setPage }: { setPage: (p: string) => void }
         }}
       >
         <div>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+          <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.4rem' }}>
             Finnian Bos
           </p>
           <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
@@ -205,3 +302,4 @@ export default function MethodPage({ setPage }: { setPage: (p: string) => void }
     </div>
   );
 }
+

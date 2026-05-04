@@ -692,9 +692,9 @@ function BreachTimeline() {
   const maxR = Math.max(...BREACHES.map(b => b.records));
   const minYear = 2021; const maxYear = 2025;
   const PAD_X = 24;
-  const BASELINE_Y = 200;
+  const BASELINE_Y = 185;
   const chartW = svgW - PAD_X * 2;
-  const SVG_H = 340;
+  const SVG_H = 380;
 
   // Alternate breaches above/below baseline to reduce overlap
   const positioned = BREACHES.map((b, i) => {
@@ -716,7 +716,6 @@ function BreachTimeline() {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.8 }}
       style={{
-        borderTop: `1px solid ${PALETTE.border}`,
         paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
         marginTop: 'clamp(2.5rem, 5vw, 4rem)',
         marginBottom: 'clamp(3rem, 7vw, 6rem)',
@@ -810,7 +809,7 @@ function BreachTimeline() {
                     {b.name}
                   </text>
                 ) : (
-                  <text x={b.x} y={b.above ? b.cy - b.r - 6 : b.cy + b.r + 14} textAnchor="middle"
+                  <text x={b.x} y={b.above ? b.cy - b.r - 6 : b.cy + b.r + 18} textAnchor="middle"
                     style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: `rgba(${baseRgb},0.75)`, letterSpacing: '0.08em', pointerEvents: 'none' }}>
                     {b.name}
                   </text>

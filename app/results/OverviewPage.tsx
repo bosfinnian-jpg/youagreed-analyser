@@ -1548,8 +1548,8 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
       boxSizing: 'border-box',
     }}>
       <PageFooter
-        statement="This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model."
-        followOn="The difference between the two is what makes it valuable."
+        statement="What you have seen is a record assembled from conversations you believed were private. The data was not taken — it was given, under terms designed to obscure what giving it meant."
+        followOn="The record exists. It cannot be closed."
         endLabel="End of Act I."
         setPage={setPage}
         navItems={[

@@ -1093,7 +1093,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           ================================================================ */}
       {setPage && (
         <PageFooter
-          statement="This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without your meaningful consent, and irrecoverable once embedded in a trained model."
+          statement="This profile was not constructed by you. It was constructed from you — without your participation, your knowledge of what was inferred, or any mechanism to dispute what the system decided you were."
           followOn="The difference between the two is what makes it valuable."
           navItems={[
             { page: 'commercial-profile', act: 'ACT II / 03', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },

@@ -304,7 +304,7 @@ function ArrivalChapter({ date, onActive, setPage }: {
   const line2 = 'of You.';
 
   return (
-    <ChapterShell id="arrival" label="File 01" onActive={onActive} isFirst>
+    <ChapterShell id="arrival" label="" onActive={onActive} isFirst>
       {/* Background pulse rings */}
       <PulseRings />
 

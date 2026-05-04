@@ -147,7 +147,7 @@ export default function TermsPage() {
         ::selection { background: ${COLOR.accent}; color: ${COLOR.bg}; }
       `}</style>
 
-      <div style={{ height: '100vh', minHeight: '100dvh', display: 'flex', flexDirection: 'column', background: COLOR.bg }}>
+      <div style={{ minHeight: '100vh', minHeight: '100dvh', display: 'flex', flexDirection: 'column', background: COLOR.bg }}>
         <header style={{
           padding: '0 clamp(1.5rem, 4vw, 3rem)',
           height: '52px',

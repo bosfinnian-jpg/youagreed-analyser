@@ -48,6 +48,7 @@ const CHAPTERS = [
   { id: 'network',    label: 'Network'    },
   { id: 'score',      label: 'Score'      },
   { id: 'permanence', label: 'Permanence' },
+  { id: 'continue',   label: 'Continue'   },
 ] as const;
 type ChapterId = typeof CHAPTERS[number]['id'];
 
@@ -252,42 +253,103 @@ function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof
 // ════════════════════════════════════════════════════════════════════════════
 // CHAPTER 00 — ARRIVAL
 // ════════════════════════════════════════════════════════════════════════════
+// Pulse rings — three concentric circles that breathe outward
+function PulseRings() {
+  return (
+    <div style={{ position: 'absolute', right: 'clamp(-2rem, 5vw, 4rem)', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 0 }}>
+      <svg width="340" height="340" viewBox="0 0 340 340" style={{ overflow: 'visible', opacity: 0.18 }}>
+        {[60, 110, 160].map((r, i) => (
+          <motion.circle
+            key={r}
+            cx={170} cy={170} r={r}
+            fill="none"
+            stroke={PALETTE.ink}
+            strokeWidth={i === 0 ? 1 : 0.5}
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: [0.85, 1.08, 0.85], opacity: [0, 0.9, 0] }}
+            transition={{ duration: 4 + i * 1.2, delay: i * 0.8, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ transformOrigin: '170px 170px' }}
+          />
+        ))}
+        {/* Cross-hairs */}
+        <line x1={170} y1={100} x2={170} y2={240} stroke={PALETTE.ink} strokeWidth={0.4} opacity={0.4} />
+        <line x1={100} y1={170} x2={240} y2={170} stroke={PALETTE.ink} strokeWidth={0.4} opacity={0.4} />
+        <circle cx={170} cy={170} r={3} fill={PALETTE.red} opacity={0.7} />
+        {/* Data tick marks around outer ring */}
+        {Array.from({ length: 24 }).map((_, i) => {
+          const angle = (i / 24) * Math.PI * 2;
+          const isMaj = i % 6 === 0;
+          const r0 = 155; const r1 = isMaj ? 168 : 163;
+          return (
+            <line key={i}
+              x1={170 + Math.cos(angle) * r0} y1={170 + Math.sin(angle) * r0}
+              x2={170 + Math.cos(angle) * r1} y2={170 + Math.sin(angle) * r1}
+              stroke={PALETTE.ink} strokeWidth={isMaj ? 1 : 0.5} opacity={0.5}
+            />
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
 function ArrivalChapter({ date, onActive, setPage }: {
   date: string;
   onActive: (id: ChapterId) => void;
   setPage: (p: DashPage) => void;
 }) {
+  // Character-by-character reveal on the main heading
+  const line1 = 'The Record';
+  const line2 = 'of You.';
+
   return (
     <ChapterShell id="arrival" label="File 01" onActive={onActive} isFirst>
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.1 }} style={{ marginBottom: 'clamp(0.5rem, 1vw, 1rem)' }}>
+      {/* Background pulse rings */}
+      <PulseRings />
+
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.1 }} style={{ marginBottom: 'clamp(0.5rem, 1vw, 0.85rem)', position: 'relative', zIndex: 1 }}>
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
       </motion.div>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }} style={{ borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.25rem', marginBottom: 'clamp(1.25rem, 2.5vw, 2rem)' }}>
-        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.4vw, 1rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 520, fontStyle: 'italic' }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.25 }} style={{ borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1.25rem', marginBottom: 'clamp(1rem, 2vw, 1.5rem)', position: 'relative', zIndex: 1 }}>
+        <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.9rem, 1.3vw, 1rem)', color: PALETTE.inkMuted, lineHeight: 1.72, maxWidth: 480, fontStyle: 'italic' }}>
           You agreed to terms that permitted this. What follows is what those terms made possible.
         </p>
       </motion.div>
 
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.5 }} style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.32em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: 'clamp(0.85rem, 1.75vw, 1.5rem)' }}>
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.4 }} style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.32em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: 'clamp(0.75rem, 1.5vw, 1.25rem)', position: 'relative', zIndex: 1 }}>
         Compiled · {date}
       </motion.p>
 
-      <motion.h1 initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, delay: 0.7, ease: [0.2, 0, 0.2, 1] }} className="arrival-heading" style={{ fontFamily: TYPE.serif, fontSize: 'clamp(3.5rem, 11vw, 7.5rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.04em', lineHeight: 0.95, marginBottom: 'clamp(1rem, 2.5vw, 1.75rem)' }}>
-        The Record<br />of You.
-      </motion.h1>
+      {/* Main heading — chars stagger in */}
+      <h1 className="arrival-heading" style={{ fontFamily: TYPE.serif, fontSize: 'clamp(3.5rem, 11vw, 7.5rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.04em', lineHeight: 0.95, marginBottom: 'clamp(1rem, 2vw, 1.5rem)', position: 'relative', zIndex: 1 }}>
+        <span style={{ display: 'block' }}>
+          {line1.split('').map((ch, i) => (
+            <motion.span key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.55 + i * 0.04, ease: [0.2, 0, 0.2, 1] }} style={{ display: 'inline-block', whiteSpace: ch === ' ' ? 'pre' : 'normal' }}>
+              {ch}
+            </motion.span>
+          ))}
+        </span>
+        <span style={{ display: 'block' }}>
+          {line2.split('').map((ch, i) => (
+            <motion.span key={i} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.55 + (line1.length + i) * 0.04, ease: [0.2, 0, 0.2, 1] }} style={{ display: 'inline-block', whiteSpace: ch === ' ' ? 'pre' : 'normal' }}>
+              {ch}
+            </motion.span>
+          ))}
+        </span>
+      </h1>
 
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.2 }} style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.72, maxWidth: '46ch', marginBottom: 'clamp(0.85rem, 1.75vw, 1.5rem)' }}>
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.25 }} style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.08rem)', color: PALETTE.inkMuted, lineHeight: 1.72, maxWidth: '44ch', marginBottom: 'clamp(0.75rem, 1.5vw, 1.25rem)', position: 'relative', zIndex: 1 }}>
         What follows was inferred from your conversations.
         Each item is effectively persistent. Most of it cannot currently be returned.
       </motion.p>
 
-      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.82rem, 1.1vw, 0.9rem)', color: PALETTE.inkFaint, lineHeight: 1.7, maxWidth: '46ch', marginBottom: 'clamp(1rem, 2vw, 1.75rem)' }}>
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.5 }} style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.82rem, 1.1vw, 0.9rem)', color: PALETTE.inkFaint, lineHeight: 1.7, maxWidth: '44ch', marginBottom: 'clamp(0.85rem, 1.75vw, 1.5rem)', position: 'relative', zIndex: 1 }}>
         Consent mechanisms were designed for reversible data. AI training is not reversible.
         What follows is what that gap made possible.
       </motion.p>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.7 }} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 1.75 }} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', position: 'relative', zIndex: 1 }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, opacity: 0.6 }}>
           This is a work of critical design.{' '}
           <span onClick={() => setPage('method')} style={{ textDecoration: 'underline', cursor: 'pointer' }}>
@@ -775,23 +837,50 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 07 — CONTINUE (not a snap chapter — scrolls freely)
+// CHAPTER 07 — CONTINUE
+// Final snap chapter: closing statement + nav cards to Act II/III
 // ════════════════════════════════════════════════════════════════════════════
-function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
+function ContinueChapter({ setPage, onActive }: {
+  setPage: (p: DashPage) => void;
+  onActive: (id: ChapterId) => void;
+}) {
+  const NAV_ITEMS = [
+    { page: 'profile' as DashPage, act: 'Act II', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },
+    { page: 'risk'    as DashPage, act: 'Act II', label: 'What it enables',    body: 'The scenarios that become possible once this record exists.' },
+    { page: 'terms'   as DashPage, act: 'Act III', label: 'Why it persists',   body: 'Why this profile is not easily removed — even if you delete your account.' },
+  ];
+
   return (
-    <div id="chapter-continue" style={{ maxWidth: 860, margin: '0 auto', width: '100%', paddingLeft: 'clamp(1.5rem, 7vw, 6rem)', paddingRight: 'clamp(1.5rem, 7vw, 6rem)', boxSizing: 'border-box' }}>
-      <PageFooter
-        statement="What you have seen is a record assembled from conversations you believed were private. The data was not taken — it was given, under terms designed to obscure what giving it meant."
-        followOn="The record exists. It is not easily closed."
-        endLabel="End of Act I."
-        setPage={setPage}
-        navItems={[
-          { page: 'profile', act: 'Act II / 03', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },
-          { page: 'risk',    act: 'Act II / 04', label: 'What it enables',    body: 'The scenarios that become possible once this record exists.' },
-          { page: 'terms',   act: 'Act III / 05', label: 'Why it persists',   body: 'Why this profile is not easily removed — even if you delete your account.' },
-        ]}
-      />
-    </div>
+    <ChapterShell id="continue" label="Continue" onActive={onActive}>
+      {/* Closing statement */}
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.45, maxWidth: '52ch', marginBottom: '0.85rem', fontWeight: 400 }}>
+        What you have seen is a record assembled from conversations you believed were private. The data was not taken — it was given, under terms designed to obscure what giving it meant.
+      </p>
+      <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '52ch', fontStyle: 'italic', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+        The record exists. It is not easily closed.
+      </p>
+
+      {/* Nav cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1px', background: PALETTE.border, marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
+        {NAV_ITEMS.map(item => (
+          <button
+            key={item.page}
+            onClick={() => setPage(item.page)}
+            style={{ background: PALETTE.bgPanel, border: 'none', cursor: 'pointer', padding: 'clamp(1.25rem, 2.5vw, 1.75rem)', textAlign: 'left', transition: 'background 0.15s' }}
+            onMouseEnter={e => (e.currentTarget.style.background = PALETTE.bgElevated)}
+            onMouseLeave={e => (e.currentTarget.style.background = PALETTE.bgPanel)}
+          >
+            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{item.act}</span>
+            <span style={{ display: 'block', fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.ink, letterSpacing: '-0.01em', lineHeight: 1.2, marginBottom: '0.4rem' }}>{item.label} →</span>
+            <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.06em', color: PALETTE.inkFaint, lineHeight: 1.55 }}>{item.body}</span>
+          </button>
+        ))}
+      </div>
+
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
+        End of Act I.
+      </p>
+    </ChapterShell>
   );
 }
 
@@ -843,23 +932,26 @@ export default function OverviewPage({ results, sources, setPage }: {
       setTimeout(() => { isScrollingRef.current = false; }, 1000);
     }
 
-    // Accumulate delta — trackpads fire many small events per gesture
-    let accDelta = 0;
-    let accTimer: ReturnType<typeof setTimeout> | null = null;
+    // Fire immediately on first wheel event above threshold.
+    // Track cumulative delta to ignore trailing momentum events.
+    let cumulativeDelta = 0;
+    let lastWheelTime = 0;
 
     function onWheel(e: WheelEvent) {
       e.preventDefault();
+      const now = Date.now();
+      // Reset accumulator if it's been a while — new gesture
+      if (now - lastWheelTime > 400) cumulativeDelta = 0;
+      lastWheelTime = now;
       if (isScrollingRef.current) return;
-      accDelta += e.deltaY;
-      if (accTimer) clearTimeout(accTimer);
-      accTimer = setTimeout(() => {
-        if (isScrollingRef.current) { accDelta = 0; return; }
-        const ids = visibleIdsRef.current;
-        const cur = getCurrentIndex(ids);
-        const next = accDelta > 0 ? Math.min(cur + 1, ids.length - 1) : Math.max(cur - 1, 0);
-        accDelta = 0;
-        if (next !== cur) scrollToChapter(next, ids);
-      }, 60); // wait 60ms for gesture to settle before committing
+      cumulativeDelta += e.deltaY;
+      // Require at least 20px of intent before firing
+      if (Math.abs(cumulativeDelta) < 20) return;
+      const ids = visibleIdsRef.current;
+      const cur = getCurrentIndex(ids);
+      const next = cumulativeDelta > 0 ? Math.min(cur + 1, ids.length - 1) : Math.max(cur - 1, 0);
+      cumulativeDelta = 0;
+      if (next !== cur) scrollToChapter(next, ids);
     }
 
     function onTouchStart(e: TouchEvent) {
@@ -924,7 +1016,7 @@ export default function OverviewPage({ results, sources, setPage }: {
   }
 
   const moment      = results?.juiciestMoments?.[0];
-  const excerpt     = moment?.excerpt ? moment.excerpt.substring(0, 240).trim() + (moment.excerpt.length > 240 ? '…' : '') : null;
+  const excerpt     = moment?.excerpt ? moment.excerpt.substring(0, 120).trim() + (moment.excerpt.length > 120 ? '…' : '') : null;
   const excerptDate = moment?.timestamp ? new Date(moment.timestamp).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
 
   const visibleChapters: ChapterId[] = [
@@ -935,6 +1027,7 @@ export default function OverviewPage({ results, sources, setPage }: {
     ...(namesAll.length > 0 ? ['network' as ChapterId] : []),
     'score',
     'permanence',
+    'continue',
   ];
 
   // Keep scroll controller in sync with which chapters are rendered
@@ -990,7 +1083,7 @@ export default function OverviewPage({ results, sources, setPage }: {
         {namesAll.length > 0 && <NetworkChapter names={namesAll} onActive={handleActive} />}
         <ScoreChapter score={score} onActive={handleActive} setPage={setPage} />
         <PermanenceChapter onActive={handleActive} />
-        <ContinueChapter setPage={setPage} />
+        <ContinueChapter setPage={setPage} onActive={handleActive} />
       </main>
     </>
   );

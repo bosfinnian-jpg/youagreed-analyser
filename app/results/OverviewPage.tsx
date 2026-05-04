@@ -204,10 +204,10 @@ function ChapterShell({
       className={`chapter-snap chapter-shell${last ? ' chapter-last' : ''}`}
       style={{
         height: '100dvh',
-        padding: 'clamp(3rem,7vw,5.5rem) clamp(1.25rem,6vw,5rem) clamp(2rem,5vw,4rem)',
+        padding: 'clamp(2.5rem,6vw,5rem) clamp(1.25rem,6vw,5rem)',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         position: 'relative',
         overflow: 'hidden',
         boxSizing: 'border-box',
@@ -241,7 +241,7 @@ function ChapterShell({
       }}>
         {(num || label) && (
           <div style={{
-            display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: 'clamp(1.5rem,3vw,2.5rem)',
+            display: 'flex', alignItems: 'center', gap: '1.25rem', marginBottom: 'clamp(1rem,2vw,1.75rem)',
             opacity: isActive ? 1 : 0.3,
             transform: `translateX(${isActive ? 0 : -10}px)`,
             transition: 'opacity 0.9s ease, transform 1s cubic-bezier(0.25, 0.1, 0.25, 1)',
@@ -279,7 +279,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
 }) {
   return (
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
-      <div style={{ marginBottom: 'clamp(1rem,2.5vw,1.75rem)' }}>
+      <div style={{ marginBottom: '0' }}>
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
         <ThreadSentence>You agreed to terms that permitted this. What follows is what those terms made possible.</ThreadSentence>
       </div>
@@ -289,7 +289,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
         style={{
           fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.32em',
           color: PALETTE.inkFaint, textTransform: 'uppercase',
-          marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
+          marginBottom: 'clamp(0.75rem,1.5vw,1.25rem)',
         }}
       >
         Compiled · {date}
@@ -1598,7 +1598,7 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
       maxWidth: 880,
       margin: '0 auto',
       width: '100%',
-      padding: '0 clamp(1.25rem,6vw,5rem)',
+      padding: 'clamp(2.5rem,6vw,5rem) clamp(1.25rem,6vw,5rem)',
       boxSizing: 'border-box',
     }}>
       <PageFooter

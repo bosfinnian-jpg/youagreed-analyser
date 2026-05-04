@@ -257,7 +257,7 @@ export function ThreadSentence({ children }: { children: React.ReactNode }) {
       borderLeft: `2px solid ${PALETTE.border}`,
       paddingLeft: '1.25rem',
       marginTop: '0.75rem',
-      marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
+      marginBottom: 'clamp(1.25rem, 2.5vw, 2rem)',
     }}>
       <p style={{
         fontFamily: TYPE.serif,

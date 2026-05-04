@@ -7,8 +7,8 @@
 
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
-export const maxDuration = 90;
+export const runtime = 'edge';
+export const maxDuration = 30;
 
 interface SynthesizeRequest {
   aggregateStats: {

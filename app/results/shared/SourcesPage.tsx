@@ -18,7 +18,7 @@ const ACTIVE_SOURCES = [
     fileType: '.json',
     severity: 'critical' as const,
     reveals: ['Cognitive profile', 'Emotional patterns', 'Vulnerability windows', 'Personal relationships', 'Sensitive disclosures'],
-    description: 'Your full conversation history. The most revealing source — contains your reasoning patterns, emotional disclosures, and the cognitive fingerprint that cannot be deleted from a trained model.',
+    description: 'Your full conversation history. The most revealing source - contains your reasoning patterns, emotional disclosures, and the cognitive fingerprint that cannot be deleted from a trained model.',
     exportPath: 'Settings → Data Controls → Export Data → conversations.json',
     exportUrl: 'https://chatgpt.com/#settings/DataControls',
     accept: '.json',
@@ -33,7 +33,7 @@ const ACTIVE_SOURCES = [
     fileType: '.json',
     severity: 'critical' as const,
     reveals: ['Reasoning patterns', 'Emotional disclosures', 'Cognitive fingerprint', 'Value system', 'Sensitive disclosures'],
-    description: 'Full conversation history exported from claude.ai. Anthropic trains on conversations by default — the same extraction problem, different company.',
+    description: 'Full conversation history exported from claude.ai. Anthropic trains on conversations by default - the same extraction problem, different company.',
     exportPath: 'claude.ai → Settings → Account → Export Data → conversations.json',
     exportUrl: 'https://claude.ai/settings',
     accept: '.json',
@@ -70,7 +70,7 @@ interface SourceState {
 }
 
 // ============================================================================
-// ACTIVE SOURCE CARD — full upload capability
+// ACTIVE SOURCE CARD - full upload capability
 // ============================================================================
 
 function ActiveSourceCard({
@@ -175,7 +175,7 @@ function ActiveSourceCard({
                 </a>
               </div>
 
-              {/* Upload zone — only if not done */}
+              {/* Upload zone - only if not done */}
               {!isDone && state.status !== 'processing' && (
                 <div
                   onDragOver={e => { e.preventDefault(); }}
@@ -197,7 +197,7 @@ function ActiveSourceCard({
                     Drop {source.fileType} here or click to upload
                   </p>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.7 }}>
-                    Processed locally — never transmitted
+                    Processed locally - never transmitted
                   </p>
                   <input
                     ref={inputRef}
@@ -248,7 +248,7 @@ function ActiveSourceCard({
               {isDone && (
                 <div style={{ borderLeft: `3px solid ${PALETTE.green}`, paddingLeft: '1.2rem', maxWidth: 480 }}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.2em', color: PALETTE.green, textTransform: 'uppercase' }}>
-                    Source connected — dashboard updated
+                    Source connected - dashboard updated
                   </p>
                 </div>
               )}
@@ -359,7 +359,7 @@ export default function SourcesPage({
 
       setSourceStates(prev => ({ ...prev, [sourceId]: { ...prev[sourceId], progress: 15, stage: 'Parsing conversations' } }));
 
-      // Check if other sources already analysed — if so, merge
+      // Check if other sources already analysed - if so, merge
       const existingResults = sessionStorage.getItem('analysisResults');
       const existingRawIds = ACTIVE_SOURCES
         .filter(s => s.id !== sourceId)
@@ -380,7 +380,7 @@ export default function SourcesPage({
         const newNormalised = detectedType === 'claude' ? normaliseClaude(jsonData) : jsonData;
         combinedJson = [...allRaw, ...newNormalised];
       } else {
-        // First source being added — just use this one
+        // First source being added - just use this one
         const { normaliseClaude } = await import('@/lib/parsers/claudeParser');
         combinedJson = detectedType === 'claude' ? normaliseClaude(jsonData) : jsonData;
       }
@@ -421,7 +421,7 @@ export default function SourcesPage({
     <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', padding: `0 ${pad}`, paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
       <style>{`
         @media (max-width: 640px) {
-          /* Hide column headers on mobile — source rows handle their own labels */
+          /* Hide column headers on mobile - source rows handle their own labels */
           .source-col-headers { display: none !important; }
 
           /* Source row: label + plus on top, severity left + status right beneath */
@@ -479,7 +479,7 @@ export default function SourcesPage({
               Every platform you use is building a file on you.
             </h1>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.25rem)', color: PALETTE.inkMuted, lineHeight: 1.8, fontStyle: 'italic', maxWidth: '50ch' }}>
-              Upload a second export and the dashboard updates — more data, sharper argument. Each source adds a dimension the others cannot see.
+              Upload a second export and the dashboard updates - more data, sharper argument. Each source adds a dimension the others cannot see.
             </p>
           </motion.div>
 
@@ -543,7 +543,7 @@ export default function SourcesPage({
 
       <PageFooter
         statement="Every claim made in this analysis is verifiable. The sources are the argument."
-        followOn="All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists — not to collect it."
+        followOn="All analysis runs locally in your browser. Your exports are never transmitted to any server. This tool was built to show you what exists - not to collect it."
         navItems={[
           { page: 'about',      act: 'Reference',     label: 'About this tool',     body: 'The theoretical basis, the argument, and how the inference pipeline works.' },
           { page: 'permanent',  act: 'ACT III / 05',  label: 'The permanence',      body: 'The technical and legal basis for why your data cannot be returned.' },

@@ -1,22 +1,22 @@
 'use client';
 
 // ============================================================================
-// OVERVIEW PAGE — Act I: The Record
+// OVERVIEW PAGE - Act I: The Record
 // ============================================================================
 // Architecture: full-viewport snap scroll. Each chapter is a true 100dvh
-// section. The nav is 56px fixed — only the arrival chapter offsets for it
+// section. The nav is 56px fixed - only the arrival chapter offsets for it
 // (paddingTop). All other chapters use justifyContent:center so content sits
 // in the true visual middle of the screen, not pushed to the top.
 //
 // Seven chapters:
-//   00 ARRIVAL    — title, thread sentence, scroll cue
-//   01 VOLUME     — message count + day-of-week bar chart
-//   02 INFERENCE  — tap-to-reveal attribute cards
-//   03 DISCLOSURE — most exposing excerpt with animated border
-//   04 NETWORK    — named people constellation
-//   05 SCORE      — the climax gauge ring
-//   06 PERMANENCE — RETAINED watermark + seal
-//   07 CONTINUE   — act footer / navigation onward
+//   00 ARRIVAL    - title, thread sentence, scroll cue
+//   01 VOLUME     - message count + day-of-week bar chart
+//   02 INFERENCE  - tap-to-reveal attribute cards
+//   03 DISCLOSURE - most exposing excerpt with animated border
+//   04 NETWORK    - named people constellation
+//   05 SCORE      - the climax gauge ring
+//   06 PERMANENCE - RETAINED watermark + seal
+//   07 CONTINUE   - act footer / navigation onward
 // ============================================================================
 
 import { useEffect, useRef, useState, useCallback } from 'react';
@@ -37,7 +37,7 @@ import {
 } from '../../shared/layout/DashboardLayout';
 
 // ── Constants ────────────────────────────────────────────────────────────────
-const NAV_H = 56; // px — must match DashboardLayout nav height
+const NAV_H = 56; // px - must match DashboardLayout nav height
 
 const CHAPTERS = [
   { id: 'arrival',    label: 'Arrival'    },
@@ -52,7 +52,7 @@ const CHAPTERS = [
 type ChapterId = typeof CHAPTERS[number]['id'];
 
 const fmt = (n: number | null | undefined) =>
-  typeof n === 'number' ? n.toLocaleString('en-GB') : '—';
+  typeof n === 'number' ? n.toLocaleString('en-GB') : '-';
 
 // ── Scroll trigger hook ──────────────────────────────────────────────────────
 function useScrollTrigger(
@@ -157,7 +157,7 @@ function ChapterShell({
         </div>
       )}
 
-      {/* Inner — max-width container, centred */}
+      {/* Inner - max-width container, centred */}
       <div style={{ maxWidth: 860, width: '100%', position: 'relative', zIndex: 1, margin: '0 auto' }}>
         {/* Chapter label row */}
         {(num || label) && (
@@ -192,7 +192,7 @@ function ChapterShell({
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// RIGHT RAIL — fixed chapter index (desktop only)
+// RIGHT RAIL - fixed chapter index (desktop only)
 // ════════════════════════════════════════════════════════════════════════════
 function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[] }) {
   return (
@@ -220,7 +220,7 @@ function RightRail({ active, visible }: { active: ChapterId; visible: ChapterId[
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER DOTS — bottom progress indicator
+// CHAPTER DOTS - bottom progress indicator
 // ════════════════════════════════════════════════════════════════════════════
 function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof CHAPTERS[number][] }) {
   const handleJump = (id: ChapterId) => {
@@ -254,9 +254,9 @@ function ChapterDots({ active, chapters }: { active: ChapterId; chapters: typeof
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 00 — ARRIVAL
+// CHAPTER 00 - ARRIVAL
 // ════════════════════════════════════════════════════════════════════════════
-// Pulse rings — three concentric circles that breathe outward
+// Pulse rings - three concentric circles that breathe outward
 function PulseRings() {
   return (
     <div style={{ position: 'absolute', right: 'clamp(-2rem, 5vw, 4rem)', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', zIndex: 0 }}>
@@ -324,7 +324,7 @@ function ArrivalChapter({ date, onActive, setPage }: {
         Compiled · {date}
       </motion.p>
 
-      {/* Main heading — chars stagger in */}
+      {/* Main heading - chars stagger in */}
       <h1 className="arrival-heading" style={{ fontFamily: TYPE.serif, fontSize: 'clamp(3.5rem, 11vw, 7.5rem)', fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.04em', lineHeight: 0.95, marginBottom: 'clamp(1rem, 2vw, 1.5rem)', position: 'relative', zIndex: 1 }}>
         <span style={{ display: 'block' }}>
           {line1.split('').map((ch, i) => (
@@ -371,7 +371,7 @@ function ArrivalChapter({ date, onActive, setPage }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 01 — VOLUME
+// CHAPTER 01 - VOLUME
 // ════════════════════════════════════════════════════════════════════════════
 function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
   count: number; days: number; dayHourMatrix: number[][]; onActive: (id: ChapterId) => void;
@@ -419,7 +419,7 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
                 <div style={{ flex: 1, height: isPeak ? 10 : 6, background: 'rgba(26,24,20,0.07)', position: 'relative', borderRadius: '1px' }}>
                   <div ref={el => { if (el) barRefs.current[d] = el; }} style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '0%', background: isPeak ? PALETTE.red : val > 0 ? 'rgba(26,24,20,0.45)' : 'transparent', borderRadius: '1px' }} />
                 </div>
-                <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.1em', color: isPeak ? PALETTE.red : val > 0 ? PALETTE.inkFaint : 'rgba(26,24,20,0.18)', width: '18px', textAlign: 'right', flexShrink: 0 }}>{val > 0 ? val : '—'}</span>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.1em', color: isPeak ? PALETTE.red : val > 0 ? PALETTE.inkFaint : 'rgba(26,24,20,0.18)', width: '18px', textAlign: 'right', flexShrink: 0 }}>{val > 0 ? val : '-'}</span>
               </div>
             );
           })}
@@ -430,10 +430,10 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
           <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
             OpenAI's Privacy Policy
           </a>{' '}
-          permits use of conversation content to improve its models — no public version specifies which conversations may have been used, or when.
+          permits use of conversation content to improve its models - no public version specifies which conversations may have been used, or when.
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
-          OpenAI Privacy Policy, June 2023 — April 2026
+          OpenAI Privacy Policy, June 2023 - April 2026
         </p>
       </ChapterShell>
     </div>
@@ -441,7 +441,7 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 02 — INFERENCE
+// CHAPTER 02 - INFERENCE
 // ════════════════════════════════════════════════════════════════════════════
 function InferenceCard({ inf, index, revealed, onReveal }: {
   inf: { attribute: string; value: string; confidence: number };
@@ -519,7 +519,7 @@ function InferenceChapter({ inferences, onActive }: {
         <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
           OpenAI's terms
         </a>{' '}
-        permit use of conversation content to improve its models — but say nothing about what is inferred in the process, or what that inference produces.
+        permit use of conversation content to improve its models - but say nothing about what is inferred in the process, or what that inference produces.
       </p>
       <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
         OpenAI Terms of Service, 2023 · OpenAI Privacy Policy, 2026
@@ -529,7 +529,7 @@ function InferenceChapter({ inferences, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 03 — DISCLOSURE
+// CHAPTER 03 - DISCLOSURE
 // ════════════════════════════════════════════════════════════════════════════
 function DisclosureChapter({ excerpt, date, onActive }: {
   excerpt: string; date: string | null; onActive: (id: ChapterId) => void;
@@ -579,9 +579,9 @@ function DisclosureChapter({ excerpt, date, onActive }: {
             <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.22em', color: PALETTE.red, textTransform: 'uppercase', fontWeight: 700 }}>Retained in model weights</span>
           </div>
         </div>
-        {date && <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.25rem' }}>— {date}</p>}
+        {date && <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.25rem' }}>- {date}</p>}
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.78, maxWidth: '50ch', marginBottom: '0.4rem' }}>
-          It was processed, classified, and — under OpenAI's training policy — may have been used to adjust model weights.{' '}
+          It was processed, classified, and - under OpenAI's training policy - may have been used to adjust model weights.{' '}
           <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
             OpenAI's April 2026 Privacy Policy
           </a>{' '}
@@ -591,7 +591,7 @@ function DisclosureChapter({ excerpt, date, onActive }: {
           </a>.
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
-          OpenAI Privacy Policy, April 2026 (US) — deletion carve-out
+          OpenAI Privacy Policy, April 2026 (US) - deletion carve-out
         </p>
       </ChapterShell>
     </div>
@@ -599,7 +599,7 @@ function DisclosureChapter({ excerpt, date, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 04 — NETWORK
+// CHAPTER 04 - NETWORK
 // ════════════════════════════════════════════════════════════════════════════
 function NetworkChapter({ names, onActive }: {
   names: string[]; onActive: (id: ChapterId) => void;
@@ -672,10 +672,10 @@ function NetworkChapter({ names, onActive }: {
           </svg>
         </div>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.78, maxWidth: '50ch', marginBottom: '0.4rem' }}>
-          These individuals did not consent to being named in a training dataset. OpenAI's terms govern only the account holder — not the people mentioned in their conversations.
+          These individuals did not consent to being named in a training dataset. OpenAI's terms govern only the account holder - not the people mentioned in their conversations.
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
-          OpenAI Privacy Policy, 2023 — third-party data
+          OpenAI Privacy Policy, 2023 - third-party data
         </p>
       </ChapterShell>
     </div>
@@ -683,7 +683,7 @@ function NetworkChapter({ names, onActive }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 05 — SCORE
+// CHAPTER 05 - SCORE
 // ════════════════════════════════════════════════════════════════════════════
 const RING_R = 120;
 const RING_C = 2 * Math.PI * RING_R;
@@ -768,10 +768,10 @@ function ScoreChapter({ score, onActive, setPage }: {
               Combined into a single value:
             </h2>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.78, maxWidth: '44ch', marginBottom: '0.75rem' }}>
-              A composite measure of the personal information recoverable from your conversation history — derived from what OpenAI's systems were permitted to collect, retain, and learn from.
+              A composite measure of the personal information recoverable from your conversation history - derived from what OpenAI's systems were permitted to collect, retain, and learn from.
             </p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem', opacity: 0.6 }}>
-              Based on OpenAI Privacy Policy categories, June 2023 — April 2026
+              Based on OpenAI Privacy Policy categories, June 2023 - April 2026
             </p>
             <button onClick={() => setPage('score-breakdown')} style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em', textTransform: 'uppercase', color: PALETTE.redMuted, background: 'none', border: 'none', cursor: 'pointer', borderBottom: `1px solid ${PALETTE.redMuted}50`, paddingBottom: '1px' }} onMouseEnter={e => { e.currentTarget.style.color = PALETTE.red; }} onMouseLeave={e => { e.currentTarget.style.color = PALETTE.redMuted; }}>
               How did we work this out? →
@@ -784,7 +784,7 @@ function ScoreChapter({ score, onActive, setPage }: {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 06 — PERMANENCE
+// CHAPTER 06 - PERMANENCE
 // ════════════════════════════════════════════════════════════════════════════
 function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) {
   const sectionRef   = useRef<HTMLDivElement>(null);
@@ -845,7 +845,7 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
               <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
                 OpenAI's April 2026 Privacy Policy
               </a>{' '}
-              explicitly exempts training data from the right to deletion. Deleting your account removes your data from OpenAI's servers. It does not remove your contribution from the model's weights — those are different operations, and the latter remains an{' '}
+              explicitly exempts training data from the right to deletion. Deleting your account removes your data from OpenAI's servers. It does not remove your contribution from the model's weights - those are different operations, and the latter remains an{' '}
               <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
                 unsolved problem in machine learning research
               </a>.
@@ -861,7 +861,7 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CHAPTER 07 — CONTINUE
+// CHAPTER 07 - CONTINUE
 // Final snap chapter: closing statement + nav cards to Act II/III
 // ════════════════════════════════════════════════════════════════════════════
 function ContinueChapter({ setPage, onActive }: {
@@ -869,16 +869,16 @@ function ContinueChapter({ setPage, onActive }: {
   onActive: (id: ChapterId) => void;
 }) {
   const NAV_ITEMS = [
-    { page: 'profile' as DashPage, act: 'Act II', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },
+    { page: 'profile' as DashPage, act: 'Act II', label: 'What you are worth', body: 'The commercial valuation of this profile - segments, pricing, and market position.' },
     { page: 'risk'    as DashPage, act: 'Act II', label: 'What it enables',    body: 'The scenarios that become possible once this record exists.' },
-    { page: 'terms'   as DashPage, act: 'Act III', label: 'Why it persists',   body: 'Why this profile is not easily removed — even if you delete your account.' },
+    { page: 'terms'   as DashPage, act: 'Act III', label: 'Why it persists',   body: 'Why this profile is not easily removed - even if you delete your account.' },
   ];
 
   return (
     <ChapterShell id="continue" label="Continue" onActive={onActive}>
       {/* Closing statement */}
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.45, maxWidth: '52ch', marginBottom: '0.85rem', fontWeight: 400 }}>
-        What you have seen is a record assembled from conversations you believed were private. The data was not taken — it was given, under terms designed to obscure what giving it meant.
+        What you have seen is a record assembled from conversations you believed were private. The data was not taken - it was given, under terms designed to obscure what giving it meant.
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '52ch', fontStyle: 'italic', marginBottom: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
         The record exists. It is not easily closed.
@@ -925,7 +925,7 @@ export default function OverviewPage({ results, sources, setPage }: {
   const touchStartYRef = useRef(0);
 
   useEffect(() => {
-    // Disable browser snap — we handle it manually
+    // Disable browser snap - we handle it manually
     document.documentElement.style.scrollSnapType = 'none';
 
     function getChapterEls(ids: ChapterId[]) {
@@ -964,7 +964,7 @@ export default function OverviewPage({ results, sources, setPage }: {
     function onWheel(e: WheelEvent) {
       e.preventDefault();
       const now = Date.now();
-      // Reset accumulator if it's been a while — new gesture
+      // Reset accumulator if it's been a while - new gesture
       if (now - lastWheelTime > 400) cumulativeDelta = 0;
       lastWheelTime = now;
       if (isScrollingRef.current) return;
@@ -1028,7 +1028,7 @@ export default function OverviewPage({ results, sources, setPage }: {
   const synth   = results?.synthesis;
   const portrait = results?.psychologicalPortrait;
   if (synth?.demographicPredictions?.length) {
-    inferences = synth.demographicPredictions.slice(0, 4).map((d: any) => ({ attribute: d.attribute || 'Attribute', value: d.value || '—', confidence: typeof d.confidence === 'number' ? d.confidence : 0.7 }));
+    inferences = synth.demographicPredictions.slice(0, 4).map((d: any) => ({ attribute: d.attribute || 'Attribute', value: d.value || '-', confidence: typeof d.confidence === 'number' ? d.confidence : 0.7 }));
   } else if (portrait) {
     const candidates = [
       portrait.emotionalBaselineLabel && { attribute: 'Emotional baseline', value: portrait.emotionalBaselineLabel, confidence: 0.82 },

@@ -5,7 +5,7 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence, type DashPage, PageFooter } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
-// POLICY DRIFT PAGE — 06 / Terms
+// POLICY DRIFT PAGE - 06 / Terms
 // The argument: what you consented to in 2023 is not what you consent to now.
 // You were not asked again.
 //
@@ -28,7 +28,7 @@ const KEY_CLAUSES = [
       },
       v2025: {
         text: 'We may use Content you provide us to improve our Services, for example to train the models that power ChatGPT.',
-        annotation: 'Identical language. Opt-out now available via Data Controls — but not stated here.',
+        annotation: 'Identical language. Opt-out now available via Data Controls - but not stated here.',
       },
       v2026: {
         text: 'Some of our Services allow you to delete Personal Data stored in your account. Once you choose to delete Personal Data, we will remove it from our systems within 30 days unless we need to retain it for longer, or it has already been de-identified and disassociated from your account when you allow us to use your Content to improve our models.',
@@ -178,7 +178,7 @@ function ConsentMoment({ isInView }: { isInView: boolean }) {
         overflow: 'hidden',
       }}
     >
-      {/* Corner stamp — hidden on mobile to prevent overflow */}
+      {/* Corner stamp - hidden on mobile to prevent overflow */}
       <div className="deco-svg" style={{
         position: 'absolute', top: '1.2rem', right: '1.4rem',
         fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em',
@@ -200,7 +200,7 @@ function ConsentMoment({ isInView }: { isInView: boolean }) {
         color: PALETTE.inkMuted, lineHeight: 1.75,
         maxWidth: 580, marginBottom: '2rem',
       }}>
-        You signed up for ChatGPT. At some point — probably in 2022 or 2023 — you clicked something like this.
+        You signed up for ChatGPT. At some point - probably in 2022 or 2023 - you clicked something like this.
       </p>
 
       {/* Source attribution */}
@@ -278,7 +278,7 @@ function ConsentMoment({ isInView }: { isInView: boolean }) {
               borderLeft: `2px solid ${PALETTE.redMuted}`,
               paddingLeft: '1rem',
             }}>
-              That click, in 2023, was treated as consent to the 2023 policy. It has also been treated as consent to the 2025 policy, and the 2026 policy — both of which introduced categories of data collection that did not exist when you clicked. You were not asked again.
+              That click, in 2023, was treated as consent to the 2023 policy. It has also been treated as consent to the 2025 policy, and the 2026 policy - both of which introduced categories of data collection that did not exist when you clicked. You were not asked again.
             </p>
           </motion.div>
         )}
@@ -484,7 +484,7 @@ function PolicyWordBars({ isInView }: { isInView: boolean }) {
         How long did it get?
       </p>
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.75rem', opacity: 0.7 }}>
-        OpenAI Privacy Policy — word count by version
+        OpenAI Privacy Policy - word count by version
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkFaint, lineHeight: 1.6, maxWidth: 480, marginBottom: '2rem' }}>
         Word count across three versions of OpenAI's privacy policy.
@@ -638,7 +638,7 @@ function ClauseRow({ clause, index, isInView }: {
                         fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint,
                         lineHeight: 1.6, fontStyle: 'italic',
                       }}>
-                        — not present in this version
+                        - not present in this version
                       </p>
                     ) : (
                       <blockquote style={{
@@ -681,7 +681,7 @@ function ClauseRow({ clause, index, isInView }: {
   );
 }
 
-// ── The deletion carve-out — featured section ─────────────────────────────
+// ── The deletion carve-out - featured section ─────────────────────────────
 
 function DeletionCarveOut({ isInView }: { isInView: boolean }) {
   return (
@@ -747,7 +747,7 @@ function DeletionCarveOut({ isInView }: { isInView: boolean }) {
           },
           {
             label: 'What it actually says',
-            text: 'Unless that data has already been used to train a model — in which case, the deletion right does not apply. The 30-day promise has an exception that substantially qualifies the rule.',
+            text: 'Unless that data has already been used to train a model - in which case, the deletion right does not apply. The 30-day promise has an exception that substantially qualifies the rule.',
             color: PALETTE.ink,
             isHighlight: true,
           },
@@ -801,7 +801,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
       sourceUrl: 'https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf',
       claim: 'Designed not to be read',
       stat: '76 work-days per year',
-      text: 'Reading every privacy policy a typical internet user encounters would take 76 full work-days per year. OpenAI knows this. Every large platform knows this. The consent model depends on people not reading the document — and then treats the absence of objection as agreement.',
+      text: 'Reading every privacy policy a typical internet user encounters would take 76 full work-days per year. OpenAI knows this. Every large platform knows this. The consent model depends on people not reading the document - and then treats the absence of objection as agreement.',
     },
     {
       num: '03',
@@ -809,7 +809,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
       sourceUrl: 'https://openai.com/policies/terms-of-use/',
       claim: 'Updated itself without asking',
       stat: '"Continued use = acceptance"',
-      text: 'This sentence appears in the 2023 Terms of Service. It means OpenAI could — and did — add advertising, contact list upload, and a deletion carve-out to its policy without re-asking you. Continued use was treated as a new signature. You were, by the logic of the terms, opted in through inaction.',
+      text: 'This sentence appears in the 2023 Terms of Service. It means OpenAI could - and did - add advertising, contact list upload, and a deletion carve-out to its policy without re-asking you. Continued use was treated as a new signature. You were, by the logic of the terms, opted in through inaction.',
     },
     {
       num: '04',
@@ -817,7 +817,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
       sourceUrl: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/',
       claim: 'Opacity is a feature, not a failure',
       stat: 'Surveillance capitalism',
-      text: 'Zuboff argues that opacity is structural: the system requires subjects do not fully understand what is being taken. OpenAI\'s three-year expansion — adding clauses, burying exceptions, introducing new data categories — fits this pattern. The consent framework is not broken. It is working as intended.',
+      text: 'Zuboff argues that opacity is structural: the system requires subjects do not fully understand what is being taken. OpenAI\'s three-year expansion - adding clauses, burying exceptions, introducing new data categories - fits this pattern. The consent framework is not broken. It is working as intended.',
     },
   ];
 
@@ -827,7 +827,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
         color: PALETTE.redMuted, textTransform: 'uppercase',
         marginBottom: '2rem',
-      }}>The consent failure — four arguments</p>
+      }}>The consent failure - four arguments</p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
         {arguments_.map((arg, i) => {
@@ -847,7 +847,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
               onMouseEnter={(e) => { e.currentTarget.style.background = PALETTE.bgHover; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = PALETTE.bgPanel; }}
             >
-              {/* Collapsed state — hero number + claim */}
+              {/* Collapsed state - hero number + claim */}
               <div className="policy-arg-row" style={{
                 padding: 'clamp(1.1rem, 2.2vw, 1.5rem) clamp(1.4rem, 3vw, 2rem)',
                 display: 'grid',
@@ -893,7 +893,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
                   </p>
                 </div>
 
-                {/* Stat badge — hidden on mobile to prevent layout squeeze */}
+                {/* Stat badge - hidden on mobile to prevent layout squeeze */}
                 <div className="policy-arg-stat" style={{
                   padding: '0.5rem 0.9rem',
                   background: 'rgba(26,24,20,0.04)',
@@ -1009,7 +1009,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
           .policy-arg-stat { display: none !important; }
         }
       `}</style>
-      {/* Disambiguation header — above everything */}
+      {/* Disambiguation header - above everything */}
       <div style={{
         borderBottom: `2px solid ${PALETTE.ink}`,
         paddingTop: 'clamp(2.5rem, 6vw, 4rem)',
@@ -1137,7 +1137,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
       {/* Policy word count bars */}
       <PolicyWordBars isInView={isInView} />
 
-      {/* Deletion carve-out — featured */}
+      {/* Deletion carve-out - featured */}
       <DeletionCarveOut isInView={isInView} />
 
       {/* Clause comparison table */}
@@ -1154,7 +1154,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
           color: PALETTE.inkFaint, textTransform: 'uppercase',
           marginBottom: '0.75rem', opacity: 0.7,
         }}>
-          OpenAI Privacy Policy — June 2023, June 2025, April 2026
+          OpenAI Privacy Policy - June 2023, June 2025, April 2026
         </p>
         <p style={{
           fontFamily: TYPE.serif, fontSize: '1rem',

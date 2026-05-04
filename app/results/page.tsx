@@ -76,7 +76,7 @@ export default function ResultsPage() {
         setResults(parsed);
         setSources(prev => prev.map(s => s.id === 'chatgpt' ? { ...s, connected: true } : s));
       } catch {
-        // Corrupted sessionStorage — clear and restart
+        // Corrupted sessionStorage - clear and restart
         sessionStorage.removeItem('analysisResults');
         router.push('/upload');
       }

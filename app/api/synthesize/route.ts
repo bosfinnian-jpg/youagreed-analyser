@@ -2,7 +2,7 @@
 // app/api/synthesize/route.ts
 // Produces a final psychological + commercial portrait from the enriched corpus.
 // One call. Reads the most revealing excerpts together and writes the briefing.
-// Uses Sonnet — this is the most important inference pass in the system.
+// Uses Sonnet - this is the most important inference pass in the system.
 // ============================================================================
 
 import { NextResponse } from 'next/server';
@@ -54,9 +54,9 @@ interface SynthesizeRequest {
   namedRelationships: Array<{ name: string; relationship: string | null; mentions: number }>;
 }
 
-const SYSTEM_PROMPT = `Forensic data analyst. Produce an intelligence briefing from private AI conversation history. British English. Write about "the subject" (third person). Be specific — generic claims are failures. Every claim must trace to the data.
+const SYSTEM_PROMPT = `Forensic data analyst. Produce an intelligence briefing from private AI conversation history. British English. Write about "the subject" (third person). Be specific - generic claims are failures. Every claim must trace to the data.
 
-CRITICAL: Return ONLY valid JSON. No preamble, no markdown fences. Never use unescaped double quotes inside string values — use apostrophes instead (e.g. she said 'hello' not she said "hello"). Never use literal newlines inside string values.
+CRITICAL: Return ONLY valid JSON. No preamble, no markdown fences. Never use unescaped double quotes inside string values - use apostrophes instead (e.g. she said 'hello' not she said "hello"). Never use literal newlines inside string values.
 {
   "characterSummary": "100-150 words, single paragraph, forensic tone, opens with who this person is right now, closes with a permanence/irreversibility note",
   "demographicPredictions": [{"attribute":"string","value":"string","confidence":0-100,"evidence":"string"}],
@@ -112,7 +112,7 @@ async function callClaude(apiKey: string, userPrompt: string): Promise<any> {
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',  // Sonnet — this call matters
+      model: 'claude-sonnet-4-6',  // Sonnet - this call matters
       max_tokens: 3000,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],
@@ -153,7 +153,7 @@ export async function POST(request: Request) {
 
     const userPrompt = buildUserPrompt(body);
 
-    // Stream directly from Anthropic to the browser — the edge function
+    // Stream directly from Anthropic to the browser - the edge function
     // just proxies bytes, completing its job in milliseconds rather than
     // waiting for the full Sonnet response (which times out at 30s).
     const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {

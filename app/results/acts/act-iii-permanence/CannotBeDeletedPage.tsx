@@ -114,7 +114,7 @@ function OneWayFlow({ setPage }: { setPage: (p: string) => void }) {
               style={{ transformOrigin: `${stageX[5]}px ${baseY}px` } as React.CSSProperties} />
           )}
 
-          {/* Return path — blocked */}
+          {/* Return path - blocked */}
           <motion.line x1={820} y1={baseY + 30} x2={60} y2={baseY + 30}
             stroke={PALETTE.border} strokeWidth={0.5} strokeDasharray="3 5"
             initial={{ opacity: 0 }} animate={phase >= 3 ? { opacity: 1 } : {}}
@@ -144,7 +144,7 @@ function OneWayFlow({ setPage }: { setPage: (p: string) => void }) {
 }
 
 // ============================================================================
-// WHAT WEIGHTS ARE — dissolving text into parameter grid
+// WHAT WEIGHTS ARE - dissolving text into parameter grid
 // Fixed: label now below the grid with a paddingTop gap so it never overlaps
 // ============================================================================
 function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
@@ -168,10 +168,10 @@ function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
       <SectionLabel color={C.weight.base}>What "in the weights" means</SectionLabel>
 
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
-        Your data did not go into a box. It was absorbed into the mathematics of the system. There is no discrete row to delete. Whatever influence it had is distributed across parameters — diffuse, non-localisable, structurally non-withdrawable.
+        Your data did not go into a box. It was absorbed into the mathematics of the system. There is no discrete row to delete. Whatever influence it had is distributed across parameters - diffuse, non-localisable, structurally non-withdrawable.
       </p>
 
-      {/* Grid with sentence that dissolves in — text is above, never overlapping */}
+      {/* Grid with sentence that dissolves in - text is above, never overlapping */}
       <div style={{ marginBottom: '0.75rem' }}>
         {/* Sentence floats above the grid, then fades out */}
         <div style={{ height: '2.5rem', display: 'flex', alignItems: 'center', marginBottom: '0.5rem' }}>
@@ -209,7 +209,7 @@ function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
           animate={dissolved ? { opacity: 1 } : {}}
           transition={{ delay: 1.4, duration: 0.8 }}
           style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.weight.base, textTransform: 'uppercase', marginTop: '0.6rem' }}>
-          ● Absorbed — indistinguishable from all other training data
+          ● Absorbed - indistinguishable from all other training data
         </motion.p>
       </div>
 
@@ -225,7 +225,7 @@ function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
 }
 
 // ============================================================================
-// MACHINE UNLEARNING — with interactive comparison
+// MACHINE UNLEARNING - with interactive comparison
 // ============================================================================
 function MachineUnlearning() {
   const ref = useRef(null);
@@ -238,7 +238,7 @@ function MachineUnlearning() {
       label: 'Exact unlearning',
       tag: 'Not implemented',
       tagColor: C.legal,
-      body: 'Retrain the model from scratch without your data. Guaranteed removal. Computationally prohibitive — training GPT-4 cost an estimated $100 million and took months of continuous compute time.',
+      body: 'Retrain the model from scratch without your data. Guaranteed removal. Computationally prohibitive - training GPT-4 cost an estimated $100 million and took months of continuous compute time.',
       detail: 'This is the only method that provides a mathematical guarantee of removal. It is also the only method no production AI company currently implements at scale for individual deletion requests. The economics make it impossible.',
       verdict: 'Technically possible. Economically non-viable. Not offered.',
     },
@@ -247,8 +247,8 @@ function MachineUnlearning() {
       label: 'Approximate unlearning',
       tag: 'Provably incomplete',
       tagColor: C.weight,
-      body: 'Use algorithmic shortcuts to simulate the effect of retraining without actually retraining. Fast, cheap, and available — but fundamentally limited.',
-      detail: 'Cooper et al. (2024, NeurIPS) demonstrate that approximate unlearning methods cannot currently provide the guarantees legal deletion requires. They may reduce influence — but they cannot reliably eliminate it. The model may retain traces that no current audit method can rule out.',
+      body: 'Use algorithmic shortcuts to simulate the effect of retraining without actually retraining. Fast, cheap, and available - but fundamentally limited.',
+      detail: 'Cooper et al. (2024, NeurIPS) demonstrate that approximate unlearning methods cannot currently provide the guarantees legal deletion requires. They may reduce influence - but they cannot reliably eliminate it. The model may retain traces that no current audit method can rule out.',
       verdict: 'Implemented by some systems. Cannot satisfy GDPR Art.17.',
     },
   ];
@@ -302,13 +302,13 @@ function MachineUnlearning() {
         })}
       </div>
 
-      {/* Cooper pullquote — single clean block, no double lines */}
+      {/* Cooper pullquote - single clean block, no double lines */}
       <div style={{ borderLeft: `3px solid ${C.weight.base}`, background: C.weight.faint, padding: 'clamp(1rem, 2.5vw, 1.5rem)', paddingLeft: 'clamp(1.25rem, 3vw, 2rem)' }}>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.75, marginBottom: '0.75rem' }}>
           "Removing information from a model's training data does not guarantee the model cannot reproduce or reflect that information. There is no known production system, at this scale, that currently implements full unlearning."
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>{"Cooper et al., NeurIPS 2024 — Machine Unlearning Doesn't Do What You Think (arXiv:2412.06966)"}</a>
+          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>{"Cooper et al., NeurIPS 2024 - Machine Unlearning Doesn't Do What You Think (arXiv:2412.06966)"}</a>
         </p>
       </div>
     </motion.div>
@@ -340,7 +340,7 @@ function RetrainingBar() {
       <SectionLabel>The only real alternative: full model retraining</SectionLabel>
 
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 560, marginBottom: '2rem' }}>
-        The only way to guarantee removal of your data is to retrain the model from scratch — excluding your conversations. For GPT-4, that takes approximately 90 days of continuous compute. If OpenAI began retraining at the exact moment you started reading this page, this is how far along they would be.
+        The only way to guarantee removal of your data is to retrain the model from scratch - excluding your conversations. For GPT-4, that takes approximately 90 days of continuous compute. If OpenAI began retraining at the exact moment you started reading this page, this is how far along they would be.
       </p>
 
       <div className="cbd-3col" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1px', background: PALETTE.border, marginBottom: '2rem' }}>
@@ -375,7 +375,7 @@ function RetrainingBar() {
 }
 
 // ============================================================================
-// LEGAL GAP — interactive row reveal
+// LEGAL GAP - interactive row reveal
 // ============================================================================
 function LegalGap() {
   const ref = useRef(null);
@@ -409,7 +409,7 @@ function LegalGap() {
       <SectionLabel color={C.legal.base}>The legal gap</SectionLabel>
 
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '2rem' }}>
-        {"In March 2023, "}<a href="https://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/9870832" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>{"Italy's Garante temporarily banned ChatGPT"}</a>{" — OpenAI could not demonstrate that users' data, once embedded in model weights, could be erased on request. OpenAI added opt-out controls and the ban was lifted. In December 2024, "}<a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>a €15M fine was issued</a>{", subsequently annulled on procedural grounds. The underlying technical problem was never resolved."}
+        {"In March 2023, "}<a href="https://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/9870832" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>{"Italy's Garante temporarily banned ChatGPT"}</a>{" - OpenAI could not demonstrate that users' data, once embedded in model weights, could be erased on request. OpenAI added opt-out controls and the ban was lifted. In December 2024, "}<a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>a €15M fine was issued</a>{", subsequently annulled on procedural grounds. The underlying technical problem was never resolved."}
       </p>
 
       {/* Interactive table */}
@@ -472,7 +472,7 @@ function ConsentFailure() {
           Disclosure without comprehension is not consent. The more complex the system, the more precise the disclosure must be. AI training is diffuse, irreversible, and invisible. It exceeds the complexity threshold at which any current disclosure mechanism is adequate.
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Nissenbaum, 2011 — A Contextual Approach to Privacy Online, Daedalus 140(4):32–48</a>
+          <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Nissenbaum, 2011 - A Contextual Approach to Privacy Online, Daedalus 140(4):32–48</a>
         </p>
       </div>
     </motion.div>
@@ -493,7 +493,7 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
         {[
-          { num: '01', text: 'No current mechanism exists to request the removal of your data from trained model weights. OpenAI cannot straightforwardly fulfil such a request — not by policy alone, but by the current limits of machine learning science.' },
+          { num: '01', text: 'No current mechanism exists to request the removal of your data from trained model weights. OpenAI cannot straightforwardly fulfil such a request - not by policy alone, but by the current limits of machine learning science.' },
           { num: '02', text: 'You cannot know what specifically your conversations contributed. The contribution is diffuse. It cannot currently be quantified or localised.' },
           { num: '03', text: 'The model that learned from your conversations will continue operating for the foreseeable future. Your influence outlasts your account.' },
         ].map((fact, i) => (

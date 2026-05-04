@@ -1,7 +1,7 @@
 // ============================================================================
 // claudeParser.ts
 // Normalises Claude.ai conversation exports into the same RawMessage[]
-// format that deepParser.ts expects — so they can be merged and re-analysed.
+// format that deepParser.ts expects - so they can be merged and re-analysed.
 //
 // Claude export format (conversations.json):
 // [
@@ -42,7 +42,7 @@ export function extractClaudeMessages(rawJson: any[]): RawMessage[] {
     const conversationId = convo.uuid || '';
 
     for (const msg of convo.chat_messages) {
-      // Only human messages — same as ChatGPT parser only taking 'user' role
+      // Only human messages - same as ChatGPT parser only taking 'user' role
       if (msg.sender !== 'human') continue;
 
       const text = typeof msg.text === 'string' ? msg.text.trim() : '';

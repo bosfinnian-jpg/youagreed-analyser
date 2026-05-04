@@ -59,7 +59,7 @@ ${name}`;
 }
 
 // ============================================================================
-// ANIMATED SECTION NUMBER — giant faint digit behind section heading
+// ANIMATED SECTION NUMBER - giant faint digit behind section heading
 // ============================================================================
 function SectionMark({ n }: { n: string }) {
   return (
@@ -80,7 +80,7 @@ function SectionMark({ n }: { n: string }) {
 }
 
 // ============================================================================
-// DOES / DOESN'T — honest two-column caveat
+// DOES / DOESN'T - honest two-column caveat
 // ============================================================================
 function DoesDoesnt({ does, doesnt }: { does: string; doesnt: string }) {
   return (
@@ -127,7 +127,7 @@ function Divider() {
 }
 
 // ============================================================================
-// ACTION 01 — LIMIT EXPOSURE GOING FORWARD
+// ACTION 01 - LIMIT EXPOSURE GOING FORWARD
 // ============================================================================
 function ActionOptOut() {
   const ref = useRef(null);
@@ -188,14 +188,14 @@ function ActionOptOut() {
 
       <DoesDoesnt
         does="Stop your future conversations from being used as training data."
-        doesnt="Remove what the model already learned from your previous conversations. Whatever influence that data had is distributed across weights — it cannot currently be located or individually extracted."
+        doesnt="Remove what the model already learned from your previous conversations. Whatever influence that data had is distributed across weights - it cannot currently be located or individually extracted."
       />
     </motion.section>
   );
 }
 
 // ============================================================================
-// ACTION 02 — SUBJECT ACCESS REQUEST
+// ACTION 02 - SUBJECT ACCESS REQUEST
 // ============================================================================
 function ActionSAR({ analysis }: { analysis: DeepAnalysis }) {
   const [copied, setCopied] = useState(false);
@@ -228,11 +228,11 @@ function ActionSAR({ analysis }: { analysis: DeepAnalysis }) {
       </h2>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.7vw, 1.12rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '58ch', marginBottom: '2rem' }}>
         Under Article 15 of the UK GDPR, you have the right to demand that OpenAI disclose
-        every piece of data they hold about you — inferred profiles, retention periods, and whether
+        every piece of data they hold about you - inferred profiles, retention periods, and whether
         your conversations were used to train a model. They have 30 days to respond.
         {name && messageCount > 0
           ? ` The letter below is pre-filled with your name and approximate message count (${messageCount.toLocaleString()}).`
-          : ' The letter below is ready to send — fill in your name and email address.'}
+          : ' The letter below is ready to send - fill in your name and email address.'}
       </p>
 
       {/* The letter */}
@@ -241,7 +241,7 @@ function ActionSAR({ analysis }: { analysis: DeepAnalysis }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{ width: 8, height: 8, borderRadius: '50%', background: PALETTE.red, opacity: 0.7 }} />
             <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.26em', textTransform: 'uppercase', color: PALETTE.inkFaint }}>
-              Subject Access Request — OpenAI
+              Subject Access Request - OpenAI
             </span>
           </div>
           <button
@@ -295,7 +295,7 @@ function ActionSAR({ analysis }: { analysis: DeepAnalysis }) {
         <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: '64ch' }}>
           OpenAI will send a data export and respond to the erasure request.
           They are likely to confirm that data used in model training cannot be individually
-          removed — this is the technical reality this tool documents. The value of the letter
+          removed - this is the technical reality this tool documents. The value of the letter
           is not retrieval. It is forcing them to state the limitation in writing.
         </p>
       </div>
@@ -309,7 +309,7 @@ function ActionSAR({ analysis }: { analysis: DeepAnalysis }) {
 }
 
 // ============================================================================
-// ACTION 03 — CONSIDER ALTERNATIVES
+// ACTION 03 - CONSIDER ALTERNATIVES
 // ============================================================================
 function ActionAlternatives() {
   const ref = useRef(null);
@@ -317,7 +317,7 @@ function ActionAlternatives() {
 
   const categories = [
     {
-      label: 'Fully local — nothing leaves your machine',
+      label: 'Fully local - nothing leaves your machine',
       color: PALETTE.green,
       items: [
         { name: 'Ollama', url: 'https://ollama.com', desc: 'Run open-source models (Llama, Mistral, Gemma) on your own hardware. No account. No telemetry. Conversations never leave your device.' },
@@ -397,7 +397,7 @@ function ActionAlternatives() {
 }
 
 // ============================================================================
-// CLOSING — honest, not dramatic
+// CLOSING - honest, not dramatic
 // ============================================================================
 function Closing({ messageCount, days, setPage }: { messageCount: number; days: number; setPage?: (p: string) => void }) {
   const ref = useRef(null);

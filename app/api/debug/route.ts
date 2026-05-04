@@ -7,6 +7,6 @@ export async function GET() {
   return NextResponse.json({
     apiKeyPresent: !!apiKey,
     routesOk: true,
-    message: 'Use the browser console debug instead — see instructions',
+    message: 'Use the browser console debug instead - see instructions',
   });
 }

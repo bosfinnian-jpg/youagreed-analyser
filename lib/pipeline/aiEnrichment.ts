@@ -1,5 +1,5 @@
 // ============================================================================
-// aiEnrichment.ts — v3
+// aiEnrichment.ts - v3
 // Merges AI enrichment into the deep analysis.
 // Now handles psychological_signals and inferred_beliefs.
 // ============================================================================
@@ -37,7 +37,7 @@ const BATCH_SIZE = 3;
 const MAX_CANDIDATES = 30;
 const MAX_PARALLEL_BATCHES = 1;
 
-// Score ceilings removed — scoring handled by computeScoreFactors in deepParser.ts
+// Score ceilings removed - scoring handled by computeScoreFactors in deepParser.ts
 
 // ============================================================================
 // TEMPLATE DETECTION
@@ -59,16 +59,16 @@ function isStructuralTemplate(text: string): boolean {
   const lines = text.split('\n').filter(l => l.trim());
   const n = Math.max(lines.length, 1);
 
-  // Markdown headings — 4+ is a structured document, not a personal message
+  // Markdown headings - 4+ is a structured document, not a personal message
   const headings = lines.filter(l => /^#{1,6}\s+\S/.test(l.trim())).length;
   if (headings >= 4) return true;
   if (headings >= 2 && n >= 8 && headings / n > 0.25) return true;
 
-  // Bold labels with colons — only if very dense (document structure)
+  // Bold labels with colons - only if very dense (document structure)
   const boldLabels = (text.match(/\*\*[^*\n]{1,60}:\*\*/g) || []).length;
   if (boldLabels >= 4) return true;
 
-  // Numbered lists — only flag as template if:
+  // Numbered lists - only flag as template if:
   // 1. High count (7+ items) AND high ratio
   // 2. AND items look like instructions (not personal enumeration)
   // "5 things I need to tell my therapist" is NOT a template
@@ -159,7 +159,7 @@ async function enrichBatch(batch: Candidate[], attempt = 0): Promise<MessageEnri
     return (data.enrichments as MessageEnrichment[]) || [];
   } catch (err) {
     if (attempt < 2 && err instanceof TypeError) {
-      // Network error — retry
+      // Network error - retry
       await new Promise(r => setTimeout(r, 2000));
       return enrichBatch(batch, attempt + 1);
     }
@@ -316,7 +316,7 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
   const existingCategories = new Set(analysis.findings.sensitiveTopics.map((t: any) => t.category));
   const newSensitiveTopics = [...analysis.findings.sensitiveTopics, ...aiSensitiveTopics.filter(t => !existingCategories.has(t.category))];
 
-  // Psychological signals — aggregate across all enriched messages
+  // Psychological signals - aggregate across all enriched messages
   const psychSignalCounts: Record<string, number> = {};
   for (const e of enrichments) {
     if (!e.is_personal || e.is_template_or_script) continue;
@@ -325,7 +325,7 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
     }
   }
 
-  // Inferred beliefs — collect unique ones, ranked by frequency
+  // Inferred beliefs - collect unique ones, ranked by frequency
   const beliefCounts: Record<string, number> = {};
   for (const e of enrichments) {
     if (!e.is_personal || e.is_template_or_script) continue;
@@ -350,9 +350,9 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
 
   // Override attachment style with AI signals if stronger evidence
   if (psychSignalCounts['attachment_anxiety'] >= 3 && (!updatedPortrait.attachmentStyle || !updatedPortrait.attachmentStyle.includes('Anxious'))) {
-    updatedPortrait.attachmentStyle = 'Anxious attachment pattern — preoccupied with others\' responses and availability';
+    updatedPortrait.attachmentStyle = 'Anxious attachment pattern - preoccupied with others\' responses and availability';
   } else if (psychSignalCounts['attachment_avoidant'] >= 2 && (!updatedPortrait.attachmentStyle || !updatedPortrait.attachmentStyle.includes('Avoidant'))) {
-    updatedPortrait.attachmentStyle = 'Avoidant attachment pattern — discomfort with emotional closeness';
+    updatedPortrait.attachmentStyle = 'Avoidant attachment pattern - discomfort with emotional closeness';
   }
 
   // Add inferred beliefs to portrait
@@ -394,7 +394,7 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
 
   const typeBreakdown = enrichedMessages.reduce((acc, m) => { acc[m.messageType] = (acc[m.messageType] || 0) + 1; return acc; }, {} as Record<string, number>);
 
-  // Scoring — delegate entirely to computeScoreFactors (deepParser.ts)
+  // Scoring - delegate entirely to computeScoreFactors (deepParser.ts)
   // This ensures privacyScore and scoreBreakdown are always computed by
   // the same function, eliminating the divergence bug.
 
@@ -460,7 +460,7 @@ export async function enrichAnalysisWithAI(analysis: DeepAnalysis, onProgress?: 
     onProgress?.({ stage: 'merging', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
     const merged = mergeEnrichments(analysis, enrichments);
 
-    // Synthesis pass — one final call reading the top excerpts together
+    // Synthesis pass - one final call reading the top excerpts together
     onProgress?.({ stage: 'synthesizing', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
     try {
       const synthesis = await runSynthesis(merged, enrichments);

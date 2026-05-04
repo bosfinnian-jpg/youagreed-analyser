@@ -18,7 +18,7 @@ interface MarketSeg {
 }
 
 // ============================================================================
-// SOURCE LINK — underlined, clickable, opens in new tab
+// SOURCE LINK - underlined, clickable, opens in new tab
 // ============================================================================
 function Src({ href, children }: { href: string; children: React.ReactNode }) {
   return (
@@ -94,16 +94,16 @@ function CpmTooltip() {
 function generateMarketplaceSegments(r: any): MarketSeg[] {
   const segments = r.commercialProfile?.segments || [];
   const cpmMap: Record<string, { cpm: string; cat: string; iabUrl: string }> = {
-    mental_health_support:    { cpm: '£6.20', cat: 'IAB: Health — Panic/Anxiety Disorders', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
-    career_development:       { cpm: '£3.80', cat: 'IAB: Business — Career Advice', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    mental_health_support:    { cpm: '£6.20', cat: 'IAB: Health - Panic/Anxiety Disorders', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    career_development:       { cpm: '£3.80', cat: 'IAB: Business - Career Advice', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
     financial_planning:       { cpm: '£4.50', cat: 'IAB: Personal Finance', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
-    relationship_advice:      { cpm: '£2.90', cat: 'IAB: Family — Dating/Marriage', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
-    productivity_optimisation:{ cpm: '£2.40', cat: 'IAB: Technology — Software', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
-    creative_professional:    { cpm: '£3.10', cat: 'IAB: Business — Freelance/Startup', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
-    health_wellness:          { cpm: '£5.60', cat: 'IAB: Health — General', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    relationship_advice:      { cpm: '£2.90', cat: 'IAB: Family - Dating/Marriage', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    productivity_optimisation:{ cpm: '£2.40', cat: 'IAB: Technology - Software', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    creative_professional:    { cpm: '£3.10', cat: 'IAB: Business - Freelance/Startup', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    health_wellness:          { cpm: '£5.60', cat: 'IAB: Health - General', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
     education_learning:       { cpm: '£2.20', cat: 'IAB: Education', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
     housing_relocation:       { cpm: '£7.80', cat: 'IAB: Real Estate', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
-    parenting:                { cpm: '£4.10', cat: 'IAB: Family — Babies and Toddlers', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    parenting:                { cpm: '£4.10', cat: 'IAB: Family - Babies and Toddlers', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
     legal_concerns:           { cpm: '£8.90', cat: 'IAB: Legal', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
   };
   return segments.slice(0, 6).map((seg: any) => {
@@ -167,7 +167,7 @@ function CommercialTargetsSection({ targets }: { targets: any[] }) {
       <SectionHeader
         label="Advertisers who would target you"
         heading="The brands that would pay to reach this profile."
-        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data were to enter the broker ecosystem — through a breach, a policy change, or a data-sharing agreement — these are the advertisers whose algorithms would likely identify you as a high-value target."
+        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data were to enter the broker ecosystem - through a breach, a policy change, or a data-sharing agreement - these are the advertisers whose algorithms would likely identify you as a high-value target."
       />
       <div style={{
         display: 'grid',
@@ -251,7 +251,7 @@ export default function CommercialProfilePage({ results, setPage }: {
         marginBottom: 'clamp(3rem, 6vw, 5rem)',
       }}>
         <ActLabel roman="II" title="The Inference" pageLabel="03 / Commercial Profile" />
-        <ThreadSentence>A commercial reconstruction of you — assembled without full disclosure, valued without your knowledge.</ThreadSentence>
+        <ThreadSentence>A commercial reconstruction of you - assembled without full disclosure, valued without your knowledge.</ThreadSentence>
 
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -278,7 +278,7 @@ export default function CommercialProfilePage({ results, setPage }: {
             color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '56ch',
           }}
         >
-          <Src href="https://openai.com/policies/privacy-policy/">OpenAI</Src> does not sell your data to advertisers — but your conversations
+          <Src href="https://openai.com/policies/privacy-policy/">OpenAI</Src> does not sell your data to advertisers - but your conversations
           helped train a model <Src href="https://fortune.com/2025/04/01/openai-finalizes-40-billion-funding-at-300-billion-value/">now valued at over $300 billion</Src>. That
           contribution is not easily undone. What follows is the
           commercial shape of what you gave away.
@@ -297,7 +297,7 @@ export default function CommercialProfilePage({ results, setPage }: {
               label="Market placement"
               heading="What a profile like yours is worth."
               body={<>
-                These are the <Src href="https://iabtechlab.com/standards/content-taxonomy/">IAB Content Taxonomy</Src> advertising segments your inferred profile maps onto. The <CpmTooltip /> rate is what advertisers pay per thousand impressions to reach someone matching this profile. These segments are derived from your conversation patterns — without your consent or awareness.
+                These are the <Src href="https://iabtechlab.com/standards/content-taxonomy/">IAB Content Taxonomy</Src> advertising segments your inferred profile maps onto. The <CpmTooltip /> rate is what advertisers pay per thousand impressions to reach someone matching this profile. These segments are derived from your conversation patterns - without your consent or awareness.
               </>}
             />
           </div>
@@ -444,12 +444,12 @@ export default function CommercialProfilePage({ results, setPage }: {
       {/* Footer */}
       {setPage && (
         <PageFooter
-          statement="This is not your identity. This is a commercial reconstruction of your identity — assembled without meaningful disclosure, retained without informed consent, and not easily reversible once absorbed into a trained model."
+          statement="This is not your identity. This is a commercial reconstruction of your identity - assembled without meaningful disclosure, retained without informed consent, and not easily reversible once absorbed into a trained model."
           followOn="The difference between the two is what makes it valuable."
           navItems={[
             { page: 'risk',      act: 'ACT II / 04', label: 'What it enables',      body: 'The scenarios that become possible once this profile exists and data is exposed.' },
-            { page: 'permanent', act: 'ACT III / 05', label: 'Why it persists',     body: 'Why this profile is not easily removed — even if you delete your account.' },
-            { page: 'terms',     act: 'ACT III / 06', label: 'What you agreed to',  body: 'The terms that authorised this commercial extraction — and when they changed.' },
+            { page: 'permanent', act: 'ACT III / 05', label: 'Why it persists',     body: 'Why this profile is not easily removed - even if you delete your account.' },
+            { page: 'terms',     act: 'ACT III / 06', label: 'What you agreed to',  body: 'The terms that authorised this commercial extraction - and when they changed.' },
           ]}
           endLabel="End of commercial profile."
           setPage={setPage}

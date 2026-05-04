@@ -6,19 +6,19 @@ const securityHeaders = [
   // Prevent MIME sniffing
   { key: "X-Content-Type-Options", value: "nosniff" },
 
-  // No iframing — prevents clickjacking
+  // No iframing - prevents clickjacking
   { key: "X-Frame-Options", value: "DENY" },
 
-  // Strict referrer — no leaking full URLs cross-origin
+  // Strict referrer - no leaking full URLs cross-origin
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
 
-  // Lock down permissions — camera/mic/geo/payment
+  // Lock down permissions - camera/mic/geo/payment
   {
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), payment=()",
   },
 
-  // HSTS — prod only; 1 year, include subdomains
+  // HSTS - prod only; 1 year, include subdomains
   ...(isProd
     ? [
         {

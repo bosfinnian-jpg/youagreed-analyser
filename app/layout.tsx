@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "trace.ai — your AI data dossier",
+  title: "trace.ai - your AI data dossier",
   description:
     "Upload your ChatGPT export and see what your conversations permanently reveal about you. A critical data experience.",
   icons: {
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     apple: "/favicon.svg",
   },
   openGraph: {
-    title: "trace.ai — your AI data dossier",
+    title: "trace.ai - your AI data dossier",
     description:
       "Upload your ChatGPT export. See what your conversations permanently reveal.",
     url: "https://youagreed.co.uk",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "trace.ai — your AI data dossier",
+    title: "trace.ai - your AI data dossier",
     description: "Upload your ChatGPT export. See what your conversations permanently reveal.",
   },
   robots: {

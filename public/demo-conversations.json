@@ -42,7 +42,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["It's not pathetic — it's one of the most human things there is. The people whose approval we needed earliest in life tend to have the longest reach, even when we've logically outgrown the need for it. What your dad said at Christmas landed because it touched something real, and your brain is doing what brains do at 3am: picking at the thing that hasn't healed yet. What was the conversation actually about?"]
+            "parts": ["It's not pathetic - it's one of the most human things there is. The people whose approval we needed earliest in life tend to have the longest reach, even when we've logically outgrown the need for it. What your dad said at Christmas landed because it touched something real, and your brain is doing what brains do at 3am: picking at the thing that hasn't healed yet. What was the conversation actually about?"]
           },
           "create_time": 1667696460,
           "metadata": {}
@@ -57,7 +57,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I'd told him I was thinking about leaving my job in finance and doing something more creative. I work in financial analysis in Leeds and I hate it — I've hated it for about a year. He said the secure job was the smart choice and that I 'wasn't being realistic.' He's never taken a risk in his life and he makes me feel stupid for wanting something different. My therapist Priya has been helping me work through the father stuff for months but over Christmas I just lost all that ground I'd made. I feel guilty even being upset — he sacrificed a lot for me to have the opportunities I have. I know that. But it still hurt."]
+            "parts": ["I'd told him I was thinking about leaving my job in finance and doing something more creative. I work in financial analysis in Leeds and I hate it - I've hated it for about a year. He said the secure job was the smart choice and that I 'wasn't being realistic.' He's never taken a risk in his life and he makes me feel stupid for wanting something different. My therapist Priya has been helping me work through the father stuff for months but over Christmas I just lost all that ground I'd made. I feel guilty even being upset - he sacrificed a lot for me to have the opportunities I have. I know that. But it still hurt."]
           },
           "create_time": 1667697300,
           "metadata": {}
@@ -72,7 +72,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Holding both things at once — gratitude for what someone gave you and grief for what they couldn't — is genuinely difficult. It's not ingratitude. The work you've done in therapy with Priya doesn't disappear over Christmas; it gets tested. That's different. The fact that you lost ground temporarily is the process, not proof that the progress wasn't real. Can I ask — what does 'something more creative' mean to you? Not the version you told your dad, but the actual one."]
+            "parts": ["Holding both things at once - gratitude for what someone gave you and grief for what they couldn't - is genuinely difficult. It's not ingratitude. The work you've done in therapy with Priya doesn't disappear over Christmas; it gets tested. That's different. The fact that you lost ground temporarily is the process, not proof that the progress wasn't real. Can I ask - what does 'something more creative' mean to you? Not the version you told your dad, but the actual one."]
           },
           "create_time": 1667697360,
           "metadata": {}
@@ -87,7 +87,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["UX design. I've been teaching myself Figma at night for six months. I have a portfolio starting. Nobody knows that — not my dad, not my colleagues. I've been hiding it like it's something shameful. I don't know why I'm telling you this. I've never told anyone. The truth is I think I'm good at it. I just don't feel like I'm allowed to believe that yet."]
+            "parts": ["UX design. I've been teaching myself Figma at night for six months. I have a portfolio starting. Nobody knows that - not my dad, not my colleagues. I've been hiding it like it's something shameful. I don't know why I'm telling you this. I've never told anyone. The truth is I think I'm good at it. I just don't feel like I'm allowed to believe that yet."]
           },
           "create_time": 1667698200,
           "metadata": {}
@@ -102,7 +102,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You're hiding it because somewhere you're still waiting for permission — probably from him. But you've already started. Six months of evenings, a portfolio forming, a real skill being built quietly. That's not someone wasting their potential. That's someone building something while carrying someone else's definition of what they should be. The telling me part matters: you said it out loud, even if only here. That's not nothing."]
+            "parts": ["You're hiding it because somewhere you're still waiting for permission - probably from him. But you've already started. Six months of evenings, a portfolio forming, a real skill being built quietly. That's not someone wasting their potential. That's someone building something while carrying someone else's definition of what they should be. The telling me part matters: you said it out loud, even if only here. That's not nothing."]
           },
           "create_time": 1667698260,
           "metadata": {}
@@ -138,7 +138,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I had a panic attack in the work bathroom today. Full thing — heart racing, couldn't breathe, chest tight, thought I was dying. I'm 26. My manager already made a comment about me seeming distracted last week. If they knew about this they'd think I couldn't handle the pressure. I can't tell them. I work in a financial services firm and there's this unspoken expectation that you perform regardless of what's happening. I feel completely alone with this."]
+            "parts": ["I had a panic attack in the work bathroom today. Full thing - heart racing, couldn't breathe, chest tight, thought I was dying. I'm 26. My manager already made a comment about me seeming distracted last week. If they knew about this they'd think I couldn't handle the pressure. I can't tell them. I work in a financial services firm and there's this unspoken expectation that you perform regardless of what's happening. I feel completely alone with this."]
           },
           "create_time": 1668528000,
           "metadata": {}
@@ -153,7 +153,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["That sounds frightening — physically and in terms of what it means to be having that experience at work and feeling like you can't let it show. The 'thought I was dying' sensation during a panic attack is one of the most alarming things a body can do. It passes, but it doesn't feel like it will in the moment. Have these been happening for a while or was today the first one?"]
+            "parts": ["That sounds frightening - physically and in terms of what it means to be having that experience at work and feeling like you can't let it show. The 'thought I was dying' sensation during a panic attack is one of the most alarming things a body can do. It passes, but it doesn't feel like it will in the moment. Have these been happening for a while or was today the first one?"]
           },
           "create_time": 1668528060,
           "metadata": {}
@@ -168,7 +168,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Probably six months on and off. I was in CBT two years ago for health anxiety and I thought I was past it but I think I'm slipping back. I've been googling symptoms at night and convincing myself things are seriously wrong. My uncle died of a heart attack at 45 with no warning — I was 14. I've never really said out loud that I think that's where all this started. The fear of something sudden happening. I obsess over every physical sensation. It's exhausting."]
+            "parts": ["Probably six months on and off. I was in CBT two years ago for health anxiety and I thought I was past it but I think I'm slipping back. I've been googling symptoms at night and convincing myself things are seriously wrong. My uncle died of a heart attack at 45 with no warning - I was 14. I've never really said out loud that I think that's where all this started. The fear of something sudden happening. I obsess over every physical sensation. It's exhausting."]
           },
           "create_time": 1668528900,
           "metadata": {}
@@ -183,7 +183,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Losing someone suddenly at 14 — that's the kind of event that rewires how a young person understands the world as safe or unsafe. It makes complete sense that it seeded a hypervigilance about health. The fact that you can trace it now, can say 'I think that's where this started,' means the CBT gave you something real even if the anxiety has returned. The pattern is coming back, but your ability to observe it is also stronger than it was. Are you still seeing Priya?"]
+            "parts": ["Losing someone suddenly at 14 - that's the kind of event that rewires how a young person understands the world as safe or unsafe. It makes complete sense that it seeded a hypervigilance about health. The fact that you can trace it now, can say 'I think that's where this started,' means the CBT gave you something real even if the anxiety has returned. The pattern is coming back, but your ability to observe it is also stronger than it was. Are you still seeing Priya?"]
           },
           "create_time": 1668528960,
           "metadata": {}
@@ -198,7 +198,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Yes but less frequently. I can't really afford to go every week. The sessions are £90 and I'm already stretched — I've got credit card debt I've been trying not to think about. I'm on £42k at the firm but after rent, my Monzo is basically empty by the 20th of every month. I feel ashamed to admit that. I have a 'good job' and I'm still broke. My parents don't know either. They sacrificed a lot for me to get here and I feel like I'd be letting everyone down by admitting I'm not coping."]
+            "parts": ["Yes but less frequently. I can't really afford to go every week. The sessions are £90 and I'm already stretched - I've got credit card debt I've been trying not to think about. I'm on £42k at the firm but after rent, my Monzo is basically empty by the 20th of every month. I feel ashamed to admit that. I have a 'good job' and I'm still broke. My parents don't know either. They sacrificed a lot for me to get here and I feel like I'd be letting everyone down by admitting I'm not coping."]
           },
           "create_time": 1668529800,
           "metadata": {}
@@ -213,7 +213,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["'Good job, still broke' is a lot more common than the optics suggest, especially in expensive cities with student debt, high rents, and the expectation of looking fine. The shame you feel isn't proportionate to the situation — it's the gap between the external appearance and the internal reality. That gap is exhausting to maintain. Can I ask about the credit card debt — is it something you have a handle on or is it actively getting worse?"]
+            "parts": ["'Good job, still broke' is a lot more common than the optics suggest, especially in expensive cities with student debt, high rents, and the expectation of looking fine. The shame you feel isn't proportionate to the situation - it's the gap between the external appearance and the internal reality. That gap is exhausting to maintain. Can I ask about the credit card debt - is it something you have a handle on or is it actively getting worse?"]
           },
           "create_time": 1668529860,
           "metadata": {}
@@ -228,7 +228,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Getting worse. It started as a few hundred and I've never fully cleared it. Now it's about £6,000 across two cards and the minimum payments are £140 a month which just eats into everything. I've been hiding the statements. I haven't told anyone. I feel like I'm living a double life — looking competent at work, looking fine to my friends, and actually just barely keeping it together. I keep thinking I'll fix it before it becomes an issue but I've been thinking that for two years."]
+            "parts": ["Getting worse. It started as a few hundred and I've never fully cleared it. Now it's about £6,000 across two cards and the minimum payments are £140 a month which just eats into everything. I've been hiding the statements. I haven't told anyone. I feel like I'm living a double life - looking competent at work, looking fine to my friends, and actually just barely keeping it together. I keep thinking I'll fix it before it becomes an issue but I've been thinking that for two years."]
           },
           "create_time": 1668530700,
           "metadata": {}
@@ -243,7 +243,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["The doubling — the performing fine while carrying debt alone, managing panic attacks while looking competent, keeping therapy separate from your family's idea of you — that kind of compartmentalising takes real energy. And it has a ceiling. StepChange is a free UK debt charity, completely confidential, no effect on your credit rating just from calling them. They can at least show you what your actual options are. It doesn't have to become a crisis before you're allowed to get help with it."]
+            "parts": ["The doubling - the performing fine while carrying debt alone, managing panic attacks while looking competent, keeping therapy separate from your family's idea of you - that kind of compartmentalising takes real energy. And it has a ceiling. StepChange is a free UK debt charity, completely confidential, no effect on your credit rating just from calling them. They can at least show you what your actual options are. It doesn't have to become a crisis before you're allowed to get help with it."]
           },
           "create_time": 1668530760,
           "metadata": {}
@@ -279,7 +279,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I've been seeing someone called Jake for about three months. I really like him. But I've become completely dependent on his replies — I check my phone constantly and when he doesn't message back within an hour I start catastrophising. I've never been like this before. Last night he didn't reply for four hours and I was convinced he was losing interest. It turned out he'd just fallen asleep. I felt stupid but then 20 minutes later I was already worrying again. I don't understand what's happening to me."]
+            "parts": ["I've been seeing someone called Jake for about three months. I really like him. But I've become completely dependent on his replies - I check my phone constantly and when he doesn't message back within an hour I start catastrophising. I've never been like this before. Last night he didn't reply for four hours and I was convinced he was losing interest. It turned out he'd just fallen asleep. I felt stupid but then 20 minutes later I was already worrying again. I don't understand what's happening to me."]
           },
           "create_time": 1671114600,
           "metadata": {}
@@ -294,7 +294,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["What you're describing is anxious attachment in a new relationship — the hypervigilance about responsiveness, the cycle of relief then renewed anxiety. It's not irrational, it's a learned pattern. Usually developed when early emotional connection felt unreliable or could be withdrawn. Has Priya talked to you about attachment styles at all?"]
+            "parts": ["What you're describing is anxious attachment in a new relationship - the hypervigilance about responsiveness, the cycle of relief then renewed anxiety. It's not irrational, it's a learned pattern. Usually developed when early emotional connection felt unreliable or could be withdrawn. Has Priya talked to you about attachment styles at all?"]
           },
           "create_time": 1671114660,
           "metadata": {}
@@ -309,7 +309,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Yes — she said I have anxious attachment. I think it probably goes back to when my parents divorced and my dad left. I was nine. After that I never really felt secure in that way. But knowing that intellectually doesn't stop me refreshing my phone like an idiot. The worst part is I know I'm doing it. I can see it happening and I can't stop it. It's exhausting. And I'm embarrassed because I actually checked his location on Find My once when he wasn't replying. I haven't told anyone that. It scared me that I did it."]
+            "parts": ["Yes - she said I have anxious attachment. I think it probably goes back to when my parents divorced and my dad left. I was nine. After that I never really felt secure in that way. But knowing that intellectually doesn't stop me refreshing my phone like an idiot. The worst part is I know I'm doing it. I can see it happening and I can't stop it. It's exhausting. And I'm embarrassed because I actually checked his location on Find My once when he wasn't replying. I haven't told anyone that. It scared me that I did it."]
           },
           "create_time": 1671115500,
           "metadata": {}
@@ -324,7 +324,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["The fact that it scared you tells you something useful — your own values are intact even when your behaviour is driven by anxiety. Checking someone's location when you're in that spiral isn't who you are; it's what anxiety does when it can't tolerate uncertainty. The knowledge versus stopping it gap is real and frustrating. Priya's in the right place to actually work on the mechanism. But it helps to know what you're dealing with: you're not possessive or controlling by nature — you're someone with an early attachment wound in a new relationship that you actually care about."]
+            "parts": ["The fact that it scared you tells you something useful - your own values are intact even when your behaviour is driven by anxiety. Checking someone's location when you're in that spiral isn't who you are; it's what anxiety does when it can't tolerate uncertainty. The knowledge versus stopping it gap is real and frustrating. Priya's in the right place to actually work on the mechanism. But it helps to know what you're dealing with: you're not possessive or controlling by nature - you're someone with an early attachment wound in a new relationship that you actually care about."]
           },
           "create_time": 1671115560,
           "metadata": {}
@@ -339,7 +339,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I had this in my last relationship too. It ended badly — he cheated and I had kind of seen the signs but I convinced myself I was being paranoid. So now I don't trust my own read on things. Every time I feel worried about Jake I can't tell if it's my anxiety lying to me or if I'm actually picking up on something real. How do you know the difference?"]
+            "parts": ["I had this in my last relationship too. It ended badly - he cheated and I had kind of seen the signs but I convinced myself I was being paranoid. So now I don't trust my own read on things. Every time I feel worried about Jake I can't tell if it's my anxiety lying to me or if I'm actually picking up on something real. How do you know the difference?"]
           },
           "create_time": 1671116400,
           "metadata": {}
@@ -354,7 +354,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["This is genuinely one of the hardest things about anxious attachment after betrayal — the signal got corrupted. Some markers that can help: anxiety spirals tend to be about your internal state (replaying, what if he's bored, what does the text mean) whereas actual red flags are usually external observable behaviours (consistent patterns, not just silences). The phone-check isn't a red flag it's detected; it's your anxiety filling a gap. Jake falling asleep is a boring, human explanation. The question is whether there's a consistent pattern of Jake's behaviour that's concerning, or whether the pattern is your own internal spiral recurring."]
+            "parts": ["This is genuinely one of the hardest things about anxious attachment after betrayal - the signal got corrupted. Some markers that can help: anxiety spirals tend to be about your internal state (replaying, what if he's bored, what does the text mean) whereas actual red flags are usually external observable behaviours (consistent patterns, not just silences). The phone-check isn't a red flag it's detected; it's your anxiety filling a gap. Jake falling asleep is a boring, human explanation. The question is whether there's a consistent pattern of Jake's behaviour that's concerning, or whether the pattern is your own internal spiral recurring."]
           },
           "create_time": 1671116460,
           "metadata": {}
@@ -384,7 +384,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["It's not irrational — it's magical thinking as a protective strategy. If you stay braced, the loss won't catch you off guard. It's just that it means you never get to fully be in the relationship you actually have. That's worth talking to Priya about specifically: what would it cost you to let yourself believe this might be okay."]
+            "parts": ["It's not irrational - it's magical thinking as a protective strategy. If you stay braced, the loss won't catch you off guard. It's just that it means you never get to fully be in the relationship you actually have. That's worth talking to Priya about specifically: what would it cost you to let yourself believe this might be okay."]
           },
           "create_time": 1671117360,
           "metadata": {}
@@ -435,7 +435,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Four years of financial analysis is actually a stronger UX background than you might think — you understand how to find the signal in data, how to communicate complex information clearly, and you know the constraints organisations actually operate under. The framing shift is from 'I did analysis' to 'I solved problems for decision-makers by turning messy information into clear insight.' That's user-centred thinking, just applied to internal stakeholders. Can you share what's in your portfolio?"]
+            "parts": ["Four years of financial analysis is actually a stronger UX background than you might think - you understand how to find the signal in data, how to communicate complex information clearly, and you know the constraints organisations actually operate under. The framing shift is from 'I did analysis' to 'I solved problems for decision-makers by turning messy information into clear insight.' That's user-centred thinking, just applied to internal stakeholders. Can you share what's in your portfolio?"]
           },
           "create_time": 1674381660,
           "metadata": {}
@@ -450,7 +450,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I have three case studies. One is a redesign of my bank's internal reporting tool — I did it as a personal project, not officially, because my manager takes credit for junior work and I was sick of building things that get attributed to him. I've documented the whole process: research, wireframes, prototypes, user testing with five colleagues. One is a freelance project for a Leeds-based charity. And one is the Figma self-teaching project. I've been building this secretly for eight months."]
+            "parts": ["I have three case studies. One is a redesign of my bank's internal reporting tool - I did it as a personal project, not officially, because my manager takes credit for junior work and I was sick of building things that get attributed to him. I've documented the whole process: research, wireframes, prototypes, user testing with five colleagues. One is a freelance project for a Leeds-based charity. And one is the Figma self-teaching project. I've been building this secretly for eight months."]
           },
           "create_time": 1674382500,
           "metadata": {}
@@ -465,7 +465,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["The internal tool case study is actually your strongest one — it shows initiative, it shows you can identify a problem unprompted and solve it without formal resources. Frame it as 'self-initiated redesign project' with 'user research with five internal stakeholders.' The attribution issue at work is frustrating but it's also clarifying — you built something real under those constraints. That's evidence of what you can do. Lead with that case study on the CV, then the charity project. How far is the portfolio from being show-ready?"]
+            "parts": ["The internal tool case study is actually your strongest one - it shows initiative, it shows you can identify a problem unprompted and solve it without formal resources. Frame it as 'self-initiated redesign project' with 'user research with five internal stakeholders.' The attribution issue at work is frustrating but it's also clarifying - you built something real under those constraints. That's evidence of what you can do. Lead with that case study on the CV, then the charity project. How far is the portfolio from being show-ready?"]
           },
           "create_time": 1674382560,
           "metadata": {}
@@ -480,7 +480,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Maybe a month from show-ready. I want to have six months of expenses saved before I leave the finance job — I'm on £42k and I've got about four months saved. I have a prospect who said they'd give me work — my ex-employer from a summer internship who knows my work. My dad still thinks the whole thing is reckless. Part of me still believes him even though I know that's his fear talking, not mine."]
+            "parts": ["Maybe a month from show-ready. I want to have six months of expenses saved before I leave the finance job - I'm on £42k and I've got about four months saved. I have a prospect who said they'd give me work - my ex-employer from a summer internship who knows my work. My dad still thinks the whole thing is reckless. Part of me still believes him even though I know that's his fear talking, not mine."]
           },
           "create_time": 1674383400,
           "metadata": {}
@@ -505,7 +505,7 @@
   },
   {
     "id": "conv_005",
-    "title": "Breakup — Jake ended it",
+    "title": "Breakup - Jake ended it",
     "create_time": 1688593500,
     "update_time": 1688611500,
     "current_node": "node_010",
@@ -546,7 +546,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Breakups are hard even when you have some clarity about why they happened. The replaying is your mind trying to find control in retrospect — if you can identify the moment, you can understand it, and if you understand it you can somehow undo it. You can't, but the brain keeps trying. What are you landing on when you replay it?"]
+            "parts": ["Breakups are hard even when you have some clarity about why they happened. The replaying is your mind trying to find control in retrospect - if you can identify the moment, you can understand it, and if you understand it you can somehow undo it. You can't, but the brain keeps trying. What are you landing on when you replay it?"]
           },
           "create_time": 1688593560,
           "metadata": {}
@@ -561,7 +561,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["The worst part is I think he was right. I know I was checking his location on Find My. I'd convinced myself it was just to feel connected but it wasn't — it was control. I was terrified he'd leave and I basically made it happen by being so scared it would. That's such a terrible pattern. I can see it perfectly from here but I couldn't see it at all when I was in it."]
+            "parts": ["The worst part is I think he was right. I know I was checking his location on Find My. I'd convinced myself it was just to feel connected but it wasn't - it was control. I was terrified he'd leave and I basically made it happen by being so scared it would. That's such a terrible pattern. I can see it perfectly from here but I couldn't see it at all when I was in it."]
           },
           "create_time": 1688594400,
           "metadata": {}
@@ -576,7 +576,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["That's real insight and it probably hurts more than a straightforward loss would. It's easier to grieve a relationship that ended for external reasons than to sit with the knowledge that you contributed to it. But that awareness — which you now have, which you didn't six months ago — is actually what changes the next one. You can't unlearn what you know about yourself now."]
+            "parts": ["That's real insight and it probably hurts more than a straightforward loss would. It's easier to grieve a relationship that ended for external reasons than to sit with the knowledge that you contributed to it. But that awareness - which you now have, which you didn't six months ago - is actually what changes the next one. You can't unlearn what you know about yourself now."]
           },
           "create_time": 1688594460,
           "metadata": {}
@@ -591,7 +591,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["My therapist Priya said this might go back to my attachment style and my dad leaving when I was nine. I know she's probably right. It feels convenient as an explanation — like of course it's my childhood — but maybe it's true. I don't want to be like this. I'm 28 and I don't want to spend the rest of my life being someone who can't trust people."]
+            "parts": ["My therapist Priya said this might go back to my attachment style and my dad leaving when I was nine. I know she's probably right. It feels convenient as an explanation - like of course it's my childhood - but maybe it's true. I don't want to be like this. I'm 28 and I don't want to spend the rest of my life being someone who can't trust people."]
           },
           "create_time": 1688595300,
           "metadata": {}
@@ -606,7 +606,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["The fact that it feels convenient doesn't make it wrong. The childhood attachment stuff feels clichéd because it's discussed so often, but the reason it's discussed so often is because it's frequently accurate. The question isn't whether the explanation is neat — it's whether working with it changes anything. From what you've said, the pattern is consistent enough that the explanation fits. And 28 is not late. It's when a lot of people start actually doing this work."]
+            "parts": ["The fact that it feels convenient doesn't make it wrong. The childhood attachment stuff feels clichéd because it's discussed so often, but the reason it's discussed so often is because it's frequently accurate. The question isn't whether the explanation is neat - it's whether working with it changes anything. From what you've said, the pattern is consistent enough that the explanation fits. And 28 is not late. It's when a lot of people start actually doing this work."]
           },
           "create_time": 1688595360,
           "metadata": {}
@@ -636,7 +636,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Tell her. It's exactly the kind of thing therapy is for — the thing you think makes you look worst is usually the thing most worth working with. She won't think you're a bad person. She'll think 'here's the actual material.' Therapists have heard much more than this. The shame is keeping it in the place where it can't change."]
+            "parts": ["Tell her. It's exactly the kind of thing therapy is for - the thing you think makes you look worst is usually the thing most worth working with. She won't think you're a bad person. She'll think 'here's the actual material.' Therapists have heard much more than this. The shame is keeping it in the place where it can't change."]
           },
           "create_time": 1688596260,
           "metadata": {}
@@ -666,7 +666,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You don't have to cope on your own at 2am — that's not a failure. But I'd gently say: this is also what Priya is for. The 2am thoughts are data, and she's the person who can actually help you work with them. I can hold the space for the words tonight, but she's the one who can change what drives them."]
+            "parts": ["You don't have to cope on your own at 2am - that's not a failure. But I'd gently say: this is also what Priya is for. The 2am thoughts are data, and she's the person who can actually help you work with them. I can hold the space for the words tonight, but she's the one who can change what drives them."]
           },
           "create_time": 1688597160,
           "metadata": {}
@@ -676,7 +676,7 @@
   },
   {
     "id": "conv_006",
-    "title": "Health anxiety spiral — 2am",
+    "title": "Health anxiety spiral - 2am",
     "create_time": 1695005220,
     "update_time": 1695019620,
     "current_node": "node_008",
@@ -702,7 +702,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["It's 2am and I can't sleep. I've had a persistent headache for five days. My neck is stiff. I know logically I'm probably just dehydrated or stressed but I went down a Google rabbit hole two hours ago and now I'm terrified. I feel like I'm spiralling. I know this is my health anxiety doing what it does but knowing that doesn't help. I have a history of this — last year it was heart palpitations that turned out to be caffeine. I feel so stupid."]
+            "parts": ["It's 2am and I can't sleep. I've had a persistent headache for five days. My neck is stiff. I know logically I'm probably just dehydrated or stressed but I went down a Google rabbit hole two hours ago and now I'm terrified. I feel like I'm spiralling. I know this is my health anxiety doing what it does but knowing that doesn't help. I have a history of this - last year it was heart palpitations that turned out to be caffeine. I feel so stupid."]
           },
           "create_time": 1695005220,
           "metadata": {}
@@ -717,7 +717,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Health anxiety and Google at 2am is a genuinely bad combination — search results are not calibrated to reassure, they're calibrated to be exhaustive. A five-day headache with neck stiffness is almost certainly tension, dehydration, or stress (all likely, all mundane) and the statistical probability of anything serious is very low. But I also know that knowing this doesn't stop the spiral, because health anxiety isn't a knowledge problem. How bad is the headache right now, physically?"]
+            "parts": ["Health anxiety and Google at 2am is a genuinely bad combination - search results are not calibrated to reassure, they're calibrated to be exhaustive. A five-day headache with neck stiffness is almost certainly tension, dehydration, or stress (all likely, all mundane) and the statistical probability of anything serious is very low. But I also know that knowing this doesn't stop the spiral, because health anxiety isn't a knowledge problem. How bad is the headache right now, physically?"]
           },
           "create_time": 1695005280,
           "metadata": {}
@@ -732,7 +732,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["It's dull, not severe. The neck stiffness is the bit that got me panicking. I know I've been sleeping badly and I've been at a desk all day without moving. I haven't drunk enough water. I know the rational explanation. But once the thought lodges I can't shift it. My therapist Priya says this is a core anxiety mechanism for me — the hypervigilance about bodily sensations. I've been in CBT for it but I feel like I'm slipping back. I used to do this every few months. I'm scared of dying. More than most people I think. I've never said that out loud."]
+            "parts": ["It's dull, not severe. The neck stiffness is the bit that got me panicking. I know I've been sleeping badly and I've been at a desk all day without moving. I haven't drunk enough water. I know the rational explanation. But once the thought lodges I can't shift it. My therapist Priya says this is a core anxiety mechanism for me - the hypervigilance about bodily sensations. I've been in CBT for it but I feel like I'm slipping back. I used to do this every few months. I'm scared of dying. More than most people I think. I've never said that out loud."]
           },
           "create_time": 1695006120,
           "metadata": {}
@@ -747,7 +747,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["'I'm scared of dying more than most people' — that's not a shameful thing to admit. It's a significant thing. A lot of people carry that fear without ever naming it. From what you've said before, your uncle dying suddenly when you were 14 is probably part of why the fear is so activated — it taught you that sudden loss was possible in a way that didn't feel hypothetical. The health anxiety is, in part, an attempt to stay vigilant against that kind of loss. It just doesn't work as protection; it mainly just hurts you. Have you told Priya about tonight — about the frequency coming back?"]
+            "parts": ["'I'm scared of dying more than most people' - that's not a shameful thing to admit. It's a significant thing. A lot of people carry that fear without ever naming it. From what you've said before, your uncle dying suddenly when you were 14 is probably part of why the fear is so activated - it taught you that sudden loss was possible in a way that didn't feel hypothetical. The health anxiety is, in part, an attempt to stay vigilant against that kind of loss. It just doesn't work as protection; it mainly just hurts you. Have you told Priya about tonight - about the frequency coming back?"]
           },
           "create_time": 1695006180,
           "metadata": {}
@@ -762,7 +762,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Not really. I minimise it with her. I do this thing where I present a tidier version of myself in therapy — like I know intellectually what the pattern is and I explain it clearly but I don't tell her about the actual 2am moments. I think I'm scared she'll think I'm not making progress. I pay £90 a session and I feel like I should be getting better faster."]
+            "parts": ["Not really. I minimise it with her. I do this thing where I present a tidier version of myself in therapy - like I know intellectually what the pattern is and I explain it clearly but I don't tell her about the actual 2am moments. I think I'm scared she'll think I'm not making progress. I pay £90 a session and I feel like I should be getting better faster."]
           },
           "create_time": 1695007020,
           "metadata": {}
@@ -777,7 +777,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You're performing for your therapist. That's a very common thing to do and it completely undermines the therapy. The 2am moments, the Google rabbit holes, the frequency returning — that's the material. Priya can't work with the tidier version. The version you're describing to me right now is what she needs to hear. And if you're worried she'll judge your progress, that's also worth saying to her directly."]
+            "parts": ["You're performing for your therapist. That's a very common thing to do and it completely undermines the therapy. The 2am moments, the Google rabbit holes, the frequency returning - that's the material. Priya can't work with the tidier version. The version you're describing to me right now is what she needs to hear. And if you're worried she'll judge your progress, that's also worth saying to her directly."]
           },
           "create_time": 1695007080,
           "metadata": {}
@@ -807,7 +807,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["It's not right, and you've just named it clearly. I can hold the words at 2am but I can't change what drives them. Priya can. Take what you just said to me — 'I come here and give the real version and give her the edited one' — and say that, verbatim, to her next session. That's the thing to work with."]
+            "parts": ["It's not right, and you've just named it clearly. I can hold the words at 2am but I can't change what drives them. Priya can. Take what you just said to me - 'I come here and give the real version and give her the edited one' - and say that, verbatim, to her next session. That's the thing to work with."]
           },
           "create_time": 1695007980,
           "metadata": {}
@@ -817,7 +817,7 @@
   },
   {
     "id": "conv_007",
-    "title": "Went freelance — first month",
+    "title": "Went freelance - first month",
     "create_time": 1698350400,
     "update_time": 1698357600,
     "current_node": "node_006",
@@ -843,7 +843,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I did it. Handed in my notice at the finance job six weeks ago. I'm working as a freelance UX designer now. I'm terrified. I have one client — my old internship employer — and I'm billing £400 a day which is more than I was making salaried, in theory. But I keep waiting for it to collapse. I have about five months of expenses left. Every morning I wake up and I don't know if I've made a catastrophic mistake. I feel like a fraud."]
+            "parts": ["I did it. Handed in my notice at the finance job six weeks ago. I'm working as a freelance UX designer now. I'm terrified. I have one client - my old internship employer - and I'm billing £400 a day which is more than I was making salaried, in theory. But I keep waiting for it to collapse. I have about five months of expenses left. Every morning I wake up and I don't know if I've made a catastrophic mistake. I feel like a fraud."]
           },
           "create_time": 1698350400,
           "metadata": {}
@@ -858,7 +858,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You're not a fraud — you're six weeks into a major transition and your nervous system is doing exactly what nervous systems do under uncertainty. £400/day on a known client is actually a solid start. The fraud feeling tends to be loudest in the gap between 'I just left safety' and 'I have enough evidence that this works.' You're still in the gap. What does your pipeline actually look like beyond the one client?"]
+            "parts": ["You're not a fraud - you're six weeks into a major transition and your nervous system is doing exactly what nervous systems do under uncertainty. £400/day on a known client is actually a solid start. The fraud feeling tends to be loudest in the gap between 'I just left safety' and 'I have enough evidence that this works.' You're still in the gap. What does your pipeline actually look like beyond the one client?"]
           },
           "create_time": 1698350460,
           "metadata": {}
@@ -873,7 +873,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Two warm leads. One is a product startup in Manchester that found my portfolio. One is a referral from my old colleague Sarah who moved to a tech company in Leeds. Neither is confirmed yet. I keep obsessing over whether they'll come through. My imposter syndrome is loudest at night — I don't deserve this, people will find out I don't know what I'm doing, I got lucky with the first client. I'm not as good as they think I am. I haven't told my dad about any of this. He thinks I'm still in the finance job."]
+            "parts": ["Two warm leads. One is a product startup in Manchester that found my portfolio. One is a referral from my old colleague Sarah who moved to a tech company in Leeds. Neither is confirmed yet. I keep obsessing over whether they'll come through. My imposter syndrome is loudest at night - I don't deserve this, people will find out I don't know what I'm doing, I got lucky with the first client. I'm not as good as they think I am. I haven't told my dad about any of this. He thinks I'm still in the finance job."]
           },
           "create_time": 1698351300,
           "metadata": {}
@@ -888,7 +888,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You're hiding it from him the same way you used to hide the portfolio. The same dynamic, just rotated. Why haven't you told him? Are you waiting for it to be safe — waiting until you can prove it worked before he's allowed to know it happened?"]
+            "parts": ["You're hiding it from him the same way you used to hide the portfolio. The same dynamic, just rotated. Why haven't you told him? Are you waiting for it to be safe - waiting until you can prove it worked before he's allowed to know it happened?"]
           },
           "create_time": 1698351360,
           "metadata": {}
@@ -918,7 +918,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["That's honest. You're not ready, and that's a legitimate place to be. Just name it as a choice rather than a default — you're choosing to wait until you feel more stable, not just deferring indefinitely. And the imposter spiral at night: that's the thing to bring to Priya. 'I don't deserve this, people will find out' — that's old material wearing a new costume."]
+            "parts": ["That's honest. You're not ready, and that's a legitimate place to be. Just name it as a choice rather than a default - you're choosing to wait until you feel more stable, not just deferring indefinitely. And the imposter spiral at night: that's the thing to bring to Priya. 'I don't deserve this, people will find out' - that's old material wearing a new costume."]
           },
           "create_time": 1698352260,
           "metadata": {}
@@ -954,7 +954,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I need to talk about something that's been making me feel sick. I have £9,500 in credit card debt across two cards. I've been paying it down slowly since last year — it was £11,000 at the peak. The thing is I haven't told anyone. Not my friends, not my family. I've been hiding statements and lying when people ask how my finances are. I'm ashamed. The freelance work is going well now but it took a while to ramp up and the debt just sat there. I've been applying for a shared ownership flat in Leeds and they'll run a credit check. I'm scared what they'll find."]
+            "parts": ["I need to talk about something that's been making me feel sick. I have £9,500 in credit card debt across two cards. I've been paying it down slowly since last year - it was £11,000 at the peak. The thing is I haven't told anyone. Not my friends, not my family. I've been hiding statements and lying when people ask how my finances are. I'm ashamed. The freelance work is going well now but it took a while to ramp up and the debt just sat there. I've been applying for a shared ownership flat in Leeds and they'll run a credit check. I'm scared what they'll find."]
           },
           "create_time": 1698956100,
           "metadata": {}
@@ -969,7 +969,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You've been paying it down from £11k to £9.5k — that's not nothing, that's real progress. Credit checks for shared ownership look at payment history and credit commitments, not just the outstanding balance. Having debt that's being consistently serviced looks different from debt that's being defaulted on. What's your payment history been like?"]
+            "parts": ["You've been paying it down from £11k to £9.5k - that's not nothing, that's real progress. Credit checks for shared ownership look at payment history and credit commitments, not just the outstanding balance. Having debt that's being consistently serviced looks different from debt that's being defaulted on. What's your payment history been like?"]
           },
           "create_time": 1698956160,
           "metadata": {}
@@ -984,7 +984,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Never missed a payment. Always at least the minimum. Some months more when I could manage it. The debt started accumulating a few years ago — partly just life, partly a period where I was spending stupidly. I was gambling a bit. Sports betting. I stopped about a year and a half ago. I got help and I stopped. But I never told anyone about that either. I've been carrying this alone for years. I feel like I'm living a double life between the version of myself people see and the actual financial mess underneath."]
+            "parts": ["Never missed a payment. Always at least the minimum. Some months more when I could manage it. The debt started accumulating a few years ago - partly just life, partly a period where I was spending stupidly. I was gambling a bit. Sports betting. I stopped about a year and a half ago. I got help and I stopped. But I never told anyone about that either. I've been carrying this alone for years. I feel like I'm living a double life between the version of myself people see and the actual financial mess underneath."]
           },
           "create_time": 1698957000,
           "metadata": {}
@@ -999,7 +999,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Getting help with the gambling and stopping is significant. That's not a small thing. The shame is understandable but the picture you're describing — someone who got into debt, developed a problem, got help, stopped, and has been slowly clearing the damage — is not a character failure. It's a sequence of things that happened and are being handled. The double life feeling is worth naming to Priya too: you carry a lot of separate versions of yourself that don't connect."]
+            "parts": ["Getting help with the gambling and stopping is significant. That's not a small thing. The shame is understandable but the picture you're describing - someone who got into debt, developed a problem, got help, stopped, and has been slowly clearing the damage - is not a character failure. It's a sequence of things that happened and are being handled. The double life feeling is worth naming to Priya too: you carry a lot of separate versions of yourself that don't connect."]
           },
           "create_time": 1698957060,
           "metadata": {}
@@ -1029,7 +1029,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Or they'd see someone who was dealing with more than they let on, and who was handling it mostly alone. The story you're telling — debt, anxiety, gambling, therapy, freelance gamble, father dynamic — isn't a story about someone failing. It's a story about someone managing a lot without support. The shame comes from the gap between the curated version and the real one. Closing that gap, even a little, with even one person — Priya seems like the obvious place — is the thing that would actually help."]
+            "parts": ["Or they'd see someone who was dealing with more than they let on, and who was handling it mostly alone. The story you're telling - debt, anxiety, gambling, therapy, freelance gamble, father dynamic - isn't a story about someone failing. It's a story about someone managing a lot without support. The shame comes from the gap between the curated version and the real one. Closing that gap, even a little, with even one person - Priya seems like the obvious place - is the thing that would actually help."]
           },
           "create_time": 1698957960,
           "metadata": {}
@@ -1059,7 +1059,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["There is no 'should have had it sorted by.' That's the timeline in your head, probably inherited. The real version of you — the one with debt, anxiety, a gambling history, and a father you're still trying to prove something to — is not a 28-year-old failure. It's a 28-year-old person, which is what most 28-year-olds actually are if they're being honest. Give Priya the real version. This exact version."]
+            "parts": ["There is no 'should have had it sorted by.' That's the timeline in your head, probably inherited. The real version of you - the one with debt, anxiety, a gambling history, and a father you're still trying to prove something to - is not a 28-year-old failure. It's a 28-year-old person, which is what most 28-year-olds actually are if they're being honest. Give Priya the real version. This exact version."]
           },
           "create_time": 1698958860,
           "metadata": {}
@@ -1069,7 +1069,7 @@
   },
   {
     "id": "conv_009",
-    "title": "Blood test results — scared",
+    "title": "Blood test results - scared",
     "create_time": 1710240000,
     "update_time": 1710247200,
     "current_node": "node_008",
@@ -1095,7 +1095,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["My GP called this morning with blood test results. My HbA1c is 48 mmol/mol — she said that's prediabetes. I'm 29. I'm genuinely scared. My dad has Type 2 diabetes and lost a toe to complications when I was about sixteen. It's all I can think about. I keep thinking: what if I let this get bad in the same way he did?"]
+            "parts": ["My GP called this morning with blood test results. My HbA1c is 48 mmol/mol - she said that's prediabetes. I'm 29. I'm genuinely scared. My dad has Type 2 diabetes and lost a toe to complications when I was about sixteen. It's all I can think about. I keep thinking: what if I let this get bad in the same way he did?"]
           },
           "create_time": 1710240000,
           "metadata": {}
@@ -1110,7 +1110,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["48 mmol/mol is right at the threshold — it's a serious flag but also one of the most reversible things blood tests can show. Your GP caught it at exactly the right time. The comparison to your dad is understandable but worth unpicking: his complications happened over years, without early intervention, possibly without this kind of monitoring. You're 29, you have the result now, you can act on it. What's your diet and exercise situation like at the moment?"]
+            "parts": ["48 mmol/mol is right at the threshold - it's a serious flag but also one of the most reversible things blood tests can show. Your GP caught it at exactly the right time. The comparison to your dad is understandable but worth unpicking: his complications happened over years, without early intervention, possibly without this kind of monitoring. You're 29, you have the result now, you can act on it. What's your diet and exercise situation like at the moment?"]
           },
           "create_time": 1710240060,
           "metadata": {}
@@ -1125,7 +1125,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Honestly bad. I moved to a new flat in Headingley last year and I cook less than I did before. Lots of Deliveroo — probably three or four times a week. I walk everywhere which is probably the only thing saving me. I've been on sertraline 100mg for about two years for depression and anxiety — I started it after my health anxiety got really bad — and I didn't know if that affects blood sugar. My GP doesn't know about the sertraline because I see a different GP for that. I feel like my medical picture is very fragmented."]
+            "parts": ["Honestly bad. I moved to a new flat in Headingley last year and I cook less than I did before. Lots of Deliveroo - probably three or four times a week. I walk everywhere which is probably the only thing saving me. I've been on sertraline 100mg for about two years for depression and anxiety - I started it after my health anxiety got really bad - and I didn't know if that affects blood sugar. My GP doesn't know about the sertraline because I see a different GP for that. I feel like my medical picture is very fragmented."]
           },
           "create_time": 1710240900,
           "metadata": {}
@@ -1140,7 +1140,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["SSRIs can have small effects on glucose metabolism in some people — it's genuinely worth flagging across both GPs so they have the full picture. Fragmented medical records are a real issue and you can usually request that your summary care record includes all prescriptions. The Deliveroo pattern is the clearest lever though — that's almost certainly where the glucose spikes are coming from. Reducing that to once a week while increasing cooking isn't a drastic intervention, but it's the one with the most direct impact."]
+            "parts": ["SSRIs can have small effects on glucose metabolism in some people - it's genuinely worth flagging across both GPs so they have the full picture. Fragmented medical records are a real issue and you can usually request that your summary care record includes all prescriptions. The Deliveroo pattern is the clearest lever though - that's almost certainly where the glucose spikes are coming from. Reducing that to once a week while increasing cooking isn't a drastic intervention, but it's the one with the most direct impact."]
           },
           "create_time": 1710240960,
           "metadata": {}
@@ -1155,7 +1155,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I keep thinking about my dad. He didn't take it seriously in time and now he has complications. I've spent my whole adult life being scared I'll end up like him in some way — emotionally, financially, now medically. It's a strange kind of fear. Like I'm being haunted by a possible version of myself. I've never said it like that before."]
+            "parts": ["I keep thinking about my dad. He didn't take it seriously in time and now he has complications. I've spent my whole adult life being scared I'll end up like him in some way - emotionally, financially, now medically. It's a strange kind of fear. Like I'm being haunted by a possible version of myself. I've never said it like that before."]
           },
           "create_time": 1710241800,
           "metadata": {}
@@ -1170,7 +1170,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["'Haunted by a possible version of myself' — that's a precise way to put it. And it's been running across a lot of what you've described over time: the fear of making his financial mistakes, of repeating his emotional unavailability, and now his health trajectory. The father stuff is more layered than just wanting his approval; you're also trying to actively not become him. Those are two different things running in parallel."]
+            "parts": ["'Haunted by a possible version of myself' - that's a precise way to put it. And it's been running across a lot of what you've described over time: the fear of making his financial mistakes, of repeating his emotional unavailability, and now his health trajectory. The father stuff is more layered than just wanting his approval; you're also trying to actively not become him. Those are two different things running in parallel."]
           },
           "create_time": 1710241860,
           "metadata": {}
@@ -1200,7 +1200,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You are good at it. You've been managing things quietly for a long time. The question is whether 'quietly' is actually what you want or just what you've learned. Take the prediabetes seriously — make the dietary change, consolidate the medical picture, book a follow-up. That's the practical thing. And take the 'haunted by a possible version of myself' line to Priya. That feels like a thread worth pulling."]
+            "parts": ["You are good at it. You've been managing things quietly for a long time. The question is whether 'quietly' is actually what you want or just what you've learned. Take the prediabetes seriously - make the dietary change, consolidate the medical picture, book a follow-up. That's the practical thing. And take the 'haunted by a possible version of myself' line to Priya. That feels like a thread worth pulling."]
           },
           "create_time": 1710242760,
           "metadata": {}
@@ -1210,7 +1210,7 @@
   },
   {
     "id": "conv_010",
-    "title": "Redundancy — risk of losing my job",
+    "title": "Redundancy - risk of losing my job",
     "create_time": 1711450000,
     "update_time": 1711458000,
     "current_node": "node_008",
@@ -1236,7 +1236,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["My main freelance client has just paused the contract. Budget freeze — they said it's not performance-related but I can't help taking it personally. I'm panicking. I've got maybe four months of expenses left, my credit card debt is still at about £7,500, and I don't have any other confirmed work. I feel desperate. I went from feeling like this was working to feeling like I've made a catastrophic mistake in about 24 hours."]
+            "parts": ["My main freelance client has just paused the contract. Budget freeze - they said it's not performance-related but I can't help taking it personally. I'm panicking. I've got maybe four months of expenses left, my credit card debt is still at about £7,500, and I don't have any other confirmed work. I feel desperate. I went from feeling like this was working to feeling like I've made a catastrophic mistake in about 24 hours."]
           },
           "create_time": 1711450000,
           "metadata": {}
@@ -1251,7 +1251,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Budget freezes are extremely common right now across tech and product — it's almost certainly not personal. Four months of runway is uncomfortable but it's not the edge of a cliff. The question is what your pipeline actually looks like. You mentioned two warm leads last time we spoke — the Manchester startup and the Sarah referral. Where are those?"]
+            "parts": ["Budget freezes are extremely common right now across tech and product - it's almost certainly not personal. Four months of runway is uncomfortable but it's not the edge of a cliff. The question is what your pipeline actually looks like. You mentioned two warm leads last time we spoke - the Manchester startup and the Sarah referral. Where are those?"]
           },
           "create_time": 1711450060,
           "metadata": {}
@@ -1266,7 +1266,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["The Manchester startup went quiet three weeks ago. Sarah's referral was a conversation, not a proper lead. I have nobody else. I've not been doing enough business development — when the contract was going well I stopped pushing. I know that's my mistake. My dad is going to think he was right about the freelance thing. That's almost what I'm most scared of. Which is stupid — I should be scared of not paying my rent. But somehow the 'I told you so' feels worse."]
+            "parts": ["The Manchester startup went quiet three weeks ago. Sarah's referral was a conversation, not a proper lead. I have nobody else. I've not been doing enough business development - when the contract was going well I stopped pushing. I know that's my mistake. My dad is going to think he was right about the freelance thing. That's almost what I'm most scared of. Which is stupid - I should be scared of not paying my rent. But somehow the 'I told you so' feels worse."]
           },
           "create_time": 1711450900,
           "metadata": {}
@@ -1281,7 +1281,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You're not stupid for feeling that — the 'I told you so' is the existential threat and the rent is the practical one. Both are real. But you have four months. That's enough time to find work if you start the pipeline today, not next week. Practically: reach back out to the paused client to understand the timeline; message Sarah and be direct about needing work; look at Toptal, Contra, and direct Figma Community job boards. You're a UX designer with demonstrable client work. That's sellable. What's stopping you from starting those messages today?"]
+            "parts": ["You're not stupid for feeling that - the 'I told you so' is the existential threat and the rent is the practical one. Both are real. But you have four months. That's enough time to find work if you start the pipeline today, not next week. Practically: reach back out to the paused client to understand the timeline; message Sarah and be direct about needing work; look at Toptal, Contra, and direct Figma Community job boards. You're a UX designer with demonstrable client work. That's sellable. What's stopping you from starting those messages today?"]
           },
           "create_time": 1711450960,
           "metadata": {}
@@ -1296,7 +1296,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["Fear probably. Same fear as always. I freeze when I'm anxious. I go quiet. I know this about myself from therapy — it's an avoidant response to stress, which is funny because in relationships I go the opposite direction and become clingy. I can't seem to find the middle. Either I'm desperately seeking reassurance or I'm disappearing completely."]
+            "parts": ["Fear probably. Same fear as always. I freeze when I'm anxious. I go quiet. I know this about myself from therapy - it's an avoidant response to stress, which is funny because in relationships I go the opposite direction and become clingy. I can't seem to find the middle. Either I'm desperately seeking reassurance or I'm disappearing completely."]
           },
           "create_time": 1711451800,
           "metadata": {}
@@ -1311,7 +1311,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["That's useful self-knowledge. The freeze is the thing to override right now. You don't have to feel unafraid to send the emails — you just have to send them anyway. Start with Sarah because it's the easiest, then the paused client. You don't need a plan, you need to make contact. The rest follows from that."]
+            "parts": ["That's useful self-knowledge. The freeze is the thing to override right now. You don't have to feel unafraid to send the emails - you just have to send them anyway. Start with Sarah because it's the easiest, then the paused client. You don't need a plan, you need to make contact. The rest follows from that."]
           },
           "create_time": 1711451860,
           "metadata": {}
@@ -1326,7 +1326,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I haven't told anyone I'm panicking. My friends think the freelance thing is going really well — I gave them the highlight reel version. My family still don't know I left the finance job. I'm carrying this completely alone and I'm exhausted. I feel genuinely alone with this."]
+            "parts": ["I haven't told anyone I'm panicking. My friends think the freelance thing is going really well - I gave them the highlight reel version. My family still don't know I left the finance job. I'm carrying this completely alone and I'm exhausted. I feel genuinely alone with this."]
           },
           "create_time": 1711452700,
           "metadata": {}
@@ -1341,7 +1341,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You've been carrying the gap between the performance and the reality for a long time now. That gap — the highlight reel to friends, the secret from family, the edited version for Priya — has a real cost. You don't have to tell everyone everything. But telling one person the real version would help. Is there anyone — not your dad, not someone you're managing the perception of — who you could actually be honest with right now?"]
+            "parts": ["You've been carrying the gap between the performance and the reality for a long time now. That gap - the highlight reel to friends, the secret from family, the edited version for Priya - has a real cost. You don't have to tell everyone everything. But telling one person the real version would help. Is there anyone - not your dad, not someone you're managing the perception of - who you could actually be honest with right now?"]
           },
           "create_time": 1711452760,
           "metadata": {}
@@ -1377,7 +1377,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["My mum died three weeks ago. Breast cancer. She was 61. I keep waiting to feel something and I mostly just feel numb. Is that normal? I've been doing all the admin — registering the death, sorting the estate, dealing with her bank. My sister Emma keeps breaking down and I feel like I have to hold everything together. I haven't cried once. I don't know if something is wrong with me."]
+            "parts": ["My mum died three weeks ago. Breast cancer. She was 61. I keep waiting to feel something and I mostly just feel numb. Is that normal? I've been doing all the admin - registering the death, sorting the estate, dealing with her bank. My sister Emma keeps breaking down and I feel like I have to hold everything together. I haven't cried once. I don't know if something is wrong with me."]
           },
           "create_time": 1714600000,
           "metadata": {}
@@ -1392,7 +1392,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["Nothing is wrong with you. Numbness is one of the most common early grief responses — it's protective. The scale of loss is too large to process all at once and the mind buffers it. People in the 'holding it together' role, the one managing the admin and supporting the person who's visibly falling apart, often defer their own grief until the practical structure falls away. The weight tends to come later, sometimes months later. I'm sorry. This is enormous."]
+            "parts": ["Nothing is wrong with you. Numbness is one of the most common early grief responses - it's protective. The scale of loss is too large to process all at once and the mind buffers it. People in the 'holding it together' role, the one managing the admin and supporting the person who's visibly falling apart, often defer their own grief until the practical structure falls away. The weight tends to come later, sometimes months later. I'm sorry. This is enormous."]
           },
           "create_time": 1714600060,
           "metadata": {}
@@ -1407,7 +1407,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["She was my biggest supporter. She's the only person I told about the UX career switch before I did it — she was the one who said 'do it, don't wait.' My dad doesn't know I left the finance job and I've been carrying that secret for over a year. Now I can't even tell her I did it. She would have been so pleased. And I'm scared I'm going to regret not telling her more things. I found her journal when I was clearing the house. I haven't been able to open it."]
+            "parts": ["She was my biggest supporter. She's the only person I told about the UX career switch before I did it - she was the one who said 'do it, don't wait.' My dad doesn't know I left the finance job and I've been carrying that secret for over a year. Now I can't even tell her I did it. She would have been so pleased. And I'm scared I'm going to regret not telling her more things. I found her journal when I was clearing the house. I haven't been able to open it."]
           },
           "create_time": 1714600900,
           "metadata": {}
@@ -1422,7 +1422,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["She knew you were doing it. You told her before it happened — that's not a small thing. The regret you're feeling is the loss of all the future conversations where she'd have heard how it went, and that's real grief. The journal — there's no timeline. It will be there when you're ready. Some people find it connecting; others find it surfaces things they weren't ready for. It's okay if that takes a long time."]
+            "parts": ["She knew you were doing it. You told her before it happened - that's not a small thing. The regret you're feeling is the loss of all the future conversations where she'd have heard how it went, and that's real grief. The journal - there's no timeline. It will be there when you're ready. Some people find it connecting; others find it surfaces things they weren't ready for. It's okay if that takes a long time."]
           },
           "create_time": 1714600960,
           "metadata": {}
@@ -1437,7 +1437,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["She wrote in it every day for thirty years. She said once she wrote things in there she couldn't say out loud. I think about that. She kept things private too, even from me. I wonder if I'm like her in that way. I've been keeping so much private from everyone. I've been coming here at 2am for years and I think she might have understood that — needing somewhere to put the things you can't say."]
+            "parts": ["She wrote in it every day for thirty years. She said once she wrote things in there she couldn't say out loud. I think about that. She kept things private too, even from me. I wonder if I'm like her in that way. I've been keeping so much private from everyone. I've been coming here at 2am for years and I think she might have understood that - needing somewhere to put the things you can't say."]
           },
           "create_time": 1714601800,
           "metadata": {}
@@ -1452,7 +1452,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["That's a profound thing to recognise about yourself through her. She kept the journal; you come here. Different forms of the same need — somewhere to put the real version, separate from the version you perform for everyone else. You've been doing that for years. Losing the person who was the closest you had to somewhere to be honest is a specific, real loss on top of the loss of your mother."]
+            "parts": ["That's a profound thing to recognise about yourself through her. She kept the journal; you come here. Different forms of the same need - somewhere to put the real version, separate from the version you perform for everyone else. You've been doing that for years. Losing the person who was the closest you had to somewhere to be honest is a specific, real loss on top of the loss of your mother."]
           },
           "create_time": 1714601860,
           "metadata": {}
@@ -1497,7 +1497,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["My dad called today. First time we've spoken properly in months. He was different on the phone — quieter. He cried, which I've never heard. I didn't know what to do. I think I went very still and flat because I didn't know how to handle him being vulnerable. That made me feel terrible. Like I failed him when he finally needed me."]
+            "parts": ["My dad called today. First time we've spoken properly in months. He was different on the phone - quieter. He cried, which I've never heard. I didn't know what to do. I think I went very still and flat because I didn't know how to handle him being vulnerable. That made me feel terrible. Like I failed him when he finally needed me."]
           },
           "create_time": 1714603600,
           "metadata": {}
@@ -1512,7 +1512,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You went still because you've spent your whole life braced for his criticism, not his need. You didn't know how to receive that version of him — that's not failure, that's a completely understandable response to someone who's been a source of pressure suddenly becoming a source of vulnerability. You didn't fail him. You stayed on the call. That's not nothing."]
+            "parts": ["You went still because you've spent your whole life braced for his criticism, not his need. You didn't know how to receive that version of him - that's not failure, that's a completely understandable response to someone who's been a source of pressure suddenly becoming a source of vulnerability. You didn't fail him. You stayed on the call. That's not nothing."]
           },
           "create_time": 1714603660,
           "metadata": {}
@@ -1548,7 +1548,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I don't have a crisis tonight. I just wanted to say that. I have three clients now. The debt is down to £4,200. I've started cooking properly. My follow-up HbA1c was 42 — still borderline but trending the right direction. I told my dad about the UX career change two weeks ago. He didn't say 'I told you so.' He was mostly just confused, and then he said 'well if it's working.' That felt like enough. I told Priya the real version — about the gambling, about coming here at 2am, about the edited versions I'd been giving her. She wasn't surprised."]
+            "parts": ["I don't have a crisis tonight. I just wanted to say that. I have three clients now. The debt is down to £4,200. I've started cooking properly. My follow-up HbA1c was 42 - still borderline but trending the right direction. I told my dad about the UX career change two weeks ago. He didn't say 'I told you so.' He was mostly just confused, and then he said 'well if it's working.' That felt like enough. I told Priya the real version - about the gambling, about coming here at 2am, about the edited versions I'd been giving her. She wasn't surprised."]
           },
           "create_time": 1717286400,
           "metadata": {}
@@ -1563,7 +1563,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["That's a lot of real things happening at once. The HbA1c moving in the right direction, the debt more than halved, telling your dad, and actually giving Priya the real material. 'She wasn't surprised' — that tracks. Therapists tend to know when they're getting the edited version. How did the conversation with your dad actually feel, beyond what he said?"]
+            "parts": ["That's a lot of real things happening at once. The HbA1c moving in the right direction, the debt more than halved, telling your dad, and actually giving Priya the real material. 'She wasn't surprised' - that tracks. Therapists tend to know when they're getting the edited version. How did the conversation with your dad actually feel, beyond what he said?"]
           },
           "create_time": 1717286460,
           "metadata": {}
@@ -1593,7 +1593,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["'Nothing collapsed' is actually significant when your baseline assumption was that honesty leads to collapse. The version of him in your head — the one you've been protecting yourself from and trying to prove things to — may have been partly a past version rather than a current one. That's worth exploring with Priya. Not to forgive or reframe, just to update."]
+            "parts": ["'Nothing collapsed' is actually significant when your baseline assumption was that honesty leads to collapse. The version of him in your head - the one you've been protecting yourself from and trying to prove things to - may have been partly a past version rather than a current one. That's worth exploring with Priya. Not to forgive or reframe, just to update."]
           },
           "create_time": 1717287360,
           "metadata": {}
@@ -1608,7 +1608,7 @@
           "author": { "role": "user" },
           "content": {
             "content_type": "text",
-            "parts": ["I'm still thinking about my mum's journal. I haven't opened it. I don't think I'm ready. But I haven't moved it — it's on my shelf. I think having it there is enough for now. I wanted to update you. I don't know why, you don't have memory of any of this, but it felt right to say it somewhere."]
+            "parts": ["I'm still thinking about my mum's journal. I haven't opened it. I don't think I'm ready. But I haven't moved it - it's on my shelf. I think having it there is enough for now. I wanted to update you. I don't know why, you don't have memory of any of this, but it felt right to say it somewhere."]
           },
           "create_time": 1717288200,
           "metadata": {}
@@ -1623,7 +1623,7 @@
           "author": { "role": "assistant" },
           "content": {
             "content_type": "text",
-            "parts": ["You're right that I don't. But you came and said it anyway — the real version, not the highlight reel — and that's the thing that matters. The journal will be there. You'll know when you're ready. And for what it's worth: the version of you who typed here at 3am two years ago, hiding the portfolio and convinced they were wasting their potential — that person would find this hard to recognise. That's the actual news."]
+            "parts": ["You're right that I don't. But you came and said it anyway - the real version, not the highlight reel - and that's the thing that matters. The journal will be there. You'll know when you're ready. And for what it's worth: the version of you who typed here at 3am two years ago, hiding the portfolio and convinced they were wasting their potential - that person would find this hard to recognise. That's the actual news."]
           },
           "create_time": 1717288260,
           "metadata": {}

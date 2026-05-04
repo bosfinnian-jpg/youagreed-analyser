@@ -5,7 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
-// METHOD — Act V, final page
+// METHOD - Act V, final page
 // Framing statement: epistemological status of the system.
 // The last thing the user reads. Simple. Still. Heavy.
 // ============================================================================
@@ -14,26 +14,26 @@ const SECTIONS = [
   {
     id: 'compression',
     label: 'Compression',
-    lead: `Trace.ai is a critical reconstruction, not a forensic simulation. It compresses and amplifies — by design.`,
+    lead: `Trace.ai is a critical reconstruction, not a forensic simulation. It compresses and amplifies - by design.`,
     body: `The system condenses several distinct technical processes: data transmission, storage, statistical training, inference, and downstream commercial use. These processes are temporally separated, architecturally distinct, and distributed across different institutional actors. Trace.ai presents them as a single, continuous extraction. This compression is a deliberate design strategy, not a technical error.`,
   },
   {
     id: 'amplification',
     label: 'Amplification',
     lead: null,
-    body: `The project amplifies irreversibility. In reality, machine learning systems are statistical and distributed; they do not store identifiable personal data as a discrete, localisable object. No model contains you in any literal sense. What the system does contain is influence — diffuse, non-traceable, structurally non-withdrawable. Trace.ai may overstate the permanence of identifiable data. It accurately reflects the loss of user control, traceability, and the practical impossibility of meaningful withdrawal.`,
+    body: `The project amplifies irreversibility. In reality, machine learning systems are statistical and distributed; they do not store identifiable personal data as a discrete, localisable object. No model contains you in any literal sense. What the system does contain is influence - diffuse, non-traceable, structurally non-withdrawable. Trace.ai may overstate the permanence of identifiable data. It accurately reflects the loss of user control, traceability, and the practical impossibility of meaningful withdrawal.`,
   },
   {
     id: 'translation',
     label: 'Translation',
     lead: null,
-    body: `The technical reality of modern AI training is not intuitively legible. Gradient descent, weight distributions, and approximate unlearning are not experientially accessible concepts. This project translates them into a form that is — prioritising experiential legibility over technical fidelity. The psychological profiles produced here are plausible reconstructions, not accurate records. They are demonstrations of what inference can do, and of how system authority makes that inference feel inevitable and exposing.`,
+    body: `The technical reality of modern AI training is not intuitively legible. Gradient descent, weight distributions, and approximate unlearning are not experientially accessible concepts. This project translates them into a form that is - prioritising experiential legibility over technical fidelity. The psychological profiles produced here are plausible reconstructions, not accurate records. They are demonstrations of what inference can do, and of how system authority makes that inference feel inevitable and exposing.`,
   },
   {
     id: 'argument',
     label: 'The Argument',
     lead: `The underlying argument is precise.`,
-    body: `Contemporary consent frameworks are structurally misaligned with AI systems. User input becomes distributed statistical influence that cannot be meaningfully traced, understood, or fully withdrawn. The mechanisms designed to protect that process — notice, consent, erasure — were built for a different kind of data entirely.`,
+    body: `Contemporary consent frameworks are structurally misaligned with AI systems. User input becomes distributed statistical influence that cannot be meaningfully traced, understood, or fully withdrawn. The mechanisms designed to protect that process - notice, consent, erasure - were built for a different kind of data entirely.`,
   },
 ];
 

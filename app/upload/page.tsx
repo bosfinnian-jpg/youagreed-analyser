@@ -267,7 +267,7 @@ export default function UploadPage() {
                     id="file-upload"
                   />
 
-                  {/* Tooltip — anchored to drop zone container */}
+                  {/* Tooltip - anchored to drop zone container */}
                   <AnimatePresence>
                     {showTooltip && (
                       <motion.div

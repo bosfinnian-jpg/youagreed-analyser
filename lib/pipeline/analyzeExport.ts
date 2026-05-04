@@ -86,7 +86,7 @@ export async function analyzeExport(
 }
 
 // ============================================================================
-// MERGE — combine two source analyses
+// MERGE - combine two source analyses
 // Used when a second source (e.g. Claude) is added to an existing ChatGPT analysis
 // ============================================================================
 
@@ -109,7 +109,7 @@ export async function mergeAndReanalyze(
     const existingParsed = JSON.parse(existingRaw);
     combined = [...existingParsed, ...newNormalised];
   } else {
-    // Can't get original — just analyse the new source alone
+    // Can't get original - just analyse the new source alone
     combined = newNormalised;
   }
 
@@ -122,7 +122,7 @@ export function storeRawJson(sourceId: string, jsonData: any[], sourceType: Sour
   try {
     sessionStorage.setItem('rawJson_' + sourceId, JSON.stringify(normalised));
   } catch {
-    // sessionStorage full — skip, analysis will still work
+    // sessionStorage full - skip, analysis will still work
   }
 }
 

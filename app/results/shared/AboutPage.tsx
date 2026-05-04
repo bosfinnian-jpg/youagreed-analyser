@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { PALETTE, TYPE, type DashPage, PageFooter } from './layout/DashboardLayout';
 
 // ============================================================================
-// ABOUT — trace.ai
+// ABOUT - trace.ai
 // ============================================================================
 
 export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void }) {
@@ -74,7 +74,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
         >
           <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
           <span style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.3em', color: PALETTE.inkFaint, textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-            trace.ai — critical digital media practice
+            trace.ai - critical digital media practice
           </span>
           <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
         </motion.div>
@@ -104,10 +104,10 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
         style={{ maxWidth: 640, marginBottom: 'clamp(3rem, 7vw, 5rem)' }}
       >
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.85, marginBottom: '1.5rem' }}>
-          This tool analyses your ChatGPT or Claude conversation export and produces a structured account of what that data makes possible — what was inferred, what was disclosed, and what cannot be removed. It is not a privacy scanner. It is an argument about the structural inadequacy of consent.
+          This tool analyses your ChatGPT or Claude conversation export and produces a structured account of what that data makes possible - what was inferred, what was disclosed, and what cannot be removed. It is not a privacy scanner. It is an argument about the structural inadequacy of consent.
         </p>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.85, marginBottom: '1.5rem' }}>
-          Cookie-era consent was designed for reversible behavioural tracking. You could delete a cookie. You could withdraw consent and the record would go with it. AI training is different: a sentence processed during training dissolves into weight adjustments across hundreds of billions of parameters — distributed, non-contiguous, structurally non-isolable. There is no row to delete. The right to erasure, as written, cannot be technically fulfilled.
+          Cookie-era consent was designed for reversible behavioural tracking. You could delete a cookie. You could withdraw consent and the record would go with it. AI training is different: a sentence processed during training dissolves into weight adjustments across hundreds of billions of parameters - distributed, non-contiguous, structurally non-isolable. There is no row to delete. The right to erasure, as written, cannot be technically fulfilled.
         </p>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.85 }}>
           Trace.ai was built with AI in order to critique it. The tool is the argument. The experience is the critique.

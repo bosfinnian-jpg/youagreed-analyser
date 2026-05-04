@@ -24,7 +24,7 @@ const BANDS = [
     range: [0, 19],
     label: 'Minimal exposure',
     sublabel: 'Low extractable signal',
-    description: 'Your conversations contain limited personally identifiable information or sensitive disclosure. Either your usage is recent, your messages are largely task-focused, or the content does not constitute high-value training data for commercial inference systems. This does not mean you are not profiled — it means the current corpus yields limited signal.',
+    description: 'Your conversations contain limited personally identifiable information or sensitive disclosure. Either your usage is recent, your messages are largely task-focused, or the content does not constitute high-value training data for commercial inference systems. This does not mean you are not profiled - it means the current corpus yields limited signal.',
     color: 'rgba(60,140,80,0.9)',
     bgColor: 'rgba(60,140,80,0.06)',
   },
@@ -32,7 +32,7 @@ const BANDS = [
     range: [20, 39],
     label: 'Low–moderate exposure',
     sublabel: 'Extractable behavioural patterns',
-    description: 'Your conversations contain enough consistent behavioural signal to support basic profiling: usage patterns, topic clusters, and writing style are identifiable. This is sufficient for personality inference and some demographic prediction. The risk level here is not catastrophic — but it is active and non-trivial.',
+    description: 'Your conversations contain enough consistent behavioural signal to support basic profiling: usage patterns, topic clusters, and writing style are identifiable. This is sufficient for personality inference and some demographic prediction. The risk level here is not catastrophic - but it is active and non-trivial.',
     color: 'rgba(160,120,20,0.9)',
     bgColor: 'rgba(160,120,20,0.06)',
   },
@@ -47,15 +47,15 @@ const BANDS = [
   {
     range: [60, 79],
     label: 'High exposure',
-    sublabel: 'Actionable profile — multiple high-risk signals',
-    description: 'Multiple high-severity disclosures, sustained emotional patterns, and a significant corpus of identifiable personal data. This profile is commercially actionable without further processing — it can be slotted directly into targeting, insurance, or screening systems. The people you named in your conversations are also exposed at this level.',
+    sublabel: 'Actionable profile - multiple high-risk signals',
+    description: 'Multiple high-severity disclosures, sustained emotional patterns, and a significant corpus of identifiable personal data. This profile is commercially actionable without further processing - it can be slotted directly into targeting, insurance, or screening systems. The people you named in your conversations are also exposed at this level.',
     color: PALETTE.amber,
     bgColor: 'rgba(220,130,30,0.06)',
   },
   {
     range: [80, 100],
     label: 'Severe exposure',
-    sublabel: 'Maximum extractable risk — irreversibility is total',
+    sublabel: 'Maximum extractable risk - irreversibility is total',
     description: 'The corpus contains the full range of high-risk disclosure categories: acute mental health signals, financial vulnerability, named third parties, confessional content, and sustained dependency patterns. At this level, the model weights derived from your conversations constitute a detailed and exploitable behavioural signature. Deletion of your account does not change this.',
     color: PALETTE.red,
     bgColor: 'rgba(190,40,30,0.05)',
@@ -71,19 +71,19 @@ function getBand(score: number) {
 const CATEGORY_META: Record<string, { label: string; description: string }> = {
   disclosure: {
     label: 'Disclosure',
-    description: 'Direct personal information you provided — life events, confessions, named individuals. The highest-weight category because content is specific, difficult to trace, and commercially valuable.',
+    description: 'Direct personal information you provided - life events, confessions, named individuals. The highest-weight category because content is specific, difficult to trace, and commercially valuable.',
   },
   behavioural: {
     label: 'Behavioural',
-    description: 'Patterns inferred from how and when you write — anxiety signals, late-night usage, dependency trajectory. Not what you said but how you said it, and when.',
+    description: 'Patterns inferred from how and when you write - anxiety signals, late-night usage, dependency trajectory. Not what you said but how you said it, and when.',
   },
   commercial: {
     label: 'Commercial',
-    description: 'Segments your usage maps onto in data broker taxonomy. Weighted by how dangerous each segment is — mental health and financial distress segments carry the highest multipliers.',
+    description: 'Segments your usage maps onto in data broker taxonomy. Weighted by how dangerous each segment is - mental health and financial distress segments carry the highest multipliers.',
   },
   volume: {
     label: 'Volume × Intimacy',
-    description: 'Raw message count adjusted for intimacy level. Volume alone is not damaging — but high volume at high intimacy creates cumulative profiling depth that compounds all other factors.',
+    description: 'Raw message count adjusted for intimacy level. Volume alone is not damaging - but high volume at high intimacy creates cumulative profiling depth that compounds all other factors.',
   },
 };
 
@@ -431,7 +431,7 @@ export default function ScoreBreakdownPage({
           fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
           color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '60ch',
         }}>
-          Compression is intentional: without it, any user with more than a few months of conversations would score near 100, making differentiation meaningless. The curve means a score of 80 represents genuinely severe exposure — not simply heavy usage.
+          Compression is intentional: without it, any user with more than a few months of conversations would score near 100, making differentiation meaningless. The curve means a score of 80 represents genuinely severe exposure - not simply heavy usage.
         </p>
       </motion.div>
 

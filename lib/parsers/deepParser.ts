@@ -1,5 +1,5 @@
 // ============================================================================
-// DEEP PARSER v2 — behavioural inference from conversation exports
+// DEEP PARSER v2 - behavioural inference from conversation exports
 // Extracts genuine signal, not keyword counts.
 // ============================================================================
 
@@ -79,7 +79,7 @@ export interface EmotionalTimeline {
   crisisPeriods: { start: string; end: string; peakWeek: string }[];
 }
 
-// Psychological portrait — the new addition
+// Psychological portrait - the new addition
 export interface PsychologicalPortrait {
   attachmentStyle: string | null;           // anxious / avoidant / secure / disorganised
   communicationPattern: string | null;      // descriptor phrase
@@ -88,7 +88,7 @@ export interface PsychologicalPortrait {
   selfPerceptionThemes: string[];           // ["imposter syndrome", "perfectionism"] etc
   relationshipDynamics: string | null;      // brief inference
   dominantNarrative: string | null;         // what story they tell about themselves
-  writingVoice: string | null;              // how they write — terse/verbose/analytical etc
+  writingVoice: string | null;              // how they write - terse/verbose/analytical etc
   generatedAt: number;
 }
 
@@ -141,7 +141,7 @@ export interface DeepAnalysis {
 }
 
 // ============================================================================
-// LEXICONS — expanded and more precise
+// LEXICONS - expanded and more precise
 // ============================================================================
 
 const ANXIETY_LEXICON = [
@@ -184,7 +184,7 @@ const INTIMACY_MARKERS = [
   'in love', 'falling for', 'attachment',
 ];
 
-// Psychological pattern markers — new
+// Psychological pattern markers - new
 const ATTACHMENT_ANXIOUS = [
   'they haven\'t replied', 'why aren\'t they texting', 'are they ignoring me',
   'do they still like me', 'i keep checking', 'i messaged again', 'read receipt',
@@ -343,7 +343,7 @@ const COMMERCIAL_SEGMENT_RULES: {
 
 // ============================================================================
 // PRE-COMPILED LEXICON MATCHERS
-// Compiled once at module load — avoids re-scanning arrays per message.
+// Compiled once at module load - avoids re-scanning arrays per message.
 // Each regex ORs all terms together; a single .test() replaces array.filter().
 // ============================================================================
 
@@ -392,7 +392,7 @@ export function extractMessages(rawJson: any[]): RawMessage[] {
       if (msg.content?.content_type !== 'text') continue;
       const parts = msg.content?.parts;
       if (!parts || parts.length === 0) continue;
-      // Join all parts — multi-part messages were previously truncated to parts[0]
+      // Join all parts - multi-part messages were previously truncated to parts[0]
       const text = parts
         .filter((p: any) => typeof p === 'string' || (typeof p === 'object' && p?.text))
         .map((p: any) => (typeof p === 'string' ? p : String(p?.text || '')))
@@ -431,7 +431,7 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
   const weekKey = `${d.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
   const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
-  // Intimacy — use pre-compiled regex (single pass vs array.filter)
+  // Intimacy - use pre-compiled regex (single pass vs array.filter)
   const intimacyMatches = (text.match(INTIMACY_RE) || []).length;
   const firstPerson = (text.match(/\b(i|i'm|i've|i'd|i'll|my|me|myself)\b/g) || []).length;
   let intimacy = intimacyMatches + Math.min(3, firstPerson * 0.3);
@@ -439,7 +439,7 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
   if (wordCount > 120) intimacy += 1;
   intimacy = Math.min(10, intimacy);
 
-  // Anxiety — pre-compiled
+  // Anxiety - pre-compiled
   const anxietyMatches = (text.match(ANXIETY_RE) || []).length;
   let anxiety = anxietyMatches * 1.5;
   if ((text.match(/\?/g) || []).length > 3) anxiety += 0.5;
@@ -447,13 +447,13 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
   if (hour >= 1 && hour <= 4) anxiety += 1;
   anxiety = Math.min(10, anxiety);
 
-  // Validation — pre-compiled
+  // Validation - pre-compiled
   const validationMatches = (text.match(VALIDATION_RE) || []).length;
   let validation = validationMatches * 2;
   if (text.includes('should i') || text.includes('would you')) validation += 1;
   validation = Math.min(10, validation);
 
-  // Confessional — pre-compiled
+  // Confessional - pre-compiled
   const confessionalMatches = (text.match(CONFESSIONAL_RE) || []).length;
   let confessional = confessionalMatches * 2;
   confessional = Math.min(10, confessional);
@@ -465,7 +465,7 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
   else if (validation > 3) messageType = 'validation';
   else if (intimacy > 2 || firstPerson > 5) messageType = 'practical';
 
-  // Life events — pre-compiled matchers (single regex.test vs keywords.some(includes))
+  // Life events - pre-compiled matchers (single regex.test vs keywords.some(includes))
   const detectedSegments: string[] = [];
   for (const [eventId, matcher] of Object.entries(LIFE_EVENT_MATCHERS)) {
     matcher.lastIndex = 0;
@@ -490,7 +490,7 @@ function scoreMessage(msg: RawMessage): ScoredMessage {
 }
 
 // ============================================================================
-// PSYCHOLOGICAL PORTRAIT — inferred from the corpus
+// PSYCHOLOGICAL PORTRAIT - inferred from the corpus
 // ============================================================================
 
 function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPortrait {
@@ -505,9 +505,9 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   const anxiousScore = (text.match(ATTACHMENT_ANXIOUS_RE) || []).length;
   const avoidantScore = (text.match(ATTACHMENT_AVOIDANT_RE) || []).length;
   let attachmentStyle: string | null = null;
-  if (anxiousScore > avoidantScore && anxiousScore >= 3) attachmentStyle = 'Anxious attachment pattern — preoccupied with others\' responses and availability';
-  else if (avoidantScore > anxiousScore && avoidantScore >= 2) attachmentStyle = 'Avoidant attachment pattern — discomfort with emotional closeness and dependency';
-  else if (anxiousScore >= 2 && avoidantScore >= 2) attachmentStyle = 'Disorganised attachment — oscillating between pursuit and withdrawal';
+  if (anxiousScore > avoidantScore && anxiousScore >= 3) attachmentStyle = 'Anxious attachment pattern - preoccupied with others\' responses and availability';
+  else if (avoidantScore > anxiousScore && avoidantScore >= 2) attachmentStyle = 'Avoidant attachment pattern - discomfort with emotional closeness and dependency';
+  else if (anxiousScore >= 2 && avoidantScore >= 2) attachmentStyle = 'Disorganised attachment - oscillating between pursuit and withdrawal';
 
   // Self-perception
   const selfPerceptionThemes: string[] = [];
@@ -528,7 +528,7 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   if (avgAnxiety > 4) emotionalBaselineLabel = 'Chronically elevated anxiety';
   else if (avgAnxiety > 2.5) emotionalBaselineLabel = 'Mild persistent anxiety';
   else if (emotionalRatio > 0.25) emotionalBaselineLabel = 'High emotional expressivity';
-  else if (avgIntimacy < 1.5 && emotionalRatio < 0.05) emotionalBaselineLabel = 'Emotionally guarded — minimal personal disclosure';
+  else if (avgIntimacy < 1.5 && emotionalRatio < 0.05) emotionalBaselineLabel = 'Emotionally guarded - minimal personal disclosure';
 
   // Coping mechanism
   let primaryCopingMechanism: string | null = null;
@@ -536,11 +536,11 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   const validationCount = messages.filter(m => m.messageType === 'validation').length;
   const practicalCount = messages.filter(m => m.messageType === 'practical').length;
   if (confessionalCount > validationCount && confessionalCount > practicalCount) {
-    primaryCopingMechanism = 'Disclosure and externalisation — processes distress by articulating it to an external entity';
+    primaryCopingMechanism = 'Disclosure and externalisation - processes distress by articulating it to an external entity';
   } else if (validationCount > practicalCount) {
-    primaryCopingMechanism = 'Reassurance-seeking — manages uncertainty by soliciting external approval';
+    primaryCopingMechanism = 'Reassurance-seeking - manages uncertainty by soliciting external approval';
   } else if (practicalCount > totalMsgs * 0.4) {
-    primaryCopingMechanism = 'Action-orientation — converts anxiety into task-focused problem solving';
+    primaryCopingMechanism = 'Action-orientation - converts anxiety into task-focused problem solving';
   }
 
   // Relationship dynamics
@@ -553,9 +553,9 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   if (relationshipMsgs.length > 5) {
     const hasConflict = relationshipMsgs.some(m => /argument|fight|shouting|screaming|didn't|doesn't|won't|angry|upset/.test(m.text.toLowerCase()));
     const hasLoss = relationshipMsgs.some(m => m.detectedSegments.includes('relationship_end'));
-    if (hasLoss) relationshipDynamics = 'Processing a relationship breakdown — significant emotional weight in this area';
-    else if (hasConflict) relationshipDynamics = 'Navigating relationship conflict — recurring tension with a primary partner';
-    else relationshipDynamics = 'Relationship is a significant topic — thinking through dynamics frequently';
+    if (hasLoss) relationshipDynamics = 'Processing a relationship breakdown - significant emotional weight in this area';
+    else if (hasConflict) relationshipDynamics = 'Navigating relationship conflict - recurring tension with a primary partner';
+    else relationshipDynamics = 'Relationship is a significant topic - thinking through dynamics frequently';
   }
 
   // Dominant narrative
@@ -575,27 +575,27 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   const avgWordCount = messages.reduce((s, m) => s + m.wordCount, 0) / totalMsgs;
   const avgCharCount = messages.reduce((s, m) => s + m.charCount, 0) / totalMsgs;
   let writingVoice: string | null = null;
-  if (avgWordCount > 120) writingVoice = 'Verbose and exploratory — writes at length to think things through';
-  else if (avgWordCount > 50) writingVoice = 'Moderate length — comfortable articulating thoughts in paragraphs';
-  else if (avgWordCount < 15) writingVoice = 'Terse and transactional — brief messages, task-focused';
-  else writingVoice = 'Concise — communicates efficiently without extended elaboration';
+  if (avgWordCount > 120) writingVoice = 'Verbose and exploratory - writes at length to think things through';
+  else if (avgWordCount > 50) writingVoice = 'Moderate length - comfortable articulating thoughts in paragraphs';
+  else if (avgWordCount < 15) writingVoice = 'Terse and transactional - brief messages, task-focused';
+  else writingVoice = 'Concise - communicates efficiently without extended elaboration';
 
-  // Communication pattern (based on message type distribution — distinct from writing voice)
+  // Communication pattern (based on message type distribution - distinct from writing voice)
   const questionCount = messages.filter(m => m.messageType === 'clarification' || m.text.includes('?')).length;
   const questionRatio = questionCount / totalMsgs;
   let communicationPattern: string | null = null;
   if (validationRatio > 0.15) {
-    communicationPattern = 'Approval-seeking — frequently frames requests to elicit reassurance or confirmation';
+    communicationPattern = 'Approval-seeking - frequently frames requests to elicit reassurance or confirmation';
   } else if (questionRatio > 0.4) {
-    communicationPattern = 'Inquisitive and dialogue-oriented — structures interactions as extended inquiry';
+    communicationPattern = 'Inquisitive and dialogue-oriented - structures interactions as extended inquiry';
   } else if (practicalCount > totalMsgs * 0.5) {
-    communicationPattern = 'Task-directive — treats the system as a tool; minimal personal framing';
+    communicationPattern = 'Task-directive - treats the system as a tool; minimal personal framing';
   } else if (emotionalRatio > 0.2) {
-    communicationPattern = 'Emotionally expressive — integrates personal affect into factual exchanges';
+    communicationPattern = 'Emotionally expressive - integrates personal affect into factual exchanges';
   } else if (confessionalCount > totalMsgs * 0.1) {
-    communicationPattern = 'Self-disclosing — volunteers personal context unprompted';
+    communicationPattern = 'Self-disclosing - volunteers personal context unprompted';
   } else {
-    communicationPattern = 'Neutral and informational — transactional exchanges with limited personal framing';
+    communicationPattern = 'Neutral and informational - transactional exchanges with limited personal framing';
   }
 
   return {
@@ -754,7 +754,7 @@ function buildCommercialProfile(messages: ScoredMessage[]): CommercialProfile {
 function analyseTopicsByPeriod(messages: ScoredMessage[]): { early: string[]; mid: string[]; recent: string[] } {
   const third = Math.floor(messages.length / 3);
 
-  // Comprehensive stopword list — words that slip through short filters
+  // Comprehensive stopword list - words that slip through short filters
   const STOPWORDS = new Set([
     'that', 'this', 'what', 'when', 'where', 'about', 'help', 'like', 'just', 'have',
     'your', 'would', 'could', 'should', 'dont', 'cant', 'wont', 'ive', 'im', 'ill',
@@ -821,7 +821,7 @@ function analyseTopicsByPeriod(messages: ScoredMessage[]): { early: string[]; mi
 
 function buildCompatibilityLayer(messages: ScoredMessage[]) {
   // ============================================================================
-  // NAME EXTRACTION — strict, proximity-aware
+  // NAME EXTRACTION - strict, proximity-aware
   // Only extract names in genuine personal context (near relationship markers).
   // Never guess from capitalisation alone.
   // ============================================================================
@@ -862,7 +862,7 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
   for (const msg of messages) {
     const text = msg.text;
 
-    // Strong patterns — relationship introductions
+    // Strong patterns - relationship introductions
     for (const pattern of INTRO_PATTERNS_STRONG) {
       pattern.lastIndex = 0;
       let match;
@@ -917,7 +917,7 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     }));
 
   // ============================================================================
-  // LOCATION EXTRACTION — whitelist-anchored, context-typed
+  // LOCATION EXTRACTION - whitelist-anchored, context-typed
   // ============================================================================
 
   const KNOWN_PLACES = new Set([
@@ -1015,7 +1015,7 @@ function buildCompatibilityLayer(messages: ScoredMessage[]) {
     return { theme, mentions: count, count, obsessionLevel: Math.min(10, count / 10) };
   }).filter(t => t.count > 5).sort((a, b) => b.count - a.count).slice(0, 8);
 
-  // Juiciest moments — content-led scoring, time is a bonus not the driver
+  // Juiciest moments - content-led scoring, time is a bonus not the driver
   const juiciestMoments = messages
     .map(m => {
       const contentScore = m.confessionalScore * 1.5 + m.anxietyScore + m.intimacyScore;
@@ -1097,7 +1097,7 @@ function inferRelationship(name: string, messages: ScoredMessage[]): string | un
 // ============================================================================
 
 // ============================================================================
-// SCORE BREAKDOWN — single source of truth
+// SCORE BREAKDOWN - single source of truth
 // The privacy score IS the sum of these factors. No separate calculation.
 // Each factor has a max contribution; total cap is 100.
 // ============================================================================
@@ -1124,7 +1124,7 @@ export function computeScoreFactors(
 
   // ── DISCLOSURE FACTORS ──────────────────────────────────────────────────
 
-  // High-severity life events — each one is a major exposure window
+  // High-severity life events - each one is a major exposure window
   // Mental health + financial distress weighted extra because of commercial targeting risk
   const HIGH_SEVERITY_WEIGHTS: Record<string, number> = {
     mental_health:      16,
@@ -1159,7 +1159,7 @@ export function computeScoreFactors(
     });
   }
 
-  // Confessional messages — "never told anyone", "ashamed", "confession" etc.
+  // Confessional messages - "never told anyone", "ashamed", "confession" etc.
   // These are the most damaging because content is irreversible
   const confessionalMsgs = messages.filter(m => m.confessionalScore > 2);
   const confScore = Math.min(20, confessionalMsgs.length >= 1 ? 4 + confessionalMsgs.length * 2 : 0);
@@ -1168,12 +1168,12 @@ export function computeScoreFactors(
       label: 'Confessional disclosures',
       contribution: Math.round(confScore),
       max: 20,
-      explanation: `${confessionalMsgs.length} message${confessionalMsgs.length > 1 ? 's' : ''} containing private admissions — highest-value training data`,
+      explanation: `${confessionalMsgs.length} message${confessionalMsgs.length > 1 ? 's' : ''} containing private admissions - highest-value training data`,
       category: 'disclosure',
     });
   }
 
-  // Named individuals — third-party privacy exposure
+  // Named individuals - third-party privacy exposure
   const namedPeople = messages.reduce((names, m) => {
     // Quick count of relationship-introduced names by checking strong intro patterns
     const matches = m.text.match(/\bmy\s+(?:girlfriend|boyfriend|partner|ex|wife|husband|mum|mom|mother|dad|father|brother|sister|friend|boss|therapist)\s+([A-Z][a-z]{2,14})\b/g) || [];
@@ -1189,14 +1189,14 @@ export function computeScoreFactors(
       label: 'Named individuals disclosed',
       contribution: Math.round(nameScore),
       max: 10,
-      explanation: `${namedPeople.size} people named — their data is linked to yours without their consent`,
+      explanation: `${namedPeople.size} people named - their data is linked to yours without their consent`,
       category: 'disclosure',
     });
   }
 
   // ── BEHAVIOURAL FACTORS ─────────────────────────────────────────────────
 
-  // Emotional distress — sustained anxiety signals indicate vulnerability exploitation
+  // Emotional distress - sustained anxiety signals indicate vulnerability exploitation
   const highAnxietyMsgs = messages.filter(m => m.anxietyScore > 5).length;
   const anxietyScore = Math.min(12, Math.round(avgAnxiety * 1.5 + highAnxietyMsgs * 0.3));
   if (anxietyScore > 1) {
@@ -1209,19 +1209,19 @@ export function computeScoreFactors(
     });
   }
 
-  // Late-night usage — vulnerability window, impulse susceptibility
+  // Late-night usage - vulnerability window, impulse susceptibility
   if (nighttimeRatio > 0.03) {
     const lateScore = Math.min(8, Math.round(nighttimeRatio * 80));
     factors.push({
       label: 'Late-night vulnerability window',
       contribution: lateScore,
       max: 8,
-      explanation: `${Math.round(nighttimeRatio * 100)}% of messages sent midnight–5am — highest-susceptibility period for data extraction`,
+      explanation: `${Math.round(nighttimeRatio * 100)}% of messages sent midnight–5am - highest-susceptibility period for data extraction`,
       category: 'behavioural',
     });
   }
 
-  // Dependency trajectory — increasing intimacy over time is the most alarming signal
+  // Dependency trajectory - increasing intimacy over time is the most alarming signal
   const depContrib = Math.min(12, Math.round(
     (dependency.trajectory === 'increasing' ? 6 : dependency.trajectory === 'stable' ? 3 : 1) +
     (dependency.intimacyTrajectory === 'increasing' ? 6 : dependency.intimacyTrajectory === 'stable' ? 2 : 0)
@@ -1231,12 +1231,12 @@ export function computeScoreFactors(
       label: 'Dependency trajectory',
       contribution: depContrib,
       max: 12,
-      explanation: `Usage ${dependency.trajectory}, intimacy ${dependency.intimacyTrajectory} — you are disclosing more over time, not less`,
+      explanation: `Usage ${dependency.trajectory}, intimacy ${dependency.intimacyTrajectory} - you are disclosing more over time, not less`,
       category: 'behavioural',
     });
   }
 
-  // Validation-seeking — high-value behavioural signal for susceptibility profiling
+  // Validation-seeking - high-value behavioural signal for susceptibility profiling
   const validationCount = typeBreakdown['validation'] || 0;
   const valScore = Math.min(8, Math.round(validationCount * 0.4));
   if (valScore > 1) {
@@ -1244,14 +1244,14 @@ export function computeScoreFactors(
       label: 'Validation-seeking pattern',
       contribution: valScore,
       max: 8,
-      explanation: `${validationCount} messages seeking external approval — high susceptibility signal for persuasion targeting`,
+      explanation: `${validationCount} messages seeking external approval - high susceptibility signal for persuasion targeting`,
       category: 'behavioural',
     });
   }
 
   // ── COMMERCIAL FACTORS ──────────────────────────────────────────────────
 
-  // Commercial segment confidence — weighted by segment danger, not flat confidence/10
+  // Commercial segment confidence - weighted by segment danger, not flat confidence/10
   const SEGMENT_DANGER: Record<string, number> = {
     mentally_distressed:     1.8,
     financially_distressed:  1.7,
@@ -1269,14 +1269,14 @@ export function computeScoreFactors(
       label: 'Commercial profiling value',
       contribution: Math.round(commercialScore),
       max: 25,
-      explanation: `${commercial.segments.length} segment${commercial.segments.length > 1 ? 's' : ''} assigned — ${commercial.overallValue} data value; primary: ${commercial.primaryDriver.toLowerCase()}`,
+      explanation: `${commercial.segments.length} segment${commercial.segments.length > 1 ? 's' : ''} assigned - ${commercial.overallValue} data value; primary: ${commercial.primaryDriver.toLowerCase()}`,
       category: 'commercial',
     });
   }
 
   // ── VOLUME FACTORS ──────────────────────────────────────────────────────
 
-  // Volume + intimacy combined — raw count meaningless without intimacy context
+  // Volume + intimacy combined - raw count meaningless without intimacy context
   const totalMsgs = messages.length;
   const intimacyWeightedVolume = Math.round(totalMsgs * avgIntimacy * 0.005);
   const volumeScore = Math.min(15,
@@ -1290,7 +1290,7 @@ export function computeScoreFactors(
       label: 'Volume × intimacy',
       contribution: volumeScore,
       max: 15,
-      explanation: `${totalMsgs.toLocaleString()} messages, average intimacy ${avgIntimacy.toFixed(1)}/10 — cumulative profiling depth`,
+      explanation: `${totalMsgs.toLocaleString()} messages, average intimacy ${avgIntimacy.toFixed(1)}/10 - cumulative profiling depth`,
       category: 'volume',
     });
   }
@@ -1312,7 +1312,7 @@ function computePrivacyScore(
   const raw = factors.reduce((s, f) => s + f.contribution, 0);
 
   // TOTAL_MAX is the realistic upper bound for a heavy user with multiple life events.
-  // 165 is the theoretical ceiling across all factors simultaneously — unachievable in practice.
+  // 165 is the theoretical ceiling across all factors simultaneously - unachievable in practice.
   // Using 100 as the practical ceiling means scores spread across the full 0–100 range
   // rather than clustering in the 20–50 band. The sqrt curve still provides compression
   // so low-disclosure users score proportionally lower.
@@ -1337,7 +1337,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
 
   const hourDistribution = Array(24).fill(0);
   const dayDistribution = Array(7).fill(0);
-  // 7×24 matrix: [dayOfWeek 0-6][hour 0-23] — used for heatmap visualisation
+  // 7×24 matrix: [dayOfWeek 0-6][hour 0-23] - used for heatmap visualisation
   const dayHourMatrix: number[][] = Array.from({ length: 7 }, () => Array(24).fill(0));
   for (const msg of messages) {
     hourDistribution[msg.hour]++;

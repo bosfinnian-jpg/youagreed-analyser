@@ -1,5 +1,5 @@
 // ============================================================================
-// synthesis.ts — client-side caller for /api/synthesize
+// synthesis.ts - client-side caller for /api/synthesize
 // Runs after per-message enrichment. One call. Produces the intelligence briefing.
 // ============================================================================
 
@@ -67,7 +67,7 @@ function selectTopExcerpts(
       if (!msg) return null;
 
       // Composite score for "revealing-ness"
-      // Unintentional disclosures get extra weight — they are the most
+      // Unintentional disclosures get extra weight - they are the most
       // commercially dangerous and the most impactful for the installation
       const hasIncidentalInfo = (e.sensitive_topics || []).some(t =>
         ['debt', 'poverty', 'addiction', 'eating_disorder', 'abortion', 'miscarriage',
@@ -85,7 +85,7 @@ function selectTopExcerpts(
         (msg.hour >= 0 && msg.hour <= 4 ? 2.5 : 0) +
         Math.min(2, Math.log2(Math.max(msg.wordCount, 10) / 10));
 
-      // Full text — use the actual message, not a truncated excerpt
+      // Full text - use the actual message, not a truncated excerpt
       // The excerpt is used for display; fullText is what the AI reads
       const fullText = msg.text.substring(0, 600); // keep payload small for timeout
 
@@ -111,7 +111,7 @@ function selectTopExcerpts(
 
   ranked.sort((a, b) => b.score - a.score);
 
-  // Deduplicate by excerpt similarity — don't send 40 near-identical messages
+  // Deduplicate by excerpt similarity - don't send 40 near-identical messages
   const chosen: typeof ranked = [];
   const seen = new Set<string>();
 
@@ -221,7 +221,7 @@ export async function runSynthesis(
       if (done) break;
       buffer += decoder.decode(value, { stream: true });
 
-      // Process complete lines only — keep incomplete line in buffer
+      // Process complete lines only - keep incomplete line in buffer
       const lines = buffer.split('\n');
       buffer = lines.pop() ?? ''; // last element may be incomplete
 
@@ -246,7 +246,7 @@ export async function runSynthesis(
       .trim();
 
 
-    // Sanitise: fix common issues — unescaped newlines/quotes inside string values
+    // Sanitise: fix common issues - unescaped newlines/quotes inside string values
     // and truncation. Use a lenient approach: extract field by field if full parse fails.
     let parsed: any;
     try {

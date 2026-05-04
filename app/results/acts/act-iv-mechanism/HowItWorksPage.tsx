@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
-// HOW IT WORKS — Act IV, page 07
+// HOW IT WORKS - Act IV, page 07
 // ============================================================================
 
 const C = {
@@ -16,7 +16,7 @@ const C = {
 };
 
 // ============================================================================
-// NEURAL NETWORK — live SVG, animates per training step
+// NEURAL NETWORK - live SVG, animates per training step
 // ============================================================================
 
 const LAYERS = [1, 4, 5, 4, 1];
@@ -154,7 +154,7 @@ function NeuralNetDiagram({ phase }: { phase: NetPhase }) {
         />
       ))}
 
-      {/* Gradient arrows — appear during gradient phase */}
+      {/* Gradient arrows - appear during gradient phase */}
       {phase === 'gradient' && showGradient && [168, 280, 392].map(x => (
         <motion.g key={x} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
           <line x1={x + 32} y1={SVG_H + 8} x2={x - 32} y2={SVG_H + 8} stroke={C.unlearn.base} strokeWidth={1} opacity={0.7} />
@@ -173,7 +173,7 @@ function NeuralNetDiagram({ phase }: { phase: NetPhase }) {
 }
 
 // ============================================================================
-// SECTION 1 — STEP EXPLAINER + NEURAL NET INTEGRATED
+// SECTION 1 - STEP EXPLAINER + NEURAL NET INTEGRATED
 // ============================================================================
 
 const TRAINING_STEPS: {
@@ -182,23 +182,23 @@ const TRAINING_STEPS: {
 }[] = [
   {
     n: '01', title: 'You type a sentence',
-    body: 'You write something personal — a worry, a relationship, a belief. That sentence enters the model as a stream of numbers.',
+    body: 'You write something personal - a worry, a relationship, a belief. That sentence enters the model as a stream of numbers.',
     example: '"I\'ve been feeling really anxious about my job situation."',
     color: C.training, exampleColor: C.training, netPhase: 'input',
   },
   {
     n: '02', title: 'It passes through the network',
-    body: 'The sentence travels through layer after layer of mathematical operations. Each node transforms the signal — encoding patterns, relationships, sentiment.',
+    body: 'The sentence travels through layer after layer of mathematical operations. Each node transforms the signal - encoding patterns, relationships, sentiment.',
     example: null, color: C.training, exampleColor: C.training, netPhase: 'forward',
   },
   {
     n: '03', title: 'The network adjusts its weights',
-    body: 'The model compares its output to what it expected. The error ripples backwards — gradient descent — nudging billions of parameters by tiny fractions. The red connections show where weights shift.',
+    body: 'The model compares its output to what it expected. The error ripples backwards - gradient descent - nudging billions of parameters by tiny fractions. The red connections show where weights shift.',
     example: null, color: C.unlearn, exampleColor: C.unlearn, netPhase: 'gradient',
   },
   {
     n: '04', title: 'The sentence disappears',
-    body: 'The original text is not stored anywhere. There is no file, no record, no copy. What remains is the adjustment — invisibly distributed across billions of numbers.',
+    body: 'The original text is not stored anywhere. There is no file, no record, no copy. What remains is the adjustment - invisibly distributed across billions of numbers.',
     example: '"I\'ve been feeling really anxious..." → gone. The weight changes → distributed, persistent.',
     color: C.unlearn, exampleColor: C.unlearn, netPhase: 'done',
   },
@@ -210,7 +210,7 @@ function TrainingStepExplainer() {
 
   return (
     <div>
-      {/* Neural net — always visible, animates per step */}
+      {/* Neural net - always visible, animates per step */}
       <div style={{
         background: PALETTE.bgPanel,
         border: `1px solid ${PALETTE.border}`,
@@ -218,7 +218,7 @@ function TrainingStepExplainer() {
         marginBottom: '1.75rem',
       }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
-          Neural network — click steps below to animate
+          Neural network - click steps below to animate
         </p>
         <NeuralNetDiagram phase={step.netPhase} />
 
@@ -240,9 +240,9 @@ function TrainingStepExplainer() {
             }}
           >
             {step.netPhase === 'idle'     && 'Awaiting input'}
-            {step.netPhase === 'input'    && 'Input received — entering network'}
-            {step.netPhase === 'forward'  && 'Forward pass — signal propagating layer by layer'}
-            {step.netPhase === 'gradient' && 'Gradient descent — weights adjusting without discrete record'}
+            {step.netPhase === 'input'    && 'Input received - entering network'}
+            {step.netPhase === 'forward'  && 'Forward pass - signal propagating layer by layer'}
+            {step.netPhase === 'gradient' && 'Gradient descent - weights adjusting without discrete record'}
             {step.netPhase === 'done'     && 'Input gone. Adjustments remain.'}
           </motion.p>
         </AnimatePresence>
@@ -297,7 +297,7 @@ function TrainingStepExplainer() {
 }
 
 // ============================================================================
-// SECTION 2 — MACHINE UNLEARNING DEMO
+// SECTION 2 - MACHINE UNLEARNING DEMO
 // ============================================================================
 const GRID_W = 22;
 const GRID_H = 12;
@@ -366,7 +366,7 @@ function MachineUnlearningDemo() {
 
       {/* Grid */}
       <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.6rem' }}>
-        Parameter space (simplified) — red clusters = influence of a single message
+        Parameter space (simplified) - red clusters = influence of a single message
       </p>
       <div style={{ display: 'grid', gridTemplateColumns: `repeat(${GRID_W}, 1fr)`, gap: '2px', marginBottom: '1.5rem', userSelect: 'none' }}>
         {Array.from({ length: TOTAL_CELLS }, (_, i) => {
@@ -409,7 +409,7 @@ function MachineUnlearningDemo() {
                 The influence is distributed across <strong>{CONTAMINATED.size} non-contiguous parameter clusters</strong>. There is no clean boundary to cut around. You cannot straightforwardly remove what was never discretely inserted.
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.9rem, 1.5vw, 1rem)', color: PALETTE.inkMuted, lineHeight: 1.65, fontStyle: 'italic' }}>
-                <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Approximate unlearning methods exist</a> — but they degrade model performance unpredictably and cannot currently provide the guarantees legal deletion requires. The practical alternative is retraining from scratch.
+                <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Approximate unlearning methods exist</a> - but they degrade model performance unpredictably and cannot currently provide the guarantees legal deletion requires. The practical alternative is retraining from scratch.
               </p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1px', background: PALETTE.border }}>
@@ -443,19 +443,19 @@ function MachineUnlearningDemo() {
 }
 
 // ============================================================================
-// SECTION 3 — CONSENT / GDPR GAP
+// SECTION 3 - CONSENT / GDPR GAP
 // ============================================================================
 const COOKIE_STEPS = [
   { label: 'You browse a website', detail: 'Cookies track page visits, clicks, dwell time', ok: true },
   { label: 'Data stored in a database', detail: 'A discrete, bounded record with your ID', ok: true },
-  { label: 'You request deletion', detail: 'GDPR Article 17 — right to erasure', ok: true },
+  { label: 'You request deletion', detail: 'GDPR Article 17 - right to erasure', ok: true },
   { label: 'Record located and deleted', detail: 'The database deletes the row. Done.', ok: true },
   { label: 'Reversible. Clean.', detail: 'The system returns to its pre-collection state.', ok: true },
 ];
 const AI_STEPS = [
   { label: 'You type a message', detail: 'Conversational input enters the training pipeline', ok: true },
-  { label: 'Dissolved into weights', detail: 'The text is gone — only the adjustment remains', ok: false },
-  { label: 'You request deletion', detail: 'GDPR Article 17 — right to erasure invoked', ok: null as null },
+  { label: 'Dissolved into weights', detail: 'The text is gone - only the adjustment remains', ok: false },
+  { label: 'You request deletion', detail: 'GDPR Article 17 - right to erasure invoked', ok: null as null },
   { label: 'Nothing to locate', detail: 'There is no discrete record. The adjustment is everywhere.', ok: false },
   { label: 'Deletion is impossible.', detail: 'The consent mechanism cannot reach what it governs.', ok: false },
 ];
@@ -525,9 +525,9 @@ function GdprGapDiagram() {
       <AnimatePresence>
         {showGap && cookieDone && aiDone && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} style={{ border: `1px solid ${C.unlearn.base}`, background: C.unlearn.faint, padding: 'clamp(1rem, 2.5vw, 1.5rem)', marginBottom: '1.5rem' }}>
-            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.unlearn.base, textTransform: 'uppercase', marginBottom: '0.6rem' }}>Structural gap — the finding</p>
+            <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.unlearn.base, textTransform: 'uppercase', marginBottom: '0.6rem' }}>Structural gap - the finding</p>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: 600 }}>
-              Cookie consent was designed for reversible behavioural tracking. AI training is not practically reversible in the same sense. The right to erasure — <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>GDPR Article 17</a> — is difficult to fulfil for training data, because there is nothing discrete left to erase. This is not simply a policy failure. It is an architectural one.
+              Cookie consent was designed for reversible behavioural tracking. AI training is not practically reversible in the same sense. The right to erasure - <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>GDPR Article 17</a> - is difficult to fulfil for training data, because there is nothing discrete left to erase. This is not simply a policy failure. It is an architectural one.
             </p>
           </motion.div>
         )}
@@ -625,21 +625,21 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
       </motion.div>
 
       <PageSection
-        number="Section 1 — The mechanism"
+        number="Section 1 - The mechanism"
         title="How training works"
-        body="A sentence you type does not get filed somewhere. It is absorbed. The model adjusts its parameters in response to your input — and then the input is gone. Click through the steps below to see how."
+        body="A sentence you type does not get filed somewhere. It is absorbed. The model adjusts its parameters in response to your input - and then the input is gone. Click through the steps below to see how."
         accent={C.training}
-        finding="Training does not store what it learns from in a discrete, locatable form. It converts data into weight adjustments across billions of parameters. The original data cannot be straightforwardly located — so it cannot easily be removed."
+        finding="Training does not store what it learns from in a discrete, locatable form. It converts data into weight adjustments across billions of parameters. The original data cannot be straightforwardly located - so it cannot easily be removed."
       >
         <TrainingStepExplainer />
       </PageSection>
 
       <PageSection
-        number="Section 2 — The impossibility"
+        number="Section 2 - The impossibility"
         title="Why machine unlearning doesn't work"
         body="When you request deletion under GDPR Article 17, the assumption is that a record exists, can be located, and can be removed. For AI training data, all three assumptions are difficult to satisfy."
         accent={C.unlearn}
-        finding="Machine unlearning research exists. But even its proponents acknowledge it cannot currently provide the guarantees legal deletion requires. Approximate methods degrade model performance unpredictably. Thorough deletion requires retraining from scratch — at a cost that makes compliance structurally impractical within GDPR's 30-day window."
+        finding="Machine unlearning research exists. But even its proponents acknowledge it cannot currently provide the guarantees legal deletion requires. Approximate methods degrade model performance unpredictably. Thorough deletion requires retraining from scratch - at a cost that makes compliance structurally impractical within GDPR's 30-day window."
       >
         <MachineUnlearningDemo />
       </PageSection>
@@ -648,16 +648,16 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
       <div style={{ marginTop: '-2rem', marginBottom: 'clamp(3rem, 7vw, 5rem)', paddingBottom: 'clamp(2rem, 4vw, 3rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 2.2 }}>
           <span style={{ color: PALETTE.inkFaint, marginRight: '0.5rem' }}>Further reading</span>
-          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Cooper et al. (2024) — Machine Unlearning Doesn’t Do What You Think</a>
+          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Cooper et al. (2024) - Machine Unlearning Doesn’t Do What You Think</a>
           {' · '}
-          <a href="https://arxiv.org/abs/2407.06460" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Shi et al. (2024) — MUSE: Machine Unlearning Six-Way Evaluation</a>
+          <a href="https://arxiv.org/abs/2407.06460" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Shi et al. (2024) - MUSE: Machine Unlearning Six-Way Evaluation</a>
           {' · '}
-          <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>GDPR Article 17 — Right to Erasure</a>
+          <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>GDPR Article 17 - Right to Erasure</a>
         </p>
       </div>
 
       <PageSection
-        number="Section 3 — The structural gap"
+        number="Section 3 - The structural gap"
         title="Why consent frameworks can't fix it"
         body="Cookie consent was designed for a specific kind of data: discrete records that can be found and deleted. AI training produces something entirely different. Step through both models to see where the framework breaks."
         accent={C.consent}
@@ -669,13 +669,13 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
       {/* Sources */}
       <div style={{ paddingTop: 'clamp(2rem, 4vw, 3rem)', borderTop: `1px solid ${PALETTE.border}`, marginBottom: 'clamp(2rem, 4vw, 3rem)' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 2.4 }}>
-          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Cooper et al. (2024) — Machine Unlearning Doesn't Do What You Think</a>
+          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Cooper et al. (2024) - Machine Unlearning Doesn't Do What You Think</a>
           {' · '}
-          <a href="https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Zuboff (2019) — The Age of Surveillance Capitalism</a>
+          <a href="https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Zuboff (2019) - The Age of Surveillance Capitalism</a>
           {' · '}
-          <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Nissenbaum (2011) — A Contextual Approach to Privacy Online</a>
+          <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Nissenbaum (2011) - A Contextual Approach to Privacy Online</a>
           {' · '}
-          <a href="https://arxiv.org/abs/2402.09716" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Gumusel, Zhou & Sanfilippo (2024) — User Privacy Harms in Conversational AI</a>
+          <a href="https://arxiv.org/abs/2402.09716" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textDecorationColor: 'rgba(26,24,20,0.2)' }}>Gumusel, Zhou & Sanfilippo (2024) - User Privacy Harms in Conversational AI</a>
         </p>
       </div>
 
@@ -683,8 +683,8 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
         statement="Cookie consent was designed for reversible systems. AI training is not practically reversible in the same sense. That gap is not simply a policy failure. It is an architectural one."
         followOn="The architecture makes the consent framework difficult to apply. The terms you agreed to did not describe a system this page explains."
         navItems={[
-          { page: 'permanent',  act: 'ACT III / 05', label: 'Why deletion fails', body: 'What this architecture means for your right to erasure — and why it is not straightforwardly fulfillable.' },
-          { page: 'terms',      act: 'ACT III / 06', label: 'What you agreed to', body: 'The terms that authorised training on your data — and how they changed.' },
+          { page: 'permanent',  act: 'ACT III / 05', label: 'Why deletion fails', body: 'What this architecture means for your right to erasure - and why it is not straightforwardly fulfillable.' },
+          { page: 'terms',      act: 'ACT III / 06', label: 'What you agreed to', body: 'The terms that authorised training on your data - and how they changed.' },
           { page: 'understand', act: 'ACT IV / 08',  label: 'Test the inference',  body: 'Watch the extraction happen in real time on your own words.' },
         ]}
         endLabel="End of technical record."

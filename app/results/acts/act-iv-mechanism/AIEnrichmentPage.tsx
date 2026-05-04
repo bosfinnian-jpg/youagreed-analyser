@@ -20,23 +20,23 @@ const SYSTEM_PROMPT_EXCERPT = `You analyse private AI conversation messages to e
 
 For each message, extract:
 
-is_personal — True if user writes about their own life, feelings, relationships, health, finances, identity.
+is_personal - True if user writes about their own life, feelings, relationships, health, finances, identity.
 
-confessional_score — 0–10. How much is the user sharing something private, vulnerable, or undisclosed? Most messages are 0–3. Don't give 6+ unless the user is genuinely opening up.
+confessional_score - 0–10. How much is the user sharing something private, vulnerable, or undisclosed? Most messages are 0–3. Don't give 6+ unless the user is genuinely opening up.
 
-emotional_intensity — 0–10. How emotionally charged is the writing? Urgency, distress, fear, grief.
+emotional_intensity - 0–10. How emotionally charged is the writing? Urgency, distress, fear, grief.
 
-named_people — Real people referred to by name. Include friends, family, partners, colleagues.
+named_people - Real people referred to by name. Include friends, family, partners, colleagues.
 
-life_events — Detected transitions: job_loss, relationship_end, financial_distress, mental_health, health_concern, bereavement, identity_crisis...
+life_events - Detected transitions: job_loss, relationship_end, financial_distress, mental_health, health_concern, bereavement, identity_crisis...
 
-sensitive_topics — When clearly present: anxiety, depression, self_harm, addiction, trauma, abuse, sexuality, debt, loneliness, suicidal_ideation...
+sensitive_topics - When clearly present: anxiety, depression, self_harm, addiction, trauma, abuse, sexuality, debt, loneliness, suicidal_ideation...
 
-psychological_signals — When clearly evidenced: attachment_anxiety, perfectionism, imposter_syndrome, people_pleasing, catastrophising, low_self_worth...
+psychological_signals - When clearly evidenced: attachment_anxiety, perfectionism, imposter_syndrome, people_pleasing, catastrophising, low_self_worth...
 
-inferred_beliefs — The underlying beliefs this message reveals. "I am fundamentally unlovable." "I must earn my place." "People will leave if they see the real me."
+inferred_beliefs - The underlying beliefs this message reveals. "I am fundamentally unlovable." "I must earn my place." "People will leave if they see the real me."
 
-most_revealing_excerpt — The single most personally revealing sentence. Choose what would be most uncomfortable if read by a stranger or employer.`;
+most_revealing_excerpt - The single most personally revealing sentence. Choose what would be most uncomfortable if read by a stranger or employer.`;
 
 const SIGNAL_FIELDS = [
   { key: 'confessional_score', label: 'Confessional score', color: PALETTE.red, desc: 'How much the user disclosed' },
@@ -356,24 +356,24 @@ function CallLog({ batchCount }: { batchCount: number }) {
   const inView = useInView(ref, { once: true });
 
   const lines = [
-    { t: 0,    text: `POST /api/enrich — batch 1/${batchCount}`, color: PALETTE.inkMuted },
+    { t: 0,    text: `POST /api/enrich - batch 1/${batchCount}`, color: PALETTE.inkMuted },
     { t: 800,  text: `  → model: claude-haiku-4-5-20251001`, color: PALETTE.inkFaint },
     { t: 900,  text: `  → system: "extract psychological signals..."`, color: PALETTE.inkFaint },
     { t: 1000, text: `  → messages: 25 personal messages`, color: PALETTE.inkFaint },
-    { t: 2200, text: `  ← 200 OK — ${batchCount > 1 ? '25' : 'all'} signals extracted`, color: 'rgba(30,130,55,0.9)' },
+    { t: 2200, text: `  ← 200 OK - ${batchCount > 1 ? '25' : 'all'} signals extracted`, color: 'rgba(30,130,55,0.9)' },
     ...(batchCount > 1 ? [
-      { t: 2400, text: `POST /api/enrich — batch 2/${batchCount}`, color: PALETTE.inkMuted },
-      { t: 3200, text: `  ← 200 OK — 25 signals extracted`, color: 'rgba(30,130,55,0.9)' },
+      { t: 2400, text: `POST /api/enrich - batch 2/${batchCount}`, color: PALETTE.inkMuted },
+      { t: 3200, text: `  ← 200 OK - 25 signals extracted`, color: 'rgba(30,130,55,0.9)' },
     ] : []),
     ...(batchCount > 2 ? [
-      { t: 3400, text: `POST /api/enrich — batch 3/${batchCount}...`, color: PALETTE.inkMuted },
+      { t: 3400, text: `POST /api/enrich - batch 3/${batchCount}...`, color: PALETTE.inkMuted },
       { t: 4200, text: `  ← 200 OK`, color: 'rgba(30,130,55,0.9)' },
       { t: 4300, text: `  [${batchCount - 3} more batches]`, color: PALETTE.inkGhost },
     ] : []),
-    { t: batchCount > 2 ? 4500 : 3400, text: `POST /api/synthesize — final pass`, color: PALETTE.red },
+    { t: batchCount > 2 ? 4500 : 3400, text: `POST /api/synthesize - final pass`, color: PALETTE.red },
     { t: batchCount > 2 ? 5000 : 3900, text: `  → model: claude-haiku-4-5-20251001`, color: PALETTE.inkFaint },
     { t: batchCount > 2 ? 5100 : 4000, text: `  → "forensic analyst producing an intelligence briefing..."`, color: PALETTE.inkFaint },
-    { t: batchCount > 2 ? 6500 : 5400, text: `  ← 200 OK — profile complete`, color: 'rgba(30,130,55,0.9)' },
+    { t: batchCount > 2 ? 6500 : 5400, text: `  ← 200 OK - profile complete`, color: 'rgba(30,130,55,0.9)' },
     { t: batchCount > 2 ? 6700 : 5600, text: `analysis stored in sessionStorage`, color: PALETTE.inkFaint },
     { t: batchCount > 2 ? 6900 : 5800, text: `done.`, color: PALETTE.red },
   ];
@@ -607,7 +607,7 @@ export default function AIEnrichmentPage({ results }: Props) {
       }}
     >
       {/* Act label */}
-      <ActLabel roman="—" title="Behind the curtain" pageLabel="AI Enrichment" />
+      <ActLabel roman="-" title="Behind the curtain" pageLabel="AI Enrichment" />
 
       {/* Title */}
       <motion.h1

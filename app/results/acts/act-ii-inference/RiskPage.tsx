@@ -95,8 +95,8 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
       ? `You made ${sensitiveCount} sensitive disclosure${sensitiveCount > 1 ? 's' : ''}${topCats.length > 0 ? '. Categories include: ' + topCats.join(', ') : ''}.`
       : 'Your behavioural patterns may be sufficient for risk modelling without any direct disclosure.',
     body: anxietyScore > 3
-      ? `The analysis detected ${anxietyScore.toFixed(1)}/10 average anxiety signal intensity across your messages. Some underwriting algorithms treat sustained anxiety indicators as a predictor of future claims (Gumusel et al., 2024). Combined with ${nightPct > 5 ? nightPct + '% late-night message volume — associated with stress signals in behavioural actuarial models' : 'your disclosure frequency'}, this pattern could trigger elevated risk classification in automated systems.`
-      : `Even without direct mental health disclosures, usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution may provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers — but data brokers compile equivalent profiles from dozens of sources. If this data were ever exposed, it could fit directly into those systems. Some insurers do not require a diagnosis. They require a pattern.`,
+      ? `The analysis detected ${anxietyScore.toFixed(1)}/10 average anxiety signal intensity across your messages. Some underwriting algorithms treat sustained anxiety indicators as a predictor of future claims (Gumusel et al., 2024). Combined with ${nightPct > 5 ? nightPct + '% late-night message volume - associated with stress signals in behavioural actuarial models' : 'your disclosure frequency'}, this pattern could trigger elevated risk classification in automated systems.`
+      : `Even without direct mental health disclosures, usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution may provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers - but data brokers compile equivalent profiles from dozens of sources. If this data were ever exposed, it could fit directly into those systems. Some insurers do not require a diagnosis. They require a pattern.`,
     dataPoints: [
       { label: 'Sensitive disclosures', value: String(sensitiveCount), alarming: sensitiveCount > 5 },
       { label: 'Anxiety indicator', value: anxietyScore > 0 ? anxietyScore.toFixed(1) + '/10' : 'Not scored', alarming: anxietyScore > 4 },
@@ -116,7 +116,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     subtitle: careerEvents.length > 0
       ? `${careerEvents.length} career-related life event${careerEvents.length > 1 ? 's' : ''} detected. AI screening tools flag this as instability.`
       : 'Your writing patterns are sufficient for personality inference. No interview required.',
-    body: `The corpus contains ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Dominant topic clusters (' + themes.join(', ') + ') ' : 'Topic distribution '}may constitute a text-derived personality signature of the kind targeted by commercial screening tools. Companies including Humantic AI claim 78–85% accuracy in personality profiling from language patterns alone (Hickman et al., 2022). ${anxietyScore > 3 ? 'Detected anxiety signal intensity (avg ' + anxietyScore.toFixed(1) + '/10) falls within the range that some screening models associate with emotional volatility.' : 'Message volume and consistency patterns can be sufficient for work-habit inference even without direct mental health signal.'}${depScore > 60 ? ' Dependency score (' + depScore + '/100) indicates high-frequency tool engagement — a pattern some productivity screening systems flag.' : ''}`,
+    body: `The corpus contains ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Dominant topic clusters (' + themes.join(', ') + ') ' : 'Topic distribution '}may constitute a text-derived personality signature of the kind targeted by commercial screening tools. Companies including Humantic AI claim 78–85% accuracy in personality profiling from language patterns alone (Hickman et al., 2022). ${anxietyScore > 3 ? 'Detected anxiety signal intensity (avg ' + anxietyScore.toFixed(1) + '/10) falls within the range that some screening models associate with emotional volatility.' : 'Message volume and consistency patterns can be sufficient for work-habit inference even without direct mental health signal.'}${depScore > 60 ? ' Dependency score (' + depScore + '/100) indicates high-frequency tool engagement - a pattern some productivity screening systems flag.' : ''}`,
     dataPoints: [
       { label: 'Messages analysed', value: totalMsgs.toLocaleString('en-GB'), alarming: totalMsgs > 2000 },
       { label: 'Career events', value: String(careerEvents.length), alarming: careerEvents.length > 0 },
@@ -135,7 +135,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     subtitle: segments.length > 0
       ? `Categories: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
       : 'Behavioural patterns alone are sufficient for vulnerability classification.',
-    body: `${nightPct > 5 ? nightPct + '% of messages were sent between midnight and 5am — windows often associated with lower barriers to disclosure, a pattern noted in conversational AI research (Gumusel et al., 2024). ' : ''}OpenAI does not sell conversation data to advertisers. But the patterns these messages contain — vulnerability signals, life circumstances, emotional disclosure frequency — map onto categories that data brokers trade in. A breach, a legal order, or a policy change could expose this profile into systems where it would have immediate market value. The data exists. That is the structural risk.`,
+    body: `${nightPct > 5 ? nightPct + '% of messages were sent between midnight and 5am - windows often associated with lower barriers to disclosure, a pattern noted in conversational AI research (Gumusel et al., 2024). ' : ''}OpenAI does not sell conversation data to advertisers. But the patterns these messages contain - vulnerability signals, life circumstances, emotional disclosure frequency - map onto categories that data brokers trade in. A breach, a legal order, or a policy change could expose this profile into systems where it would have immediate market value. The data exists. That is the structural risk.`,
     dataPoints: [
       { label: 'Assigned segments', value: String(segments.length), alarming: segments.length > 3 },
       { label: 'Vulnerability window', value: nightPct > 5 ? `00:00–05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
@@ -152,7 +152,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     relevance: breachRelevance,
     title: 'None of this requires intent. One breach is enough.',
     subtitle: `Your profile contains ${nameCount} named individual${nameCount === 1 ? '' : 's'}, ${locCount} location${locCount === 1 ? '' : 's'}, and ${sensitiveCount} sensitive disclosure${sensitiveCount === 1 ? '' : 's'}. All could be exposed.`,
-    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure — none of which can easily be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named could also be implicated. Their information appears alongside yours.' : ''}${r.privacyScore >= 60 ? ' Your exposure index (' + r.privacyScore + '/100) places this profile in a high-risk category for identity reconstruction from leaked behavioural data.' : ' Even partial exposure of your behavioural patterns may be sufficient for re-identification.'}`,
+    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure - none of which can easily be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named could also be implicated. Their information appears alongside yours.' : ''}${r.privacyScore >= 60 ? ' Your exposure index (' + r.privacyScore + '/100) places this profile in a high-risk category for identity reconstruction from leaked behavioural data.' : ' Even partial exposure of your behavioural patterns may be sufficient for re-identification.'}`,
     dataPoints: [
       { label: 'Exposure index', value: r.privacyScore + '/100', alarming: r.privacyScore >= 60 },
       { label: 'People exposed', value: String(nameCount), alarming: nameCount > 0 },
@@ -181,7 +181,7 @@ function sevColor(severity: string) {
 }
 
 // ============================================================================
-// HERO SCENARIO — full-width, unboxed, Resist-pattern
+// HERO SCENARIO - full-width, unboxed, Resist-pattern
 // ============================================================================
 
 function HeroScenario({ scenario }: { scenario: RiskScenario }) {
@@ -218,7 +218,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         </span>
       </div>
 
-      {/* Title — large, declarative */}
+      {/* Title - large, declarative */}
       <h2 style={{
         fontFamily: TYPE.serif,
         fontSize: 'clamp(1.8rem, 4vw, 3rem)',
@@ -238,7 +238,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         {scenario.subtitle}
       </p>
 
-      {/* Data points — horizontal strip, no box around them */}
+      {/* Data points - horizontal strip, no box around them */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
@@ -269,7 +269,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
         {scenario.body}
       </p>
 
-      {/* Precedent — left-bordered, no heavy box */}
+      {/* Precedent - left-bordered, no heavy box */}
       <div style={{
         borderLeft: `2px solid ${PALETTE.border}`,
         paddingLeft: '1.5rem',
@@ -301,7 +301,7 @@ function HeroScenario({ scenario }: { scenario: RiskScenario }) {
 }
 
 // ============================================================================
-// SECONDARY SCENARIO — accordion, clean
+// SECONDARY SCENARIO - accordion, clean
 // ============================================================================
 
 function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: number }) {
@@ -520,7 +520,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         color: PALETTE.inkMuted, lineHeight: 1.75,
         maxWidth: '58ch', marginBottom: '1rem',
       }}>
-        OpenAI does not sell your data. But every time you load a webpage, your behavioural profile — built from sources across the internet — enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, could slot directly into that system. This is what that would look like.
+        OpenAI does not sell your data. But every time you load a webpage, your behavioural profile - built from sources across the internet - enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, could slot directly into that system. This is what that would look like.
       </p>
 
       <p style={{
@@ -528,13 +528,13 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         color: PALETTE.inkFaint, lineHeight: 1.9,
         maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
       }}>
-        <a href="https://www.eff.org/deeplinks/2025/01/online-behavioral-ads-fuel-surveillance-industry-heres-how" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>EFF — How Online Behavioural Ads Fuel the Surveillance Industry</a>
+        <a href="https://www.eff.org/deeplinks/2025/01/online-behavioral-ads-fuel-surveillance-industry-heres-how" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>EFF - How Online Behavioural Ads Fuel the Surveillance Industry</a>
         {' · '}
-        <a href="https://ico.org.uk/about-the-ico/research-reports-impact-and-evaluation/research-and-reports/technology-and-innovation/adtech-fact-finding-forum/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>ICO — Adtech &amp; Real-Time Bidding Report</a>
+        <a href="https://ico.org.uk/about-the-ico/research-reports-impact-and-evaluation/research-and-reports/technology-and-innovation/adtech-fact-finding-forum/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>ICO - Adtech &amp; Real-Time Bidding Report</a>
         {' · '}
-        <a href="https://www.ftc.gov/reports/data-brokers-call-transparency-accountability-report-federal-trade-commission-may-2014" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>FTC — Data Brokers: A Call for Transparency (2014)</a>
+        <a href="https://www.ftc.gov/reports/data-brokers-call-transparency-accountability-report-federal-trade-commission-may-2014" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>FTC - Data Brokers: A Call for Transparency (2014)</a>
         {' · '}
-        <a href="https://iabeurope.eu/laypersons-programmatic/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>IAB Europe — The Advent of RTB Explained</a>
+        <a href="https://iabeurope.eu/laypersons-programmatic/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>IAB Europe - The Advent of RTB Explained</a>
       </p>
 
       {/* Lot card */}
@@ -645,7 +645,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                 <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', color: PALETTE.ink, marginBottom: '0.3rem' }}>{winner.buyer}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '1.2rem', color: PALETTE.red, letterSpacing: '0.02em', marginBottom: '0.8rem' }}>£{winner.amount.toFixed(4)}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
-                  In the real-time bidding ecosystem, a winner receives: a behavioural profile, vulnerability classifications, a targeting window{homeLoc ? `, and an approximate location (${homeLoc.location})` : ''}. OpenAI does not participate in this system. But a profile like yours — if exposed — could be usable within it almost immediately. You would not be notified.
+                  In the real-time bidding ecosystem, a winner receives: a behavioural profile, vulnerability classifications, a targeting window{homeLoc ? `, and an approximate location (${homeLoc.location})` : ''}. OpenAI does not participate in this system. But a profile like yours - if exposed - could be usable within it almost immediately. You would not be notified.
                 </p>
               </motion.div>
             )}
@@ -677,15 +677,15 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
 
 // ── BREACH HISTORY TIMELINE ──────────────────────────────────────────────
 // Pudding principle: make the threat feel regular, not exceptional.
-// Real incidents. Real scales. The question is not IF — it is when.
+// Real incidents. Real scales. The question is not IF - it is when.
 
 const BREACHES = [
   { year: 2021, month: 4,  name: 'Facebook',      records: 533,  detail: 'Phone numbers, names, and locations of 533M users published to a hacking forum. Data scraped before a 2019 vulnerability was patched.', url: 'https://www.wired.com/story/facebook-data-leak-500-million-users-phone-numbers/' },
-  { year: 2021, month: 6,  name: 'LinkedIn',      records: 700,  detail: '700M user profiles scraped and listed for sale — 92% of total user base. Included emails, phone numbers, professional history.', url: 'https://www.privacysharks.com/exclusive-700-million-linkedin-records-for-sale-on-hacker-forum-june-22nd-2021/' },
+  { year: 2021, month: 6,  name: 'LinkedIn',      records: 700,  detail: '700M user profiles scraped and listed for sale - 92% of total user base. Included emails, phone numbers, professional history.', url: 'https://www.privacysharks.com/exclusive-700-million-linkedin-records-for-sale-on-hacker-forum-june-22nd-2021/' },
   { year: 2021, month: 10, name: 'Twitch',        records: 0.5,  detail: '125GB of source code, creator earnings data, and internal security tools leaked by anonymous hacker. Revenue data for top streamers made public.', url: 'https://www.theverge.com/2021/10/6/22712250/twitch-hack-data-leak-amazon' },
   { year: 2022, month: 8,  name: 'Twitter/X',     records: 400,  detail: '400M unique user records including private email addresses and phone numbers, exploited via a 2021 API vulnerability.', url: 'https://techcrunch.com/2023/01/19/twitters-data-leak-response-is-a-lesson-in-how-not-to-do-cybersecurity/' },
   { year: 2023, month: 3,  name: 'OpenAI',        records: 0.1,  detail: 'A bug in the Redis client library exposed conversation titles, payment info, and the last four digits of credit cards of active users for ~9 hours.', url: 'https://thehackernews.com/2023/03/openai-reveals-redis-bug-behind-chatgpt.html' },
-  { year: 2023, month: 6,  name: 'MOVEit',        records: 60,   detail: '60M+ individuals affected across hundreds of organisations — including the BBC, British Airways, and the US Department of Energy — via a zero-day in file transfer software.', url: 'https://en.wikipedia.org/wiki/2023_MOVEit_data_breach' },
+  { year: 2023, month: 6,  name: 'MOVEit',        records: 60,   detail: '60M+ individuals affected across hundreds of organisations - including the BBC, British Airways, and the US Department of Energy - via a zero-day in file transfer software.', url: 'https://en.wikipedia.org/wiki/2023_MOVEit_data_breach' },
   { year: 2024, month: 2,  name: 'Change Health', records: 190,  detail: '190M patient records including diagnoses, medications, and Social Security numbers. Largest US healthcare breach in history. UnitedHealth paid a $22M ransom.', url: 'https://www.wired.com/story/change-healthcare-ransomware-attack-2024/' },
   { year: 2024, month: 5,  name: 'Snowflake',     records: 50,   detail: 'Ticketmaster (560M users), Santander, AT&T, and 160+ other companies breached via stolen cloud credentials. Data sold on criminal forums.', url: 'https://www.wired.com/story/snowflake-breach-advanced-auto-parts-lendingtree/' },
   { year: 2025, month: 1,  name: 'DeepSeek',      records: 1,    detail: 'AI chat logs, API keys, backend data, and system prompts exposed in an unsecured database. One million chat histories accessible without authentication.', url: 'https://techcrunch.com/2025/01/30/deepseek-exposed-internal-database-containing-chat-histories-and-sensitive-data/' },
@@ -736,11 +736,11 @@ function BreachTimeline() {
       }}
     >
       <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-        Major data incidents — 2021–2025
+        Major data incidents - 2021–2025
       </p>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '2.5rem' }}>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.65, maxWidth: 520 }}>
-          Circle size = records exposed (millions). Breach is not exceptional — it is the norm. Click any incident for the source.
+          Circle size = records exposed (millions). Breach is not exceptional - it is the norm. Click any incident for the source.
         </p>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexShrink: 0 }}>
           {[
@@ -755,14 +755,14 @@ function BreachTimeline() {
         </div>
       </div>
 
-      {/* SVG — responsive width */}
+      {/* SVG - responsive width */}
       <div style={{ position: 'relative', width: '100%', overflowX: 'auto' }}>
         <svg
           viewBox={`0 0 ${svgW} ${SVG_H}`}
           width="100%"
           style={{ display: 'block', minWidth: 480, overflow: 'visible' }}
         >
-          {/* Year tick lines — faint verticals */}
+          {/* Year tick lines - faint verticals */}
           {[2021, 2022, 2023, 2024, 2025].map(yr => {
             const x = PAD_X + ((yr - minYear) / (maxYear - minYear)) * chartW;
             return (
@@ -816,7 +816,7 @@ function BreachTimeline() {
                 />
                 {/* Centre dot for AI platforms */}
                 {b.isAI && <circle cx={b.x} cy={b.cy} r={3} fill={`rgba(${baseRgb},0.8)`} />}
-                {/* Name label — inside if large enough, outside if small */}
+                {/* Name label - inside if large enough, outside if small */}
                 {b.r >= 22 ? (
                   <text x={b.x} y={b.cy + 4} textAnchor="middle"
                     style={{ fontFamily: TYPE.mono, fontSize: '9px', fill: `rgba(${baseRgb},0.9)`, letterSpacing: '0.08em', pointerEvents: 'none' }}>
@@ -845,7 +845,7 @@ function BreachTimeline() {
           })}
         </svg>
 
-        {/* Detail panel — appears below chart when active */}
+        {/* Detail panel - appears below chart when active */}
         <AnimatePresence>
           {active && (
             <motion.div
@@ -866,7 +866,7 @@ function BreachTimeline() {
             >
               <div style={{ flex: 1, minWidth: 200 }}>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: (active.name === 'OpenAI' || active.name === 'DeepSeek') ? PALETTE.red : PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                  {active.name} — {new Date(active.year, active.month - 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+                  {active.name} - {new Date(active.year, active.month - 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
                 </p>
                 <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
                   {active.detail}
@@ -928,7 +928,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
       position: 'relative',
     }}>
 
-      {/* Background geometry — top right, faint crosshair */}
+      {/* Background geometry - top right, faint crosshair */}
       <svg className="deco-svg" style={{
         position: 'absolute', top: 0, right: 0,
         width: '260px', height: '260px',
@@ -945,7 +945,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
         </g>
       </svg>
 
-      {/* HEADER — Resist pattern */}
+      {/* HEADER - Resist pattern */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -957,9 +957,9 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
         }}
       >
         <ActLabel roman="II" title="The Inference" pageLabel="04 / Risk" />
-        <ThreadSentence>What this record makes possible — without leaving the system, without your knowledge.</ThreadSentence>
+        <ThreadSentence>What this record makes possible - without leaving the system, without your knowledge.</ThreadSentence>
 
-        {/* Active count — the big number */}
+        {/* Active count - the big number */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -1039,10 +1039,10 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
       {/* CLOSING */}
       <PageFooter
         statement="These scenarios are grounded in documented practice. Such systems exist, operate legally, and are commercially incentivised."
-        followOn="These scenarios assume the record leaves the system. The prior question is whether it can ever be fully removed. Current evidence suggests it cannot — even by those who hold it."
+        followOn="These scenarios assume the record leaves the system. The prior question is whether it can ever be fully removed. Current evidence suggests it cannot - even by those who hold it."
         navItems={[
           { page: 'permanent', act: 'ACT III / 05', label: 'Why it is not easily removed', body: 'Gradient descent has no simple reverse function. Deletion removes your account. It does not straightforwardly remove what the model may have learned.' },
-          { page: 'terms',     act: 'ACT III / 06', label: 'What you agreed to',       body: 'The terms that authorised this — and how they changed after you signed.' },
+          { page: 'terms',     act: 'ACT III / 06', label: 'What you agreed to',       body: 'The terms that authorised this - and how they changed after you signed.' },
           { page: 'understand', act: 'ACT IV / 08', label: 'How inference works',      body: 'Watch the extraction happen on your own words.' },
         ]}
         endLabel="End of risk assessment."

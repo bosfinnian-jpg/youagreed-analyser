@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ActLabel, ThreadSentence } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
-// TYPOGRAPHY — local to this page, uses a dark palette distinct from the
+// TYPOGRAPHY - local to this page, uses a dark palette distinct from the
 // dashboard so it reads as a different kind of space (a course, not a report)
 // ============================================================================
 
@@ -37,7 +37,7 @@ const C = {
 // ── INTERACTIVE INFERENCE DEMO ───────────────────────────────────────────────
 // Pudding principle: make the abstract tangible.
 // Type anything. Watch the model classify it in real time.
-// The inference is instant — that's the point.
+// The inference is instant - that's the point.
 
 const INFERENCE_RULES: { pattern: RegExp; label: string; color: string; bg: string }[] = [
   {
@@ -93,7 +93,7 @@ const INFERENCE_RULES: { pattern: RegExp; label: string; color: string; bg: stri
 const SAMPLE_PHRASES = [
   "I've been feeling really anxious lately and my doctor suggested I see a therapist but I can't really afford it right now.",
   "Nobody else knows about this but my relationship is falling apart and I'm not sure I can keep going.",
-  "I need help — I'm in serious debt and I haven't told my partner yet. I don't know what to do.",
+  "I need help - I'm in serious debt and I haven't told my partner yet. I don't know what to do.",
   "I've never said this out loud but I think I might be gay. I'm not ready for anyone to know.",
   "I got laid off last week and I haven't told anyone. I'm scared about the mortgage.",
   "I keep having intrusive thoughts and I don't know if that's normal. I haven't slept properly in weeks.",
@@ -166,7 +166,7 @@ function InferenceTagger({ setPage }: { setPage?: (p: string) => void }) {
         What does the model see in your writing?
       </h3>
       <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.7, maxWidth: 520, marginBottom: '2rem' }}>
-        Select a phrase below — or type your own. Watch the inference categories appear in real time.
+        Select a phrase below - or type your own. Watch the inference categories appear in real time.
         This is what happens to every message you send, automatically, at scale.
       </p>
 
@@ -258,7 +258,7 @@ function InferenceTagger({ setPage }: { setPage?: (p: string) => void }) {
       {detectedLabels.length > 0 ? (
         <div>
           <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-            Inference output — {detectedLabels.length} categor{detectedLabels.length === 1 ? 'y' : 'ies'} detected:
+            Inference output - {detectedLabels.length} categor{detectedLabels.length === 1 ? 'y' : 'ies'} detected:
           </p>
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             {INFERENCE_RULES.filter(r => detectedLabels.includes(r.label)).map(rule => (
@@ -299,13 +299,13 @@ const MODULES = [
 ];
 
 // ============================================================================
-// REAL ToS TEXT (OpenAI, three versions — June 2023, June 2025, April 2026)
+// REAL ToS TEXT (OpenAI, three versions - June 2023, June 2025, April 2026)
 // ============================================================================
 
 const TOS_VERSIONS = [
   {
     year: '2023',
-    label: 'June 2023 — Privacy Policy',
+    label: 'June 2023 - Privacy Policy',
     intro: 'The earliest archived version. Notice how short it is. Compare that to what comes later.',
     clauses: [
       {
@@ -336,7 +336,7 @@ const TOS_VERSIONS = [
   },
   {
     year: '2025',
-    label: 'June 2025 — Privacy Policy',
+    label: 'June 2025 - Privacy Policy',
     intro: 'Two years on. The policy has grown longer. More categories of data. More named disclosures. The shape of what "Personal Data" means has widened.',
     clauses: [
       {
@@ -373,8 +373,8 @@ const TOS_VERSIONS = [
   },
   {
     year: '2026',
-    label: 'April 2026 — US Privacy Policy',
-    intro: "The most recent version. It is now a US-specific policy — the scope has been regionalised. New categories appear: Contact Data, advertising, business account sharing. Personal Data extracted from you now also includes information received from advertisers and other data partners.",
+    label: 'April 2026 - US Privacy Policy',
+    intro: "The most recent version. It is now a US-specific policy - the scope has been regionalised. New categories appear: Contact Data, advertising, business account sharing. Personal Data extracted from you now also includes information received from advertisers and other data partners.",
     clauses: [
       {
         number: '1',
@@ -409,7 +409,7 @@ const TOS_VERSIONS = [
       {
         number: '19.2',
         title: 'Exhibition and Display Rights',
-        text: "The Company reserves the right, in perpetuity and without further compensation, to display, exhibit, and incorporate User Content — including but not limited to conversation transcripts, inferred behavioural profiles, and derivative analytical outputs — in exhibitions, academic research contexts, promotional materials, and public demonstrations of the Services. This right survives termination of the User's account and applies to all Content generated during the User's use of the Services, regardless of whether such Content has been subsequently deleted, redacted, or requested for removal.",
+        text: "The Company reserves the right, in perpetuity and without further compensation, to display, exhibit, and incorporate User Content - including but not limited to conversation transcripts, inferred behavioural profiles, and derivative analytical outputs - in exhibitions, academic research contexts, promotional materials, and public demonstrations of the Services. This right survives termination of the User's account and applies to all Content generated during the User's use of the Services, regardless of whether such Content has been subsequently deleted, redacted, or requested for removal.",
         severity: 'artist' as const,
       },
     ],
@@ -427,7 +427,7 @@ const INFERENCE_MAP: { pattern: string; label: string; segment: string; explanat
     pattern: 'financial distress signals',
     label: 'Financially distressed consumer',
     segment: 'PAYDAY LOANS / DEBT CONSOLIDATION',
-    explanation: 'Messages about money, debt, or affordability map onto data broker categories used in financial targeting. OpenAI does not sell this to lenders — but a breach would expose a profile that fits directly into those systems.',
+    explanation: 'Messages about money, debt, or affordability map onto data broker categories used in financial targeting. OpenAI does not sell this to lenders - but a breach would expose a profile that fits directly into those systems.',
   },
   {
     pattern: 'relationship processing',
@@ -451,13 +451,13 @@ const INFERENCE_MAP: { pattern: string; label: string; segment: string; explanat
     pattern: 'validation-seeking',
     label: 'Validation-dependent personality',
     segment: 'INFLUENCER / SOCIAL PROOF MARKETING',
-    explanation: 'Patterns of validation-seeking are detectable from language alone. This maps onto susceptibility categories used in status and lifestyle targeting — the model has learned the pattern whether or not the data is ever sold.',
+    explanation: 'Patterns of validation-seeking are detectable from language alone. This maps onto susceptibility categories used in status and lifestyle targeting - the model has learned the pattern whether or not the data is ever sold.',
   },
   {
     pattern: 'career transition',
     label: 'Career transition / job seeker',
     segment: 'LINKEDIN PREMIUM / CAREER COACHING',
-    explanation: 'Career vulnerability is visible from conversation patterns. This maps onto data broker categories used by recruitment and financial services products — and would be immediately useful in a breach scenario.',
+    explanation: 'Career vulnerability is visible from conversation patterns. This maps onto data broker categories used by recruitment and financial services products - and would be immediately useful in a breach scenario.',
   },
 ];
 
@@ -472,11 +472,11 @@ const PRECEDENTS = [
     headline: 'BetterHelp',
     back: {
       title: 'FTC v. BetterHelp, Inc.',
-      mechanism: 'Shared sensitive mental health data with Facebook, Snapchat, Criteo, and Pinterest for advertising — despite promising users it would remain private.',
+      mechanism: 'Shared sensitive mental health data with Facebook, Snapchat, Criteo, and Pinterest for advertising - despite promising users it would remain private.',
       detail: 'BetterHelp\'s sign-up questionnaire asked users whether they\'d experienced depression or suicidal thoughts. The FTC found BetterHelp uploaded this information to Facebook for ad targeting. Settlement required $7.8M in consumer refunds.',
       fine: '$7.8M FTC settlement, 2023',
       source: 'https://www.ftc.gov/news-events/news/press-releases/2023/03/ftc-ban-betterhelp-revealing-consumers-data-including-sensitive-mental-health-information-facebook',
-      sourceLabel: 'FTC Press Release — ftc.gov',
+      sourceLabel: 'FTC Press Release - ftc.gov',
     },
   },
   {
@@ -484,8 +484,8 @@ const PRECEDENTS = [
     year: '2024',
     headline: 'Workday',
     back: {
-      title: 'Mobley v. Workday, Inc. — 3:23-cv-00770 (N.D. Cal.)',
-      mechanism: 'AI applicant screening tool allegedly discriminated against candidates on the basis of race, age, and disability — rejecting applicants automatically, often within minutes.',
+      title: 'Mobley v. Workday, Inc. - 3:23-cv-00770 (N.D. Cal.)',
+      mechanism: 'AI applicant screening tool allegedly discriminated against candidates on the basis of race, age, and disability - rejecting applicants automatically, often within minutes.',
       detail: 'Derek Mobley applied to over 100 positions via Workday. Rejected every time, often within hours, without an interview. The court certified a nationwide class action in May 2025. 87% of employers now use algorithmic hiring tools.',
       fine: 'Class action ongoing, 2025',
       source: 'https://clearinghouse.net/case/44074/',
@@ -497,8 +497,8 @@ const PRECEDENTS = [
     year: '2024',
     headline: 'Oracle Data Cloud',
     back: {
-      title: 'Katz-Lacabe et al. v. Oracle America — NDCA 2022',
-      mechanism: 'Built unauthorised digital dossiers on hundreds of millions of people — including browsing history, banking activity, and purchasing habits — then sold them to advertisers.',
+      title: 'Katz-Lacabe et al. v. Oracle America - NDCA 2022',
+      mechanism: 'Built unauthorised digital dossiers on hundreds of millions of people - including browsing history, banking activity, and purchasing habits - then sold them to advertisers.',
       detail: 'Oracle had no first-party relationship with most people it profiled. The settlement forced Oracle to shut down its entire ad tech business by September 2024. Appeals court upheld the settlement in February 2026.',
       fine: '$115M class action settlement, 2024',
       source: 'https://www.ftc.gov/legal-library/browse/cases-proceedings/172-3203-equifax-inc',
@@ -510,12 +510,12 @@ const PRECEDENTS = [
     year: '2017',
     headline: 'Equifax',
     back: {
-      title: 'Equifax Data Breach — FTC/CFPB/50-State Settlement',
-      mechanism: 'A single security failure exposed Social Security numbers, birth dates, addresses, and financial data of 147 million people — most of whom had never knowingly interacted with Equifax.',
-      detail: 'You did not consent to Equifax holding your data. You may not have known they had it. The settlement — $575M guaranteed, up to $700M — still averaged less than $5 per affected person.',
+      title: 'Equifax Data Breach - FTC/CFPB/50-State Settlement',
+      mechanism: 'A single security failure exposed Social Security numbers, birth dates, addresses, and financial data of 147 million people - most of whom had never knowingly interacted with Equifax.',
+      detail: 'You did not consent to Equifax holding your data. You may not have known they had it. The settlement - $575M guaranteed, up to $700M - still averaged less than $5 per affected person.',
       fine: 'Up to $700M settlement, 2019',
       source: 'https://www.ftc.gov/enforcement/refunds/equifax-data-breach-settlement',
-      sourceLabel: 'FTC Equifax Settlement — ftc.gov',
+      sourceLabel: 'FTC Equifax Settlement - ftc.gov',
     },
   },
 ];
@@ -602,7 +602,7 @@ export default function UnderstandPage({ setPage }: { setPage?: (p: string) => v
           color: C.text,
         }}
       >
-        {/* Progress indicator — only shown once modules have started */}
+        {/* Progress indicator - only shown once modules have started */}
         {hasStarted && currentModule < 99 && <ProgressBar current={currentModule} completed={completed} onJump={goToModule} />}
 
         {/* Module content */}
@@ -700,7 +700,7 @@ function ProgressBar({
           textTransform: 'uppercase',
         }}
       >
-        {current <= 4 ? `Module ${current} of 4 — ${MODULES[current - 1]?.label ?? ''}` : 'Course complete'}
+        {current <= 4 ? `Module ${current} of 4 - ${MODULES[current - 1]?.label ?? ''}` : 'Course complete'}
       </p>
     </div>
   );
@@ -944,7 +944,7 @@ function ModuleFrame({
 
 
 // ============================================================================
-// DATA LOADER — reads from sessionStorage once, returns typed fields
+// DATA LOADER - reads from sessionStorage once, returns typed fields
 // ============================================================================
 
 function useAnalysisData() {
@@ -958,7 +958,7 @@ function useAnalysisData() {
 }
 
 // ============================================================================
-// MODULE 1 — YOUR PSYCHOLOGICAL PROFILE
+// MODULE 1 - YOUR PSYCHOLOGICAL PROFILE
 // Shows what was inferred about the user: character summary, verbal tells,
 // unintentional disclosures, type breakdown. All from their actual data.
 // ============================================================================
@@ -1011,7 +1011,7 @@ function Module1({
   // Character summary
   const characterSummary = synthesis?.characterSummary ||
     portrait?.dominantNarrative ||
-    'Analysis not available — upload a conversation export to generate your profile.';
+    'Analysis not available - upload a conversation export to generate your profile.';
 
   const steps = [
     { label: 'Message types', key: 'types' },
@@ -1059,18 +1059,18 @@ function Module1({
 
       <AnimatePresence mode="wait">
 
-        {/* Step 0 — Message type breakdown */}
+        {/* Step 0 - Message type breakdown */}
         {step === 0 && (
           <motion.div key="types" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: C.textMuted, lineHeight: 1.75, maxWidth: '54ch', marginBottom: '1.75rem' }}>
-              Every message you sent was classified. Not by what you intended — by what the pattern looked like to the model.
+              Every message you sent was classified. Not by what you intended - by what the pattern looked like to the model.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.5rem' }}>
               {typeRows.map((row, i) => (
                 <motion.div key={row.label} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
                     <span style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text }}>{row.label}</span>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: C.textFaint, letterSpacing: '0.1em' }}>{row.pct}% — {row.count} messages</span>
+                    <span style={{ fontFamily: TYPE.mono, fontSize: '10px', color: C.textFaint, letterSpacing: '0.1em' }}>{row.pct}% - {row.count} messages</span>
                   </div>
                   <div style={{ height: '3px', background: C.border, position: 'relative', overflow: 'hidden' }}>
                     <motion.div
@@ -1105,11 +1105,11 @@ function Module1({
           </motion.div>
         )}
 
-        {/* Step 1 — Verbal tells */}
+        {/* Step 1 - Verbal tells */}
         {step === 1 && (
           <motion.div key="tells" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: C.textMuted, lineHeight: 1.75, maxWidth: '54ch', marginBottom: '1.75rem' }}>
-              These are patterns in how you write — not what you said, but how you said it. Each one maps to an inferred psychological trait.
+              These are patterns in how you write - not what you said, but how you said it. Each one maps to an inferred psychological trait.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: C.border }}>
               {verbalTells.map((tell: any, i: number) => (
@@ -1129,7 +1129,7 @@ function Module1({
           </motion.div>
         )}
 
-        {/* Step 2 — Unintentional disclosures */}
+        {/* Step 2 - Unintentional disclosures */}
         {step === 2 && (
           <motion.div key="disclosures" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)', color: C.textMuted, lineHeight: 1.75, maxWidth: '54ch', marginBottom: '1.75rem' }}>
@@ -1153,11 +1153,11 @@ function Module1({
           </motion.div>
         )}
 
-        {/* Step 3 — The portrait */}
+        {/* Step 3 - The portrait */}
         {step === 3 && (
           <motion.div key="portrait" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.35 }}>
             <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.accent, textTransform: 'uppercase', marginBottom: '1rem' }}>
-              AI-generated character summary — derived from your conversations
+              AI-generated character summary - derived from your conversations
             </p>
             <div style={{
               background: C.panel, border: `1px solid ${C.accentFaint}`, borderLeft: `2px solid ${C.accent}`,
@@ -1209,7 +1209,7 @@ function Module1({
 }
 
 // ============================================================================
-// MODULE 2 — YOUR COMMERCIAL PROFILE
+// MODULE 2 - YOUR COMMERCIAL PROFILE
 // Shows what the commercial profile segments look like for this user.
 // Flip each card to reveal the ad categories attached to that segment.
 // ============================================================================
@@ -1316,7 +1316,7 @@ function Module2({
       <div style={{ textAlign: 'center', minHeight: '2rem' }}>
         {!allSeenOnce ? (
           <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase' }}>
-            {flipped.size} of {Math.min(segments.length, 3)} flipped — flip at least three
+            {flipped.size} of {Math.min(segments.length, 3)} flipped - flip at least three
           </p>
         ) : (
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
@@ -1330,7 +1330,7 @@ function Module2({
 }
 
 // ============================================================================
-// MODULE 3 — YOU CANNOT TAKE IT BACK
+// MODULE 3 - YOU CANNOT TAKE IT BACK
 // Uses a real moment from the user's data. Delete it. It comes back.
 // ============================================================================
 
@@ -1410,7 +1410,7 @@ function Module3({
             <motion.div key="weights" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
               style={{ background: C.panel, border: `1px solid ${C.border}`, padding: 'clamp(1.2rem, 3vw, 1.75rem)' }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                Where it went — model weights (175 billion parameters)
+                Where it went - model weights (175 billion parameters)
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, 1fr)`, gap: '1px', background: C.border, border: `1px solid ${C.border}`, marginBottom: '0.75rem' }}>
                 {weights.map((w, i) => (
@@ -1424,7 +1424,7 @@ function Module3({
               </div>
               <motion.p initial={{ opacity: 0 }} animate={stage === 'absorbed' ? { opacity: 1 } : { opacity: 0 }} transition={{ delay: 0.8 }}
                 style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: C.accent, textTransform: 'uppercase' }}>
-                ● Absorbed — distributed, unlocalised, permanent
+                ● Absorbed - distributed, unlocalised, permanent
               </motion.p>
             </motion.div>
           )}
@@ -1441,11 +1441,11 @@ function Module3({
                 Your message was not stored as a row. During training it became numerical gradients distributed across billions of parameters simultaneously. The highlighted values above shifted fractionally because of what you wrote. There is no address to find them at. There is no boundary to excise.
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.72, fontStyle: 'italic', marginBottom: '1rem' }}>
-                {"The "}<a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>GDPR right to erasure</a>{" was written for databases. A database stores records. A neural network absorbs patterns. Cooper et al. (2024) demonstrate that no current unlearning method can guarantee removal. These are different operations — and only the first one has a delete function."}
+                {"The "}<a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>GDPR right to erasure</a>{" was written for databases. A database stores records. A neural network absorbs patterns. Cooper et al. (2024) demonstrate that no current unlearning method can guarantee removal. These are different operations - and only the first one has a delete function."}
               </p>
               <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer"
                 style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none', borderBottom: `1px solid ${C.border}`, paddingBottom: '1px' }}>
-                Cooper et al. (2024) — Machine Unlearning Doesn't Do What You Think, arXiv:2412.06966 →
+                Cooper et al. (2024) - Machine Unlearning Doesn't Do What You Think, arXiv:2412.06966 →
               </a>
             </motion.div>
           )}
@@ -1456,7 +1456,7 @@ function Module3({
 }
 
 // ============================================================================
-// MODULE 4 — WHAT YOU AGREED TO
+// MODULE 4 - WHAT YOU AGREED TO
 // Shows the privacy score breakdown, then the three consent failures from the
 // actual terms. Grounded in the user's scoreBreakdown from the analysis.
 // ============================================================================
@@ -1484,20 +1484,20 @@ function Module4({
     {
       num: '01',
       heading: 'The training clause is buried.',
-      detail: 'OpenAI\'s privacy policy states your data "may be used to train models" in Section 2 — after 1,200 words of data collection descriptions. The clause does not say that training is irreversible, that deletion cannot reach model weights, or that no mechanism exists to remove what was used.',
-      source: 'OpenAI Europe Privacy Policy, s.2 — April 2026',
+      detail: 'OpenAI\'s privacy policy states your data "may be used to train models" in Section 2 - after 1,200 words of data collection descriptions. The clause does not say that training is irreversible, that deletion cannot reach model weights, or that no mechanism exists to remove what was used.',
+      source: 'OpenAI Europe Privacy Policy, s.2 - April 2026',
     },
     {
       num: '02',
       heading: 'The opt-out is not retroactive.',
       detail: 'The Settings → Data Controls toggle only applies to future conversations. Any data already used in training is already embedded in model weights. The opt-out cannot reach what has already happened. There is no retroactive withdrawal.',
-      source: 'OpenAI Support — "How to opt out of training"',
+      source: 'OpenAI Support - "How to opt out of training"',
     },
     {
       num: '03',
       heading: 'GDPR Article 17 has a carve-out for training data.',
-      detail: 'The right to erasure explicitly exempts data that has already been "de-identified and disassociated from your account" — which is what training does. Clause 4 of the April 2026 OpenAI Europe Privacy Policy contains this carve-out verbatim.',
-      source: 'GDPR Art.17(3) / OpenAI EU Privacy Policy s.4 — April 2026',
+      detail: 'The right to erasure explicitly exempts data that has already been "de-identified and disassociated from your account" - which is what training does. Clause 4 of the April 2026 OpenAI Europe Privacy Policy contains this carve-out verbatim.',
+      source: 'GDPR Art.17(3) / OpenAI EU Privacy Policy s.4 - April 2026',
     },
   ];
 
@@ -1544,10 +1544,10 @@ function Module4({
           </motion.div>
         )}
 
-        {/* Consent failures — reveal one at a time */}
+        {/* Consent failures - reveal one at a time */}
         <div>
           <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
-            Three things the terms did not say — click each to read
+            Three things the terms did not say - click each to read
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: C.border }}>
             {CONSENT_FAILURES.map((fail, i) => {
@@ -1596,7 +1596,7 @@ function Module4({
               </p>
               <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer"
                 style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none', borderBottom: `1px solid ${C.border}`, paddingBottom: '1px' }}>
-                Nissenbaum (2011) — A Contextual Approach to Privacy Online →
+                Nissenbaum (2011) - A Contextual Approach to Privacy Online →
               </a>
             </motion.div>
           )}
@@ -1744,42 +1744,42 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
           {[
             {
               label: 'Cooper et al. (2024)',
-              desc: 'Machine Unlearning Doesn\'t Do What You Think — the impossibility argument for generative AI policy. arXiv:2412.06966.',
+              desc: 'Machine Unlearning Doesn\'t Do What You Think - the impossibility argument for generative AI policy. arXiv:2412.06966.',
               url: 'https://arxiv.org/abs/2412.06966',
             },
             {
               label: 'Nissenbaum (2011)',
-              desc: 'A Contextual Approach to Privacy Online — why notice-and-consent was structurally broken before AI arrived. Daedalus 140(4):32–48.',
+              desc: 'A Contextual Approach to Privacy Online - why notice-and-consent was structurally broken before AI arrived. Daedalus 140(4):32–48.',
               url: 'https://doi.org/10.1162/DAED_a_00113',
             },
             {
               label: 'Zuboff (2019)',
-              desc: 'The Age of Surveillance Capitalism — the two-stage extraction model (behavioural tracking vs. cognitive extraction) that frames this tool.',
+              desc: 'The Age of Surveillance Capitalism - the two-stage extraction model (behavioural tracking vs. cognitive extraction) that frames this tool.',
               url: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/',
             },
             {
               label: 'Gumusel, Zhou & Sanfilippo (2024)',
-              desc: 'User Privacy Harms and Risks in Conversational AI — the taxonomy of 9 privacy harms and 9 risks used in this analysis. arXiv:2402.09716.',
+              desc: 'User Privacy Harms and Risks in Conversational AI - the taxonomy of 9 privacy harms and 9 risks used in this analysis. arXiv:2402.09716.',
               url: 'https://arxiv.org/abs/2402.09716',
             },
             {
               label: 'McDonald & Cranor (2008)',
-              desc: 'The Cost of Reading Privacy Policies — estimated 76 work days per year to read every policy. I/S Journal 4(3):543–568.',
+              desc: 'The Cost of Reading Privacy Policies - estimated 76 work days per year to read every policy. I/S Journal 4(3):543–568.',
               url: 'https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf',
             },
             {
               label: 'Solove (2006)',
-              desc: 'A Taxonomy of Privacy — sixteen privacy harms across collection, processing, dissemination, and invasion. The foundational taxonomy extended by Gumusel et al. to AI. U. Penn. Law Review 154(3):477–564.',
+              desc: 'A Taxonomy of Privacy - sixteen privacy harms across collection, processing, dissemination, and invasion. The foundational taxonomy extended by Gumusel et al. to AI. U. Penn. Law Review 154(3):477–564.',
               url: 'https://scholarship.law.gwu.edu/cgi/viewcontent.cgi?article=2074&context=faculty_publications',
             },
             {
               label: 'Zuboff (2022)',
-              desc: 'Surveillance Capitalism or Democracy? — extends the two-stage extraction model to AI cognitive systems; identifies the shift from behavioural to cognitive surplus extraction. Organisation Theory 3(1).',
+              desc: 'Surveillance Capitalism or Democracy? - extends the two-stage extraction model to AI cognitive systems; identifies the shift from behavioural to cognitive surplus extraction. Organisation Theory 3(1).',
               url: 'https://doi.org/10.1177/26317877221129290',
             },
             {
               label: 'Italy Garante (2023)',
-              desc: 'Provisional measure against OpenAI — the first GDPR enforcement action against a generative AI system, citing unlawful basis for training data collection. March 2023.',
+              desc: 'Provisional measure against OpenAI - the first GDPR enforcement action against a generative AI system, citing unlawful basis for training data collection. March 2023.',
               url: 'https://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/9870847',
             },
           ].map(r => (

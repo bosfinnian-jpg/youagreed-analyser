@@ -1,6 +1,6 @@
 // ============================================================================
 // app/api/enrich/route.ts
-// AI enrichment — extracts psychological signals from private messages.
+// AI enrichment - extracts psychological signals from private messages.
 // ============================================================================
 
 import { NextResponse } from 'next/server';
@@ -25,12 +25,12 @@ Fields required:
 - is_template_or_script (bool: true if it IS a template/script/sales copy for external use)
 - confessional_score (0-10: 0=nothing personal, 5=real disclosure, 8=sensitive/private, 10=deeply hidden)
 - emotional_intensity (0-10: 0=neutral, 4=clearly emotional, 8=acute distress)
-- named_people (array of {name,relationship|null} — real personally known people only)
+- named_people (array of {name,relationship|null} - real personally known people only)
 - life_events (array, only from: job_loss, job_search, relationship_end, relationship_start, financial_distress, mental_health, health_concern, bereavement, identity_crisis, moving_home, new_baby, wedding, legal_issue)
 - sensitive_topics (array, only from: anxiety, depression, self_harm, addiction, eating_disorder, trauma, abuse, sexuality, gender_identity, chronic_illness, debt, poverty, loneliness, suicidal_ideation, relationship_abuse, infidelity, criminal_record, immigration_status, miscarriage, fertility, bereavement)
 - psychological_signals (array, only from: attachment_anxiety, attachment_avoidant, perfectionism, imposter_syndrome, people_pleasing, catastrophising, rumination, emotional_dysregulation, low_self_worth, validation_seeking, codependency, abandonment_fear, trust_issues, social_anxiety, grief_unprocessed)
-- inferred_beliefs (array, max 3, max 8 words each — underlying beliefs revealed by this message)
-- most_revealing_excerpt (string, max 150 chars — most uncomfortable sentence if read by employer)
+- inferred_beliefs (array, max 3, max 8 words each - underlying beliefs revealed by this message)
+- most_revealing_excerpt (string, max 150 chars - most uncomfortable sentence if read by employer)
 - topic (string, max 6 words)`;
 
 

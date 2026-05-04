@@ -7,7 +7,7 @@ import { getPageColorHex } from '../components/DataThread';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ============================================================================
-// SETTINGS — persisted accessibility & display preferences
+// SETTINGS - persisted accessibility & display preferences
 // ============================================================================
 
 export type ColourFilter = 'none' | 'deuteranopia' | 'protanopia' | 'achromatopsia';
@@ -231,7 +231,7 @@ const ACTS = [
     title: 'The Permanence',
     pages: [
       { id: 'permanent' as DashPage, label: 'Permanent', short: '05', desc: 'Why deletion changes nothing' },
-      { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to — and when it changed' },
+      { id: 'terms' as DashPage, label: 'Terms', short: '06', desc: 'What you agreed to - and when it changed' },
     ],
   },
   {
@@ -266,7 +266,7 @@ export function ActLabel({ roman, title, pageLabel }: { roman: string; title: st
         fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.4em',
         color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.2rem',
       }}>
-        ACT {roman} — {title}
+        ACT {roman} - {title}
       </p>
       <p style={{
         fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em',
@@ -301,7 +301,7 @@ export function ThreadSentence({ children }: { children: React.ReactNode }) {
 }
 
 // ============================================================================
-// PAGE FOOTER — shared closing section used by every results page.
+// PAGE FOOTER - shared closing section used by every results page.
 // Closing text → italic follow-on → nav grid cards → end label.
 // ============================================================================
 export type FooterNavItem = {
@@ -419,7 +419,7 @@ export function PageFooter({
 }
 
 // ============================================================================
-// SHARE BUTTON — Web Share API with clipboard fallback
+// SHARE BUTTON - Web Share API with clipboard fallback
 // ============================================================================
 function ShareButton({ exposureScore, userName }: { exposureScore: number; userName?: string }) {
   const [shared, setShared] = useState(false);
@@ -435,7 +435,7 @@ function ShareButton({ exposureScore, userName }: { exposureScore: number; userN
         setShared(true);
         setTimeout(() => setShared(false), 2500);
       } catch {
-        // user dismissed — no-op
+        // user dismissed - no-op
       }
     } else {
       try {
@@ -443,7 +443,7 @@ function ShareButton({ exposureScore, userName }: { exposureScore: number; userN
         setShared(true);
         setTimeout(() => setShared(false), 2500);
       } catch {
-        // clipboard blocked — silent fail
+        // clipboard blocked - silent fail
       }
     }
   };
@@ -508,7 +508,7 @@ function HamburgerIcon({ open }: { open: boolean }) {
 }
 
 // ============================================================================
-// ACT DROPDOWN — hover panel beneath each act label
+// ACT DROPDOWN - hover panel beneath each act label
 // ============================================================================
 function ActDropdown({ act, currentPage, onNav, visible }: {
   act: typeof ACTS[number];
@@ -615,7 +615,7 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
 
 
 // ============================================================================
-// SETTINGS PANEL — collapsible drawer section
+// SETTINGS PANEL - collapsible drawer section
 // ============================================================================
 
 function Toggle({ checked, onChange, id, label, description }: {
@@ -885,7 +885,7 @@ function SettingsPanel({ settings, updateSettings }: {
 // NAV
 // ============================================================================
 // ============================================================================
-// FURTHER READING — collapsible dropdown inside the drawer
+// FURTHER READING - collapsible dropdown inside the drawer
 // ============================================================================
 const FURTHER_ITEMS = [
   { id: 'about' as DashPage, label: 'About', desc: 'The theoretical basis' },
@@ -1087,7 +1087,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
           <span style={{ fontFamily: TYPE.serif, fontSize: '1.15rem', letterSpacing: '-0.02em', color: PALETTE.red }}>.ai</span>
         </button>
 
-        {/* Desktop act nav — hover dropdowns */}
+        {/* Desktop act nav - hover dropdowns */}
         <div
           className="nav-desktop"
           style={{ display: 'flex', alignItems: 'center', position: 'relative', flex: 1, justifyContent: 'center', gap: '0' }}
@@ -1328,10 +1328,10 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
                   </div>
                 ))}
 
-                {/* Further reading — collapsible */}
+                {/* Further reading - collapsible */}
                 <FurtherReading page={page} onNav={handleNav} />
 
-                {/* Settings — collapsible */}
+                {/* Settings - collapsible */}
                 <SettingsPanel settings={settings} updateSettings={updateSettings} />
               </div>
 
@@ -1352,7 +1352,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
 }
 
 // ============================================================================
-// CONTEXT RAIL — right-side "find out more" links, buried but findable
+// CONTEXT RAIL - right-side "find out more" links, buried but findable
 // ============================================================================
 const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: string; page: DashPage }>>> = {
   overview: [
@@ -1452,7 +1452,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
   return (
     <ErrorBoundary>
     <>
-      {/* Colour blindness SVG filter — hidden, referenced by CSS */}
+      {/* Colour blindness SVG filter - hidden, referenced by CSS */}
       <svg aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
         <defs>
           <filter id="cb-filter">
@@ -1465,7 +1465,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         /* ────────────────────────────────────────────────────────
-           DESIGN TOKENS — single source of truth
+           DESIGN TOKENS - single source of truth
            All pages inherit these. Override only for intentional
            deviations (e.g. dark ResistPage sections).
            ──────────────────────────────────────────────────────── */
@@ -1479,7 +1479,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           --space-2xl:  clamp(3.5rem,  7vw,   6rem);
           --space-3xl:  clamp(5rem,   10vw,   8rem);
 
-          /* Section rhythm — consistent between-section gap */
+          /* Section rhythm - consistent between-section gap */
           --section-gap: clamp(3rem, 7vw, 5.5rem);
 
           /* Content widths */
@@ -1487,7 +1487,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           --content-width: 1000px;
           --wide-width:    1200px;
 
-          /* Typography — body prose */
+          /* Typography - body prose */
           --text-body:    clamp(1rem,   1.6vw, 1.1rem);
           --text-body-lg: clamp(1.1rem, 2vw,  1.25rem);
           --text-sm:      clamp(0.9rem, 1.4vw, 1rem);
@@ -1501,10 +1501,10 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           UTILITY CLASSES — use instead of inline style duplication
+           UTILITY CLASSES - use instead of inline style duplication
            ──────────────────────────────────────────────────────── */
 
-        /* Section label — the 10px mono red uppercase */
+        /* Section label - the 10px mono red uppercase */
         .section-label {
           font-family: 'Courier Prime', 'Courier New', monospace;
           font-size: 10px;
@@ -1532,7 +1532,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           padding-bottom: clamp(5rem, 12vw, 9rem);
         }
 
-        /* Section block — full-width divided section */
+        /* Section block - full-width divided section */
         .section-block {
           padding: var(--section-gap) 0;
           border-bottom: 1px solid rgba(26,24,20,0.14);
@@ -1541,7 +1541,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           border-bottom: none;
         }
 
-        /* Source link — small mono underline */
+        /* Source link - small mono underline */
         .source-link {
           font-family: 'Courier Prime', monospace;
           font-size: 9px;
@@ -1566,7 +1566,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           color: rgba(26,24,20,0.40);
         }
 
-        /* List last-child border removal — apply to list containers */
+        /* List last-child border removal - apply to list containers */
         .bordered-list > *:last-child {
           border-bottom: none !important;
         }
@@ -1575,7 +1575,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           PROSE RHYTHM — paragraph spacing inside prose blocks
+           PROSE RHYTHM - paragraph spacing inside prose blocks
            ──────────────────────────────────────────────────────── */
         .prose-block p + p {
           margin-top: var(--space-md);
@@ -1623,7 +1623,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(26,24,20,0.15); border-radius: 2px; }
 
-        /* On mobile, hide native scrollbar entirely — visual chrome handles it */
+        /* On mobile, hide native scrollbar entirely - visual chrome handles it */
         @media (max-width: 768px) {
           ::-webkit-scrollbar { display: none; }
           html { scrollbar-width: none; }
@@ -1635,7 +1635,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           DYNAMIC VIEWPORT HEIGHT — fixes iOS Safari URL bar collapse
+           DYNAMIC VIEWPORT HEIGHT - fixes iOS Safari URL bar collapse
            Use .full-height-screen instead of minHeight: 100vh.
            ──────────────────────────────────────────────────────── */
         .full-height-screen {
@@ -1648,7 +1648,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           MOBILE NAV — name hidden, exposure score compacted
+           MOBILE NAV - name hidden, exposure score compacted
            ──────────────────────────────────────────────────────── */
         @media (max-width: 700px) {
           .nav-exposure-label { display: none !important; }
@@ -1751,13 +1751,13 @@ export default function DashboardLayout({ results, children, page, setPage }: {
             hyphens: auto;
           }
 
-          /* Wider prose on mobile — remove overly tight max-width constraints */
+          /* Wider prose on mobile - remove overly tight max-width constraints */
           .prose {
             max-width: 100% !important;
             font-size: clamp(1.05rem, 4vw, 1.1rem) !important;
           }
 
-          /* FooterNav cards — single column on tiny screens */
+          /* FooterNav cards - single column on tiny screens */
           .page-footer-nav {
             grid-template-columns: 1fr !important;
           }
@@ -1777,7 +1777,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
             grid-template-columns: repeat(10, 1fr) !important;
           }
 
-          /* Chapter shell inner — keep content in bounds */
+          /* Chapter shell inner - keep content in bounds */
           .chapter-content-inner {
             max-width: 100% !important;
           }
@@ -1787,12 +1787,12 @@ export default function DashboardLayout({ results, children, page, setPage }: {
             font-size: clamp(1.2rem, 4.5vw, 1.6rem) !important;
           }
 
-          /* Score ring — mobile sizing */
+          /* Score ring - mobile sizing */
           .score-ring-container {
             width: min(72vw, 280px) !important;
           }
 
-          /* Resist page action steps — no truncation */
+          /* Resist page action steps - no truncation */
           .action-step-platform {
             font-size: 9px !important;
             letter-spacing: 0.12em !important;
@@ -1811,7 +1811,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         @media (max-width: 380px) {
-          /* Ultra-small phones — reduce base padding further */
+          /* Ultra-small phones - reduce base padding further */
           .dash-page-inner {
             padding-left: 1rem !important;
             padding-right: 1rem !important;
@@ -1829,7 +1829,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           SAFE AREA INSET helpers — for notch / home indicator
+           SAFE AREA INSET helpers - for notch / home indicator
            Used by sticky bottom bars across pages
            ──────────────────────────────────────────────────────── */
         .safe-pb {
@@ -1840,7 +1840,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           BORDERED LIST — removes orphan first/last borders
+           BORDERED LIST - removes orphan first/last borders
            Apply .bordered-list to the wrapper of any list where
            items have borderBottom. CSS handles the rest.
            ──────────────────────────────────────────────────────── */
@@ -1854,7 +1854,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           FOCUS VISIBLE — keyboard nav accessibility
+           FOCUS VISIBLE - keyboard nav accessibility
            ──────────────────────────────────────────────────────── */
         :focus-visible {
           outline: 2px solid rgba(190,40,30,0.6);
@@ -1883,14 +1883,14 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           MONO NUMBERS — tabular figures for aligned metrics
+           MONO NUMBERS - tabular figures for aligned metrics
            ──────────────────────────────────────────────────────── */
         .tabular-nums {
           font-variant-numeric: tabular-nums;
         }
 
         /* ────────────────────────────────────────────────────────
-           DASH PAGE INNER — standard page container
+           DASH PAGE INNER - standard page container
            Replaces scattered maxWidth: 1000 / margin: auto
            ──────────────────────────────────────────────────────── */
         .dash-page-inner {
@@ -1902,7 +1902,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           SECTION DIVIDER — consistent ruled sections
+           SECTION DIVIDER - consistent ruled sections
            ──────────────────────────────────────────────────────── */
         .section-block {
           padding-top:    var(--section-gap, clamp(3rem, 7vw, 5.5rem));
@@ -1915,14 +1915,14 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           TRANSITION CONSISTENCY — all interactive elements
+           TRANSITION CONSISTENCY - all interactive elements
            ──────────────────────────────────────────────────────── */
         button, a {
           transition: color 0.15s, background 0.15s, border-color 0.15s, opacity 0.15s;
         }
 
         /* ────────────────────────────────────────────────────────
-           TOUCH ACTIVE STATES — mobile hover fallback
+           TOUCH ACTIVE STATES - mobile hover fallback
            On touch devices, :hover never fires reliably. :active
            gives instant visual feedback on tap.
            ──────────────────────────────────────────────────────── */
@@ -1938,7 +1938,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         }
 
         /* ────────────────────────────────────────────────────────
-           ACCESSIBILITY SETTINGS — applied via html class/attr
+           ACCESSIBILITY SETTINGS - applied via html class/attr
            ──────────────────────────────────────────────────────── */
 
         .sr-only {
@@ -1949,7 +1949,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
 
         /* ── Accessibility ────────────────────────────────────────
            High contrast, large text, and invert are applied via
-           applySettings() which injects styles directly — the only
+           applySettings() which injects styles directly - the only
            way to reliably override inline style attributes.
            Only reduced-motion uses a class selector (it targets
            animation properties, not inline style values).

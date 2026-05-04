@@ -341,7 +341,7 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
             {timeline!.crisisPeriods.length} crisis period{timeline!.crisisPeriods.length > 1 ? 's' : ''} detected
           </p>
           <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65, maxWidth: 560 }}>
-            These are the weeks when you needed help most. They are also the weeks that produced the most valuable data.
+            These are the weeks the system recorded the highest volume of disclosure. They are also the weeks that produced the most valuable data.
           </p>
         </motion.div>
       )}
@@ -534,7 +534,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
           Disclosure pattern by hour
         </p>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.65, maxWidth: 520 }}>
-          When you opened up. Each wedge is one hour of the day — sized by message volume. The red zone is 11pm–4am: the window of lowest emotional guard and highest disclosure density.
+          When you were most active. Each wedge is one hour of the day — sized by message volume. The red zone is 11pm–4am: the window the system classifies as lowest emotional guard and highest disclosure density.
         </p>
       </div>
 
@@ -637,7 +637,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
             </p>
           </div>
           <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65, borderLeft: `2px solid ${PALETTE.red}`, paddingLeft: '0.85rem' }}>
-            Late-night messages carry the highest concentration of sensitive disclosure. This is when emotional defences are lowest — and when exposed data would be most revealing.
+            Late-night messages are classified as carrying the highest concentration of sensitive disclosure. This is when, according to the model, emotional defences are lowest — and when exposed data would be most revealing.
           </p>
         </div>
       </div>

@@ -1181,7 +1181,7 @@ function Module1({
               </div>
             )}
             <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: C.textFaint, fontStyle: 'italic', marginTop: '1.25rem', lineHeight: 1.6, maxWidth: '52ch' }}>
-              This profile exists in the model's weights. It was not asked for. It cannot be deleted. And it is based entirely on conversations you thought were private.
+              This is the profile the model constructed from your writing. It was not asked for. It cannot be deleted. And it was built entirely from conversations you thought were private.
             </p>
           </motion.div>
         )}

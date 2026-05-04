@@ -165,7 +165,7 @@ function SocialGraphSVG({ names }: { names: AnalysisResult['findings']['personal
     return (
       <div style={{ padding: '2rem 0' }}>
         <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
-          No named individuals detected. Behavioural patterns alone are sufficient for cross-referencing your identity.
+          No named individuals detected. Behavioural patterns alone are treated by these systems as sufficient for cross-referencing your identity.
         </p>
       </div>
     );
@@ -915,7 +915,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           ================================================================ */}
       <div ref={heroRef} style={{ padding: 'clamp(3rem, 8vw, 6rem) 0 clamp(3rem, 6vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}`, marginBottom: 'clamp(3rem, 6vw, 5rem)' }}>
         <ActLabel roman="II" title="The Inference" pageLabel="02 / Personal Profile" />
-        <ThreadSentence>Not what you said. What the pattern of saying it reveals about you.</ThreadSentence>
+        <ThreadSentence>Not what you said. What the pattern of saying it was classified as revealing about you.</ThreadSentence>
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={heroInView ? { opacity: 1, y: 0 } : {}}

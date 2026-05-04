@@ -512,7 +512,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         letterSpacing: '-0.02em', lineHeight: 1.2,
         maxWidth: '24ch', marginBottom: '1.2rem',
       }}>
-        This is what happens to a profile like yours if it ever leaves OpenAI’s servers.
+        This is what the system allows to happen to a profile like yours if it ever leaves OpenAI’s servers.
       </h2>
 
       <p style={{
@@ -889,7 +889,7 @@ function BreachTimeline() {
         lineHeight: 1.7, maxWidth: 560, marginTop: '1.75rem',
         fontStyle: 'italic', borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1rem',
       }}>
-      The question is not whether a breach could expose AI conversation data. It is which breach, and when. Your conversations exist on servers. Servers can be breached. The pattern, historically, is consistent.
+      The question is not whether a breach could expose AI conversation data. The pattern, historically, is consistent. Which breach, and when, is what remains unknown.
       </p>
     </motion.div>
   );

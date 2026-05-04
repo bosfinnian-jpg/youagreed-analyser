@@ -116,9 +116,9 @@ function ChapterShell({
       id={`chapter-${id}`}
       className="chapter-snap"
       style={{
-        height: '100dvh',
-        paddingTop:    isFirst ? `${NAV_H + 40}px` : `${NAV_H}px`,
-        paddingBottom: '40px',
+        height: 'calc(100dvh - 64px)',
+        paddingTop:    isFirst ? '2rem' : '0',
+        paddingBottom: '2rem',
         paddingLeft:   'clamp(1.5rem, 7vw, 6rem)',
         paddingRight:  'clamp(1.5rem, 7vw, 6rem)',
         display: 'flex',
@@ -804,9 +804,93 @@ export default function OverviewPage({ results, sources, setPage }: {
   const [active, setActive] = useState<ChapterId>('arrival');
   const handleActive = useCallback((id: ChapterId) => setActive(id), []);
 
+  // ── Locked chapter scroll ──────────────────────────────────────────────────
+  // Intercept wheel + touch so each gesture moves exactly one chapter.
+  // No inertia drift, no mid-chapter resting.
+  const visibleIdsRef = useRef<ChapterId[]>([]);
+  const isScrollingRef = useRef(false);
+  const touchStartYRef = useRef(0);
+
   useEffect(() => {
-    document.documentElement.style.scrollSnapType = 'y mandatory';
-    return () => { document.documentElement.style.scrollSnapType = ''; };
+    // Disable browser snap — we handle it manually
+    document.documentElement.style.scrollSnapType = 'none';
+    document.body.style.overflow = 'hidden';
+
+    function getChapterEls(ids: ChapterId[]) {
+      return ids.map(id => document.getElementById(`chapter-${id}`)).filter(Boolean) as HTMLElement[];
+    }
+
+    function getCurrentIndex(ids: ChapterId[]) {
+      const els = getChapterEls(ids);
+      const mid = window.innerHeight / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      els.forEach((el, i) => {
+        const rect = el.getBoundingClientRect();
+        const center = rect.top + rect.height / 2;
+        const dist = Math.abs(center - mid);
+        if (dist < bestDist) { bestDist = dist; best = i; }
+      });
+      return best;
+    }
+
+    function scrollToChapter(idx: number, ids: ChapterId[]) {
+      if (isScrollingRef.current) return;
+      const els = getChapterEls(ids);
+      const el = els[idx];
+      if (!el) return;
+      isScrollingRef.current = true;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => { isScrollingRef.current = false; }, 800);
+    }
+
+    function onWheel(e: WheelEvent) {
+      e.preventDefault();
+      if (isScrollingRef.current) return;
+      const ids = visibleIdsRef.current;
+      const cur = getCurrentIndex(ids);
+      const next = e.deltaY > 0 ? Math.min(cur + 1, ids.length - 1) : Math.max(cur - 1, 0);
+      if (next !== cur) scrollToChapter(next, ids);
+    }
+
+    function onTouchStart(e: TouchEvent) {
+      touchStartYRef.current = e.touches[0].clientY;
+    }
+
+    function onTouchEnd(e: TouchEvent) {
+      if (isScrollingRef.current) return;
+      const dy = touchStartYRef.current - e.changedTouches[0].clientY;
+      if (Math.abs(dy) < 30) return; // ignore taps
+      const ids = visibleIdsRef.current;
+      const cur = getCurrentIndex(ids);
+      const next = dy > 0 ? Math.min(cur + 1, ids.length - 1) : Math.max(cur - 1, 0);
+      if (next !== cur) scrollToChapter(next, ids);
+    }
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (!['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Space'].includes(e.key)) return;
+      e.preventDefault();
+      if (isScrollingRef.current) return;
+      const ids = visibleIdsRef.current;
+      const cur = getCurrentIndex(ids);
+      const down = ['ArrowDown', 'PageDown', 'Space'].includes(e.key);
+      const next = down ? Math.min(cur + 1, ids.length - 1) : Math.max(cur - 1, 0);
+      if (next !== cur) scrollToChapter(next, ids);
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.documentElement.style.scrollSnapType = '';
+      document.body.style.overflow = '';
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, []);
 
   const score        = results?.privacyScore ?? 0;
@@ -844,6 +928,11 @@ export default function OverviewPage({ results, sources, setPage }: {
     'score',
     'permanence',
   ];
+
+  // Keep scroll controller in sync with which chapters are rendered
+  useEffect(() => {
+    visibleIdsRef.current = visibleChapters;
+  }, [visibleChapters.join(',')]);
 
   const connected = sources.filter((s: any) => s.connected).length;
 

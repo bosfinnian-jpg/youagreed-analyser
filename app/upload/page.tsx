@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -29,6 +29,8 @@ export default function UploadPage() {
   const [stage, setStage] = useState<string>('');
   const [detail, setDetail] = useState<string>('');
   const [showTooltip, setShowTooltip] = useState(false);
+  const [skipAI, setSkipAI] = useState(false);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const handleFile = useCallback(async (file: File) => {
@@ -94,7 +96,7 @@ export default function UploadPage() {
           setStage('Complete');
           setDetail('');
         }
-      });
+      }, undefined, skipAI);
 
       setTimeout(() => {
         router.push('/results');
@@ -108,7 +110,7 @@ export default function UploadPage() {
       setStage('');
       setDetail('');
     }
-  }, [router]);
+  }, [router, skipAI]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -155,13 +157,13 @@ export default function UploadPage() {
         } else if (p.phase === 'done') {
           setProgress(100); setStage('Analysis complete'); setDetail('');
         }
-      });
+      }, undefined, skipAI);
       router.push('/results');
     } catch (err: any) {
       setIsAnalysing(false);
       setError(err?.message || 'Demo failed to load.');
     }
-  }, [router]);
+  }, [router, skipAI]);
 
   const handleDragOver = useCallback((e: React.DragEvent) => { e.preventDefault(); setIsDragging(true); }, []);
   const handleDragLeave = useCallback(() => setIsDragging(false), []);
@@ -255,6 +257,7 @@ export default function UploadPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 1.2, delay: 0.4, ease: EASE }}
+                  style={{ position: 'relative' }}
                 >
                   <input
                     type="file"
@@ -263,13 +266,77 @@ export default function UploadPage() {
                     style={{ display: 'none' }}
                     id="file-upload"
                   />
+
+                  {/* Tooltip — anchored to drop zone container */}
+                  <AnimatePresence>
+                    {showTooltip && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        transition={{ duration: 0.25 }}
+                        style={{
+                          position: 'absolute',
+                          bottom: 'calc(100% + 12px)',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          background: COLOR.ink,
+                          color: COLOR.bg,
+                          padding: '0.9rem 1.35rem',
+                          pointerEvents: 'none',
+                          zIndex: 10,
+                          width: 'max-content',
+                          maxWidth: '380px',
+                        }}
+                      >
+                        <div style={{
+                          fontFamily: MONO,
+                          fontSize: '9px',
+                          letterSpacing: '0.2em',
+                          textTransform: 'uppercase',
+                          color: 'rgba(238,236,229,0.45)',
+                          marginBottom: '0.5rem',
+                        }}>
+                          How to get the file
+                        </div>
+                        <ol style={{
+                          fontFamily: MONO,
+                          fontSize: '11px',
+                          letterSpacing: '0.04em',
+                          color: 'rgba(238,236,229,0.88)',
+                          lineHeight: 1.7,
+                          margin: 0,
+                          paddingLeft: '1.2rem',
+                          textAlign: 'left',
+                        }}>
+                          <li>ChatGPT → Settings → Data Controls</li>
+                          <li>Export data → Confirm</li>
+                          <li>Wait for email (usually 2–5 minutes)</li>
+                          <li>Download zip, unzip, upload conversations.json</li>
+                        </ol>
+                        <div style={{
+                          position: 'absolute',
+                          bottom: '-6px',
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: 0,
+                          height: 0,
+                          borderLeft: '6px solid transparent',
+                          borderRight: '6px solid transparent',
+                          borderTop: `6px solid ${COLOR.ink}`,
+                        }} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <label
                     htmlFor="file-upload"
-                    style={{ cursor: 'pointer', display: 'block', position: 'relative' }}
+                    style={{ cursor: 'pointer', display: 'block' }}
                     onMouseEnter={() => setShowTooltip(true)}
                     onMouseLeave={() => setShowTooltip(false)}
                   >
                     <div
+                      ref={dropZoneRef}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
@@ -314,71 +381,65 @@ export default function UploadPage() {
                         or click to browse
                       </div>
                     </div>
-
-                    {/* Hover tooltip */}
-                    <AnimatePresence>
-                      {showTooltip && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 4 }}
-                          transition={{ duration: 0.25 }}
-                          style={{
-                            position: 'absolute',
-                            top: '-6px',
-                            left: '50%',
-                            transform: 'translateX(-50%) translateY(-100%)',
-                            background: COLOR.ink,
-                            color: COLOR.bg,
-                            padding: '0.9rem 1.35rem',
-                            borderRadius: '2px',
-                            pointerEvents: 'none',
-                            zIndex: 10,
-                            width: 'max-content',
-                            maxWidth: '420px',
-                          }}
-                        >
-                          <div style={{
-                            fontFamily: MONO,
-                            fontSize: '9px',
-                            letterSpacing: '0.2em',
-                            textTransform: 'uppercase',
-                            color: 'rgba(238,236,229,0.45)',
-                            marginBottom: '0.5rem',
-                          }}>
-                            How to get the file
-                          </div>
-                          <ol style={{
-                            fontFamily: MONO,
-                            fontSize: '11px',
-                            letterSpacing: '0.04em',
-                            color: 'rgba(238,236,229,0.88)',
-                            lineHeight: 1.7,
-                            margin: 0,
-                            paddingLeft: '1.2rem',
-                            textAlign: 'left',
-                          }}>
-                            <li>ChatGPT → Settings → Data Controls</li>
-                            <li>Export data → Confirm</li>
-                            <li>Wait for email (usually 2–5 minutes)</li>
-                            <li>Download zip, unzip, upload conversations.json</li>
-                          </ol>
-                          {/* Arrow */}
-                          <div style={{
-                            position: 'absolute',
-                            bottom: '-6px',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            width: 0,
-                            height: 0,
-                            borderLeft: '6px solid transparent',
-                            borderRight: '6px solid transparent',
-                            borderTop: `6px solid ${COLOR.ink}`,
-                          }} />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
                   </label>
+                </motion.div>
+
+                {/* AI enrichment toggle */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.55, ease: EASE }}
+                  style={{
+                    marginTop: '1.5rem',
+                    padding: '1rem 1.25rem',
+                    border: `1px solid ${COLOR.rule}`,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '1rem',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setSkipAI(v => !v)}
+                >
+                  {/* Checkbox */}
+                  <div style={{
+                    width: 16,
+                    height: 16,
+                    border: `1px solid ${skipAI ? COLOR.inkFaint : COLOR.accent}`,
+                    background: skipAI ? 'transparent' : COLOR.accentFaint,
+                    flexShrink: 0,
+                    marginTop: '2px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s',
+                  }}>
+                    {!skipAI && (
+                      <div style={{ width: 8, height: 8, background: COLOR.accent }} />
+                    )}
+                  </div>
+                  <div>
+                    <p style={{
+                      fontFamily: MONO,
+                      fontSize: '10px',
+                      letterSpacing: '0.18em',
+                      textTransform: 'uppercase',
+                      color: skipAI ? COLOR.inkFaint : COLOR.ink,
+                      marginBottom: '0.3rem',
+                      transition: 'color 0.2s',
+                    }}>
+                      {skipAI ? 'AI enrichment disabled' : 'AI enrichment enabled'}
+                    </p>
+                    <p style={{
+                      fontFamily: SERIF,
+                      fontSize: '0.95rem',
+                      color: COLOR.inkMuted,
+                      lineHeight: 1.6,
+                    }}>
+                      {skipAI
+                        ? 'Analysis will use pattern-matching only. No conversation content is sent to any external service.'
+                        : 'Selected excerpts are sent to OpenAI and Anthropic APIs for enrichment. Click to disable if you prefer not to share data with these services.'}
+                    </p>
+                  </div>
                 </motion.div>
 
                 {/* Demo button */}
@@ -467,18 +528,15 @@ export default function UploadPage() {
                   fontSize: 'clamp(2rem, 4.5vw, 3rem)',
                   lineHeight: 1.15,
                   letterSpacing: '-0.015em',
-                  margin: '0 0 0.75rem 0',
+                  margin: '0 0 2.5rem 0',
                   color: COLOR.ink,
                   minHeight: '56px',
                 }}>
-                  {stage}
-                  <span style={{ color: COLOR.accent }}>.</span>
+                  {stage}<span style={{ color: COLOR.accent }}>.</span>
                 </h2>
 
-
-                {/* Progress — clean single bar */}
+                {/* Progress bar */}
                 <div style={{ marginBottom: '2.5rem' }}>
-                  {/* Track */}
                   <div style={{ position: 'relative', height: '1px', background: COLOR.inkTrace }}>
                     <motion.div
                       animate={{ width: `${progress}%` }}
@@ -489,7 +547,6 @@ export default function UploadPage() {
                       }}
                     />
                   </div>
-                  {/* Detail + percent */}
                   <div style={{
                     display: 'flex', justifyContent: 'space-between',
                     marginTop: '0.5rem',

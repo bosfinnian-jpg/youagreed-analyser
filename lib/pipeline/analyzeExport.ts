@@ -47,7 +47,8 @@ export interface RevealData {
 export async function analyzeExport(
   jsonData: any[],
   onProgress?: (p: AnalyzeProgress) => void,
-  sourceType?: SourceType
+  sourceType?: SourceType,
+  skipAI?: boolean
 ): Promise<{
   analysis: DeepAnalysis;
   revealData: RevealData;
@@ -60,14 +61,16 @@ export async function analyzeExport(
   let analysis = analyzeDeep(normalised);
   storeAnalysis(analysis);
 
-  onProgress?.({ phase: 'ai_enriching' });
+  if (!skipAI) {
+    onProgress?.({ phase: 'ai_enriching' });
 
-  try {
-    analysis = await enrichAnalysisWithAI(analysis, (aiProgress) => {
-      onProgress?.({ phase: 'ai_enriching', aiProgress });
-    });
-  } catch (err) {
-    console.error('AI enrichment threw, keeping regex analysis:', err);
+    try {
+      analysis = await enrichAnalysisWithAI(analysis, (aiProgress) => {
+        onProgress?.({ phase: 'ai_enriching', aiProgress });
+      });
+    } catch (err) {
+      console.error('AI enrichment threw, keeping regex analysis:', err);
+    }
   }
 
   onProgress?.({ phase: 'storing' });

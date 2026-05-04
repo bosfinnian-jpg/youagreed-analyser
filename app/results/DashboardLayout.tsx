@@ -1,8 +1,146 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
+import React from 'react';
 import { getPageColorHex } from './DataThread';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// ============================================================================
+// SETTINGS — persisted accessibility & display preferences
+// ============================================================================
+
+export type ColourFilter = 'none' | 'deuteranopia' | 'protanopia' | 'achromatopsia';
+
+export interface AccessibilitySettings {
+  highContrast:   boolean;
+  largeText:      boolean;
+  reducedMotion:  boolean;
+  invertColours:  boolean;
+  colourFilter:   ColourFilter;
+}
+
+const SETTINGS_KEY = 'trace_a11y_settings';
+
+const DEFAULTS: AccessibilitySettings = {
+  highContrast:  false,
+  largeText:     false,
+  reducedMotion: false,
+  invertColours: false,
+  colourFilter:  'none',
+};
+
+function loadSettings(): AccessibilitySettings {
+  if (typeof window === 'undefined') return DEFAULTS;
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (!raw) return DEFAULTS;
+    return { ...DEFAULTS, ...JSON.parse(raw) };
+  } catch {
+    return DEFAULTS;
+  }
+}
+
+function saveSettings(s: AccessibilitySettings) {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch { /* storage blocked */ }
+}
+
+// SVG colour-blindness filter matrices
+const COLOUR_MATRICES: Record<ColourFilter, string> = {
+  none:          '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0',
+  deuteranopia:  '0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0',
+  protanopia:    '0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0',
+  achromatopsia: '0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0.299 0.587 0.114 0 0  0 0 0 1 0',
+};
+
+function applySettings(s: AccessibilitySettings) {
+  if (typeof document === 'undefined') return;
+  const h = document.documentElement;
+  h.classList.toggle('a11y-high-contrast',  s.highContrast);
+  h.classList.toggle('a11y-large-text',     s.largeText);
+  h.classList.toggle('a11y-reduced-motion', s.reducedMotion);
+  h.classList.toggle('a11y-invert',         s.invertColours);
+  h.setAttribute('data-colour-filter', s.colourFilter);
+}
+
+function useSettings() {
+  const [settings, setSettingsState] = useState<AccessibilitySettings>(DEFAULTS);
+
+  useEffect(() => {
+    const loaded = loadSettings();
+    setSettingsState(loaded);
+    applySettings(loaded);
+  }, []);
+
+  const updateSettings = useCallback((patch: Partial<AccessibilitySettings>) => {
+    setSettingsState(prev => {
+      const next = { ...prev, ...patch };
+      saveSettings(next);
+      applySettings(next);
+      return next;
+    });
+  }, []);
+
+  return { settings, updateSettings };
+}
+
+const SettingsContext = React.createContext<ReturnType<typeof useSettings> | null>(null);
+
+// ============================================================================
+// ERROR BOUNDARY
+// ============================================================================
+
+interface EBState { hasError: boolean; message: string }
+
+class ErrorBoundary extends Component<{ children: ReactNode }, EBState> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, message: '' };
+  }
+  static getDerivedStateFromError(error: Error): EBState {
+    return { hasError: true, message: error?.message || 'Unknown error' };
+  }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error('[trace.ai] Render error:', error, info.componentStack);
+  }
+  render() {
+    if (!this.state.hasError) return this.props.children;
+    return (
+      <div style={{
+        minHeight: '100vh', display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        fontFamily: '"EB Garamond", Georgia, serif',
+        background: '#eeece5', color: '#1a1816', padding: '2rem',
+        textAlign: 'center',
+      }}>
+        <p style={{ fontFamily: '"Courier Prime", monospace', fontSize: '9px', letterSpacing: '0.35em', textTransform: 'uppercase', color: 'rgba(190,40,30,0.7)', marginBottom: '1.5rem' }}>
+          Something went wrong
+        </p>
+        <h1 style={{ fontSize: 'clamp(1.8rem,5vw,2.8rem)', fontWeight: 400, letterSpacing: '-0.02em', marginBottom: '1rem', lineHeight: 1.2 }}>
+          This page could not be rendered.
+        </h1>
+        <p style={{ fontSize: '1rem', color: 'rgba(26,24,20,0.55)', maxWidth: '44ch', lineHeight: 1.7, marginBottom: '2rem' }}>
+          Your data has not been lost. Reload the page to continue, or go back to the upload screen.
+        </p>
+        <p style={{ fontFamily: '"Courier Prime", monospace', fontSize: '9px', color: 'rgba(26,24,20,0.28)', letterSpacing: '0.1em' }}>
+          {this.state.message}
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          style={{
+            marginTop: '2rem', background: 'none',
+            border: '1px solid rgba(26,24,20,0.25)', cursor: 'pointer',
+            fontFamily: '"Courier Prime", monospace', fontSize: '10px',
+            letterSpacing: '0.25em', textTransform: 'uppercase',
+            color: '#1a1816', padding: '0.75rem 1.5rem',
+          }}
+        >
+          Reload page
+        </button>
+      </div>
+    );
+  }
+}
 
 // ============================================================================
 // DESIGN SYSTEM
@@ -448,6 +586,274 @@ function ActDropdown({ act, currentPage, onNav, visible }: {
   );
 }
 
+
+// ============================================================================
+// SETTINGS PANEL — collapsible drawer section
+// ============================================================================
+
+function Toggle({ checked, onChange, id, label, description }: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  id: string;
+  label: string;
+  description?: string;
+}) {
+  return (
+    <div
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', padding: '0.65rem 1.5rem', minHeight: '52px' }}
+    >
+      <label htmlFor={id} style={{ cursor: 'pointer', flex: 1 }}>
+        <span style={{ display: 'block', fontFamily: TYPE.serif, fontSize: '0.95rem', color: checked ? PALETTE.ink : PALETTE.inkMuted, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+          {label}
+        </span>
+        {description && (
+          <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost, letterSpacing: '0.04em', marginTop: '2px', lineHeight: 1.4 }}>
+            {description}
+          </span>
+        )}
+      </label>
+      <button
+        id={id}
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={() => onChange(!checked)}
+        style={{
+          width: '36px', height: '20px', borderRadius: '10px', border: 'none', cursor: 'pointer',
+          background: checked ? PALETTE.red : 'rgba(26,24,20,0.15)',
+          position: 'relative', flexShrink: 0, transition: 'background 0.2s',
+          padding: 0,
+        }}
+      >
+        <span style={{
+          position: 'absolute', top: '3px',
+          left: checked ? '19px' : '3px',
+          width: '14px', height: '14px', borderRadius: '50%',
+          background: '#fff',
+          transition: 'left 0.2s',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+          display: 'block',
+        }} />
+        <span className="sr-only">{checked ? 'On' : 'Off'}</span>
+      </button>
+    </div>
+  );
+}
+
+const COLOUR_FILTER_OPTIONS: { id: ColourFilter; label: string; desc: string }[] = [
+  { id: 'none',          label: 'None',          desc: 'Standard colours' },
+  { id: 'deuteranopia',  label: 'Deuteranopia',  desc: 'Red-green (green-weak)' },
+  { id: 'protanopia',    label: 'Protanopia',    desc: 'Red-green (red-weak)' },
+  { id: 'achromatopsia', label: 'Achromatopsia', desc: 'Full colour blindness' },
+];
+
+function SettingsPanel({ settings, updateSettings }: {
+  settings: AccessibilitySettings;
+  updateSettings: (patch: Partial<AccessibilitySettings>) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  return (
+    <div style={{ borderTop: '1px solid rgba(26,24,20,0.07)' }}>
+      {/* Section header */}
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-controls="settings-panel-content"
+        style={{
+          width: '100%', background: 'none', border: 'none', cursor: 'pointer',
+          padding: '0.75rem 1.5rem',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          transition: 'background 0.12s', minHeight: '48px',
+        }}
+        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(26,24,20,0.025)'; }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none'; }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
+            <circle cx="6.5" cy="6.5" r="2.2" stroke="rgba(26,24,20,0.38)" strokeWidth="1.1" />
+            <circle cx="6.5" cy="6.5" r="5.5" stroke="rgba(26,24,20,0.18)" strokeWidth="1" />
+            {[0,60,120,180,240,300].map((deg, i) => (
+              <line key={i}
+                x1={6.5 + 3.5 * Math.cos(deg * Math.PI / 180)}
+                y1={6.5 + 3.5 * Math.sin(deg * Math.PI / 180)}
+                x2={6.5 + 5.2 * Math.cos(deg * Math.PI / 180)}
+                y2={6.5 + 5.2 * Math.sin(deg * Math.PI / 180)}
+                stroke="rgba(26,24,20,0.28)" strokeWidth="1.1"
+              />
+            ))}
+          </svg>
+          <span style={{
+            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.28em',
+            textTransform: 'uppercase', color: 'rgba(26,24,20,0.38)',
+          }}>
+            Settings
+          </span>
+        </div>
+        <motion.span
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+          style={{ fontFamily: TYPE.mono, fontSize: '9px', color: 'rgba(26,24,20,0.2)', lineHeight: 1 }}
+        >
+          ↓
+        </motion.span>
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            id="settings-panel-content"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22, ease: [0.4, 0, 0.2, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            {/* Section heading */}
+            <div style={{ padding: '0.5rem 1.5rem 0.2rem', borderBottom: '1px solid rgba(26,24,20,0.05)' }}>
+              <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.22)' }}>
+                Display
+              </p>
+            </div>
+
+            <Toggle
+              id="toggle-high-contrast"
+              label="High contrast"
+              description="Increases text and border contrast"
+              checked={settings.highContrast}
+              onChange={v => updateSettings({ highContrast: v })}
+            />
+            <Toggle
+              id="toggle-large-text"
+              label="Larger text"
+              description="Increases base font size by 20%"
+              checked={settings.largeText}
+              onChange={v => updateSettings({ largeText: v })}
+            />
+            <Toggle
+              id="toggle-invert"
+              label="Invert colours"
+              description="Reverses the colour scheme"
+              checked={settings.invertColours}
+              onChange={v => updateSettings({ invertColours: v })}
+            />
+
+            {/* Colour blindness filter */}
+            <div style={{ padding: '0.6rem 1.5rem', borderTop: '1px solid rgba(26,24,20,0.05)' }}>
+              <button
+                onClick={() => setFilterOpen(o => !o)}
+                aria-expanded={filterOpen}
+                style={{
+                  width: '100%', background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}
+              >
+                <div>
+                  <span style={{ display: 'block', fontFamily: TYPE.serif, fontSize: '0.95rem', color: settings.colourFilter !== 'none' ? PALETTE.ink : PALETTE.inkMuted, letterSpacing: '-0.01em', lineHeight: 1.2 }}>
+                    Colour blindness filter
+                  </span>
+                  <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost, letterSpacing: '0.04em', marginTop: '2px' }}>
+                    {settings.colourFilter === 'none' ? 'Not active' : COLOUR_FILTER_OPTIONS.find(o => o.id === settings.colourFilter)?.label}
+                  </span>
+                </div>
+                <motion.span
+                  animate={{ rotate: filterOpen ? 180 : 0 }}
+                  transition={{ duration: 0.15 }}
+                  style={{ fontFamily: TYPE.mono, fontSize: '9px', color: 'rgba(26,24,20,0.2)', flexShrink: 0 }}
+                >
+                  ↓
+                </motion.span>
+              </button>
+
+              <AnimatePresence>
+                {filterOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.15 }}
+                    style={{ overflow: 'hidden', marginTop: '0.5rem' }}
+                  >
+                    {COLOUR_FILTER_OPTIONS.map(opt => (
+                      <button
+                        key={opt.id}
+                        onClick={() => updateSettings({ colourFilter: opt.id })}
+                        style={{
+                          width: '100%', background: settings.colourFilter === opt.id ? 'rgba(190,40,30,0.06)' : 'none',
+                          border: 'none', cursor: 'pointer', textAlign: 'left',
+                          padding: '0.5rem 0.75rem',
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          borderLeft: settings.colourFilter === opt.id ? `2px solid ${PALETTE.red}` : '2px solid transparent',
+                          transition: 'background 0.12s',
+                        }}
+                        onMouseEnter={e => { if (settings.colourFilter !== opt.id) (e.currentTarget as HTMLElement).style.background = 'rgba(26,24,20,0.03)'; }}
+                        onMouseLeave={e => { if (settings.colourFilter !== opt.id) (e.currentTarget as HTMLElement).style.background = 'none'; }}
+                      >
+                        <div>
+                          <span style={{ display: 'block', fontFamily: TYPE.serif, fontSize: '0.9rem', color: settings.colourFilter === opt.id ? PALETTE.ink : PALETTE.inkMuted, lineHeight: 1.2 }}>
+                            {opt.label}
+                          </span>
+                          <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkGhost, letterSpacing: '0.04em', marginTop: '1px' }}>
+                            {opt.desc}
+                          </span>
+                        </div>
+                        {settings.colourFilter === opt.id && (
+                          <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: PALETTE.red, flexShrink: 0 }} />
+                        )}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Motion */}
+            <div style={{ borderTop: '1px solid rgba(26,24,20,0.05)' }}>
+              <div style={{ padding: '0.5rem 1.5rem 0.2rem' }}>
+                <p style={{ fontFamily: TYPE.mono, fontSize: '8px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(26,24,20,0.22)' }}>
+                  Motion
+                </p>
+              </div>
+              <Toggle
+                id="toggle-reduced-motion"
+                label="Reduce motion"
+                description="Disables animations and transitions"
+                checked={settings.reducedMotion}
+                onChange={v => updateSettings({ reducedMotion: v })}
+              />
+            </div>
+
+            {/* Reset */}
+            <div style={{ padding: '0.75rem 1.5rem', borderTop: '1px solid rgba(26,24,20,0.05)' }}>
+              <button
+                onClick={() => updateSettings(DEFAULTS)}
+                style={{
+                  background: 'none', border: '1px solid rgba(26,24,20,0.14)',
+                  cursor: 'pointer', fontFamily: TYPE.mono, fontSize: '9px',
+                  letterSpacing: '0.2em', textTransform: 'uppercase',
+                  color: PALETTE.inkFaint, padding: '0.5rem 0.85rem',
+                  transition: 'border-color 0.15s, color 0.15s',
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(26,24,20,0.3)';
+                  (e.currentTarget as HTMLElement).style.color = PALETTE.inkMuted;
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(26,24,20,0.14)';
+                  (e.currentTarget as HTMLElement).style.color = PALETTE.inkFaint;
+                }}
+              >
+                Reset to defaults
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ============================================================================
 // NAV
 // ============================================================================
@@ -551,11 +957,13 @@ function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) 
 // ============================================================================
 // NAV
 // ============================================================================
-function Nav({ page, setPage, results, exposureScore }: {
+function Nav({ page, setPage, results, exposureScore, settings, updateSettings }: {
   page: DashPage;
   setPage: (p: DashPage) => void;
   results: any;
   exposureScore: number;
+  settings: AccessibilitySettings;
+  updateSettings: (patch: Partial<AccessibilitySettings>) => void;
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
@@ -886,6 +1294,9 @@ function Nav({ page, setPage, results, exposureScore }: {
 
                 {/* Further reading — collapsible */}
                 <FurtherReading page={page} onNav={handleNav} />
+
+                {/* Settings — collapsible */}
+                <SettingsPanel settings={settings} updateSettings={updateSettings} />
               </div>
 
               {/* Footer */}
@@ -1009,8 +1420,18 @@ export default function DashboardLayout({ results, children, page, setPage }: {
   setPage: (p: DashPage) => void;
 }) {
   const exposureScore = results?.privacyScore || 0;
+  const { settings, updateSettings } = useSettings();
 
   return (
+    <ErrorBoundary>
+      {/* Colour blindness SVG filter — hidden, referenced by CSS */}
+      <svg aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
+        <defs>
+          <filter id="cb-filter">
+            <feColorMatrix type="matrix" values={COLOUR_MATRICES[settings.colourFilter]} />
+          </filter>
+        </defs>
+      </svg>
     <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
@@ -1494,9 +1915,72 @@ export default function DashboardLayout({ results, children, page, setPage }: {
             opacity: 0.85;
           }
         }
+
+        /* ────────────────────────────────────────────────────────
+           ACCESSIBILITY SETTINGS — applied via html class/attr
+           ──────────────────────────────────────────────────────── */
+
+        .sr-only {
+          position: absolute; width: 1px; height: 1px;
+          padding: 0; margin: -1px; overflow: hidden;
+          clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+        }
+
+        /* High contrast — boost text and borders */
+        .a11y-high-contrast body {
+          background: #f0ede5 !important;
+        }
+        .a11y-high-contrast * {
+          color: #000 !important;
+          border-color: rgba(0,0,0,0.4) !important;
+        }
+        .a11y-high-contrast [style*="color: rgba(26"] {
+          color: #000 !important;
+        }
+        .a11y-high-contrast button, .a11y-high-contrast a {
+          outline-color: #000 !important;
+        }
+
+        /* Large text */
+        .a11y-large-text body, .a11y-large-text p, .a11y-large-text span, .a11y-large-text li {
+          font-size: 120% !important;
+        }
+
+        /* Reduced motion — kills all transitions and animations */
+        .a11y-reduced-motion *, .a11y-reduced-motion *::before, .a11y-reduced-motion *::after {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.001ms !important;
+          scroll-behavior: auto !important;
+        }
+
+        /* Invert colours */
+        .a11y-invert body {
+          filter: invert(1) hue-rotate(180deg);
+        }
+        .a11y-invert img, .a11y-invert video, .a11y-invert canvas, .a11y-invert svg {
+          filter: invert(1) hue-rotate(180deg);
+        }
+
+        /* Colour blindness filter */
+        html[data-colour-filter]:not([data-colour-filter="none"]) body {
+          filter: url(#cb-filter);
+        }
+        html[data-colour-filter]:not([data-colour-filter="none"]).a11y-invert body {
+          filter: invert(1) hue-rotate(180deg) url(#cb-filter);
+        }
+
+        /* Respect OS-level prefers-reduced-motion */
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+          }
+        }
       `}</style>
 
-      <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />
+      <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} settings={settings} updateSettings={updateSettings} />
 
       <main style={{ paddingTop: '64px', position: 'relative', zIndex: 1 }}>
         <AnimatePresence mode="wait">
@@ -1512,5 +1996,6 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         </AnimatePresence>
       </main>
     </>
+    </ErrorBoundary>
   );
 }

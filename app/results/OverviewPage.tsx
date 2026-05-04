@@ -154,8 +154,8 @@ function ChapterShell({
         </div>
       )}
 
-      {/* Inner — max-width container */}
-      <div style={{ maxWidth: 860, width: '100%', position: 'relative', zIndex: 1 }}>
+      {/* Inner — max-width container, centred */}
+      <div style={{ maxWidth: 860, width: '100%', position: 'relative', zIndex: 1, margin: '0 auto' }}>
         {/* Chapter label row */}
         {(num || label) && (
           <div
@@ -814,7 +814,6 @@ export default function OverviewPage({ results, sources, setPage }: {
   useEffect(() => {
     // Disable browser snap — we handle it manually
     document.documentElement.style.scrollSnapType = 'none';
-    document.body.style.overflow = 'hidden';
 
     function getChapterEls(ids: ChapterId[]) {
       return ids.map(id => document.getElementById(`chapter-${id}`)).filter(Boolean) as HTMLElement[];
@@ -841,16 +840,26 @@ export default function OverviewPage({ results, sources, setPage }: {
       if (!el) return;
       isScrollingRef.current = true;
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => { isScrollingRef.current = false; }, 800);
+      setTimeout(() => { isScrollingRef.current = false; }, 1000);
     }
+
+    // Accumulate delta — trackpads fire many small events per gesture
+    let accDelta = 0;
+    let accTimer: ReturnType<typeof setTimeout> | null = null;
 
     function onWheel(e: WheelEvent) {
       e.preventDefault();
       if (isScrollingRef.current) return;
-      const ids = visibleIdsRef.current;
-      const cur = getCurrentIndex(ids);
-      const next = e.deltaY > 0 ? Math.min(cur + 1, ids.length - 1) : Math.max(cur - 1, 0);
-      if (next !== cur) scrollToChapter(next, ids);
+      accDelta += e.deltaY;
+      if (accTimer) clearTimeout(accTimer);
+      accTimer = setTimeout(() => {
+        if (isScrollingRef.current) { accDelta = 0; return; }
+        const ids = visibleIdsRef.current;
+        const cur = getCurrentIndex(ids);
+        const next = accDelta > 0 ? Math.min(cur + 1, ids.length - 1) : Math.max(cur - 1, 0);
+        accDelta = 0;
+        if (next !== cur) scrollToChapter(next, ids);
+      }, 60); // wait 60ms for gesture to settle before committing
     }
 
     function onTouchStart(e: TouchEvent) {
@@ -885,7 +894,6 @@ export default function OverviewPage({ results, sources, setPage }: {
 
     return () => {
       document.documentElement.style.scrollSnapType = '';
-      document.body.style.overflow = '';
       window.removeEventListener('wheel', onWheel);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchend', onTouchEnd);

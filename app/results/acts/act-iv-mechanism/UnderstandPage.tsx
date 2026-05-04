@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { ActLabel, ThreadSentence } from './DashboardLayout';
+import { ActLabel, ThreadSentence } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
 // TYPOGRAPHY — local to this page, uses a dark palette distinct from the

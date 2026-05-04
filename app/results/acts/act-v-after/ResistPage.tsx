@@ -2,8 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel } from './DashboardLayout';
-import type { DeepAnalysis } from '@/lib/analysis/deepParser';
+import { PALETTE, TYPE, ActLabel } from '../../shared/layout/DashboardLayout';
+import type { DeepAnalysis } from '@/lib/parsers/deepParser';
 
 interface ResistPageProps {
   analysis: DeepAnalysis;

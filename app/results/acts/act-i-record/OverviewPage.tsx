@@ -35,7 +35,7 @@ import {
   type DashPage,
   ActLabel,
   PageFooter,
-} from './DashboardLayout';
+} from '../../shared/layout/DashboardLayout';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const NAV_H = 56; // px — must match DashboardLayout nav height

@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence, type DashPage, PageFooter } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, type DashPage, PageFooter } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
 // POLICY DRIFT PAGE — 06 / Terms

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import type { DashPage } from './DashboardLayout';
+import type { DashPage } from '../layout/DashboardLayout';
 
 // ============================================================================
 // DATA THREAD — the living element on every page

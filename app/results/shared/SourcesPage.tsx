@@ -2,8 +2,8 @@
 
 import { useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { PALETTE, TYPE, PageFooter } from './DashboardLayout';
-import { analyzeExport, storeRawJson, detectSourceType, type AnalyzeProgress } from '@/lib/analysis/analyzeExport';
+import { PALETTE, TYPE, PageFooter } from './layout/DashboardLayout';
+import { analyzeExport, storeRawJson, detectSourceType, type AnalyzeProgress } from '@/lib/pipeline/analyzeExport';
 
 // ============================================================================
 // DATA
@@ -376,12 +376,12 @@ export default function SourcesPage({
 
         // The existing raws are already normalised to GPT format
         // The new one needs normalising
-        const { normaliseClaude } = await import('@/lib/parser/claudeParser');
+        const { normaliseClaude } = await import('@/lib/parsers/claudeParser');
         const newNormalised = detectedType === 'claude' ? normaliseClaude(jsonData) : jsonData;
         combinedJson = [...allRaw, ...newNormalised];
       } else {
         // First source being added — just use this one
-        const { normaliseClaude } = await import('@/lib/parser/claudeParser');
+        const { normaliseClaude } = await import('@/lib/parsers/claudeParser');
         combinedJson = detectedType === 'claude' ? normaliseClaude(jsonData) : jsonData;
       }
 

@@ -3,7 +3,7 @@
 // Runs after per-message enrichment. One call. Produces the intelligence briefing.
 // ============================================================================
 
-import type { DeepAnalysis } from './deepParser';
+import type { DeepAnalysis } from '@/lib/parsers/deepParser';
 import type { MessageEnrichment } from './aiEnrichment';
 
 export interface Synthesis {

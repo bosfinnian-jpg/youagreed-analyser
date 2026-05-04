@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
 // TYPES

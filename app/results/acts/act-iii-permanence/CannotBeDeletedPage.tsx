@@ -2,8 +2,8 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
-import type { DeepAnalysis } from '@/lib/analysis/deepParser';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../shared/layout/DashboardLayout';
+import type { DeepAnalysis } from '@/lib/parsers/deepParser';
 
 // ============================================================================
 // CANNOT BE DELETED

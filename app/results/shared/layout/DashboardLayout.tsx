@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback, Component } from 'react';
 import type { ErrorInfo, ReactNode } from 'react';
 import React from 'react';
-import { getPageColorHex } from './DataThread';
+import { getPageColorHex } from '../components/DataThread';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ============================================================================

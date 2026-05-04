@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# YOU AGREED — youagreed.co.uk
 
-## Getting Started
+Critical art installation examining the structural failure of consent frameworks applied to irreversible AI cognitive data extraction.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Project Structure
+
+```
+youagreed-analyser/
+│
+├── app/
+│   ├── page.tsx                          # Landing page (trace.ai entry point)
+│   ├── layout.tsx                        # Root layout
+│   ├── globals.css
+│   │
+│   ├── upload/
+│   │   └── page.tsx                      # File upload + pipeline trigger
+│   │
+│   ├── terms/
+│   │   └── page.tsx                      # Standalone terms page
+│   │
+│   ├── api/
+│   │   ├── enrich/route.ts               # Claude Haiku — per-message enrichment
+│   │   └── synthesize/route.ts           # Claude Sonnet — full synthesis pass
+│   │
+│   └── results/
+│       ├── page.tsx                      # Results router (SPA shell)
+│       │
+│       ├── shared/
+│       │   ├── layout/
+│       │   │   └── DashboardLayout.tsx   # Nav, act structure, accessibility settings
+│       │   ├── components/
+│       │   │   └── DataThread.tsx        # Animated double-helix canvas component
+│       │   ├── AboutPage.tsx             # Theoretical basis
+│       │   └── SourcesPage.tsx           # Data sources + multi-upload handler
+│       │
+│       └── acts/
+│           │
+│           ├── act-i-record/             # ACT I — The Record
+│           │   └── OverviewPage.tsx      # 01 · Your data, extracted and mapped
+│           │
+│           ├── act-ii-inference/         # ACT II — The Inference
+│           │   ├── ProfilePage.tsx       # 02 · What the pattern reveals about you
+│           │   ├── CommercialProfilePage.tsx  # 03 · The product version of you, priced
+│           │   ├── DataProductSummary.tsx     # Commercial profile sub-component
+│           │   └── RiskPage.tsx          # 04 · What this record makes possible
+│           │
+│           ├── act-iii-permanence/       # ACT III — The Permanence
+│           │   ├── CannotBeDeletedPage.tsx  # 05 · Why deletion changes nothing
+│           │   └── PolicyDriftPage.tsx   # 06 · What you agreed to — and when it changed
+│           │
+│           ├── act-iv-mechanism/         # ACT IV — The Mechanism
+│           │   ├── HowItWorksPage.tsx    # 07 · Why the inference is effectively persistent
+│           │   ├── UnderstandPage.tsx    # 08 · Watch the extraction happen live
+│           │   ├── AIEnrichmentPage.tsx  # AI enrichment visualisation
+│           │   └── ScoreBreakdownPage.tsx  # Score breakdown detail
+│           │
+│           └── act-v-after/              # ACT V — After
+│               ├── ResistPage.tsx        # 09 · What remains. What you can do.
+│               └── MethodPage.tsx        # 10 · A note on how this system should be read.
+│
+├── lib/
+│   ├── pipeline/                         # Analysis pipeline (runs in order)
+│   │   ├── analyzeExport.ts              # Entry point — orchestrates the full pipeline
+│   │   ├── aiEnrichment.ts              # Batched Haiku enrichment per message
+│   │   └── synthesis.ts                 # Sonnet synthesis — final verdict pass
+│   │
+│   └── parsers/                          # Format-specific input parsers
+│       ├── deepParser.ts                 # Regex deep parser — primary extraction
+│       └── claudeParser.ts              # Claude export normaliser
+│
+├── public/
+│   ├── demo-conversations.json           # Demo data for exhibition mode
+│   ├── favicon.svg
+│   └── fonts/
+│       ├── NeueMontreal-Medium.otf
+│       └── neue-montreal-bold.otf
+│
+└── [config files]
+    ├── next.config.ts
+    ├── tsconfig.json
+    ├── package.json
+    ├── postcss.config.mjs
+    └── eslint.config.mjs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Four-Act Argument
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Act | ID | Pages | Thesis |
+|-----|----|-------|--------|
+| I — The Record | `record` | Overview | What was extracted |
+| II — The Inference | `infer` | Profile · Commercial Profile · Risk | What was inferred |
+| III — The Permanence | `delete` | Permanent · Terms | Why it cannot be undone |
+| IV — The Mechanism | `understand` | How It Works · Test | How the extraction persists |
+| V — After | `resist` | After · Method | What remains |
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Pipeline Flow
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+File upload
+  → deepParser.ts         (regex extraction, scoring)
+  → aiEnrichment.ts       (Haiku — batched per-message enrichment)
+  → synthesis.ts          (Sonnet — full synthesis + verdict)
+  → sessionStorage
+  → Results dashboard
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Framework**: Next.js (App Router) + TypeScript
+- **Deploy**: Netlify (auto-deploy from `main`)
+- **AI**: Anthropic API — Claude Haiku (enrichment) + Claude Sonnet (synthesis)
+- **Design**: EB Garamond · Courier Prime · `#f5f4f0` paper · single red accent
+- **Domain**: youagreed.co.uk

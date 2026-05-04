@@ -4,8 +4,8 @@
 // Now handles psychological_signals and inferred_beliefs.
 // ============================================================================
 
-import type { DeepAnalysis, ScoredMessage } from './deepParser';
-import { computeScoreFactors } from './deepParser';
+import type { DeepAnalysis, ScoredMessage } from '@/lib/parsers/deepParser';
+import { computeScoreFactors } from '@/lib/parsers/deepParser';
 import { runSynthesis, type Synthesis } from './synthesis';
 
 export interface MessageEnrichment {

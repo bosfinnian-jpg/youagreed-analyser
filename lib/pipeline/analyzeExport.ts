@@ -4,9 +4,9 @@
 // Supports ChatGPT and Claude exports, and merging multiple sources.
 // ============================================================================
 
-import { analyzeDeep, type DeepAnalysis } from './deepParser';
+import { analyzeDeep, type DeepAnalysis } from '@/lib/parsers/deepParser';
 import { enrichAnalysisWithAI, type EnrichmentProgress } from './aiEnrichment';
-import { isClaudeExport, normaliseClaude } from '@/lib/parser/claudeParser';
+import { isClaudeExport, normaliseClaude } from '@/lib/parsers/claudeParser';
 
 export interface AnalyzeProgress {
   phase: 'parsing' | 'ai_enriching' | 'storing' | 'done';

@@ -2,7 +2,7 @@
 
 import { useRef, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../shared/layout/DashboardLayout';
 import DataProductSummary from '../../DataProductSummary';
 
 // ============================================================================

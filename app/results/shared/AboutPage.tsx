@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE, type DashPage, PageFooter } from './DashboardLayout';
+import { PALETTE, TYPE, type DashPage, PageFooter } from './layout/DashboardLayout';
 
 // ============================================================================
 // ABOUT — trace.ai

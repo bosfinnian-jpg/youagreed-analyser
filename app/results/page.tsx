@@ -3,20 +3,20 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import DashboardLayout, { PALETTE, TYPE, type DashPage } from './DashboardLayout';
-import OverviewPage from './OverviewPage';
-import ProfilePage from './ProfilePage';
-import CommercialProfilePage from './[id]/commercial-profile/page';
-import RiskPage from './RiskPage';
-import SourcesPage from './SourcesPage';
-import UnderstandPage from './UnderstandPage';
-import CannotBeDeletedPage from './CannotBeDeletedPage';
-import HowItWorksPage from './HowItWorksPage';
-import AboutPage from './AboutPage';
-import PolicyDriftPage from './PolicyDriftPage';
-import ResistPage from './ResistPage';
-import MethodPage from './MethodPage';
-import ScoreBreakdownPage from './ScoreBreakdownPage';
+import DashboardLayout, { PALETTE, TYPE, type DashPage } from './shared/layout/DashboardLayout';
+import OverviewPage from './acts/act-i-record/OverviewPage';
+import ProfilePage from './acts/act-ii-inference/ProfilePage';
+import CommercialProfilePage from './acts/act-ii-inference/CommercialProfilePage';
+import RiskPage from './acts/act-ii-inference/RiskPage';
+import SourcesPage from './shared/SourcesPage';
+import UnderstandPage from './acts/act-iv-mechanism/UnderstandPage';
+import CannotBeDeletedPage from './acts/act-iii-permanence/CannotBeDeletedPage';
+import HowItWorksPage from './acts/act-iv-mechanism/HowItWorksPage';
+import AboutPage from './shared/AboutPage';
+import PolicyDriftPage from './acts/act-iii-permanence/PolicyDriftPage';
+import ResistPage from './acts/act-v-after/ResistPage';
+import MethodPage from './acts/act-v-after/MethodPage';
+import ScoreBreakdownPage from './acts/act-iv-mechanism/ScoreBreakdownPage';
 
 interface AnalysisResult {
   privacyScore: number;

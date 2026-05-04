@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
 // AI ENRICHMENT PAGE

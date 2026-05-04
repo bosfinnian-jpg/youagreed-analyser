@@ -24,7 +24,7 @@
 // ]
 // ============================================================================
 
-import type { RawMessage } from '@/lib/analysis/deepParser';
+import type { RawMessage } from '@/lib/parsers/deepParser';
 
 export function isClaudeExport(data: any): boolean {
   if (!Array.isArray(data) || data.length === 0) return false;

@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE } from './DashboardLayout';
-import type { DeepAnalysis } from '@/lib/analysis/deepParser';
+import { PALETTE, TYPE } from '../../shared/layout/DashboardLayout';
+import type { DeepAnalysis } from '@/lib/parsers/deepParser';
 
 interface DataProductSummaryProps {
   analysis: DeepAnalysis;

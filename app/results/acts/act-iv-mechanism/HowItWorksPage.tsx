@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from './DashboardLayout';
+import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
 // HOW IT WORKS — Act IV, page 07

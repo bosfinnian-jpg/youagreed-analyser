@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { PALETTE, TYPE } from './DashboardLayout';
+import { PALETTE, TYPE } from '../../shared/layout/DashboardLayout';
 
 // ============================================================================
 // SCORE BREAKDOWN PAGE

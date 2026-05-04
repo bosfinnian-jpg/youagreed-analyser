@@ -24,7 +24,6 @@ import { motion } from 'framer-motion';
 import {
   animate,
   stagger,
-  onScroll,
   createDrawable,
   createSpring,
   createTimeline,
@@ -66,15 +65,17 @@ function useScrollTrigger(
     const el = ref.current;
     if (!el) return;
     fired.current = false;
-    const obs = onScroll({
-      target: el,
-      onEnter: () => {
-        if (fired.current) return;
-        fired.current = true;
-        fn();
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !fired.current) {
+          fired.current = true;
+          fn();
+        }
       },
-    });
-    return () => { obs.revert(); };
+      { threshold: 0.25 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }
@@ -118,7 +119,7 @@ function ChapterShell({
       className="chapter-snap"
       style={{
         height: 'calc(100dvh - 64px)',
-        paddingTop:    isFirst ? '2rem' : '0',
+        paddingTop:    isFirst ? 'clamp(3.5rem, 8vh, 5rem)' : '0',
         paddingBottom: '2rem',
         paddingLeft:   'clamp(1.5rem, 7vw, 6rem)',
         paddingRight:  'clamp(1.5rem, 7vw, 6rem)',
@@ -423,7 +424,11 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
         </div>
 
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.78, maxWidth: '46ch', marginBottom: '0.4rem' }}>
-          Each one a record of unknown persistence. OpenAI's Privacy Policy permits use of conversation content to improve its models — no public version specifies which conversations may have been used, or when.
+          Each one a record of unknown persistence.{' '}
+          <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
+            OpenAI's Privacy Policy
+          </a>{' '}
+          permits use of conversation content to improve its models — no public version specifies which conversations may have been used, or when.
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
           OpenAI Privacy Policy, June 2023 — April 2026
@@ -508,7 +513,11 @@ function InferenceChapter({ inferences, onActive }: {
         ))}
       </div>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.78, maxWidth: '50ch', opacity: allRevealed ? 1 : 0.3, transition: 'opacity 0.8s ease', marginBottom: '0.4rem' }}>
-        None of these attributes were stated. All were inferred. OpenAI's terms permit use of conversation content to improve its models — but say nothing about what is inferred in the process, or what that inference produces.
+        None of these attributes were stated. All were inferred.{' '}
+        <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
+          OpenAI's terms
+        </a>{' '}
+        permit use of conversation content to improve its models — but say nothing about what is inferred in the process, or what that inference produces.
       </p>
       <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
         OpenAI Terms of Service, 2023 · OpenAI Privacy Policy, 2026
@@ -570,7 +579,14 @@ function DisclosureChapter({ excerpt, date, onActive }: {
         </div>
         {date && <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1.25rem' }}>— {date}</p>}
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.78, maxWidth: '50ch', marginBottom: '0.4rem' }}>
-          It was processed, classified, and — under OpenAI's training policy — may have been used to adjust model weights. OpenAI's April 2026 Privacy Policy contains an explicit carve-out: data already used in model training is exempt from the right to deletion.
+          It was processed, classified, and — under OpenAI's training policy — may have been used to adjust model weights.{' '}
+          <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
+            OpenAI's April 2026 Privacy Policy
+          </a>{' '}
+          contains an explicit carve-out: data already used in model training is exempt from the{' '}
+          <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
+            right to deletion
+          </a>.
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
           OpenAI Privacy Policy, April 2026 (US) — deletion carve-out
@@ -824,7 +840,13 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
               {words.map((w, i) => <span key={i} className="p-word" style={{ display: 'inline-block', marginRight: '0.25em', color: w === 'retracted.' ? PALETTE.red : PALETTE.ink }}>{w}</span>)}
             </h2>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.95rem, 1.5vw, 1.05rem)', color: PALETTE.inkMuted, lineHeight: 1.78, maxWidth: '48ch', marginBottom: '0.4rem' }}>
-              OpenAI's April 2026 Privacy Policy explicitly exempts training data from the right to deletion. Deleting your account removes your data from OpenAI's servers. It does not remove your contribution from the model's weights — those are different operations, and the latter remains an unsolved problem in machine learning research.
+              <a href="https://openai.com/policies/privacy-policy" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
+                OpenAI's April 2026 Privacy Policy
+              </a>{' '}
+              explicitly exempts training data from the right to deletion. Deleting your account removes your data from OpenAI's servers. It does not remove your contribution from the model's weights — those are different operations, and the latter remains an{' '}
+              <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
+                unsolved problem in machine learning research
+              </a>.
             </p>
             <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase', opacity: 0.6 }}>
               OpenAI Privacy Policy, April 2026 · Cooper et al., 2024 (machine unlearning)

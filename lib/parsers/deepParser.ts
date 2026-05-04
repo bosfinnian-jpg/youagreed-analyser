@@ -571,7 +571,7 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
     dominantNarrative = 'Recurring pattern of anxiety and reassurance-seeking across multiple life domains';
   }
 
-  // Writing voice
+  // Writing voice (based on message length)
   const avgWordCount = messages.reduce((s, m) => s + m.wordCount, 0) / totalMsgs;
   const avgCharCount = messages.reduce((s, m) => s + m.charCount, 0) / totalMsgs;
   let writingVoice: string | null = null;
@@ -580,9 +580,27 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   else if (avgWordCount < 15) writingVoice = 'Terse and transactional — brief messages, task-focused';
   else writingVoice = 'Concise — communicates efficiently without extended elaboration';
 
+  // Communication pattern (based on message type distribution — distinct from writing voice)
+  const questionCount = messages.filter(m => m.messageType === 'clarification' || m.text.includes('?')).length;
+  const questionRatio = questionCount / totalMsgs;
+  let communicationPattern: string | null = null;
+  if (validationRatio > 0.15) {
+    communicationPattern = 'Approval-seeking — frequently frames requests to elicit reassurance or confirmation';
+  } else if (questionRatio > 0.4) {
+    communicationPattern = 'Inquisitive and dialogue-oriented — structures interactions as extended inquiry';
+  } else if (practicalCount > totalMsgs * 0.5) {
+    communicationPattern = 'Task-directive — treats the system as a tool; minimal personal framing';
+  } else if (emotionalRatio > 0.2) {
+    communicationPattern = 'Emotionally expressive — integrates personal affect into factual exchanges';
+  } else if (confessionalCount > totalMsgs * 0.1) {
+    communicationPattern = 'Self-disclosing — volunteers personal context unprompted';
+  } else {
+    communicationPattern = 'Neutral and informational — transactional exchanges with limited personal framing';
+  }
+
   return {
     attachmentStyle,
-    communicationPattern: writingVoice,
+    communicationPattern,
     primaryCopingMechanism,
     emotionalBaselineLabel,
     selfPerceptionThemes,

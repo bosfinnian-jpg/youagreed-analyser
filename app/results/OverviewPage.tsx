@@ -271,10 +271,11 @@ function ChapterShell({
 // CHAPTER 00 — ARRIVAL
 // Confident silence. Almost no animation. Just the type.
 // ════════════════════════════════════════════════════════════════════════════
-function ArrivalChapter({ name, date, onActive }: {
+function ArrivalChapter({ name, date, onActive, setPage }: {
   name: string | null;
   date: string;
   onActive: (id: ChapterId) => void;
+  setPage: (p: DashPage) => void;
 }) {
   return (
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
@@ -326,6 +327,39 @@ function ArrivalChapter({ name, date, onActive }: {
       >
         What follows was inferred from your conversations.
         Each item is effectively persistent. Most of it cannot currently be returned.
+      </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 1.0 }}
+        style={{
+          fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em',
+          color: PALETTE.inkFaint, marginBottom: 'clamp(1.5rem,5vw,2.5rem)',
+          opacity: 0.55,
+        }}
+      >
+        This is a work of critical design.{' '}
+        <span
+          onClick={() => setPage('method')}
+          style={{ textDecoration: 'underline', cursor: 'pointer' }}
+        >
+          A note on method →
+        </span>
+      </motion.p>
+
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 1.7 }}
+        style={{
+          fontFamily: TYPE.serif,
+          fontSize: 'clamp(0.8rem, 1.2vw, 0.9rem)',
+          color: PALETTE.inkFaint,
+          lineHeight: 1.7,
+          maxWidth: '46ch',
+          marginBottom: 'clamp(1.5rem,5vw,2.5rem)',
+        }}
+      >
+        Consent mechanisms were designed for reversible data. AI training is not reversible. What follows is what that gap made possible.
       </motion.p>
 
       <motion.div
@@ -1751,7 +1785,7 @@ export default function OverviewPage({ results, sources, setPage }: {
 
       {/* Chapters */}
       <main>
-        <ArrivalChapter name={primaryName} date={today} onActive={handleActive} />
+        <ArrivalChapter name={primaryName} date={today} onActive={handleActive} setPage={setPage} />
         {messageCount > 0 && <VolumeChapter count={messageCount} days={days} dayHourMatrix={dayHourMatrix} onActive={handleActive} />}
         {inferences.length > 0 && <InferenceChapter inferences={inferences} onActive={handleActive} />}
         {excerpt && <DisclosureChapter excerpt={excerpt} date={excerptDate} onActive={handleActive} />}

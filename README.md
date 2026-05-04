@@ -1,4 +1,4 @@
-# YOU AGREED — youagreed.co.uk
+# Trace.ai — youagreed.co.uk
 
 Critical art installation examining the structural failure of consent frameworks applied to irreversible AI cognitive data extraction.
 

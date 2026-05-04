@@ -936,7 +936,9 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
       </div>
 
 
-      <ExtractionWaffle results={results} />
+      <div style={{ marginBottom: 'clamp(1rem, 3vw, 2rem)' }}>
+        <ExtractionWaffle results={results} />
+      </div>
 
       {/* ================================================================
           SYNTHESIS — intelligence briefing sections (00–07)
@@ -1115,7 +1117,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
 
 function ProfileSection({ children, index }: { children: React.ReactNode; index?: number }) {
   return (
-    <div style={{ padding: 'clamp(2.5rem, 8vw, 6rem) 0', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
+    <div style={{ padding: 'clamp(2rem, 5vw, 3.5rem) 0', borderBottom: `1px solid ${PALETTE.border}`, position: 'relative' }}>
       {children}
     </div>
   );
@@ -1123,14 +1125,14 @@ function ProfileSection({ children, index }: { children: React.ReactNode; index?
 
 function SectionHeader({ label, heading, headingSize, body }: { label: string; heading: string; headingSize: string; body: string }) {
   return (
-    <div style={{ marginBottom: '2.5rem' }}>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+    <div style={{ marginBottom: '2rem' }}>
+      <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.75rem' }}>
         {label}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: headingSize, fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1.2rem' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: headingSize, fontWeight: 400, color: PALETTE.ink, letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: '1rem' }}>
         {heading}
       </p>
-      <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '58ch' }}>
+      <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: '58ch' }}>
         {body}
       </p>
     </div>

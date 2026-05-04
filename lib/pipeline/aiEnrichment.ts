@@ -464,11 +464,8 @@ export async function enrichAnalysisWithAI(analysis: DeepAnalysis, onProgress?: 
     onProgress?.({ stage: 'synthesizing', batchesDone: batches.length, batchesTotal: batches.length, messagesEnriched: enrichments.length });
     try {
       const synthesis = await runSynthesis(merged, enrichments);
-      console.log('runSynthesis returned:', synthesis ? 'object with keys: ' + Object.keys(synthesis).join(',') : 'null');
-      console.log('synthesis characterSummary preview:', (synthesis as any)?.characterSummary?.substring(0, 60));
       if (synthesis) {
         (merged as DeepAnalysis & { synthesis?: Synthesis }).synthesis = synthesis;
-        console.log('synthesis attached to merged, merged.synthesis:', !!(merged as any).synthesis);
       }
     } catch (synthErr) {
       console.error('Synthesis failed, continuing without:', synthErr);

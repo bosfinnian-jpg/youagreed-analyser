@@ -245,7 +245,6 @@ export async function runSynthesis(
       .replace(/```\s*$/i, '')
       .trim();
 
-    console.log('Synthesis fullText length:', fullText.length, 'cleaned preview:', cleaned.substring(0, 100));
 
     // Sanitise: fix common issues — unescaped newlines/quotes inside string values
     // and truncation. Use a lenient approach: extract field by field if full parse fails.
@@ -263,7 +262,6 @@ export async function runSynthesis(
         });
       try {
         parsed = JSON.parse(sanitised);
-        console.log('Synthesis recovered after sanitising control chars');
       } catch {
         // Last resort: trim to last complete top-level field
         const lastComma = sanitised.lastIndexOf(',\n  "');
@@ -271,7 +269,6 @@ export async function runSynthesis(
           const trimmed = sanitised.substring(0, lastComma) + '\n}';
           try {
             parsed = JSON.parse(trimmed);
-            console.log('Synthesis recovered by trimming to last complete field');
           } catch {
             console.error('Synthesis parse failed after all recovery attempts');
             return null;
@@ -285,7 +282,6 @@ export async function runSynthesis(
 
     if (!parsed) return null;
 
-    console.log('Synthesis parsed OK:', Object.keys(parsed));
     return {
       ...parsed,
       generatedAt: Date.now(),

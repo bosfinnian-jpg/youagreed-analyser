@@ -86,7 +86,7 @@ function useScrollTrigger(
 // The first chapter (arrival) offsets for the fixed nav.
 // ════════════════════════════════════════════════════════════════════════════
 function ChapterShell({
-  id, num, label, children, onActive, isFirst = false,
+  id, num, label, children, onActive, isFirst = false, hideLabel = false,
 }: {
   id: ChapterId;
   num?: string;
@@ -94,6 +94,7 @@ function ChapterShell({
   children: React.ReactNode;
   onActive: (id: ChapterId) => void;
   isFirst?: boolean;
+  hideLabel?: boolean;
 }) {
   const ref = useRef<HTMLElement>(null);
   const [isActive, setIsActive] = useState(false);
@@ -166,9 +167,10 @@ function ChapterShell({
               alignItems: 'center',
               gap: '1rem',
               marginBottom: 'clamp(1rem, 2vw, 1.75rem)',
-              opacity: isActive ? 1 : 0.2,
+              opacity: hideLabel ? 0 : isActive ? 1 : 0.2,
               transform: `translateX(${isActive ? 0 : -8}px)`,
               transition: 'opacity 0.9s ease, transform 1s cubic-bezier(0.25,0.1,0.25,1)',
+              pointerEvents: hideLabel ? 'none' : 'auto',
             }}
           >
             {num && (
@@ -304,7 +306,7 @@ function ArrivalChapter({ date, onActive, setPage }: {
   const line2 = 'of You.';
 
   return (
-    <ChapterShell id="arrival" label="" onActive={onActive} isFirst>
+    <ChapterShell id="arrival" label="File 01" hideLabel onActive={onActive} isFirst>
       {/* Background pulse rings */}
       <PulseRings />
 

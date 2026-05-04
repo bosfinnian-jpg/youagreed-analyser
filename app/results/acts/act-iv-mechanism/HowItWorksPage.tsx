@@ -353,11 +353,11 @@ function MachineUnlearningDemo() {
       {/* Stats bar */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1px', background: PALETTE.border, marginBottom: '1.75rem' }}>
         {[
-          { label: 'Parameters in GPT-4', value: '~1.8 trillion' },
+          { label: <a href="https://arxiv.org/abs/2303.08774" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Parameters in GPT-4</a>, value: '~1.8 trillion' },
           { label: 'Clusters influenced by one message', value: `${CONTAMINATED.size} of ${TOTAL_CELLS}` },
           { label: 'Clean deletion boundary', value: 'Does not exist' },
-        ].map(item => (
-          <div key={item.label} style={{ background: PALETTE.bgPanel, padding: 'clamp(0.75rem, 2vw, 1.1rem)' }}>
+        ].map((item, si) => (
+          <div key={si} style={{ background: PALETTE.bgPanel, padding: 'clamp(0.75rem, 2vw, 1.1rem)' }}>
             <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.35rem' }}>{item.label}</p>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.2rem)', color: C.unlearn.base }}>{item.value}</p>
           </div>
@@ -409,16 +409,16 @@ function MachineUnlearningDemo() {
                 The influence is distributed across <strong>{CONTAMINATED.size} non-contiguous parameter clusters</strong>. There is no clean boundary to cut around. You cannot straightforwardly remove what was never discretely inserted.
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.9rem, 1.5vw, 1rem)', color: PALETTE.inkMuted, lineHeight: 1.65, fontStyle: 'italic' }}>
-                Approximate unlearning methods exist — but they degrade model performance unpredictably and cannot currently provide the guarantees legal deletion requires. The practical alternative is retraining from scratch.
+                <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Approximate unlearning methods exist</a> — but they degrade model performance unpredictably and cannot currently provide the guarantees legal deletion requires. The practical alternative is retraining from scratch.
               </p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1px', background: PALETTE.border }}>
               {[
-                { label: 'Cost to retrain GPT-4', value: '~$100M+', sub: 'OpenAI estimates' },
+                { label: <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Cost to retrain GPT-4</a>, value: '~$100M+', sub: 'Cooper et al., 2024' },
                 { label: 'Time to retrain', value: '3–6 months', sub: 'On existing hardware' },
-                { label: 'GDPR deletion deadline', value: '30 days', sub: 'Article 17 requirement' },
-              ].map(item => (
-                <div key={item.label} style={{ background: PALETTE.bgPanel, padding: '0.9rem 1rem' }}>
+                { label: <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>GDPR deletion deadline</a>, value: '30 days', sub: 'Article 17' },
+              ].map((item, di) => (
+                <div key={di} style={{ background: PALETTE.bgPanel, padding: '0.9rem 1rem' }}>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '0.3rem' }}>{item.label}</p>
                   <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 1.8vw, 1.3rem)', color: C.unlearn.base }}>{item.value}</p>
                   <p style={{ fontFamily: TYPE.mono, fontSize: '8px', color: PALETTE.inkFaint, letterSpacing: '0.1em' }}>{item.sub}</p>
@@ -555,14 +555,14 @@ function GdprGapDiagram() {
 // ============================================================================
 // SECTION WRAPPER
 // ============================================================================
-function PageSection({ number, title, body, children, accent, finding }: {
+function PageSection({ number, title, body, children, accent, finding, noBorder }: {
   number: string; title: string; body: string; children: React.ReactNode;
-  accent: { base: string; faint: string; muted: string }; finding?: string;
+  accent: { base: string; faint: string; muted: string }; finding?: string; noBorder?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-60px' });
   return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 14 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65 }} style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+    <motion.div ref={ref} initial={{ opacity: 0, y: 14 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.65 }} style={{ paddingBottom: 'clamp(3rem, 7vw, 5rem)', marginBottom: 'clamp(3rem, 7vw, 5rem)', borderBottom: noBorder ? 'none' : `1px solid ${PALETTE.border}` }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
         <div style={{ width: '28px', height: '2px', background: accent.base }} />
         <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.3em', color: accent.base, textTransform: 'uppercase' }}>{number}</p>
@@ -644,11 +644,24 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
         <MachineUnlearningDemo />
       </PageSection>
 
+      {/* Section 2 further reading */}
+      <div style={{ marginTop: '-2rem', marginBottom: 'clamp(3rem, 7vw, 5rem)', paddingBottom: 'clamp(2rem, 4vw, 3rem)', borderBottom: `1px solid ${PALETTE.border}` }}>
+        <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em', color: PALETTE.inkFaint, textTransform: 'uppercase', lineHeight: 2.2 }}>
+          <span style={{ color: PALETTE.inkFaint, marginRight: '0.5rem' }}>Further reading</span>
+          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Cooper et al. (2024) — Machine Unlearning Doesn’t Do What You Think</a>
+          {' · '}
+          <a href="https://arxiv.org/abs/2407.06460" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Shi et al. (2024) — MUSE: Machine Unlearning Six-Way Evaluation</a>
+          {' · '}
+          <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>GDPR Article 17 — Right to Erasure</a>
+        </p>
+      </div>
+
       <PageSection
         number="Section 3 — The structural gap"
         title="Why consent frameworks can't fix it"
         body="Cookie consent was designed for a specific kind of data: discrete records that can be found and deleted. AI training produces something entirely different. Step through both models to see where the framework breaks."
         accent={C.consent}
+        noBorder
       >
         <GdprGapDiagram />
       </PageSection>

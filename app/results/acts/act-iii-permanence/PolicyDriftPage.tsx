@@ -790,6 +790,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
     {
       num: '01',
       source: 'Nissenbaum, 2011',
+      sourceUrl: 'https://doi.org/10.1162/DAED_a_00113',
       claim: 'Cannot be both readable and honest',
       stat: '3,417 → 9,241 words',
       text: 'Nissenbaum\'s transparency paradox: a policy detailed enough to accurately describe OpenAI\'s data practices is too long to read. A version short enough to read omits the clauses that matter. OpenAI\'s privacy policy grew 170% in three years. The consent it generates is not meaningful.',
@@ -797,6 +798,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
     {
       num: '02',
       source: 'McDonald & Cranor, 2008',
+      sourceUrl: 'https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf',
       claim: 'Designed not to be read',
       stat: '76 work-days per year',
       text: 'Reading every privacy policy a typical internet user encounters would take 76 full work-days per year. OpenAI knows this. Every large platform knows this. The consent model depends on people not reading the document — and then treats the absence of objection as agreement.',
@@ -804,6 +806,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
     {
       num: '03',
       source: 'OpenAI ToS, 2023',
+      sourceUrl: 'https://openai.com/policies/terms-of-use/',
       claim: 'Updated itself without asking',
       stat: '"Continued use = acceptance"',
       text: 'This sentence appears in the 2023 Terms of Service. It means OpenAI could — and did — add advertising, contact list upload, and a deletion carve-out to its policy without re-asking you. Continued use was treated as a new signature. You were, by the logic of the terms, opted in through inaction.',
@@ -811,6 +814,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
     {
       num: '04',
       source: 'Zuboff, 2022',
+      sourceUrl: 'https://www.publicaffairsbooks.com/titles/shoshana-zuboff/the-age-of-surveillance-capitalism/9781610395694/',
       claim: 'Opacity is a feature, not a failure',
       stat: 'Surveillance capitalism',
       text: 'Zuboff argues that opacity is structural: the system requires subjects do not fully understand what is being taken. OpenAI\'s three-year expansion — adding clauses, burying exceptions, introducing new data categories — fits this pattern. The consent framework is not broken. It is working as intended.',
@@ -883,7 +887,9 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
                     color: PALETTE.inkFaint,
                     textTransform: 'uppercase',
                   }}>
-                    {arg.source}
+                    {(arg as any).sourceUrl ? (
+                      <a href={(arg as any).sourceUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.25)' }}>{arg.source}</a>
+                    ) : arg.source}
                   </p>
                 </div>
 
@@ -951,82 +957,6 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
       transition={{ delay: 0.4, duration: 0.7 }}
       style={{ marginBottom: 'clamp(3rem, 6vw, 5rem)' }}
     >
-      {/* Single-column flow instead of grid */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1px',
-        background: PALETTE.border,
-        marginBottom: 'clamp(2.5rem, 5vw, 3.5rem)',
-      }}>
-        {/* Panel 1 */}
-        <div style={{
-          background: PALETTE.bgPanel,
-          padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.75rem, 3.5vw, 2.5rem)',
-          borderLeft: `3px solid ${PALETTE.coral}`,
-        }}>
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.24em',
-            color: PALETTE.coral, textTransform: 'uppercase',
-            marginBottom: '0.9rem',
-          }}>The legal fiction</p>
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
-            color: PALETTE.ink, lineHeight: 1.7, maxWidth: '68ch',
-          }}>
-            When OpenAI changes its policy, your continued use is treated as fresh consent. 
-            But you were not shown the changes. You were not asked to accept them. Under the terms as written, continued use was sufficient.
-          </p>
-        </div>
-
-        {/* Panel 2 */}
-        <div style={{
-          background: PALETTE.bgPanel,
-          padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.75rem, 3.5vw, 2.5rem)',
-          borderLeft: `3px solid ${PALETTE.amber}`,
-        }}>
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.24em',
-            color: PALETTE.amber, textTransform: 'uppercase',
-            marginBottom: '0.9rem',
-          }}>What was added</p>
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
-            color: PALETTE.ink, lineHeight: 1.7, maxWidth: '68ch',
-          }}>
-            Three categories of data collection appeared between 2023 and 2026 that did not exist 
-            in the original policy: advertising data, contact list upload, and data from third-party partners.
-          </p>
-        </div>
-
-        {/* Panel 3 */}
-        <div style={{
-          background: PALETTE.bgPanel,
-          padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.75rem, 3.5vw, 2.5rem)',
-          borderLeft: `3px solid ${PALETTE.redMuted}`,
-        }}>
-          <p style={{
-            fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.24em',
-            color: PALETTE.redMuted, textTransform: 'uppercase',
-            marginBottom: '0.9rem',
-          }}>The deletion carve-out</p>
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
-            color: PALETTE.ink, lineHeight: 1.7, maxWidth: '68ch',
-            marginBottom: '0.75rem',
-          }}>
-            The 2026 policy states that data used in model training is exempt from the right to deletion.
-          </p>
-          <p style={{
-            fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.85vw, 1.2rem)',
-            color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: '68ch',
-            fontStyle: 'italic',
-          }}>
-            That data is not just stored. It was learned from. And what a model has learned, it cannot currently unlearn.
-          </p>
-        </div>
-      </div>
-
       <PageFooter
         statement="What you consented to in 2023 is not what the policy says today. The document changed around you. You were not asked again."
         followOn="The terms describe what was taken. What you can do about it is next."

@@ -528,13 +528,13 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         color: PALETTE.inkFaint, lineHeight: 1.9,
         maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
       }}>
-        <a href="https://www.ftc.gov/system/files/documents/reports/data-brokers-call-transparency-accountability-report-federal-trade-commission-may-2014/140527databrokerreport.pdf" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>FTC Data Brokers Report (2014)</a>
+        <a href="https://www.eff.org/deeplinks/2025/01/online-behavioral-ads-fuel-surveillance-industry-heres-how" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>EFF — How Online Behavioural Ads Fuel the Surveillance Industry</a>
         {' · '}
-        <a href="https://iabeurope.eu/tcf-for-publishers/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>IAB Europe Transparency &amp; Consent Framework</a>
+        <a href="https://ico.org.uk/about-the-ico/research-reports-impact-and-evaluation/research-and-reports/technology-and-innovation/adtech-fact-finding-forum/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>ICO — Adtech &amp; Real-Time Bidding Report</a>
         {' · '}
-        <a href="https://www.wired.com/story/the-mad-science-of-the-cookie-economy/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Wired — The Mad Science of the Cookie Economy</a>
+        <a href="https://www.ftc.gov/reports/data-brokers-call-transparency-accountability-report-federal-trade-commission-may-2014" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>FTC — Data Brokers: A Call for Transparency (2014)</a>
         {' · '}
-        <a href="https://epic.org/issues/surveillance/law-enforcement/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>EPIC — Surveillance &amp; Law Enforcement</a>
+        <a href="https://iabeurope.eu/laypersons-programmatic/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>IAB Europe — The Advent of RTB Explained</a>
       </p>
 
       {/* Lot card */}

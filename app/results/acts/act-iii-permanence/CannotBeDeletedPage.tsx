@@ -472,7 +472,7 @@ function ConsentFailure() {
           Disclosure without comprehension is not consent. The more complex the system, the more precise the disclosure must be. AI training is diffuse, irreversible, and invisible. It exceeds the complexity threshold at which any current disclosure mechanism is adequate.
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          Nissenbaum, 2011 — A Contextual Approach to Privacy Online, Daedalus 140(4):32–48
+          <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Nissenbaum, 2011 — A Contextual Approach to Privacy Online, Daedalus 140(4):32–48</a>
         </p>
       </div>
     </motion.div>

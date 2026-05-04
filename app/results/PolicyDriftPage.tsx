@@ -847,7 +847,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
               onMouseLeave={(e) => { e.currentTarget.style.background = PALETTE.bgPanel; }}
             >
               {/* Collapsed state — hero number + claim */}
-              <div style={{
+              <div className="policy-arg-row" style={{
                 padding: 'clamp(1.1rem, 2.2vw, 1.5rem) clamp(1.4rem, 3vw, 2rem)',
                 display: 'grid',
                 gridTemplateColumns: 'auto 1fr auto',
@@ -890,8 +890,8 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
                   </p>
                 </div>
 
-                {/* Stat badge */}
-                <div style={{
+                {/* Stat badge — hidden on mobile to prevent layout squeeze */}
+                <div className="policy-arg-stat" style={{
                   padding: '0.5rem 0.9rem',
                   background: 'rgba(26,24,20,0.04)',
                   border: `1px solid ${PALETTE.border}`,
@@ -1075,6 +1075,11 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
             grid-template-columns: 1fr !important;
             gap: 0.75rem !important;
           }
+          /* Argument accordion: remove stat badge column on mobile */
+          .policy-arg-row {
+            grid-template-columns: auto 1fr !important;
+          }
+          .policy-arg-stat { display: none !important; }
         }
       `}</style>
       {/* Disambiguation header — above everything */}

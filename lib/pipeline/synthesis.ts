@@ -87,7 +87,7 @@ function selectTopExcerpts(
 
       // Full text — use the actual message, not a truncated excerpt
       // The excerpt is used for display; fullText is what the AI reads
-      const fullText = msg.text.substring(0, 2000); // generous limit
+      const fullText = msg.text.substring(0, 600); // keep payload small for timeout
 
       return {
         score,
@@ -156,7 +156,7 @@ export async function runSynthesis(
   analysis: DeepAnalysis,
   enrichments: MessageEnrichment[]
 ): Promise<Synthesis | null> {
-  const topExcerpts = selectTopExcerpts(analysis, enrichments, 35);
+  const topExcerpts = selectTopExcerpts(analysis, enrichments, 12);
   if (topExcerpts.length < 2) return null; // not enough signal
 
   const payload = {

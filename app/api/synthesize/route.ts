@@ -71,7 +71,7 @@ You will receive the subject's most revealing message excerpts FIRST (they are t
 Return a JSON object with EXACTLY these fields:
 
 {
-  "characterSummary": "180–260 words. Single-paragraph continuous prose. Opens with one declarative sentence naming who this person is at this point in their life — their dominant preoccupation, life stage, or psychological state. Not a list of attributes. A portrait. Continues with 4–6 further sentences covering: what they are navigating, their emotional architecture, their recurring pattern of thought, what they have disclosed across this corpus, and what makes this profile commercially or psychographically significant. Closes with a sentence about permanence or irreversibility. Forensic tone throughout. No bullet points. No hedging.",
+  "characterSummary": "120–180 words. Single-paragraph continuous prose. Opens with one declarative sentence naming who this person is at this point in their life — their dominant preoccupation, life stage, or psychological state. Not a list of attributes. A portrait. Continues with 4–6 further sentences covering: what they are navigating, their emotional architecture, their recurring pattern of thought, what they have disclosed across this corpus, and what makes this profile commercially or psychographically significant. Closes with a sentence about permanence or irreversibility. Forensic tone throughout. No bullet points. No hedging.",
 
   "demographicPredictions": [
     {
@@ -178,7 +178,7 @@ ${topExcerpts.map((ex, i) => {
   const messageText = ex.fullText && ex.fullText.length > ex.excerpt.length ? ex.fullText : ex.excerpt;
   return `[${i + 1}] ${ex.hour}:00 | conf:${ex.confessionalScore} | emo:${ex.emotionalIntensity} | day:${ex.daysSinceFirst} | ${ex.topic}${sensitiveStr}${signalsStr}${namedStr}
 
-"${messageText.substring(0, 1200)}"`;
+"${messageText.substring(0, 500)}"`;
 }).join('\n\n---\n\n')}`);
 
   // ── NAMED PEOPLE ─────────────────────────────────────────────────────────
@@ -262,7 +262,7 @@ async function callClaude(apiKey: string, userPrompt: string): Promise<any> {
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',  // Sonnet — this call matters
-      max_tokens: 5000,
+      max_tokens: 2500,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],
     }),

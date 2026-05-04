@@ -994,8 +994,8 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
   const [scrolled, setScrolled] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hoveredAct, setHoveredAct] = useState<string | null>(null);
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [openAct, setOpenAct] = useState<string | null>(null);
+  const navDesktopRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -1008,7 +1008,19 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setMenuOpen(false); }, [page]);
+  // Close desktop dropdown on outside click
+  useEffect(() => {
+    if (!openAct) return;
+    const handler = (e: MouseEvent) => {
+      if (navDesktopRef.current && !navDesktopRef.current.contains(e.target as Node)) {
+        setOpenAct(null);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [openAct]);
+
+  useEffect(() => { setMenuOpen(false); setOpenAct(null); }, [page]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -1044,19 +1056,14 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
   const handleNav = (id: DashPage) => {
     setPage(id);
     setMenuOpen(false);
-    setHoveredAct(null);
+    setOpenAct(null);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const currentAct = ACTS.find(a => a.pages.some(p => p.id === page));
 
-  const handleActEnter = (actId: string) => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setHoveredAct(actId);
-  };
-
-  const handleActLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => setHoveredAct(null), 120);
+  const handleActClick = (actId: string) => {
+    setOpenAct(prev => prev === actId ? null : actId);
   };
 
   return (
@@ -1089,27 +1096,27 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
 
         {/* Desktop act nav - hover dropdowns */}
         <div
+          ref={navDesktopRef}
           className="nav-desktop"
           style={{ display: 'flex', alignItems: 'center', position: 'relative', flex: 1, justifyContent: 'center', gap: '0' }}
         >
           {ACTS.map((act) => {
             const isCurrentAct = currentAct?.id === act.id;
-            const isHovered = hoveredAct === act.id;
+            const isOpen = openAct === act.id;
 
             return (
               <div
                 key={act.id}
                 style={{ position: 'relative' }}
-                onMouseEnter={() => handleActEnter(act.id)}
-                onMouseLeave={handleActLeave}
               >
                 <button
+                  onClick={() => handleActClick(act.id)}
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     padding: '0 1.1rem', height: '56px',
                     fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
                     textTransform: 'uppercase',
-                    color: isCurrentAct ? PALETTE.ink : isHovered ? PALETTE.inkMuted : PALETTE.inkFaint,
+                    color: isCurrentAct ? PALETTE.ink : isOpen ? PALETTE.inkMuted : PALETTE.inkFaint,
                     transition: 'color 0.15s',
                     position: 'relative',
                     whiteSpace: 'nowrap',
@@ -1140,7 +1147,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
                   act={act}
                   currentPage={page}
                   onNav={handleNav}
-                  visible={isHovered}
+                  visible={isOpen}
                 />
               </div>
             );

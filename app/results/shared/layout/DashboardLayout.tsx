@@ -1109,16 +1109,6 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
             </span>
           </div>
 
-          {/* Name — desktop only */}
-          {userName && (
-            <div className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: '1.4rem' }}>
-              <div style={{ width: '1px', height: '16px', background: PALETTE.border }} />
-              <span style={{ fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
-                {userName}
-              </span>
-            </div>
-          )}
-
           {/* Hamburger */}
           <button
             onClick={() => setMenuOpen(o => !o)}
@@ -1209,11 +1199,6 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
                     {exposureScore}<span style={{ fontFamily: TYPE.mono, fontSize: '9px', color: PALETTE.inkGhost, marginLeft: '2px' }}>/100</span>
                   </span>
                 </div>
-                {userName && (
-                  <span style={{ fontFamily: TYPE.serif, fontSize: '0.85rem', color: PALETTE.inkFaint, fontStyle: 'italic' }}>
-                    {userName}
-                  </span>
-                )}
               </div>
 
               {/* Navigation */}

@@ -1340,9 +1340,6 @@ const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: strin
   terms: [
     { label: 'Sources', desc: 'Clause-by-clause', page: 'sources' },
   ],
-    { label: 'Sources', desc: 'Every clause, sourced', page: 'sources' },
-    { label: 'Permanent', desc: 'What the changes mean', page: 'permanent' },
-  ],
   sources: [
     { label: 'About', desc: 'The theoretical basis', page: 'about' },
   ],

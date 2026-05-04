@@ -279,8 +279,8 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
                   padding: 'clamp(1.25rem, 3vw, 2rem) 0',
                   borderBottom: i < THEORISTS.length - 1 ? `1px solid ${PALETTE.border}` : 'none',
                   display: 'grid',
-                  gridTemplateColumns: 'clamp(180px, 26%, 240px) 1fr',
-                  gap: 'clamp(1.25rem, 3vw, 2.5rem)',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(min(180px, 100%), 1fr))',
+                  gap: 'clamp(0.75rem, 3vw, 2.5rem)',
                   alignItems: 'start',
                 }}
               >
@@ -364,7 +364,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
         }}>
           <SectionLabel>Built by</SectionLabel>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 'clamp(2rem, 5vw, 4rem)', alignItems: 'end' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 'clamp(2rem, 5vw, 4rem)', alignItems: 'end' }}>
             <div>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.35rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 500, marginBottom: '1rem' }}>
                 Finnian Bos is a Digital Media student at the University of Leeds. Trace.ai is a critical practice project that uses AI as both subject and instrument — a tool critical of AI, built with AI.

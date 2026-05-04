@@ -172,8 +172,8 @@ function SocialGraphSVG({ names }: { names: AnalysisResult['findings']['personal
   }
 
   return (
-    <div ref={ref} style={{ position: 'relative', width: '100%', maxWidth: W }}>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
+    <div ref={ref} style={{ position: 'relative', width: '100%', maxWidth: W, overflowX: 'auto' }}>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block', minWidth: Math.min(W, 320) }}>
         {[60, 120, 175].map((ringR, i) => (
           <motion.circle key={ringR} cx={CX} cy={CY} r={ringR} fill="none" stroke={PALETTE.border} strokeWidth={0.5} strokeDasharray="4 6"
             initial={{ opacity: 0 }} animate={isInView ? { opacity: 0.35 } : {}} transition={{ delay: 0.2 + i * 0.15, duration: 1 }} />
@@ -243,11 +243,11 @@ function BehaviouralFingerprint({ hourDist, typeBreakdown }: { hourDist: number[
 
   return (
     <div ref={ref} style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap', alignItems: 'flex-start' }}>
-      <div>
+      <div style={{ flex: '0 0 auto', maxWidth: '100%' }}>
         <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.16em', color: PALETTE.inkFaint, textTransform: 'uppercase', marginBottom: '1rem' }}>
           24-hour activity pattern
         </p>
-        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: W, height: H }}>
+        <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxWidth: W, height: 'auto', display: 'block' }}>
           {[0.33, 0.66, 1].map((pct, i) => (
             <circle key={i} cx={CX} cy={CY} r={innerR + pct * (outerR - innerR)} fill="none" stroke={PALETTE.border} strokeWidth={0.5} opacity={0.3} />
           ))}

@@ -1107,7 +1107,7 @@ function Module1({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: C.border }}>
               {verbalTells.map((tell: any, i: number) => (
                 <motion.div key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.12 }}
-                  style={{ background: C.panel, padding: '1rem 1.25rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignItems: 'start' }}>
+                  style={{ background: C.panel, padding: '1rem 1.25rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem 1.5rem', alignItems: 'start' }}>
                   <div>
                     <p style={{ fontFamily: TYPE.mono, fontSize: '8.5px', letterSpacing: '0.2em', color: C.textFaint, textTransform: 'uppercase', marginBottom: '0.35rem' }}>Pattern detected</p>
                     <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.text, lineHeight: 1.5 }}>{tell.tell}</p>

@@ -195,9 +195,11 @@ export function PageFooter({
       )}
 
       {/* Nav grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      <div
+        className="page-footer-nav"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: '1px',
         background: PALETTE.border,
         marginBottom: 'clamp(2.5rem, 5vw, 4rem)',
@@ -206,6 +208,7 @@ export function PageFooter({
           <button
             key={item.page}
             onClick={() => setPage(item.page)}
+            className="nav-strip-card"
             style={{
               background: PALETTE.bgPanel, border: 'none', cursor: 'pointer',
               padding: 'clamp(1.25rem, 3vw, 1.75rem)', textAlign: 'left',
@@ -1286,6 +1289,101 @@ export default function DashboardLayout({ results, children, page, setPage }: {
 
         @media (max-width: 480px) {
           .section-ghost-num { display: none !important; }
+        }
+
+        /* ────────────────────────────────────────────────────────
+           MOBILE-SPECIFIC IMPROVEMENTS
+           ──────────────────────────────────────────────────────── */
+
+        /* Better font rendering on mobile */
+        @media (max-width: 640px) {
+          /* Force text to wrap nicely on narrow screens */
+          h1, h2, h3 {
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+          }
+
+          /* Wider prose on mobile — remove overly tight max-width constraints */
+          .prose {
+            max-width: 100% !important;
+            font-size: clamp(1.05rem, 4vw, 1.1rem) !important;
+          }
+
+          /* FooterNav cards — single column on tiny screens */
+          .page-footer-nav {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* SAR letter bar full-width buttons */
+          .sar-bar {
+            flex-direction: column !important;
+            align-items: stretch !important;
+          }
+          .sar-bar button {
+            width: 100% !important;
+            text-align: center !important;
+          }
+
+          /* Profile page waffle grid tighter columns */
+          .waffle-grid {
+            grid-template-columns: repeat(10, 1fr) !important;
+          }
+
+          /* Chapter shell inner — keep content in bounds */
+          .chapter-content-inner {
+            max-width: 100% !important;
+          }
+
+          /* Disclosure chapter - quote text smaller on mobile */
+          .disclosure-quote {
+            font-size: clamp(1.2rem, 4.5vw, 1.6rem) !important;
+          }
+
+          /* Score ring — mobile sizing */
+          .score-ring-container {
+            width: min(72vw, 280px) !important;
+          }
+
+          /* Policy drift table scrolls horizontally */
+          .policy-drift-3col {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* Resist page action steps — no truncation */
+          .action-step-platform {
+            font-size: 9px !important;
+            letter-spacing: 0.12em !important;
+          }
+          .action-step-path {
+            font-size: 9px !important;
+            word-break: break-all !important;
+          }
+
+          /* ProfilePage demographic row stacking handled by prof-demo-row */
+
+          /* Prevent NavBar score from eating too much space */
+          .nav-score-block {
+            gap: 0 !important;
+          }
+        }
+
+        @media (max-width: 380px) {
+          /* Ultra-small phones — reduce base padding further */
+          .dash-page-inner {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+
+          /* OverviewPage arrival heading */
+          .arrival-heading {
+            font-size: clamp(2.8rem, 12vw, 4rem) !important;
+          }
+
+          /* Nav: only show score number, nothing else */
+          .nav-exposure-score {
+            font-size: 11px !important;
+          }
         }
 
         /* ────────────────────────────────────────────────────────

@@ -607,7 +607,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                     <span style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.ink }}>{bid.buyer}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
+                    <span className="bid-row-seg" style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkFaint, textTransform: 'capitalize' }}>{bid.segment}</span>
                     <span style={{ fontFamily: TYPE.mono, fontSize: '1rem', color: PALETTE.red, width: '4.5rem', textAlign: 'right' }}>£{bid.amount.toFixed(4)}</span>
                   </div>
                 </motion.div>

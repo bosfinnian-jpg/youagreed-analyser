@@ -476,7 +476,7 @@ function GdprGapDiagram() {
         </p>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(1rem, 3vw, 2rem)', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 'clamp(1rem, 3vw, 2rem)', marginBottom: '1.5rem' }}>
         {/* Cookie */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: `1px solid ${C.consent.muted}` }}>

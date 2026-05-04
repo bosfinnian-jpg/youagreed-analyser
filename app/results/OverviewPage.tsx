@@ -298,6 +298,7 @@ function ArrivalChapter({ name, date, onActive }: {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.4, delay: 0.5, ease: [0.2, 0, 0.2, 1] }}
+        className="arrival-heading"
         style={{
           fontFamily: TYPE.serif,
           fontSize: 'clamp(3.6rem, 13vw, 8rem)',
@@ -858,10 +859,9 @@ function DisclosureChapter({ excerpt, date, onActive }: {
               background: PALETTE.red, flexShrink: 0,
             }} />
             <span style={{
-              fontFamily: TYPE.mono, fontSize: 'clamp(9px, 2.4vw, 9px)',
-              letterSpacing: '0.32em', color: PALETTE.red,
+              fontFamily: TYPE.mono, fontSize: 'clamp(8px, 2.4vw, 9px)',
+              letterSpacing: '0.22em', color: PALETTE.red,
               textTransform: 'uppercase', fontWeight: 700,
-              whiteSpace: 'nowrap',
             }}>
               Retained in model weights
             </span>

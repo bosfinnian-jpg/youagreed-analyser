@@ -86,7 +86,7 @@ function DoesDoesnt({ does, doesnt }: { does: string; doesnt: string }) {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
       gap: '1px',
       background: PALETTE.border,
       border: `1px solid ${PALETTE.border}`,
@@ -169,7 +169,7 @@ function ActionOptOut() {
             initial={{ opacity: 0, x: -8 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
-            style={{ display: 'grid', gridTemplateColumns: '110px 1fr auto', alignItems: 'center', gap: '1.5rem', padding: '1.1rem 1.4rem', background: PALETTE.bgPanel, textDecoration: 'none', color: 'inherit', transition: 'background 0.2s' }}
+            style={{ display: 'grid', gridTemplateColumns: 'minmax(80px,110px) 1fr auto', alignItems: 'center', gap: '1rem', padding: '1.1rem 1.4rem', background: PALETTE.bgPanel, textDecoration: 'none', color: 'inherit', transition: 'background 0.2s' }}
             onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgHover; }}
             onMouseLeave={e => { e.currentTarget.style.background = PALETTE.bgPanel; }}
           >
@@ -371,7 +371,7 @@ function ActionAlternatives() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={inView ? { opacity: 1, x: 0 } : {}}
                   transition={{ delay: 0.15 + ci * 0.1 + i * 0.08, duration: 0.5 }}
-                  style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: '1.5rem', alignItems: 'start', padding: '1.1rem 1.4rem', background: PALETTE.bgPanel, textDecoration: 'none', color: 'inherit', transition: 'background 0.2s' }}
+                  style={{ display: 'grid', gridTemplateColumns: 'minmax(80px,110px) 1fr', gap: '1rem', alignItems: 'start', padding: '1.1rem 1.4rem', background: PALETTE.bgPanel, textDecoration: 'none', color: 'inherit', transition: 'background 0.2s' }}
                   onMouseEnter={e => { e.currentTarget.style.background = PALETTE.bgHover; }}
                   onMouseLeave={e => { e.currentTarget.style.background = PALETTE.bgPanel; }}
                 >

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // Test enrich by calling Claude Haiku directly with a real enrich payload
 // (same logic as /api/enrich) — avoids the self-calling problem

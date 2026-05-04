@@ -119,7 +119,7 @@ function ChapterShell({
       className="chapter-snap"
       style={{
         height: 'calc(100dvh - 64px)',
-        paddingTop:    isFirst ? 'clamp(6rem, 12vh, 8rem)' : '0',
+        paddingTop:    isFirst ? 'clamp(2rem, 4vh, 3rem)' : '0',
         paddingBottom: '2rem',
         paddingLeft:   'clamp(1.5rem, 7vw, 6rem)',
         paddingRight:  'clamp(1.5rem, 7vw, 6rem)',
@@ -1089,8 +1089,7 @@ export default function OverviewPage({ results, sources, setPage }: {
       <ChapterDots active={active} chapters={CHAPTERS.filter(c => visibleChapters.includes(c.id))} />
 
       {connected < sources.length && (
-        <div style={{ position: 'fixed', top: `${NAV_H}px`, left: 0, right: 0, zIndex: 30, padding: '0.6rem clamp(1.5rem, 7vw, 6rem)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', background: 'rgba(238,236,229,0.95)', backdropFilter: 'blur(8px)', borderBottom: `1px solid ${PALETTE.border}`, flexWrap: 'wrap' }}>
-          <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>Analysis based on ChatGPT export only</p>
+        <div style={{ position: 'fixed', top: `${NAV_H}px`, right: 'clamp(1.5rem, 7vw, 6rem)', zIndex: 30, padding: '0.5rem 0' }}>
           <button onClick={() => setPage('sources')} style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.12em', textTransform: 'uppercase', color: PALETTE.inkMuted, background: 'none', border: `1px solid ${PALETTE.border}`, padding: '0.35rem 0.7rem', cursor: 'pointer', whiteSpace: 'nowrap' }}>
             Add more sources →
           </button>

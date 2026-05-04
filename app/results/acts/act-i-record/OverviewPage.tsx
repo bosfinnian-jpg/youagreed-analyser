@@ -119,7 +119,7 @@ function ChapterShell({
       className="chapter-snap"
       style={{
         height: 'calc(100dvh - 64px)',
-        paddingTop:    isFirst ? 'clamp(3.5rem, 8vh, 5rem)' : '0',
+        paddingTop:    isFirst ? 'clamp(6rem, 12vh, 8rem)' : '0',
         paddingBottom: '2rem',
         paddingLeft:   'clamp(1.5rem, 7vw, 6rem)',
         paddingRight:  'clamp(1.5rem, 7vw, 6rem)',

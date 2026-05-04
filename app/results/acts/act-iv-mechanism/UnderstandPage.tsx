@@ -1021,9 +1021,11 @@ function Module1({
   ];
 
   const handleNext = () => {
-    const next = step + 1;
-    setStep(next);
-    if (next >= steps.length) onComplete();
+    if (step >= steps.length - 1) {
+      onComplete();
+    } else {
+      setStep(step + 1);
+    }
   };
 
   return (
@@ -1032,7 +1034,7 @@ function Module1({
       title="What it learned about you."
       subtitle="Not from a questionnaire. From the way you write. Step through what was extracted."
       onAdvance={onAdvance}
-      canAdvance={step >= steps.length}
+      canAdvance={step >= steps.length - 1}
     >
       {/* Step navigator */}
       <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
@@ -1199,7 +1201,7 @@ function Module1({
           onMouseEnter={e => { e.currentTarget.style.background = C.text; e.currentTarget.style.color = C.bg; }}
           onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = C.text; }}
         >
-          {step < steps.length - 1 ? `Next: ${steps[step + 1].label} →` : 'See the full portrait →'}
+          {step < steps.length - 1 ? `Next: ${steps[step + 1].label} →` : 'Continue →'}
         </motion.button>
       )}
     </ModuleFrame>
@@ -1764,6 +1766,21 @@ function CompletionScreen({ setPage }: { setPage?: (p: string) => void }) {
               label: 'McDonald & Cranor (2008)',
               desc: 'The Cost of Reading Privacy Policies — estimated 76 work days per year to read every policy. I/S Journal 4(3):543–568.',
               url: 'https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf',
+            },
+            {
+              label: 'Solove (2006)',
+              desc: 'A Taxonomy of Privacy — sixteen privacy harms across collection, processing, dissemination, and invasion. The foundational taxonomy extended by Gumusel et al. to AI. U. Penn. Law Review 154(3):477–564.',
+              url: 'https://scholarship.law.gwu.edu/cgi/viewcontent.cgi?article=2074&context=faculty_publications',
+            },
+            {
+              label: 'Zuboff (2022)',
+              desc: 'Surveillance Capitalism or Democracy? — extends the two-stage extraction model to AI cognitive systems; identifies the shift from behavioural to cognitive surplus extraction. Organisation Theory 3(1).',
+              url: 'https://doi.org/10.1177/26317877221129290',
+            },
+            {
+              label: 'Italy Garante (2023)',
+              desc: 'Provisional measure against OpenAI — the first GDPR enforcement action against a generative AI system, citing unlawful basis for training data collection. March 2023.',
+              url: 'https://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/9870847',
             },
           ].map(r => (
             <a

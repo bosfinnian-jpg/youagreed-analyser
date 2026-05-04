@@ -48,7 +48,7 @@ async function callClaude(apiKey: string, messages: EnrichRequest['messages']): 
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 800,
+      max_tokens: 1200,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userContent }],
     }),
@@ -68,11 +68,15 @@ async function callClaude(apiKey: string, messages: EnrichRequest['messages']): 
     parsed = JSON.parse(cleaned);
   } catch {
     const match = cleaned.match(/\[[\s\S]*\]/);
-    if (match) parsed = JSON.parse(match[0]);
-    else throw new Error(`Failed to parse response: ${cleaned.substring(0, 200)}`);
+    if (match) {
+      try { parsed = JSON.parse(match[0]); } catch { return []; }
+    } else {
+      console.error('Enrich parse failed, raw:', cleaned.substring(0, 300));
+      return [];
+    }
   }
 
-  if (!Array.isArray(parsed)) throw new Error('Response was not an array');
+  if (!Array.isArray(parsed)) return [];
   return parsed;
 }
 

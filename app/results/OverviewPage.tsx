@@ -204,7 +204,7 @@ function ChapterShell({
       className={`chapter-snap chapter-shell${last ? ' chapter-last' : ''}`}
       style={{
         height: '100dvh',
-        padding: 'clamp(4rem,10vw,8rem) clamp(1.25rem,6vw,5rem) clamp(1.5rem,4vw,3rem)',
+        padding: 'clamp(3rem,7vw,5.5rem) clamp(1.25rem,6vw,5rem) clamp(2rem,5vw,4rem)',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-start',
@@ -279,7 +279,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
 }) {
   return (
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
-      <div style={{ marginBottom: '2.5rem' }}>
+      <div style={{ marginBottom: 'clamp(1rem,2.5vw,1.75rem)' }}>
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
         <ThreadSentence>You agreed to terms that permitted this. What follows is what those terms made possible.</ThreadSentence>
       </div>
@@ -289,7 +289,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
         style={{
           fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.32em',
           color: PALETTE.inkFaint, textTransform: 'uppercase',
-          marginBottom: '3rem',
+          marginBottom: 'clamp(1rem,2.5vw,1.75rem)',
         }}
       >
         Compiled · {date}
@@ -307,7 +307,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
           color: PALETTE.ink,
           letterSpacing: '-0.04em',
           lineHeight: 0.96,
-          marginBottom: 'clamp(1.5rem,5vw,2.5rem)',
+          marginBottom: 'clamp(1rem,3vw,1.75rem)',
         }}
       >
         The Record<br/>of You.
@@ -322,7 +322,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
           color: PALETTE.inkMuted,
           lineHeight: 1.72,
           maxWidth: '46ch',
-          marginBottom: 'clamp(2.5rem,8vw,4rem)',
+          marginBottom: 'clamp(1.25rem,4vw,2rem)',
         }}
       >
         What follows was inferred from your conversations.
@@ -334,7 +334,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
         transition={{ duration: 1, delay: 1.0 }}
         style={{
           fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em',
-          color: PALETTE.inkFaint, marginBottom: 'clamp(1.5rem,5vw,2.5rem)',
+          color: PALETTE.inkFaint, marginBottom: 'clamp(0.75rem,2vw,1.25rem)',
           opacity: 0.55,
         }}
       >
@@ -356,7 +356,7 @@ function ArrivalChapter({ name, date, onActive, setPage }: {
           color: PALETTE.inkFaint,
           lineHeight: 1.7,
           maxWidth: '46ch',
-          marginBottom: 'clamp(1.5rem,5vw,2.5rem)',
+          marginBottom: 'clamp(0.75rem,2vw,1.25rem)',
         }}
       >
         Consent mechanisms were designed for reversible data. AI training is not reversible. What follows is what that gap made possible.

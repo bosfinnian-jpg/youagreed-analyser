@@ -241,6 +241,8 @@ export async function runSynthesis(
       .replace(/```\s*$/i, '')
       .trim();
 
+    console.log('Synthesis fullText length:', fullText.length, 'cleaned preview:', cleaned.substring(0, 100));
+
     let parsed: any;
     try {
       parsed = JSON.parse(cleaned);
@@ -256,6 +258,7 @@ export async function runSynthesis(
 
     if (!parsed) return null;
 
+    console.log('Synthesis parsed OK:', Object.keys(parsed));
     return {
       ...parsed,
       generatedAt: Date.now(),

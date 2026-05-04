@@ -176,6 +176,7 @@ export default function UploadPage() {
 
       <main style={{
         minHeight: '100vh',
+        minHeight: '100dvh',
         background: COLOR.bg,
         color: COLOR.ink,
         fontFamily: SERIF,

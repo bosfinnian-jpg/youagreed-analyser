@@ -75,7 +75,7 @@ const ACTS = [
     roman: 'IV',
     title: 'The Mechanism',
     pages: [
-      { id: 'how-it-works' as DashPage, label: 'How It Works', short: '07', desc: 'Why the inference is permanent' },
+      { id: 'how-it-works' as DashPage, label: 'How It Works', short: '07', desc: 'Why the inference is effectively persistent' },
       { id: 'understand' as DashPage, label: 'Test', short: '08', desc: 'Watch the extraction happen live' },
     ],
   },
@@ -909,7 +909,7 @@ function Nav({ page, setPage, results, exposureScore }: {
 // ============================================================================
 const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: string; page: DashPage }>>> = {
   overview: [
-    { label: 'How it works', desc: 'Why the inference is permanent', page: 'how-it-works' },
+    { label: 'How it works', desc: 'Why the inference is effectively persistent', page: 'how-it-works' },
     { label: 'Test', desc: 'Watch the extraction live', page: 'understand' },
   ],
   profile: [

@@ -342,7 +342,7 @@ function CharacterSummarySection({ summary }: { summary: string }) {
         label="Intelligence briefing"
         heading="The subject, as the model sees them."
         headingSize="clamp(1.8rem, 4vw, 2.8rem)"
-        body="Written by an AI after reading your most revealing messages. A synthesis, not a quotation. Every claim is grounded in the evidence below. No questionnaire was completed. All of it is permanent."
+        body="Written by an AI after reading your most revealing messages. A synthesis, not a quotation. Every claim is grounded in the evidence below. No questionnaire was completed. None of this is easily reversed."
       />
 
       <div ref={ref} style={{
@@ -399,7 +399,7 @@ function CoreBeliefsSection({ beliefs }: { beliefs: string[] }) {
         label="Inferred core beliefs"
         heading="What your writing suggests you believe about yourself."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="None of these are statements you made. They are the beliefs the model infers from how you frame yourself, other people, and the world. Written in first person because that is how a belief presents."
+        body="None of these are statements you made. They are the beliefs the model infers from how you frame yourself, other people, and the world. Written in first person because that is how a belief presents. These are probabilistic interpretations, not verified conclusions."
       />
       <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {beliefs.map((belief, i) => (
@@ -979,7 +979,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           label="Inferred attributes"
           heading="What the system believes about you."
           headingSize="clamp(1.6rem, 3.5vw, 2.4rem)"
-          body="None of these were stated. All were inferred from patterns in your writing. Each row is sourced."
+          body="None of these were stated. All were inferred from patterns in your writing — probabilistic outputs, not verified facts. Each row is sourced."
         />
         {attrs.length === 0 ? (
           <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>
@@ -1098,7 +1098,7 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           navItems={[
             { page: 'commercial-profile', act: 'ACT II / 03', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },
             { page: 'risk',               act: 'ACT II / 04', label: 'What it enables',    body: 'The scenarios that become possible once this record exists.' },
-            { page: 'permanent',          act: 'ACT III / 05', label: 'Why it persists',   body: 'Why this profile cannot be removed — even if you delete your account.' },
+            { page: 'permanent',          act: 'ACT III / 05', label: 'Why it persists',   body: 'Why this profile is not easily removed — even if you delete your account.' },
           ]}
           endLabel="End of profile."
           setPage={setPage}

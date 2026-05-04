@@ -96,7 +96,7 @@ function CommercialTargetsSection({ targets }: { targets: any[] }) {
       <SectionHeader
         label="Advertisers who would target you"
         heading="The brands that would pay to reach this profile."
-        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data entered the broker ecosystem — through a breach, a policy change, or a data-sharing agreement — these are the advertisers whose algorithms would identify you as a high-value target."
+        body="These are real companies, named specifically. Each fits the inferred profile. If your behavioural data were to enter the broker ecosystem — through a breach, a policy change, or a data-sharing agreement — these are the advertisers whose algorithms would likely identify you as a high-value target."
       />
       <div style={{
         display: 'grid',
@@ -180,7 +180,7 @@ export default function CommercialProfilePage({ results, setPage }: {
         marginBottom: 'clamp(3rem, 6vw, 5rem)',
       }}>
         <ActLabel roman="II" title="The Inference" pageLabel="03 / Commercial Profile" />
-        <ThreadSentence>The product version of you — built without permission, priced without your knowledge.</ThreadSentence>
+        <ThreadSentence>A commercial reconstruction of you — assembled without full disclosure, valued without your knowledge.</ThreadSentence>
 
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
@@ -194,7 +194,7 @@ export default function CommercialProfilePage({ results, setPage }: {
             marginBottom: '1.5rem', maxWidth: '20ch',
           }}
         >
-          You are not the customer. You are the product.
+          You are not the customer. You are the data.
         </motion.h1>
 
         <motion.p
@@ -209,7 +209,7 @@ export default function CommercialProfilePage({ results, setPage }: {
         >
           OpenAI does not sell your data to advertisers — but your conversations
           helped train a model now worth hundreds of billions of dollars. That
-          contribution is permanent and cannot be undone. What follows is the
+          contribution is not easily undone. What follows is the
           commercial shape of what you gave away.
         </motion.p>
       </div>
@@ -280,7 +280,7 @@ export default function CommercialProfilePage({ results, setPage }: {
               fontFamily: TYPE.serif, fontSize: '0.95rem',
               color: PALETTE.inkMuted, lineHeight: 1.7, fontStyle: 'italic',
             }}>
-              This is the profile available if this data entered the broker ecosystem.
+              This is the profile that would be available if this data were to enter the broker ecosystem.
             </p>
           </motion.div>
         </div>
@@ -369,11 +369,11 @@ export default function CommercialProfilePage({ results, setPage }: {
       {/* Footer */}
       {setPage && (
         <PageFooter
-          statement="This is not your identity. This is a commercial reconstruction of your identity — assembled without your knowledge, retained without meaningful consent, and irrecoverable once embedded in a trained model."
+          statement="This is not your identity. This is a commercial reconstruction of your identity — assembled without meaningful disclosure, retained without informed consent, and not easily reversible once absorbed into a trained model."
           followOn="The difference between the two is what makes it valuable."
           navItems={[
             { page: 'risk',      act: 'ACT II / 04', label: 'What it enables',      body: 'The scenarios that become possible once this profile exists and data is exposed.' },
-            { page: 'permanent', act: 'ACT III / 05', label: 'Why it persists',     body: 'Why this profile cannot be removed — even if you delete your account.' },
+            { page: 'permanent', act: 'ACT III / 05', label: 'Why it persists',     body: 'Why this profile is not easily removed — even if you delete your account.' },
             { page: 'terms',     act: 'ACT III / 06', label: 'What you agreed to',  body: 'The terms that authorised this commercial extraction — and when they changed.' },
           ]}
           endLabel="End of commercial profile."

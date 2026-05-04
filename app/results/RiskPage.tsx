@@ -93,10 +93,10 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     title: 'An insurer could reconstruct your risk profile from data like this.',
     subtitle: sensitiveCount > 0
       ? `You made ${sensitiveCount} sensitive disclosure${sensitiveCount > 1 ? 's' : ''}${topCats.length > 0 ? '. Categories include: ' + topCats.join(', ') : ''}.`
-      : 'Your behavioural patterns alone are sufficient for risk modelling.',
+      : 'Your behavioural patterns may be sufficient for risk modelling without any direct disclosure.',
     body: anxietyScore > 3
-      ? `The analysis detected ${anxietyScore.toFixed(1)}/10 average anxiety signal intensity across your messages. Underwriting algorithms treat sustained anxiety indicators as a predictor of future claims (Gumusel et al., 2024). Combined with ${nightPct > 5 ? nightPct + '% late-night message volume — a secondary stress signal in behavioural actuarial models' : 'your disclosure frequency'}, this pattern would trigger elevated risk classification in automated systems.`
-      : `Even without direct mental health disclosures, usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers — but data brokers compile equivalent profiles from dozens of sources. If this data were ever exposed, it would fit directly into those systems. Insurers do not require a diagnosis. They require a pattern.`,
+      ? `The analysis detected ${anxietyScore.toFixed(1)}/10 average anxiety signal intensity across your messages. Some underwriting algorithms treat sustained anxiety indicators as a predictor of future claims (Gumusel et al., 2024). Combined with ${nightPct > 5 ? nightPct + '% late-night message volume — associated with stress signals in behavioural actuarial models' : 'your disclosure frequency'}, this pattern could trigger elevated risk classification in automated systems.`
+      : `Even without direct mental health disclosures, usage patterns ${depScore > 50 ? '(dependency score: ' + depScore + '/100) ' : ''}and topic distribution may provide sufficient signal for actuarial modelling. OpenAI does not share this with insurers — but data brokers compile equivalent profiles from dozens of sources. If this data were ever exposed, it could fit directly into those systems. Some insurers do not require a diagnosis. They require a pattern.`,
     dataPoints: [
       { label: 'Sensitive disclosures', value: String(sensitiveCount), alarming: sensitiveCount > 5 },
       { label: 'Anxiety indicator', value: anxietyScore > 0 ? anxietyScore.toFixed(1) + '/10' : 'Not scored', alarming: anxietyScore > 4 },
@@ -116,7 +116,7 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     subtitle: careerEvents.length > 0
       ? `${careerEvents.length} career-related life event${careerEvents.length > 1 ? 's' : ''} detected. AI screening tools flag this as instability.`
       : 'Your writing patterns are sufficient for personality inference. No interview required.',
-    body: `The corpus contains ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Dominant topic clusters (' + themes.join(', ') + ') ' : 'Topic distribution '}constitute a text-derived personality signature. Companies including Humantic AI claim 78–85% accuracy in personality profiling from language patterns alone (Hickman et al., 2022). ${anxietyScore > 3 ? 'Detected anxiety signal intensity (avg ' + anxietyScore.toFixed(1) + '/10) falls within the range that screening models classify as emotional volatility.' : 'Message volume and consistency patterns are sufficient for work-habit inference without any mental health signal.'}${depScore > 60 ? ' Dependency score (' + depScore + '/100) indicates high-frequency tool engagement — flagged as compulsive usage in some productivity screening systems.' : ''}`,
+    body: `The corpus contains ${totalMsgs.toLocaleString('en-GB')} messages over ${r.timespan?.days || '?'} days. ${themes.length > 0 ? 'Dominant topic clusters (' + themes.join(', ') + ') ' : 'Topic distribution '}may constitute a text-derived personality signature of the kind targeted by commercial screening tools. Companies including Humantic AI claim 78–85% accuracy in personality profiling from language patterns alone (Hickman et al., 2022). ${anxietyScore > 3 ? 'Detected anxiety signal intensity (avg ' + anxietyScore.toFixed(1) + '/10) falls within the range that some screening models associate with emotional volatility.' : 'Message volume and consistency patterns can be sufficient for work-habit inference even without direct mental health signal.'}${depScore > 60 ? ' Dependency score (' + depScore + '/100) indicates high-frequency tool engagement — a pattern some productivity screening systems flag.' : ''}`,
     dataPoints: [
       { label: 'Messages analysed', value: totalMsgs.toLocaleString('en-GB'), alarming: totalMsgs > 2000 },
       { label: 'Career events', value: String(careerEvents.length), alarming: careerEvents.length > 0 },
@@ -131,11 +131,11 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     id: 'targeting',
     severity: targetRelevance > 25 ? 'critical' : targetRelevance > 10 ? 'high' : 'medium',
     relevance: targetRelevance,
-    title: `Your conversations map onto ${segments.length || 'multiple'} data broker category${segments.length === 1 ? '' : 'ies'}. If exposed, this profile is immediately usable.`,
+    title: `Your conversations map onto ${segments.length || 'multiple'} data broker category${segments.length === 1 ? '' : 'ies'}. If exposed, this profile could be usable immediately.`,
     subtitle: segments.length > 0
       ? `Categories: ${segments.slice(0, 3).map(s => s.label.replace(/_/g, ' ')).join(', ')}${segments.length > 3 ? ' (+' + (segments.length - 3) + ' more)' : ''}.`
       : 'Behavioural patterns alone are sufficient for vulnerability classification.',
-    body: `${nightPct > 5 ? nightPct + '% of messages were sent between midnight and 5am. Behavioural data from these windows contains the highest concentration of sensitive disclosure — a documented pattern in conversational AI research (Gumusel et al., 2024). ' : ''}OpenAI does not sell conversation data to advertisers. But the patterns these messages contain — vulnerability signals, life circumstances, emotional disclosure frequency — map directly onto categories that data brokers trade. A breach, a legal order, or a policy change would transfer this profile into systems where it has an immediate market value. The data exists. That is the risk.`,
+    body: `${nightPct > 5 ? nightPct + '% of messages were sent between midnight and 5am — windows often associated with lower barriers to disclosure, a pattern noted in conversational AI research (Gumusel et al., 2024). ' : ''}OpenAI does not sell conversation data to advertisers. But the patterns these messages contain — vulnerability signals, life circumstances, emotional disclosure frequency — map onto categories that data brokers trade in. A breach, a legal order, or a policy change could expose this profile into systems where it would have immediate market value. The data exists. That is the structural risk.`,
     dataPoints: [
       { label: 'Assigned segments', value: String(segments.length), alarming: segments.length > 3 },
       { label: 'Vulnerability window', value: nightPct > 5 ? `00:00–05:00 (${nightPct}%)` : 'Not detected', alarming: nightPct > 10 },
@@ -151,8 +151,8 @@ function generateScenarios(r: AnalysisResult): RiskScenario[] {
     severity: breachRelevance > 30 ? 'critical' : breachRelevance > 15 ? 'high' : 'medium',
     relevance: breachRelevance,
     title: 'None of this requires intent. One breach is enough.',
-    subtitle: `Your profile contains ${nameCount} named individual${nameCount === 1 ? '' : 's'}, ${locCount} location${locCount === 1 ? '' : 's'}, and ${sensitiveCount} sensitive disclosure${sensitiveCount === 1 ? '' : 's'}. All would be exposed.`,
-    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure — none of which can be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named are also exposed. Their records are now linked to yours. ' : ''}${r.privacyScore >= 60 ? 'Your exposure index (' + r.privacyScore + '/100) places you in the highest-risk category for identity reconstruction from leaked behavioural data.' : 'Even partial exposure of your behavioural patterns is sufficient for re-identification.'}`,
+    subtitle: `Your profile contains ${nameCount} named individual${nameCount === 1 ? '' : 's'}, ${locCount} location${locCount === 1 ? '' : 's'}, and ${sensitiveCount} sensitive disclosure${sensitiveCount === 1 ? '' : 's'}. All could be exposed.`,
+    body: `A breach does not release a file with your name at the top. It releases a behavioural signature, a location history, a social graph, and a pattern of emotional disclosure — none of which can easily be changed after exposure. ${nameCount > 0 ? 'The ' + nameCount + ' people you named could also be implicated. Their information appears alongside yours.' : ''}${r.privacyScore >= 60 ? ' Your exposure index (' + r.privacyScore + '/100) places this profile in a high-risk category for identity reconstruction from leaked behavioural data.' : ' Even partial exposure of your behavioural patterns may be sufficient for re-identification.'}`,
     dataPoints: [
       { label: 'Exposure index', value: r.privacyScore + '/100', alarming: r.privacyScore >= 60 },
       { label: 'People exposed', value: String(nameCount), alarming: nameCount > 0 },
@@ -520,7 +520,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
         color: PALETTE.inkMuted, lineHeight: 1.75,
         maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
       }}>
-        OpenAI does not sell your data. But every time you load a webpage, your behavioural profile — built from sources across the internet — enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, would slot directly into that system. This is what that would look like.
+        OpenAI does not sell your data. But every time you load a webpage, your behavioural profile — built from sources across the internet — enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, could slot directly into that system. This is what that would look like.
       </p>
 
       {/* Lot card */}
@@ -631,7 +631,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
                 <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.3rem, 2.5vw, 1.7rem)', color: PALETTE.ink, marginBottom: '0.3rem' }}>{winner.buyer}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '1.2rem', color: PALETTE.red, letterSpacing: '0.02em', marginBottom: '0.8rem' }}>£{winner.amount.toFixed(4)}</p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em', color: PALETTE.inkFaint, lineHeight: 1.65 }}>
-                  In the real-time bidding ecosystem, a winner receives: a behavioural profile, vulnerability classifications, a targeting window{homeLoc ? `, and an approximate location (${homeLoc.location})` : ''}. OpenAI does not participate in this system. But a profile like yours — if exposed — would be immediately usable within it. You would not be notified.
+                  In the real-time bidding ecosystem, a winner receives: a behavioural profile, vulnerability classifications, a targeting window{homeLoc ? `, and an approximate location (${homeLoc.location})` : ''}. OpenAI does not participate in this system. But a profile like yours — if exposed — could be usable within it almost immediately. You would not be notified.
                 </p>
               </motion.div>
             )}
@@ -889,7 +889,7 @@ function BreachTimeline() {
         lineHeight: 1.7, maxWidth: 560, marginTop: '1.75rem',
         fontStyle: 'italic', borderLeft: `2px solid ${PALETTE.border}`, paddingLeft: '1rem',
       }}>
-        The question is not whether a breach will expose AI conversation data. It is which breach, and when. Your conversations exist on servers. Servers get breached. The pattern is consistent.
+      The question is not whether a breach could expose AI conversation data. It is which breach, and when. Your conversations exist on servers. Servers can be breached. The pattern, historically, is consistent.
       </p>
     </motion.div>
   );
@@ -986,7 +986,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
             maxWidth: 600, marginBottom: '1.5rem',
           }}
         >
-          These systems are operational today.
+          Such systems exist today.
         </motion.h1>
 
         <motion.p
@@ -1024,10 +1024,10 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
 
       {/* CLOSING */}
       <PageFooter
-        statement="These scenarios are grounded in documented practice. The systems are operational, legal, and commercially incentivised."
-        followOn="These scenarios assume the record leaves the system. The prior question is whether it can ever be fully removed. It cannot, even by those who hold it."
+        statement="These scenarios are grounded in documented practice. Such systems exist, operate legally, and are commercially incentivised."
+        followOn="These scenarios assume the record leaves the system. The prior question is whether it can ever be fully removed. Current evidence suggests it cannot — even by those who hold it."
         navItems={[
-          { page: 'permanent', act: 'ACT III / 05', label: 'Why it cannot be removed', body: 'Gradient descent has no reverse function. Deletion removes your account. It does not remove what the model learned.' },
+          { page: 'permanent', act: 'ACT III / 05', label: 'Why it is not easily removed', body: 'Gradient descent has no simple reverse function. Deletion removes your account. It does not straightforwardly remove what the model may have learned.' },
           { page: 'terms',     act: 'ACT III / 06', label: 'What you agreed to',       body: 'The terms that authorised this — and how they changed after you signed.' },
           { page: 'understand', act: 'ACT IV / 08', label: 'How inference works',      body: 'Watch the extraction happen on your own words.' },
         ]}

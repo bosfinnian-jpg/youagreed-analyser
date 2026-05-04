@@ -666,10 +666,10 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           letterSpacing: '-0.025em', lineHeight: 1.2,
           marginBottom: '1rem', maxWidth: 680,
         }}>
-          You, as a commercial product.
+          You, as a commercial data asset.
         </h2>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580 }}>
-          OpenAI does not sell your data to advertisers. The real problem is different: your conversations helped train a model worth hundreds of billions of dollars, and that contribution cannot be undone. What follows shows the patterns your data contains — and what would be exposed if that data were ever compromised.
+          OpenAI does not sell your data to advertisers. The real problem is different: your conversations helped train a model worth hundreds of billions of dollars, and that contribution is not straightforwardly reversible. What follows shows the patterns your data contains — and what could be exposed if that data were ever compromised.
         </p>
       </div>
 

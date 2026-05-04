@@ -750,7 +750,7 @@ function DeletionCarveOut({ isInView }: { isInView: boolean }) {
           },
           {
             label: 'What it actually says',
-            text: 'Unless that data has already been used to train a model — in which case, the deletion right does not apply. The 30-day promise has an exception that swallows the rule.',
+            text: 'Unless that data has already been used to train a model — in which case, the deletion right does not apply. The 30-day promise has an exception that substantially qualifies the rule.',
             color: PALETTE.ink,
             isHighlight: true,
           },
@@ -809,7 +809,7 @@ function ConsentFailure({ isInView }: { isInView: boolean }) {
       source: 'OpenAI ToS, 2023',
       claim: 'Updated itself without asking',
       stat: '"Continued use = acceptance"',
-      text: 'This sentence appears in the 2023 Terms of Service. It means OpenAI could — and did — add advertising, contact list upload, and a deletion carve-out to its policy without re-asking you. Continued use was treated as a new signature. You were opted in by inertia.',
+      text: 'This sentence appears in the 2023 Terms of Service. It means OpenAI could — and did — add advertising, contact list upload, and a deletion carve-out to its policy without re-asking you. Continued use was treated as a new signature. You were, by the logic of the terms, opted in through inaction.',
     },
     {
       num: '04',
@@ -978,7 +978,7 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
             color: PALETTE.ink, lineHeight: 1.7, maxWidth: '68ch',
           }}>
             When OpenAI changes its policy, your continued use is treated as fresh consent. 
-            But you were not shown the changes. You were not asked to accept them. You were opted in by inertia.
+            But you were not shown the changes. You were not asked to accept them. Under the terms as written, continued use was sufficient.
           </p>
         </div>
 
@@ -1025,7 +1025,7 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
             color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: '68ch',
             fontStyle: 'italic',
           }}>
-            That data is not just stored. It was learned from. And what a model has learned, it cannot unlearn.
+            That data is not just stored. It was learned from. And what a model has learned, it cannot currently unlearn.
           </p>
         </div>
       </div>
@@ -1034,7 +1034,7 @@ function ClosingArgument({ isInView, setPage }: { isInView: boolean; setPage: (p
         statement="What you consented to in 2023 is not what the policy says today. The document changed around you. You were not asked again."
         followOn="The terms describe what was taken. What you can do about it is next."
         navItems={[
-          { page: 'permanent',   act: 'ACT III / 05', label: 'Why it persists',   body: 'The data cannot be removed once embedded in model weights.' },
+          { page: 'permanent',   act: 'ACT III / 05', label: 'Why it persists',   body: 'Why data is not easily removed once absorbed into model weights.' },
           { page: 'how-it-works',act: 'ACT IV / 07',  label: 'How it works',      body: 'Why gradient descent makes erasure technically impossible.' },
           { page: 'resist',      act: 'ACT V / 09',   label: 'What you can do',   body: 'Three actions that limit what happens from this point forward.' },
         ]}
@@ -1194,7 +1194,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
         >
           OpenAI's privacy policy has been updated three times since ChatGPT launched. Each update 
           expanded what is collected, who it is shared with, and what happens when you try to delete it. 
-          You consented to the first version. You were opted into the rest.
+          You agreed to the first version. Continued use was treated as acceptance of the rest.
         </motion.p>
       </div>
 

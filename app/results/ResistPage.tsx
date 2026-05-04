@@ -188,7 +188,7 @@ function ActionOptOut() {
 
       <DoesDoesnt
         does="Stop your future conversations from being used as training data."
-        doesnt="Remove what the model already learned from your previous conversations. That data is in the weights. It cannot be located or extracted."
+        doesnt="Remove what the model already learned from your previous conversations. Whatever influence that data had is distributed across weights — it cannot currently be located or individually extracted."
       />
     </motion.section>
   );
@@ -294,7 +294,7 @@ function ActionSAR({ analysis }: { analysis: DeepAnalysis }) {
         </p>
         <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: '64ch' }}>
           OpenAI will send a data export and respond to the erasure request.
-          They will almost certainly confirm that data used in model training cannot be individually
+          They are likely to confirm that data used in model training cannot be individually
           removed — this is the technical reality this tool documents. The value of the letter
           is not retrieval. It is forcing them to state the limitation in writing.
         </p>
@@ -417,7 +417,7 @@ function Closing({ messageCount, days, setPage }: { messageCount: number; days: 
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.4rem)', color: PALETTE.inkMuted, lineHeight: 1.8, marginBottom: '1.25rem' }}>
         {messageCount > 0
           ? `${messageCount.toLocaleString()} messages over ${days} days are already inside the model. None of the actions above change that.`
-          : 'The data already inside the model cannot be removed. None of the actions above change that.'}
+          : 'Whatever influence your data had on trained weights is not currently retrievable. None of the actions above change that.'}
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.75vw, 1.2rem)', color: PALETTE.inkGhost, lineHeight: 1.8 }}>
         What they change is what happens next. That is still a choice you have.

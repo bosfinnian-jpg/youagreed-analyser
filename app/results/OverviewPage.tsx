@@ -280,7 +280,7 @@ function ArrivalChapter({ name, date, onActive }: {
     <ChapterShell id="arrival" label="File 01" onActive={onActive}>
       <div style={{ marginBottom: '2.5rem' }}>
         <ActLabel roman="I" title="The Record" pageLabel="01 / Overview" />
-        <ThreadSentence>You agreed to terms that permitted this. What follows is what those terms extracted.</ThreadSentence>
+        <ThreadSentence>You agreed to terms that permitted this. What follows is what those terms made possible.</ThreadSentence>
       </div>
       <motion.p
         initial={{ opacity: 0 }} animate={{ opacity: 1 }}
@@ -325,7 +325,7 @@ function ArrivalChapter({ name, date, onActive }: {
         }}
       >
         What follows was inferred from your conversations.
-        Each item is permanent. None of it can be returned.
+        Each item is effectively persistent. Most of it cannot currently be returned.
       </motion.p>
 
       <motion.div
@@ -494,9 +494,9 @@ function VolumeChapter({ count, days, dayHourMatrix, onActive }: {
             lineHeight: 1.78,
             maxWidth: '44ch',
           }}>
-            Each one a permanent record. OpenAI's Privacy Policy permits use
-            of conversation content to improve its models — no version specifies
-            which conversations were used, or when.
+            Each one a record of unknown persistence. OpenAI's Privacy Policy permits use
+            of conversation content to improve its models — no public version specifies
+            which conversations may have been used, or when.
           </p>
           <p style={{
             fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
@@ -885,7 +885,7 @@ function DisclosureChapter({ excerpt, date, onActive }: {
           lineHeight: 1.78,
           maxWidth: '50ch',
         }}>
-          It was processed, classified, and used to weight a model.
+          It was processed, classified, and — under OpenAI's training policy — may have been used to adjust model weights.
           OpenAI's April 2026 Privacy Policy contains an explicit carve-out:
           data already used in model training is exempt from the right to deletion.
         </p>
@@ -1539,9 +1539,9 @@ function PermanenceChapter({ onActive }: { onActive: (id: ChapterId) => void }) 
             }}>
               OpenAI's April 2026 Privacy Policy explicitly exempts training data
               from the right to deletion. Deleting your account removes your data
-              from OpenAI's servers. It does not remove your contribution from the
-              model's weights. Those are different operations — and only one of
-              them is covered by the terms you accepted.
+              from OpenAI's servers. It does not straightforwardly remove your contribution from the
+              model's weights — those are different operations, and the latter
+              remains an unsolved problem in machine learning research.
             </p>
             <p style={{
               fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.15em',
@@ -1569,13 +1569,13 @@ function ContinueChapter({ setPage }: { setPage: (p: DashPage) => void }) {
     }}>
       <PageFooter
         statement="What you have seen is a record assembled from conversations you believed were private. The data was not taken — it was given, under terms designed to obscure what giving it meant."
-        followOn="The record exists. It cannot be closed."
+        followOn="The record exists. It is not easily closed."
         endLabel="End of Act I."
         setPage={setPage}
         navItems={[
           { page: 'profile', act: 'Act II / 03', label: 'What you are worth', body: 'The commercial valuation of this profile — segments, pricing, and market position.' },
           { page: 'risk',    act: 'Act II / 04', label: 'What it enables',    body: 'The scenarios that become possible once this record exists.' },
-          { page: 'terms',   act: 'Act III / 05', label: 'Why it persists',   body: 'Why this profile cannot be removed — even if you delete your account.' },
+          { page: 'terms',   act: 'Act III / 05', label: 'Why it persists',   body: 'Why this profile is not easily removed — even if you delete your account.' },
         ]}
       />
     </div>

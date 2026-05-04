@@ -199,7 +199,7 @@ const TRAINING_STEPS: {
   {
     n: '04', title: 'The sentence disappears',
     body: 'The original text is not stored anywhere. There is no file, no record, no copy. What remains is the adjustment — invisibly distributed across billions of numbers.',
-    example: '"I\'ve been feeling really anxious..." → gone. The weight changes → permanent.',
+    example: '"I\'ve been feeling really anxious..." → gone. The weight changes → distributed, persistent.',
     color: C.unlearn, exampleColor: C.unlearn, netPhase: 'done',
   },
 ];
@@ -242,7 +242,7 @@ function TrainingStepExplainer() {
             {step.netPhase === 'idle'     && 'Awaiting input'}
             {step.netPhase === 'input'    && 'Input received — entering network'}
             {step.netPhase === 'forward'  && 'Forward pass — signal propagating layer by layer'}
-            {step.netPhase === 'gradient' && 'Gradient descent — weights adjusting permanently'}
+            {step.netPhase === 'gradient' && 'Gradient descent — weights adjusting without discrete record'}
             {step.netPhase === 'done'     && 'Input gone. Adjustments remain.'}
           </motion.p>
         </AnimatePresence>
@@ -406,10 +406,10 @@ function MachineUnlearningDemo() {
             <div style={{ border: `1px solid ${C.unlearn.base}`, background: C.unlearn.faint, padding: 'clamp(1rem, 2.5vw, 1.5rem)', marginBottom: '1rem' }}>
               <p style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.25em', color: C.unlearn.base, textTransform: 'uppercase', marginBottom: '0.6rem' }}>Deletion attempt failed</p>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.7vw, 1.15rem)', color: PALETTE.ink, lineHeight: 1.7, marginBottom: '0.75rem' }}>
-                The influence is distributed across <strong>{CONTAMINATED.size} non-contiguous parameter clusters</strong>. There is no clean boundary to cut around. You cannot remove what was never discretely inserted.
+                The influence is distributed across <strong>{CONTAMINATED.size} non-contiguous parameter clusters</strong>. There is no clean boundary to cut around. You cannot straightforwardly remove what was never discretely inserted.
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.9rem, 1.5vw, 1rem)', color: PALETTE.inkMuted, lineHeight: 1.65, fontStyle: 'italic' }}>
-                Approximate unlearning methods exist — but they degrade the model unpredictably and cannot provide the legal guarantees that deletion requires. The only alternative is retraining from scratch.
+                Approximate unlearning methods exist — but they degrade model performance unpredictably and cannot currently provide the guarantees legal deletion requires. The practical alternative is retraining from scratch.
               </p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1px', background: PALETTE.border }}>
@@ -527,7 +527,7 @@ function GdprGapDiagram() {
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} style={{ border: `1px solid ${C.unlearn.base}`, background: C.unlearn.faint, padding: 'clamp(1rem, 2.5vw, 1.5rem)', marginBottom: '1.5rem' }}>
             <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.unlearn.base, textTransform: 'uppercase', marginBottom: '0.6rem' }}>Structural gap — the finding</p>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: 600 }}>
-              Cookie consent was designed for reversible behavioural tracking. AI training is irreversible by architecture. The right to erasure — GDPR Article 17 — cannot be fulfilled for training data, because there is nothing discrete left to erase. This is not a policy failure. It is an architectural one.
+              Cookie consent was designed for reversible behavioural tracking. AI training is not practically reversible in the same sense. The right to erasure — GDPR Article 17 — is difficult to fulfil for training data, because there is nothing discrete left to erase. This is not simply a policy failure. It is an architectural one.
             </p>
           </motion.div>
         )}
@@ -603,8 +603,8 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
         </motion.h1>
         <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.5, duration: 0.7 }}>
           <ThreadSentence>
-            Consent was designed for reversible systems. AI training is not reversible.
-            That gap is not a policy failure. It is an architectural one.
+            Consent was designed for reversible systems. AI training is not practically reversible in the same sense.
+            That gap is not simply a policy failure. It is an architectural one.
           </ThreadSentence>
         </motion.div>
 
@@ -627,9 +627,9 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
       <PageSection
         number="Section 1 — The mechanism"
         title="How training works"
-        body="A sentence you type does not get filed somewhere. It dissolves. The model adjusts its billions of parameters in response to your input — and then the input is gone. Click through the steps below to see exactly how."
+        body="A sentence you type does not get filed somewhere. It is absorbed. The model adjusts its parameters in response to your input — and then the input is gone. Click through the steps below to see how."
         accent={C.training}
-        finding="Training does not store what it learns from. It converts data into weight adjustments across billions of parameters. The original data cannot be located — so it cannot be removed."
+        finding="Training does not store what it learns from in a discrete, locatable form. It converts data into weight adjustments across billions of parameters. The original data cannot be straightforwardly located — so it cannot easily be removed."
       >
         <TrainingStepExplainer />
       </PageSection>
@@ -637,9 +637,9 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
       <PageSection
         number="Section 2 — The impossibility"
         title="Why machine unlearning doesn't work"
-        body="When you request deletion under GDPR Article 17, the assumption is that a record exists, can be located, and can be removed. For AI training data, all three assumptions are wrong."
+        body="When you request deletion under GDPR Article 17, the assumption is that a record exists, can be located, and can be removed. For AI training data, all three assumptions are difficult to satisfy."
         accent={C.unlearn}
-        finding="Machine unlearning research exists. But even its proponents acknowledge it cannot provide the guarantees legal deletion requires. Approximate methods degrade model performance unpredictably. True deletion requires retraining from scratch — at a cost that makes compliance structurally impossible within GDPR's 30-day window."
+        finding="Machine unlearning research exists. But even its proponents acknowledge it cannot currently provide the guarantees legal deletion requires. Approximate methods degrade model performance unpredictably. Thorough deletion requires retraining from scratch — at a cost that makes compliance structurally impractical within GDPR's 30-day window."
       >
         <MachineUnlearningDemo />
       </PageSection>
@@ -667,10 +667,10 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
       </div>
 
       <PageFooter
-        statement="Cookie consent was designed for reversible systems. AI training is not reversible. That gap is not a policy failure. It is an architectural one."
-        followOn="The architecture makes the consent framework inapplicable. The terms you agreed to did not describe a system this page explains."
+        statement="Cookie consent was designed for reversible systems. AI training is not practically reversible in the same sense. That gap is not simply a policy failure. It is an architectural one."
+        followOn="The architecture makes the consent framework difficult to apply. The terms you agreed to did not describe a system this page explains."
         navItems={[
-          { page: 'permanent',  act: 'ACT III / 05', label: 'Why deletion fails', body: 'What this architecture means for your right to erasure — and why it cannot be fulfilled.' },
+          { page: 'permanent',  act: 'ACT III / 05', label: 'Why deletion fails', body: 'What this architecture means for your right to erasure — and why it is not straightforwardly fulfillable.' },
           { page: 'terms',      act: 'ACT III / 06', label: 'What you agreed to', body: 'The terms that authorised training on your data — and how they changed.' },
           { page: 'understand', act: 'ACT IV / 08',  label: 'Test the inference',  body: 'Watch the extraction happen in real time on your own words.' },
         ]}

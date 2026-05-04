@@ -168,7 +168,7 @@ function WhatWeightsAre({ setPage }: { setPage: (p: string) => void }) {
       <SectionLabel color={C.weight.base}>What "in the weights" means</SectionLabel>
 
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.1rem, 2vw, 1.3rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: 'clamp(1.5rem, 3vw, 2rem)' }}>
-        Your data did not go into a box. It dissolved into the mathematics of the system. There is no row to delete. Your influence is distributed across every parameter — everywhere and nowhere simultaneously.
+        Your data did not go into a box. It was absorbed into the mathematics of the system. There is no discrete row to delete. Whatever influence it had is distributed across parameters — diffuse, non-localisable, structurally non-withdrawable.
       </p>
 
       {/* Grid with sentence that dissolves in — text is above, never overlapping */}
@@ -248,7 +248,7 @@ function MachineUnlearning() {
       tag: 'Provably incomplete',
       tagColor: C.weight,
       body: 'Use algorithmic shortcuts to simulate the effect of retraining without actually retraining. Fast, cheap, and available — but fundamentally limited.',
-      detail: 'Cooper et al. (2024, NeurIPS) demonstrate that approximate unlearning methods cannot provide the guarantees legal deletion requires. They may reduce influence — but they cannot eliminate it. The model retains traces that no audit can rule out.',
+      detail: 'Cooper et al. (2024, NeurIPS) demonstrate that approximate unlearning methods cannot currently provide the guarantees legal deletion requires. They may reduce influence — but they cannot reliably eliminate it. The model may retain traces that no current audit method can rule out.',
       verdict: 'Implemented by some systems. Cannot satisfy GDPR Art.17.',
     },
   ];
@@ -305,7 +305,7 @@ function MachineUnlearning() {
       {/* Cooper pullquote — single clean block, no double lines */}
       <div style={{ borderLeft: `3px solid ${C.weight.base}`, background: C.weight.faint, padding: 'clamp(1rem, 2.5vw, 1.5rem)', paddingLeft: 'clamp(1.25rem, 3vw, 2rem)' }}>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.75, marginBottom: '0.75rem' }}>
-          "Removing information from a model's training data does not guarantee the model cannot reproduce or reflect that information. There is no production system, at this scale, that implements unlearning."
+          "Removing information from a model's training data does not guarantee the model cannot reproduce or reflect that information. There is no known production system, at this scale, that currently implements full unlearning."
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
           Cooper et al., NeurIPS 2024 — Machine Unlearning Doesn't Do What You Think (arXiv:2412.06966)
@@ -392,14 +392,14 @@ function LegalGap() {
     {
       right: 'Right to know your data is processed (Art. 13)',
       openai: 'Privacy Policy disclosure that data may be used for training',
-      gap: 'Disclosure does not explain: permanent embedding in weights; impossibility of removal; inability to quantify your contribution.',
+      gap: 'Disclosure does not explain: effective embedding in weights; the practical difficulty of removal; the inability to quantify individual contribution.',
       detail: "Nissenbaum's transparency paradox: a policy short enough to read cannot be detailed enough to be meaningful. A policy detailed enough to be meaningful cannot be read.",
     },
     {
       right: 'Right to object to processing (Art. 21)',
       openai: 'Opt-out toggle in settings for future training',
       gap: 'Opt-out applies to new conversations only. Data already used for training is already embedded. There is no retroactive opt-out.',
-      detail: 'The opt-out toggle was introduced in response to the Italian Garante ban in 2023. It does not and cannot reach data already embedded in trained weights.',
+      detail: 'The opt-out toggle was introduced in response to the Italian Garante ban in 2023. It does not and cannot straightforwardly reach data already absorbed into trained weights.',
     },
   ];
 
@@ -493,8 +493,8 @@ function YourDataSpecifically({ analysis }: { analysis: DeepAnalysis | null }) {
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
         {[
-          { num: '01', text: 'You cannot request the removal of your data from trained model weights. OpenAI cannot technically fulfil such a request even if they wanted to.' },
-          { num: '02', text: 'You cannot know what specifically your conversations contributed. The contribution is distributed. It cannot be quantified or localised.' },
+          { num: '01', text: 'No current mechanism exists to request the removal of your data from trained model weights. OpenAI cannot straightforwardly fulfil such a request — not by policy alone, but by the current limits of machine learning science.' },
+          { num: '02', text: 'You cannot know what specifically your conversations contributed. The contribution is diffuse. It cannot currently be quantified or localised.' },
           { num: '03', text: 'The model that learned from your conversations will continue operating for the foreseeable future. Your influence outlasts your account.' },
         ].map((fact, i) => (
           <motion.div key={i} initial={{ opacity: 0, x: -8 }} animate={isInView ? { opacity: 1, x: 0 } : {}} transition={{ delay: 0.3 + i * 0.1 }}
@@ -545,7 +545,7 @@ export default function CannotBeDeletedPage({ results, setPage }: { results: any
               </span>
               <div>
                 <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase', display: 'block' }}>messages</span>
-                <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.red, textTransform: 'uppercase', display: 'block', marginTop: '3px' }}>all permanent</span>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.18em', color: PALETTE.red, textTransform: 'uppercase', display: 'block', marginTop: '3px' }}>effectively persistent</span>
               </div>
             </div>
           ) : (
@@ -558,7 +558,7 @@ export default function CannotBeDeletedPage({ results, setPage }: { results: any
 
         <motion.p initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.55, duration: 0.8 }}
           style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.35rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: 580 }}>
-          Not because OpenAI refuses to act. Because gradient descent has no reverse function. Deleting your account removes your conversations from your account view. It does not remove your contribution from the model's weights. One is a database query. The other is an unsolved problem in machine learning research.
+          Not because OpenAI refuses to act. Because gradient descent has no straightforward reverse function. Deleting your account removes your conversations from your account view. It does not remove your contribution from the model's weights. One is a database query. The other is an unsolved problem in machine learning research.
         </motion.p>
       </motion.div>
 
@@ -571,13 +571,13 @@ export default function CannotBeDeletedPage({ results, setPage }: { results: any
       <YourDataSpecifically analysis={results} />
 
       <PageFooter
-        statement="You can delete your conversations. You cannot delete what they taught."
+        statement="You can delete your conversations. You cannot easily delete what they may have taught."
         followOn="This is not a policy failure. It is a consequence of how the technology works. The question that remains is whether the terms you agreed to were ever genuinely legible."
         navItems={[
           { page: 'terms',        act: 'ACT III / 06', label: 'What you agreed to',      body: 'The terms that made this legal. Parsed against what they actually permit.' },
           { page: 'resist',       act: 'ACT V / 09',   label: 'What you can do',         body: 'Three actions that limit what happens from this point forward.' },
           { page: 'understand',   act: 'ACT IV / 08',  label: 'How the inference works', body: 'The methodology behind how your patterns were extracted and classified.' },
-          { page: 'how-it-works', act: 'ACT IV / 07',  label: 'Why deletion fails',      body: 'The architecture that makes reversal impossible.' },
+          { page: 'how-it-works', act: 'ACT IV / 07',  label: 'Why deletion fails',      body: 'The architecture that makes reversal practically impossible.' },
         ]}
         endLabel="End of permanence record."
         setPage={setPage}

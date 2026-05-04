@@ -71,7 +71,7 @@ function getBand(score: number) {
 const CATEGORY_META: Record<string, { label: string; description: string }> = {
   disclosure: {
     label: 'Disclosure',
-    description: 'Direct personal information you provided — life events, confessions, named individuals. The highest-weight category because content is specific, irrecoverable, and commercially valuable.',
+    description: 'Direct personal information you provided — life events, confessions, named individuals. The highest-weight category because content is specific, difficult to trace, and commercially valuable.',
   },
   behavioural: {
     label: 'Behavioural',

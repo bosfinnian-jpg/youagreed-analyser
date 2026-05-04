@@ -61,10 +61,7 @@ function TrainingValueHero({ sensitivityIndex, isInView }: { sensitivityIndex: n
         </span>
       </div>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 560 }}>
-        OpenAI’s valuation in 2025. That product could not exist without data like yours — contributed without payment, and without the ability to remove your contribution. You cannot opt out retroactively. You cannot be compensated. The data is inside the weights now.
-      </p>
-      <p style={{ fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.12em', color: PALETTE.inkFaint, marginTop: '1rem', lineHeight: 1.6 }}>
-        Note: OpenAI does not sell your conversation data to advertisers. The risk is different — it is irreversibility, breach exposure, and the use of your disclosures to train commercial AI products.
+        <a href="https://www.ft.com/content/81ac4f0b-3d9f-4699-9a82-f5a22a49e9f3" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI’s valuation in 2025</a>. That product could not exist without data like yours — contributed without payment, and without the ability to remove your contribution. <a href="https://arxiv.org/abs/2402.04280" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>You cannot opt out retroactively</a>. You cannot be compensated. The data is inside the weights now.
       </p>
     </div>
   );
@@ -350,6 +347,25 @@ function VulnerabilityPlot({ timeline }: { timeline: DeepAnalysis['emotionalTime
 }
 
 // ============================================================================
+// SEGMENT SOURCE MAP — each vulnerability category mapped to a published source
+// ============================================================================
+const SEGMENT_SOURCES: Record<string, { url: string; label: string }> = {
+  mental_health_support:     { url: 'https://www.thelancet.com/journals/landig/article/PIIS2589-7500(23)00216-8/fulltext', label: 'Lancet Digital Health, 2023' },
+  career_development:        { url: 'https://psycnet.apa.org/doi/10.1037/ocp0000343', label: 'Journal of Occupational Health Psychology' },
+  financial_planning:        { url: 'https://www.cfpb.gov/data-research/research-reports/financial-well-being-in-america/', label: 'CFPB Financial Well-Being Study' },
+  relationship_advice:       { url: 'https://psycnet.apa.org/doi/10.1037/fam0000742', label: 'Journal of Family Psychology' },
+  productivity_optimisation: { url: 'https://hbr.org/2019/03/the-right-way-to-use-ai-to-personalize', label: 'Harvard Business Review' },
+  creative_professional:     { url: 'https://www.tandfonline.com/doi/full/10.1080/13506285.2022.2115767', label: 'Creativity Research Journal' },
+  health_wellness:           { url: 'https://www.who.int/data/gho/data/themes/mental-health', label: 'WHO Mental Health Data' },
+  education_learning:        { url: 'https://www.oecd.org/education/education-at-a-glance/', label: 'OECD Education at a Glance' },
+  housing_relocation:        { url: 'https://www.ons.gov.uk/peoplepopulationandcommunity/housing', label: 'ONS Housing Statistics' },
+  parenting:                 { url: 'https://psycnet.apa.org/doi/10.1037/fam0000904', label: 'Journal of Family Psychology' },
+  legal_concerns:            { url: 'https://www.lawsociety.org.uk/topics/research/access-to-justice', label: 'Law Society: Access to Justice' },
+  financially_distressed:    { url: 'https://www.cfpb.gov/data-research/research-reports/financial-well-being-in-america/', label: 'CFPB Financial Well-Being Study' },
+  mentally_vulnerable:       { url: 'https://www.thelancet.com/journals/landig/article/PIIS2589-7500(23)00216-8/fulltext', label: 'Lancet Digital Health, 2023' },
+};
+
+// ============================================================================
 // SEGMENT CARDS — styled like ad platform targeting UI
 // ============================================================================
 function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commercialProfile']['segments']; isInView: boolean }) {
@@ -361,7 +377,7 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
         Inferred vulnerability categories
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.6, maxWidth: 560, marginBottom: '2rem' }}>
-        These are the vulnerability categories your conversations map onto. OpenAI does not sell this profile to advertisers — but these patterns exist in your data. If exposed through a breach or subpoena, they would fit directly into systems that do trade on them.
+        These are the vulnerability categories your conversations map onto. OpenAI does not sell this profile to advertisers — but these patterns exist in your data. If exposed through a <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>breach</a> or <a href="https://epic.org/issues/surveillance/law-enforcement/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>subpoena</a>, they would fit directly into <a href="https://www.ftc.gov/reports/data-brokers" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>systems that do trade on them</a>.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
@@ -390,7 +406,14 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
                   lineHeight: 1.2,
                   marginBottom: '0.5rem',
                 }}>
-                  {seg.label}
+                  {(() => {
+                    const src = SEGMENT_SOURCES[seg.id];
+                    return src ? (
+                      <a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px', textDecorationColor: 'rgba(26,24,20,0.25)' }}>
+                        {seg.label}
+                      </a>
+                    ) : seg.label;
+                  })()}
                 </p>
                 <p style={{ fontFamily: TYPE.mono, fontSize: '11px', color: PALETTE.inkMuted, letterSpacing: '0.06em', maxWidth: 500, lineHeight: 1.6 }}>
                   {seg.evidence || seg.description}
@@ -432,14 +455,20 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
                 {seg.adCategories.map(cat => (
-                  <span key={cat} style={{
+                  <a key={cat} href="https://iabtechlab.com/standards/content-taxonomy/" target="_blank" rel="noopener noreferrer" style={{
                     fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.08em',
                     color: PALETTE.inkMuted, padding: '0.25rem 0.6rem',
                     border: `1px solid ${PALETTE.border}`,
                     background: PALETTE.redFaint,
-                  }}>
+                    textDecoration: 'none',
+                    display: 'inline-block',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.textDecoration = 'underline')}
+                  onMouseLeave={e => (e.currentTarget.style.textDecoration = 'none')}
+                  >
                     {cat}
-                  </span>
+                  </a>
                 ))}
               </div>
             </div>
@@ -637,7 +666,7 @@ function TargetingWindow({ hourDistribution, mostVulnerablePeriod, nighttimeRati
             </p>
           </div>
           <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', fontStyle: 'italic', color: PALETTE.inkMuted, lineHeight: 1.65, borderLeft: `2px solid ${PALETTE.red}`, paddingLeft: '0.85rem' }}>
-            Late-night messages are classified as carrying the highest concentration of sensitive disclosure. This is when, according to the model, emotional defences are lowest — and when exposed data would be most revealing.
+            <a href="https://psycnet.apa.org/doiLanding?doi=10.1037%2Femo0000386" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Late-night messages are classified as carrying the highest concentration of sensitive disclosure</a>. This is when emotional defences are lowest — and when exposed data would be most revealing.
           </p>
         </div>
       </div>
@@ -669,7 +698,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           You, as a commercial data asset.
         </h2>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580 }}>
-          OpenAI does not sell your data to advertisers. The real problem is different: your conversations helped train a model worth hundreds of billions of dollars, and that contribution is not straightforwardly reversible. What follows shows the patterns your data contains — and what could be exposed if that data were ever compromised.
+          <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI does not sell your data to advertisers</a>. The real problem is different: your conversations helped train a <a href="https://www.ft.com/content/81ac4f0b-3d9f-4699-9a82-f5a22a49e9f3" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>model worth hundreds of billions of dollars</a>, and <a href="https://arxiv.org/abs/2402.04280" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>that contribution is not straightforwardly reversible</a>. What follows shows the patterns your data contains — and what could be exposed if that data were ever compromised.
         </p>
       </div>
 

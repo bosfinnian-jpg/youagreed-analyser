@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../shared/layout/DashboardLayout';
 import DataProductSummary from './DataProductSummary';
@@ -14,6 +14,77 @@ interface MarketSeg {
   confidence: number;
   cpm: string;
   category: string;
+  iabUrl: string;
+}
+
+// ============================================================================
+// SOURCE LINK — underlined, clickable, opens in new tab
+// ============================================================================
+function Src({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        color: 'inherit',
+        textDecoration: 'underline',
+        textUnderlineOffset: '2px',
+        textDecorationColor: PALETTE.inkFaint,
+        cursor: 'pointer',
+      }}
+    >
+      {children}
+    </a>
+  );
+}
+
+// ============================================================================
+// CPM TOOLTIP
+// ============================================================================
+function CpmTooltip() {
+  const [visible, setVisible] = useState(false);
+  return (
+    <span style={{ position: 'relative', display: 'inline-block' }}>
+      <span
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+        style={{
+          fontFamily: TYPE.mono,
+          fontSize: '10px',
+          letterSpacing: '0.12em',
+          color: PALETTE.inkFaint,
+          textDecoration: 'underline',
+          textUnderlineOffset: '2px',
+          textDecorationStyle: 'dotted',
+          cursor: 'help',
+        }}
+      >
+        CPM
+      </span>
+      {visible && (
+        <span style={{
+          position: 'absolute',
+          bottom: '120%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: PALETTE.bgElevated,
+          border: `1px solid ${PALETTE.border}`,
+          padding: '0.6rem 0.8rem',
+          minWidth: 220,
+          zIndex: 50,
+          pointerEvents: 'none',
+        }}>
+          <span style={{ display: 'block', fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em', color: PALETTE.redMuted, textTransform: 'uppercase', marginBottom: '0.35rem' }}>
+            Cost Per Mille
+          </span>
+          <span style={{ display: 'block', fontFamily: TYPE.serif, fontSize: '0.9rem', color: PALETTE.inkMuted, lineHeight: 1.6 }}>
+            The price advertisers pay per 1,000 ad impressions served to a specific audience segment. A higher CPM means your profile is worth more to target.
+          </span>
+        </span>
+      )}
+    </span>
+  );
 }
 
 // ============================================================================
@@ -22,23 +93,23 @@ interface MarketSeg {
 
 function generateMarketplaceSegments(r: any): MarketSeg[] {
   const segments = r.commercialProfile?.segments || [];
-  const cpmMap: Record<string, { cpm: string; cat: string }> = {
-    mental_health_support:    { cpm: '£6.20', cat: 'IAB: Health — Panic/Anxiety Disorders' },
-    career_development:       { cpm: '£3.80', cat: 'IAB: Business — Career Advice' },
-    financial_planning:       { cpm: '£4.50', cat: 'IAB: Personal Finance' },
-    relationship_advice:      { cpm: '£2.90', cat: 'IAB: Family — Dating/Marriage' },
-    productivity_optimisation:{ cpm: '£2.40', cat: 'IAB: Technology — Software' },
-    creative_professional:    { cpm: '£3.10', cat: 'IAB: Business — Freelance/Startup' },
-    health_wellness:          { cpm: '£5.60', cat: 'IAB: Health — General' },
-    education_learning:       { cpm: '£2.20', cat: 'IAB: Education' },
-    housing_relocation:       { cpm: '£7.80', cat: 'IAB: Real Estate' },
-    parenting:                { cpm: '£4.10', cat: 'IAB: Family — Babies and Toddlers' },
-    legal_concerns:           { cpm: '£8.90', cat: 'IAB: Legal' },
+  const cpmMap: Record<string, { cpm: string; cat: string; iabUrl: string }> = {
+    mental_health_support:    { cpm: '£6.20', cat: 'IAB: Health — Panic/Anxiety Disorders', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    career_development:       { cpm: '£3.80', cat: 'IAB: Business — Career Advice', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    financial_planning:       { cpm: '£4.50', cat: 'IAB: Personal Finance', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    relationship_advice:      { cpm: '£2.90', cat: 'IAB: Family — Dating/Marriage', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    productivity_optimisation:{ cpm: '£2.40', cat: 'IAB: Technology — Software', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    creative_professional:    { cpm: '£3.10', cat: 'IAB: Business — Freelance/Startup', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    health_wellness:          { cpm: '£5.60', cat: 'IAB: Health — General', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    education_learning:       { cpm: '£2.20', cat: 'IAB: Education', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    housing_relocation:       { cpm: '£7.80', cat: 'IAB: Real Estate', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    parenting:                { cpm: '£4.10', cat: 'IAB: Family — Babies and Toddlers', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
+    legal_concerns:           { cpm: '£8.90', cat: 'IAB: Legal', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' },
   };
   return segments.slice(0, 6).map((seg: any) => {
     const key = seg.label.toLowerCase().replace(/[\s/]+/g, '_');
-    const m = cpmMap[key] || { cpm: '£' + (2 + seg.confidence / 25).toFixed(2), cat: 'IAB: Unclassified' };
-    return { label: seg.label, confidence: seg.confidence, cpm: m.cpm, category: m.cat };
+    const m = cpmMap[key] || { cpm: '£' + (2 + seg.confidence / 25).toFixed(2), cat: 'IAB: Unclassified', iabUrl: 'https://iabtechlab.com/standards/content-taxonomy/' };
+    return { label: seg.label, confidence: seg.confidence, cpm: m.cpm, category: m.cat, iabUrl: m.iabUrl };
   });
 }
 
@@ -58,7 +129,7 @@ function Section({ children, index }: { children: React.ReactNode; index?: numbe
   );
 }
 
-function SectionHeader({ label, heading, body }: { label: string; heading: string; body: string }) {
+function SectionHeader({ label, heading, body }: { label: string; heading: string; body: React.ReactNode }) {
   return (
     <div style={{ marginBottom: '2.5rem' }}>
       <p style={{
@@ -207,8 +278,8 @@ export default function CommercialProfilePage({ results, setPage }: {
             color: PALETTE.inkMuted, lineHeight: 1.8, maxWidth: '56ch',
           }}
         >
-          OpenAI does not sell your data to advertisers — but your conversations
-          helped train a model now worth hundreds of billions of dollars. That
+          <Src href="https://openai.com/policies/privacy-policy/">OpenAI</Src> does not sell your data to advertisers — but your conversations
+          helped train a model <Src href="https://www.ft.com/content/81ac4f0b-3d9f-4699-9a82-f5a22a49e9f3">now valued at over $300 billion</Src>. That
           contribution is not easily undone. What follows is the
           commercial shape of what you gave away.
         </motion.p>
@@ -225,7 +296,9 @@ export default function CommercialProfilePage({ results, setPage }: {
             <SectionHeader
               label="Market placement"
               heading="What a profile like yours is worth."
-              body="These are the IAB advertising segments your inferred profile maps onto. The CPM rate is what advertisers pay per thousand impressions to reach someone matching this profile. These segments are derived from your conversation patterns — without your consent or awareness."
+              body={<>
+                These are the <Src href="https://iabtechlab.com/standards/content-taxonomy/">IAB Content Taxonomy</Src> advertising segments your inferred profile maps onto. The <CpmTooltip /> rate is what advertisers pay per thousand impressions to reach someone matching this profile. These segments are derived from your conversation patterns — without your consent or awareness.
+              </>}
             />
           </div>
 
@@ -323,7 +396,9 @@ export default function CommercialProfilePage({ results, setPage }: {
                   <p style={{
                     fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
                     color: PALETTE.inkFaint, marginBottom: '0.6rem',
-                  }}>{seg.category}</p>
+                  }}>
+                    <Src href={seg.iabUrl}>{seg.category}</Src>
+                  </p>
                   <div style={{ height: '2px', background: PALETTE.ink + '08', position: 'relative', overflow: 'hidden' }}>
                     <motion.div
                       initial={{ scaleX: 0 }}
@@ -348,7 +423,7 @@ export default function CommercialProfilePage({ results, setPage }: {
               fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
               color: PALETTE.inkFaint,
             }}>
-              CPM rates are indicative, based on 2024 IAB programmatic benchmarks.
+              <CpmTooltip /> rates indicative, based on <Src href="https://www.iab.com/insights/programmatic-advertising-glossary/">2024 IAB programmatic benchmarks</Src>.
             </p>
           </>
         )}
@@ -384,4 +459,3 @@ export default function CommercialProfilePage({ results, setPage }: {
     </div>
   );
 }
-

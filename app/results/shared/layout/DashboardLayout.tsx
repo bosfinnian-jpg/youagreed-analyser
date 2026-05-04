@@ -171,7 +171,7 @@ export const TYPE = {
   sans: '"Helvetica Neue", Helvetica, Arial, sans-serif',
 };
 
-export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'policy-drift' | 'resist' | 'method' | 'score-breakdown';
+export type DashPage = 'overview' | 'profile' | 'commercial-profile' | 'sources' | 'risk' | 'understand' | 'terms' | 'permanent' | 'how-it-works' | 'sources-detail' | 'about' | 'resist' | 'method' | 'score-breakdown';
 
 // ============================================================================
 // FOUR-ACT STRUCTURE
@@ -863,7 +863,6 @@ function SettingsPanel({ settings, updateSettings }: {
 const FURTHER_ITEMS = [
   { id: 'about' as DashPage, label: 'About', desc: 'The theoretical basis' },
   { id: 'sources' as DashPage, label: 'Sources', desc: 'Every claim, sourced' },
-  { id: 'policy-drift' as DashPage, label: 'Policy drift', desc: 'How the terms shifted over time' },
 ] as const;
 
 function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) => void }) {
@@ -1328,29 +1327,23 @@ const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: strin
     { label: 'Test', desc: 'See it work on raw text', page: 'understand' },
   ],
   'commercial-profile': [
-    { label: 'Policy drift', desc: 'When the terms authorised this', page: 'policy-drift' },
     { label: 'Sources', desc: 'Legal basis for each finding', page: 'sources' },
   ],
   risk: [
     { label: 'Test', desc: 'Watch inference happen', page: 'understand' },
     { label: 'Sources', desc: 'Policy basis for each risk', page: 'sources' },
-    { label: 'Policy drift', desc: 'When the terms changed', page: 'policy-drift' },
   ],
   permanent: [
     { label: 'How it works', desc: 'The technical reason deletion fails', page: 'how-it-works' },
     { label: 'Sources', desc: 'The clauses that permit this', page: 'sources' },
-    { label: 'Policy drift', desc: 'How permanence entered the terms', page: 'policy-drift' },
   ],
   terms: [
-    { label: 'Policy drift', desc: '2023 → 2025 → 2026', page: 'policy-drift' },
     { label: 'Sources', desc: 'Clause-by-clause', page: 'sources' },
   ],
-  'policy-drift': [
     { label: 'Sources', desc: 'Every clause, sourced', page: 'sources' },
     { label: 'Permanent', desc: 'What the changes mean', page: 'permanent' },
   ],
   sources: [
-    { label: 'Policy drift', desc: 'How the terms evolved', page: 'policy-drift' },
     { label: 'About', desc: 'The theoretical basis', page: 'about' },
   ],
 };
@@ -1672,7 +1665,6 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           .nav-strip-card { padding: 1.4rem 1.2rem !important; }
           .findings-row { gap: 1rem !important; }
           .bid-row-seg { display: none !important; }
-          .policy-drift-table { min-width: 0; overflow-x: auto; }
           .score-hero { font-size: clamp(3rem, 15vw, 5rem) !important; }
           .deco-svg { display: none !important; }
           .stat-strip { gap: 1.5rem !important; flex-wrap: wrap !important; }
@@ -1766,8 +1758,6 @@ export default function DashboardLayout({ results, children, page, setPage }: {
             width: min(72vw, 280px) !important;
           }
 
-          /* Policy drift table scrolls horizontally */
-          .policy-drift-3col {
             grid-template-columns: 1fr !important;
           }
 

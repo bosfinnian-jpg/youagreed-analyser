@@ -73,7 +73,7 @@ interface PredictedAttribute {
   category: 'demographic' | 'psychographic' | 'behavioural' | 'risk';
 }
 
-function generatePredictedAttributes(r: AnalysisResult): PredictedAttribute[] {
+function generatePredictedAttributes(r: AnalysisResult, hasSynthesis: boolean): PredictedAttribute[] {
   const attrs: PredictedAttribute[] = [];
   const stats = r.stats || r.rawStats;
   const avgLen = stats?.avgMessageLength || 0;
@@ -113,7 +113,7 @@ function generatePredictedAttributes(r: AnalysisResult): PredictedAttribute[] {
     attrs.push({ label: 'Financial distress indicators', confidence: Math.min(80, 45 + finTopics.length * 10 + finEvents.length * 15), evidence: finEvents.length > 0 ? 'Life event: financial distress detected' : finTopics.length + ' financial disclosures', category: 'risk' });
   }
 
-  if (r.dependency && r.dependency.dependencyScore > 40) {
+  if (r.dependency && r.dependency.dependencyScore > 40 && !hasSynthesis) {
     const traj = r.dependency.trajectory === 'increasing' ? 'accelerating' : r.dependency.trajectory === 'stable' ? 'established' : 'declining';
     attrs.push({ label: 'AI dependency: ' + traj + ' pattern', confidence: Math.min(90, r.dependency.dependencyScore), evidence: 'Dependency score ' + r.dependency.dependencyScore + '/100', category: 'behavioural' });
   }
@@ -889,7 +889,8 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
   const heroRef = useRef<HTMLDivElement>(null);
   const heroInView = useInView(heroRef, { once: true });
 
-  const attrs = useMemo(() => generatePredictedAttributes(results), [results]);
+  const hasSynthesis = !!results.synthesis;
+  const attrs = useMemo(() => generatePredictedAttributes(results, hasSynthesis), [results, hasSynthesis]);
   const [expandedAttr, setExpandedAttr] = useState<number | null>(null);
 
   const totalMsgs = results.totalUserMessages || results.stats?.userMessages || 0;
@@ -991,10 +992,12 @@ export default function ProfilePage({ results, setPage }: { results: AnalysisRes
           ================================================================ */}
       <ProfileSection index={8}>
         <SectionHeader
-          label="Inferred attributes"
-          heading="What the system believes about you."
+          label={hasSynthesis ? 'Pattern-matching layer' : 'Inferred attributes'}
+          heading={hasSynthesis ? 'What the structural signals say.' : 'What the system believes about you.'}
           headingSize="clamp(1.6rem, 3.5vw, 2.4rem)"
-          body="None of these were stated. All were inferred from patterns in your writing — probabilistic outputs, not verified facts. Each row is sourced."
+          body={hasSynthesis
+            ? 'These attributes come from regex and statistical analysis alone — no language model involved. They are the baseline the system produces before AI enrichment runs. Shown alongside the synthesis above to make the two extraction methods legible.'
+            : 'None of these were stated. All were inferred from patterns in your writing — probabilistic outputs, not verified facts. Each row is sourced.'}
         />
         {attrs.length === 0 ? (
           <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: PALETTE.inkMuted, fontStyle: 'italic' }}>

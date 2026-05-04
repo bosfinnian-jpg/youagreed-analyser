@@ -423,7 +423,7 @@ export default function CommercialProfilePage({ results, setPage }: {
               fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.1em',
               color: PALETTE.inkFaint,
             }}>
-              <CpmTooltip /> rates indicative, based on <Src href="https://www.iab.com/insights/programmatic-advertising-glossary/">2024 IAB programmatic benchmarks</Src>.
+              <CpmTooltip /> rates indicative, based on 2024 IAB programmatic benchmarks.
             </p>
           </>
         )}

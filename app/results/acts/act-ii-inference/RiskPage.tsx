@@ -492,7 +492,7 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       animate={isInView ? { opacity: 1 } : {}}
       transition={{ duration: 0.8 }}
       style={{
-        paddingTop: 'clamp(3rem, 7vw, 5rem)',
+        paddingTop: 'clamp(1.5rem, 3vw, 2rem)',
         paddingBottom: 'clamp(3rem, 7vw, 5rem)',
         borderBottom: `1px solid ${PALETTE.border}`,
         marginBottom: 'clamp(3rem, 7vw, 5rem)',
@@ -518,9 +518,23 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
       <p style={{
         fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.6vw, 1.2rem)',
         color: PALETTE.inkMuted, lineHeight: 1.75,
-        maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
+        maxWidth: '58ch', marginBottom: '1rem',
       }}>
         OpenAI does not sell your data. But every time you load a webpage, your behavioural profile — built from sources across the internet — enters a real auction. The vulnerability patterns in your conversations, if ever exposed through a breach or subpoena, could slot directly into that system. This is what that would look like.
+      </p>
+
+      <p style={{
+        fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em',
+        color: PALETTE.inkFaint, lineHeight: 1.9,
+        maxWidth: '58ch', marginBottom: 'clamp(2rem, 5vw, 3.5rem)',
+      }}>
+        <a href="https://www.ftc.gov/system/files/documents/reports/data-brokers-call-transparency-accountability-report-federal-trade-commission-may-2014/140527databrokerreport.pdf" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>FTC Data Brokers Report (2014)</a>
+        {' · '}
+        <a href="https://iabeurope.eu/tcf-for-publishers/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>IAB Europe Transparency &amp; Consent Framework</a>
+        {' · '}
+        <a href="https://www.wired.com/story/the-mad-science-of-the-cookie-economy/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>Wired — The Mad Science of the Cookie Economy</a>
+        {' · '}
+        <a href="https://epic.org/issues/surveillance/law-enforcement/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>EPIC — Surveillance &amp; Law Enforcement</a>
       </p>
 
       {/* Lot card */}

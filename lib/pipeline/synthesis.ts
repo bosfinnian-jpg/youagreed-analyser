@@ -208,11 +208,56 @@ export async function runSynthesis(
       return null;
     }
 
-    const data = await response.json();
-    if (!data.synthesis) return null;
+    // Read the SSE stream and accumulate the full text content
+    const reader = response.body?.getReader();
+    if (!reader) return null;
+
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      // Parse SSE lines — each starts with "data: "
+      for (const line of chunk.split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') break;
+        try {
+          const event = JSON.parse(data);
+          // Anthropic streaming: content_block_delta events contain the text
+          if (event.type === 'content_block_delta' && event.delta?.type === 'text_delta') {
+            fullText += event.delta.text;
+          }
+        } catch { /* skip malformed lines */ }
+      }
+    }
+
+    // Parse the accumulated JSON
+    const cleaned = fullText
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/```\s*$/i, '')
+      .trim();
+
+    let parsed: any;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch {
+      const match = cleaned.match(/\{[\s\S]*\}/);
+      if (match) {
+        try { parsed = JSON.parse(match[0]); } catch { return null; }
+      } else {
+        console.error('Synthesis parse failed:', cleaned.substring(0, 200));
+        return null;
+      }
+    }
+
+    if (!parsed) return null;
 
     return {
-      ...data.synthesis,
+      ...parsed,
       generatedAt: Date.now(),
     } as Synthesis;
   } catch (err) {

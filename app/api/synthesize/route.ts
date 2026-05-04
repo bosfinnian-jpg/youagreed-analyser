@@ -152,9 +152,39 @@ export async function POST(request: Request) {
     }
 
     const userPrompt = buildUserPrompt(body);
-    const synthesis = await callClaude(apiKey, userPrompt);
 
-    return NextResponse.json({ synthesis });
+    // Stream directly from Anthropic to the browser — the edge function
+    // just proxies bytes, completing its job in milliseconds rather than
+    // waiting for the full Sonnet response (which times out at 30s).
+    const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1500,
+        stream: true,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
+    });
+
+    if (!anthropicResponse.ok) {
+      const err = await anthropicResponse.text();
+      return NextResponse.json({ error: `Claude API error ${anthropicResponse.status}: ${err}` }, { status: 502 });
+    }
+
+    // Pipe the SSE stream straight through to the client
+    return new Response(anthropicResponse.body, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'X-Accel-Buffering': 'no',
+      },
+    });
   } catch (err: any) {
     console.error('Synthesis error:', err);
     return NextResponse.json({ error: err.message || 'Synthesis failed' }, { status: 500 });

@@ -122,7 +122,7 @@ function DoesDoesnt({ does, doesnt }: { does: string; doesnt: string }) {
 // ============================================================================
 function Divider() {
   return (
-    <div style={{ height: '1px', background: PALETTE.border, margin: 'clamp(3rem, 7vw, 5rem) 0' }} />
+    <div style={{ height: '1px', background: PALETTE.border, margin: 'clamp(1.5rem, 3vw, 2rem) 0' }} />
   );
 }
 
@@ -482,7 +482,7 @@ export default function ResistPage({ analysis, setPage }: ResistPageProps & { se
       </div>
 
       {/* Three actions */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(3.5rem, 8vw, 6rem)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(2rem, 4vw, 3rem)' }}>
         <ActionOptOut />
         <Divider />
         <ActionSAR analysis={analysis} />

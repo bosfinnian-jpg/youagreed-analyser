@@ -37,7 +37,7 @@ const SECTIONS = [
   },
 ];
 
-const CLOSING = `What matters is not whether this system is literally accurate. What matters is that it reveals something true about how people experience data systems they cannot see, cannot understand, and cannot leave.`;
+
 
 function SectionBlock({ section, index }: {
   section: typeof SECTIONS[number];
@@ -117,9 +117,7 @@ function SectionBlock({ section, index }: {
 
 export default function MethodPage({ setPage }: { setPage: (p: string) => void }) {
   const heroRef = useRef(null);
-  const closingRef = useRef<HTMLDivElement>(null);
   const isHeroInView = useInView(heroRef, { once: true });
-  const isClosingInView = useInView(closingRef, { once: true, margin: '-60px' });
   const pad = 'clamp(1.5rem, 6vw, 5rem)';
 
   return (
@@ -224,34 +222,6 @@ export default function MethodPage({ setPage }: { setPage: (p: string) => void }
           <SectionBlock key={section.id} section={section} index={i} />
         ))}
       </div>
-
-      {/* Closing statement */}
-      <motion.div
-        ref={closingRef}
-        initial={{ opacity: 0, y: 12 }}
-        animate={isClosingInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.9 }}
-        style={{
-          marginTop: 'clamp(3rem, 7vw, 6rem)',
-          paddingTop: 'clamp(2.5rem, 5vw, 4rem)',
-          paddingLeft: 'clamp(1.5rem, 4vw, 3rem)',
-          borderTop: `1px solid ${PALETTE.border}`,
-          borderLeft: `3px solid ${PALETTE.red}`,
-        }}
-      >
-        <p style={{
-          fontFamily: TYPE.serif,
-          fontSize: 'clamp(1.2rem, 2.2vw, 1.55rem)',
-          color: PALETTE.ink,
-          lineHeight: 1.6,
-          letterSpacing: '-0.015em',
-          fontStyle: 'italic',
-          maxWidth: '52ch',
-          margin: 0,
-        }}>
-          {CLOSING}
-        </p>
-      </motion.div>
 
       {/* Footer */}
       <motion.div

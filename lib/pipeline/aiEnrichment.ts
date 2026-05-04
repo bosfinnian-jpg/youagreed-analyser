@@ -33,9 +33,9 @@ export interface EnrichmentProgress {
 
 
 
-const BATCH_SIZE = 8;
-const MAX_CANDIDATES = 40;
-const MAX_PARALLEL_BATCHES = 2;
+const BATCH_SIZE = 3;
+const MAX_CANDIDATES = 30;
+const MAX_PARALLEL_BATCHES = 1;
 
 // Score ceilings removed — scoring handled by computeScoreFactors in deepParser.ts
 

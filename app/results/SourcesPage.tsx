@@ -421,6 +421,9 @@ export default function SourcesPage({
     <div className="dash-page-inner" style={{ maxWidth: 1000, margin: '0 auto', padding: `0 ${pad}`, paddingBottom: 'clamp(4rem, 10vw, 8rem)' }}>
       <style>{`
         @media (max-width: 640px) {
+          /* Hide column headers on mobile — source rows handle their own labels */
+          .source-col-headers { display: none !important; }
+
           /* Source row: label + plus on top, severity left + status right beneath */
           .source-row {
             grid-template-columns: 1fr 24px !important;
@@ -504,7 +507,7 @@ export default function SourcesPage({
       {/* ACTIVE SOURCES */}
       <div style={{ marginBottom: 'clamp(3rem, 8vw, 6rem)' }}>
         {/* Column headers */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: '1.5rem', paddingBottom: '0.8rem', borderBottom: `1px solid ${PALETTE.border}` }}>
+        <div className="source-col-headers" style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: '1.5rem', paddingBottom: '0.8rem', borderBottom: `1px solid ${PALETTE.border}` }}>
           {['Platform', 'Severity', 'Status', ''].map((h, i) => (
             <span key={i} style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', textAlign: i > 0 ? 'right' : 'left' }}>{h}</span>
           ))}
@@ -527,7 +530,7 @@ export default function SourcesPage({
           <div style={{ flex: 1, height: '1px', background: PALETTE.border }} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '2rem', paddingBottom: '0.8rem', borderBottom: `1px solid ${PALETTE.border}`, opacity: 0.5 }}>
+        <div className="source-col-headers" style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '2rem', paddingBottom: '0.8rem', borderBottom: `1px solid ${PALETTE.border}`, opacity: 0.5 }}>
           {['Platform', 'Severity', ''].map((h, i) => (
             <span key={i} style={{ fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em', color: PALETTE.inkFaint, textTransform: 'uppercase', textAlign: i > 0 ? 'right' : 'left' }}>{h}</span>
           ))}

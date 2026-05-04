@@ -700,7 +700,7 @@ function PredictedBehavioursSection({ behaviours }: { behaviours: any[] }) {
           const lc = likelihoodColor(b.likelihood);
           return (
             <Reveal key={i} delay={i * 0.08}>
-              <div style={{
+              <div className="mob-stack" style={{
                 padding: '1.5rem 0',
                 borderBottom: `1px solid ${PALETTE.border}`,
                 display: 'grid',
@@ -810,6 +810,7 @@ function ExtractionWaffle({ results }: { results: AnalysisResult }) {
           maxWidth: 480,
           marginBottom: '1.75rem',
         }}
+        className="waffle-grid"
       >
         {cells.map((cell, i) => (
           <motion.div

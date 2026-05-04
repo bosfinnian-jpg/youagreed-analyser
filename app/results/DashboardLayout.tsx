@@ -1478,6 +1478,22 @@ export default function DashboardLayout({ results, children, page, setPage }: {
         button, a {
           transition: color 0.15s, background 0.15s, border-color 0.15s, opacity 0.15s;
         }
+
+        /* ────────────────────────────────────────────────────────
+           TOUCH ACTIVE STATES — mobile hover fallback
+           On touch devices, :hover never fires reliably. :active
+           gives instant visual feedback on tap.
+           ──────────────────────────────────────────────────────── */
+        @media (hover: none) {
+          button:active, a:active, [role="button"]:active {
+            opacity: 0.7;
+          }
+          /* Don't dim already-styled buttons */
+          button[style*="background: rgb"]:active,
+          button[style*="background:rgb"]:active {
+            opacity: 0.85;
+          }
+        }
       `}</style>
 
       <Nav page={page} setPage={setPage} results={results} exposureScore={exposureScore} />

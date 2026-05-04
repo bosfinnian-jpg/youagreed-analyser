@@ -246,12 +246,16 @@ export async function runSynthesis(
     let parsed: any;
     try {
       parsed = JSON.parse(cleaned);
-    } catch {
+    } catch (e) {
+      console.error('Synthesis JSON.parse failed:', e, 'last 100 chars:', cleaned.slice(-100));
       const match = cleaned.match(/\{[\s\S]*\}/);
       if (match) {
-        try { parsed = JSON.parse(match[0]); } catch { return null; }
+        try { parsed = JSON.parse(match[0]); } catch (e2) {
+          console.error('Synthesis fallback parse also failed:', e2);
+          return null;
+        }
       } else {
-        console.error('Synthesis parse failed:', cleaned.substring(0, 200));
+        console.error('Synthesis no JSON object found in:', cleaned.substring(0, 200));
         return null;
       }
     }

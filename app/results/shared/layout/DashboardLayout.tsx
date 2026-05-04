@@ -1740,9 +1740,6 @@ export default function DashboardLayout({ results, children, page, setPage }: {
             width: min(72vw, 280px) !important;
           }
 
-            grid-template-columns: 1fr !important;
-          }
-
           /* Resist page action steps — no truncation */
           .action-step-platform {
             font-size: 9px !important;

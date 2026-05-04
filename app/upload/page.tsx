@@ -437,7 +437,7 @@ export default function UploadPage() {
                     }}>
                       {skipAI
                         ? 'Analysis will use pattern-matching only. No conversation content is sent to any external service.'
-                        : 'Selected excerpts are sent to OpenAI and Anthropic APIs for enrichment. Click to disable if you prefer not to share data with these services.'}
+                        : 'Selected excerpts are sent to the Anthropic API for enrichment. Click to disable if you prefer not to share data with this service.'}
                     </p>
                   </div>
                 </motion.div>

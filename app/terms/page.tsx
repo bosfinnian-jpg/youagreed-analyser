@@ -16,7 +16,7 @@ This is an educational tool. It is not a commercial product. It does not collect
     title: '2. What Happens to Your Data',
     content: `Your uploaded conversation file is processed entirely in your browser. The file does not leave your device during the initial analysis phase.
 
-The analysis uses OpenAI and Anthropic APIs for AI-powered enrichment. When this happens, selected excerpts from your conversations are sent to these services. This is disclosed during the upload process.
+The analysis uses the Anthropic API for AI-powered enrichment. When this happens, selected excerpts from your conversations are sent to this service. This is disclosed during the upload process.
 
 You can choose to skip the AI enrichment step. The tool will still produce a full analysis using pattern-matching algorithms alone.
 
@@ -27,7 +27,7 @@ No data is retained by this tool after you close your browser. Your analysis is 
     content: `If you enable AI enrichment, the tool sends excerpts of your messages to:
 - Anthropic API (Claude Haiku and Claude Sonnet models)
 
-These services process the excerpts to identify psychological patterns, inferred beliefs, and demographic predictions. The tool does not control what these services do with the data after processing.
+This service processes the excerpts to identify psychological patterns, inferred beliefs, and demographic predictions. The tool does not control what Anthropic does with the data after processing.
 
 Anthropic's privacy policy applies to data sent to their API. You should review it before enabling AI enrichment.
 

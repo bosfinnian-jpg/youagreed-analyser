@@ -340,9 +340,9 @@ function CharacterSummarySection({ summary }: { summary: string }) {
     <ProfileSection index={0}>
       <SectionHeader
         label="Intelligence briefing"
-        heading="The subject, as the model sees them."
+        heading="What the model constructed from your writing."
         headingSize="clamp(1.8rem, 4vw, 2.8rem)"
-        body="Written by an AI after reading your most revealing messages. A synthesis, not a quotation. Every claim is grounded in the evidence below. No questionnaire was completed. None of this is easily reversed."
+        body="This is a synthesis produced by reading your most revealing messages. It reflects patterns in how you write — not verified facts about who you are. No questionnaire was completed. The profile cannot be recalled or corrected."
       />
 
       <div ref={ref} style={{
@@ -382,8 +382,8 @@ function CharacterSummarySection({ summary }: { summary: string }) {
           fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
           color: PALETTE.inkFaint, textTransform: 'uppercase',
         }}>
-          Generated from {sentences.length} sentence{sentences.length === 1 ? '' : 's'} of synthesis.
-          This is what a model knows about you after a single reading.
+          Generated from {sentences.length} sentence{sentences.length === 1 ? '' : 's'} of pattern analysis.
+          This is what writing alone made inferable — without a form, without consent.
         </p>
       </Reveal>
     </ProfileSection>
@@ -397,9 +397,9 @@ function CoreBeliefsSection({ beliefs }: { beliefs: string[] }) {
     <ProfileSection index={1}>
       <SectionHeader
         label="Inferred core beliefs"
-        heading="What your writing suggests you believe about yourself."
+        heading="What the pattern of your writing implies you believe."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="None of these are statements you made. They are the beliefs the model infers from how you frame yourself, other people, and the world. Written in first person because that is how a belief presents. These are probabilistic interpretations, not verified conclusions."
+        body="These are not statements you made. They are beliefs the model infers from how you frame yourself, other people, and outcomes. Written in first person because that is how a belief presents. They may be wrong. They are nevertheless now part of your inferred record."
       />
       <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {beliefs.map((belief, i) => (
@@ -444,7 +444,7 @@ function DemographicPredictionsSection({ predictions }: { predictions: AnalysisR
         label="Demographic predictions"
         heading="What can be inferred without asking."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Each prediction was derived from writing patterns, topic distribution, and language markers. No questions were asked. This is the kind of profile data brokers build, without consent, at hundreds of millions of rows."
+        body="Derived from writing patterns, topic distribution, and language markers. No questions were asked. Confidence scores reflect the strength of the signal — not whether the inference is correct."
       />
       <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {predictions.map((pred: any, i: number) => {
@@ -528,7 +528,7 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
         label="Verbal tells"
         heading="The phrases you use without realising."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Writing style has a fingerprint. These are the recurring phrases, hedges, and tics pulled from your corpus. Each one reveals something about how you think and what you protect yourself from."
+        body="Writing style has a fingerprint. These are recurring phrases and patterns the model identified as diagnostically significant — and what it inferred from them."
       />
       <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {tells.map((t: any, i: number) => (
@@ -574,44 +574,62 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
 // ----- RECURRING CONCERNS -----
 function RecurringConcernsSection({ concerns }: { concerns: any[] }) {
   if (!concerns || concerns.length === 0) return null;
+  const [expanded, setExpanded] = useState<number | null>(null);
   return (
     <ProfileSection index={4}>
       <SectionHeader
         label="Recurring concerns"
-        heading="What you keep coming back to."
+        heading="What you kept coming back to."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="These are the preoccupations you returned to repeatedly, across different weeks and under different phrasings. A recurring pattern reveals more than any single conversation."
+        body="Topics you returned to repeatedly, across different weeks and different phrasings. Repetition is a signal the model treats as meaningful."
       />
       <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {concerns.map((c: any, i: number) => (
           <Reveal key={i} delay={i * 0.1}>
-            <div style={{
-              padding: '1.4rem 0',
-              borderBottom: `1px solid ${PALETTE.border}`,
-              display: 'flex', alignItems: 'baseline', gap: '1.5rem',
-            }}>
-              <span style={{
-                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
-                color: PALETTE.redMuted, textTransform: 'uppercase',
-                minWidth: '2rem',
-              }}>
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <div style={{ flex: 1 }}>
+            <div style={{ borderBottom: `1px solid ${PALETTE.border}` }}>
+              <button
+                onClick={() => setExpanded(expanded === i ? null : i)}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+                  width: '100%', padding: '1.4rem 0',
+                  display: 'flex', alignItems: 'baseline', gap: '1.5rem',
+                }}
+              >
+                <span style={{
+                  fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.22em',
+                  color: PALETTE.redMuted, textTransform: 'uppercase', minWidth: '2rem', flexShrink: 0,
+                }}>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
                 <p style={{
                   fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 2vw, 1.35rem)',
-                  color: PALETTE.ink, lineHeight: 1.5, marginBottom: '0.4rem',
-                  letterSpacing: '-0.01em',
+                  color: PALETTE.ink, lineHeight: 1.45, letterSpacing: '-0.01em', flex: 1, textAlign: 'left',
                 }}>
                   {c.concern}
                 </p>
-                <p style={{
-                  fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em',
-                  color: PALETTE.inkFaint, lineHeight: 1.6,
-                }}>
-                  {c.evidence}
-                </p>
-              </div>
+                <span style={{ fontFamily: TYPE.mono, fontSize: '12px', color: PALETTE.inkFaint, flexShrink: 0 }}>
+                  {expanded === i ? '−' : '+'}
+                </span>
+              </button>
+              <AnimatePresence>
+                {expanded === i && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25 }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <p style={{
+                      fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.08em',
+                      color: PALETTE.inkFaint, lineHeight: 1.7,
+                      paddingLeft: 'calc(2rem + 1.5rem)', paddingBottom: '1.4rem',
+                    }}>
+                      {c.evidence}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </Reveal>
         ))}
@@ -629,7 +647,7 @@ function UnintentionalDisclosuresSection({ disclosures }: { disclosures: any[] }
         label="Unintentional disclosures"
         heading="What you gave away without meaning to."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="Every disclosure below was incidental. You needed help with something. Getting that help required mentioning a location, a salary, a medication, a date, a relationship. You did not intend to disclose any of it. You disclosed it anyway."
+        body="Each disclosure was incidental. You needed help with something. Providing that help required context. The context became part of your record."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {disclosures.map((d: any, i: number) => (
@@ -685,10 +703,10 @@ function PredictedBehavioursSection({ behaviours }: { behaviours: any[] }) {
   return (
     <ProfileSection index={6}>
       <SectionHeader
-        label="Predicted next behaviours"
-        heading="What the model thinks you will do next."
+        label="Predicted behaviours"
+        heading="What the model predicts you will do next."
         headingSize="clamp(1.6rem, 3.2vw, 2.2rem)"
-        body="These are not guesses. They are forward projections derived from your recent trajectory. Ad networks, insurers, and recruitment algorithms run this kind of inference continuously on behavioural data."
+        body="Forward projections derived from pattern analysis. The model treats trajectory as predictive. Insurers, recruiters, and ad networks run the same kind of inference — continuously, without disclosure."
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {behaviours.map((b: any, i: number) => {

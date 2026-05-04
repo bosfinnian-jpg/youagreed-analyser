@@ -1026,7 +1026,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
       document.body.style.right = '';
       document.body.style.overflowY = '';
       if (scrollY) {
-        window.scrollTo({ top: parseInt(scrollY || '0') * -1, behavior: 'instant' });
+        window.scrollTo({ top: Math.abs(parseInt(scrollY || '0', 10)), behavior: 'instant' });
       }
     }
     return () => {
@@ -1216,6 +1216,8 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
                 display: 'flex', flexDirection: 'column',
                 overflowY: 'auto',
                 overscrollBehavior: 'contain',
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'pan-y',
               }}
             >
               {/* Header */}

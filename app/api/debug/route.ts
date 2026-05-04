@@ -27,13 +27,13 @@ export async function GET() {
 
   const [haiku, sonnet] = await Promise.all([
     test('claude-haiku-4-5-20251001'),
-    test('claude-sonnet-4-20250514'),
+    test('claude-sonnet-4-6'),
   ]);
 
   return NextResponse.json({
     apiKeyPresent: true,
     apiKeyPrefix: apiKey.substring(0, 12) + '...',
     haiku: { model: 'claude-haiku-4-5-20251001', ...haiku },
-    sonnet: { model: 'claude-sonnet-4-20250514', ...sonnet },
+    sonnet: { model: 'claude-sonnet-4-6', ...sonnet },
   });
 }

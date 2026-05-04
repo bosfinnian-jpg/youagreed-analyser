@@ -527,7 +527,7 @@ function GdprGapDiagram() {
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} style={{ border: `1px solid ${C.unlearn.base}`, background: C.unlearn.faint, padding: 'clamp(1rem, 2.5vw, 1.5rem)', marginBottom: '1.5rem' }}>
             <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.25em', color: C.unlearn.base, textTransform: 'uppercase', marginBottom: '0.6rem' }}>Structural gap — the finding</p>
             <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.75, maxWidth: 600 }}>
-              Cookie consent was designed for reversible behavioural tracking. AI training is not practically reversible in the same sense. The right to erasure — GDPR Article 17 — is difficult to fulfil for training data, because there is nothing discrete left to erase. This is not simply a policy failure. It is an architectural one.
+              Cookie consent was designed for reversible behavioural tracking. AI training is not practically reversible in the same sense. The right to erasure — <a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>GDPR Article 17</a> — is difficult to fulfil for training data, because there is nothing discrete left to erase. This is not simply a policy failure. It is an architectural one.
             </p>
           </motion.div>
         )}

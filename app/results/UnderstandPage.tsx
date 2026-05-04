@@ -1146,7 +1146,7 @@ function Module1({
               ))}
             </div>
             <p style={{ fontFamily: TYPE.serif, fontSize: '0.95rem', color: C.textFaint, fontStyle: 'italic', marginTop: '1.25rem', lineHeight: 1.6, maxWidth: '52ch' }}>
-              This is Nissenbaum's contextual integrity failure: information shared in one context (a conversation) flowing into another (a training corpus and commercial profile) without your knowledge.
+              {"This is Nissenbaum's "}<a href="https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>contextual integrity</a>{" failure: information shared in one context (a conversation) flowing into another (a training corpus and commercial profile) without your knowledge."}
             </p>
           </motion.div>
         )}
@@ -1439,7 +1439,7 @@ function Module3({
                 Your message was not stored as a row. During training it became numerical gradients distributed across billions of parameters simultaneously. The highlighted values above shifted fractionally because of what you wrote. There is no address to find them at. There is no boundary to excise.
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.72, fontStyle: 'italic', marginBottom: '1rem' }}>
-                The GDPR right to erasure was written for databases. A database stores records. A neural network absorbs patterns. Cooper et al. (2024) demonstrate that no current unlearning method can guarantee removal. These are different operations — and only the first one has a delete function.
+                {"The "}<a href="https://gdpr-info.eu/art-17-gdpr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>GDPR right to erasure</a>{" was written for databases. A database stores records. A neural network absorbs patterns. Cooper et al. (2024) demonstrate that no current unlearning method can guarantee removal. These are different operations — and only the first one has a delete function."}
               </p>
               <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer"
                 style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none', borderBottom: `1px solid ${C.border}`, paddingBottom: '1px' }}>
@@ -1587,10 +1587,10 @@ function Module4({
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
               style={{ background: C.panel, borderLeft: `2px solid ${C.accent}`, padding: 'clamp(1rem, 2.5vw, 1.5rem)' }}>
               <p style={{ fontFamily: TYPE.serif, fontSize: '1.1rem', color: C.text, lineHeight: 1.72, marginBottom: '0.75rem' }}>
-                Nissenbaum called this the transparency paradox: a policy short enough to read cannot be detailed enough to be meaningful. A policy detailed enough to be meaningful cannot be read.
+                {"Nissenbaum called this the "}<a href="https://digitalcommons.law.uw.edu/wlr/vol79/iss1/10/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>transparency paradox</a>{": a policy short enough to read cannot be detailed enough to be meaningful. A policy detailed enough to be meaningful cannot be read."}
               </p>
               <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: C.textMuted, lineHeight: 1.7, fontStyle: 'italic', marginBottom: '0.75rem' }}>
-                McDonald and Cranor (2008) calculated that reading the privacy policies of every website an average American visits would take 76 working days per year. Clicking "I agree" constitutes valid legal consent regardless. This is not a gap in user behaviour. It is deliberate legal architecture.
+                <a href="https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>McDonald and Cranor (2008)</a>{" calculated that reading the privacy policies of every website an average American visits would take 76 working days per year. Clicking \"I agree\" constitutes "}<a href="https://gdpr-info.eu/art-7-gdpr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>valid legal consent</a>{" regardless. This is not a gap in user behaviour. It is deliberate legal architecture."}
               </p>
               <a href="https://doi.org/10.1162/DAED_a_00113" target="_blank" rel="noopener noreferrer"
                 style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.16em', color: C.textFaint, textTransform: 'uppercase', textDecoration: 'none', borderBottom: `1px solid ${C.border}`, paddingBottom: '1px' }}>

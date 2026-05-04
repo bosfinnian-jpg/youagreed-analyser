@@ -308,7 +308,7 @@ function MachineUnlearning() {
           "Removing information from a model's training data does not guarantee the model cannot reproduce or reflect that information. There is no known production system, at this scale, that currently implements full unlearning."
         </p>
         <p style={{ fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.18em', color: PALETTE.inkFaint, textTransform: 'uppercase' }}>
-          Cooper et al., NeurIPS 2024 — Machine Unlearning Doesn't Do What You Think (arXiv:2412.06966)
+          <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>{"Cooper et al., NeurIPS 2024 — Machine Unlearning Doesn't Do What You Think (arXiv:2412.06966)"}</a>
         </p>
       </div>
     </motion.div>
@@ -409,7 +409,7 @@ function LegalGap() {
       <SectionLabel color={C.legal.base}>The legal gap</SectionLabel>
 
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 660, marginBottom: '2rem' }}>
-        In March 2023, Italy's Garante temporarily banned ChatGPT — OpenAI could not demonstrate that users' data, once embedded in model weights, could be erased on request. OpenAI added opt-out controls and the ban was lifted. In December 2024, a €15M fine was issued, subsequently annulled on procedural grounds. The underlying technical problem was never resolved.
+        {"In March 2023, "}<a href="https://www.garanteprivacy.it/web/guest/home/docweb/-/docweb-display/docweb/9870832" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>{"Italy's Garante temporarily banned ChatGPT"}</a>{" — OpenAI could not demonstrate that users' data, once embedded in model weights, could be erased on request. OpenAI added opt-out controls and the ban was lifted. In December 2024, "}<a href="https://www.garanteprivacy.it/home/docweb/-/docweb-display/docweb/10085432" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>a €15M fine was issued</a>{", subsequently annulled on procedural grounds. The underlying technical problem was never resolved."}
       </p>
 
       {/* Interactive table */}

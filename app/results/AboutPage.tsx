@@ -257,7 +257,7 @@ export default function AboutPage({ setPage }: { setPage: (p: DashPage) => void 
           </div>
 
           <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1.05rem, 1.8vw, 1.2rem)', color: PALETTE.ink, lineHeight: 1.8, maxWidth: 600 }}>
-            Cooper et al. (2024) demonstrate that no current machine unlearning method can guarantee removal. The right to erasure cannot be technically fulfilled for training data. That gap is not a policy failure — it is an architectural one.
+            <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>Cooper et al. (2024)</a>{" demonstrate that no current machine unlearning method can guarantee removal. The right to erasure cannot be technically fulfilled for training data. That gap is not a policy failure — it is an architectural one."}
           </p>
         </div>
       </Block>

@@ -522,10 +522,7 @@ function PolicyWordBars({ isInView }: { isInView: boolean }) {
         display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem',
       }}>
         <p style={{ fontFamily: TYPE.serif, fontSize: '1rem', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 440, fontStyle: 'italic' }}>
-          To read all three policies end-to-end: approximately 78 minutes.
-          McDonald & Cranor (2008) found that reading every privacy policy 
-          a typical internet user encounters would take 76 full work-days per year.
-          Nobody reads them. The consent model depends on that.
+          {"To read all three policies end-to-end: approximately 78 minutes. "}<a href="https://lorrie.cranor.org/pubs/readingPolicyCost-authorDraft.pdf" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline', textDecorationColor: 'inherit', cursor: 'pointer' }}>McDonald & Cranor (2008)</a>{" found that reading every privacy policy a typical internet user encounters would take 76 full work-days per year. Nobody reads them. The consent model depends on that."}
         </p>
         <p style={{ fontFamily: TYPE.serif, fontSize: '2.2rem', color: PALETTE.red, letterSpacing: '-0.04em', lineHeight: 1, alignSelf: 'flex-end' }}>
           +170%<br />

@@ -1099,9 +1099,10 @@ function NetworkChapter({ names, onActive }: {
 const RING_R = 130;
 const RING_C = 2 * Math.PI * RING_R;
 
-function ScoreChapter({ score, onActive }: {
+function ScoreChapter({ score, onActive, setPage }: {
   score: number;
   onActive: (id: ChapterId) => void;
+  setPage: (p: DashPage) => void;
 }) {
   const sectionRef   = useRef<HTMLDivElement>(null);
   const ringRef      = useRef<SVGCircleElement>(null);
@@ -1344,6 +1345,25 @@ function ScoreChapter({ score, onActive }: {
           marginTop: '1rem', opacity: 0.6,
           textAlign: 'center',
         }}>Based on OpenAI Privacy Policy categories, June 2023 — April 2026</p>
+
+        {/* Link to score breakdown */}
+        <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+          <button
+            onClick={() => setPage('score-breakdown')}
+            style={{
+              fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.18em',
+              textTransform: 'uppercase', color: PALETTE.redMuted,
+              background: 'none', border: 'none', cursor: 'pointer',
+              borderBottom: `1px solid ${PALETTE.redMuted}50`,
+              paddingBottom: '1px',
+              transition: 'color 0.2s, border-color 0.2s',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = PALETTE.red; }}
+            onMouseLeave={e => { e.currentTarget.style.color = PALETTE.redMuted; }}
+          >
+            How did we work this out? →
+          </button>
+        </div>
       </ChapterShell>
     </div>
   );
@@ -1736,7 +1756,7 @@ export default function OverviewPage({ results, sources, setPage }: {
         {inferences.length > 0 && <InferenceChapter inferences={inferences} onActive={handleActive} />}
         {excerpt && <DisclosureChapter excerpt={excerpt} date={excerptDate} onActive={handleActive} />}
         {namesAll.length > 0 && <NetworkChapter names={namesAll} onActive={handleActive} />}
-        <ScoreChapter score={score} onActive={handleActive} />
+        <ScoreChapter score={score} onActive={handleActive} setPage={setPage} />
         <PermanenceChapter onActive={handleActive} />
         <ContinueChapter setPage={setPage} />
       </main>

@@ -16,6 +16,7 @@ import AboutPage from './AboutPage';
 import PolicyDriftPage from './PolicyDriftPage';
 import ResistPage from './ResistPage';
 import MethodPage from './MethodPage';
+import ScoreBreakdownPage from './ScoreBreakdownPage';
 
 interface AnalysisResult {
   privacyScore: number;
@@ -117,6 +118,7 @@ export default function ResultsPage() {
       {page === 'about' && <AboutPage setPage={handleSetPage} />}
       {page === 'resist' && <ResistPage analysis={results} setPage={handleSetPage} />}
       {page === 'method' && <MethodPage setPage={handleSetPage} />}
+      {page === 'score-breakdown' && <ScoreBreakdownPage results={results} setPage={handleSetPage} />}
     </DashboardLayout>
   );
 }

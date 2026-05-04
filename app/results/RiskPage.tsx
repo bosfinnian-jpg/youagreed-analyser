@@ -426,7 +426,7 @@ function ScenarioCard({ scenario, index }: { scenario: RiskScenario; index: numb
               </a>
               <p style={{
                 fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.5vw, 1.1rem)',
-                fontStyle: 'italic', color: PALETTE.inkFaint, lineHeight: 1.7, marginTop: '0.4rem',
+                color: PALETTE.inkFaint, lineHeight: 1.7, marginTop: '0.4rem',
               }}>{scenario.precedent.detail}</p>
             </div>
           </motion.div>
@@ -996,7 +996,7 @@ export default function RiskPage({ results, setPage }: { results: AnalysisResult
           style={{
             fontFamily: TYPE.serif, fontSize: 'clamp(1.15rem, 1.8vw, 1.3rem)',
             color: PALETTE.inkMuted, lineHeight: 1.8,
-            fontStyle: 'italic', maxWidth: 560,
+            maxWidth: 560,
           }}
         >
           Each scenario is built from your actual data. None of this has happened. OpenAI does not sell your data. These scenarios show what becomes possible if it is ever breached, subpoenaed, or acquired. The systems that would process it exist now. The legal frameworks that govern them permit what you are about to read.

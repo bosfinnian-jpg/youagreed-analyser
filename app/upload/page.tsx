@@ -475,68 +475,72 @@ export default function UploadPage() {
                   <span style={{ color: COLOR.accent }}>.</span>
                 </h2>
 
-                <div style={{
-                  fontFamily: MONO,
-                  fontSize: '11px',
-                  letterSpacing: '0.16em',
-                  textTransform: 'uppercase',
-                  color: COLOR.inkFaint,
-                  minHeight: '18px',
-                  marginBottom: '3.5rem',
-                }}>
-                  {detail || '\u00A0'}
-                </div>
 
-                {/* Progress bar — segmented scanning line */}
-                <div style={{
-                  position: 'relative',
-                  height: '3px',
-                  background: COLOR.inkTrace,
-                  marginBottom: '1.25rem',
-                  overflow: 'hidden',
-                }}>
-                  <motion.div
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 0.6, ease: EASE }}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      height: '100%',
-                      background: `linear-gradient(90deg, ${COLOR.accent} 0%, ${COLOR.ink} 100%)`,
-                    }}
-                  />
-                  {/* Scanning overlay */}
-                  <motion.div
-                    animate={{
-                      x: ['0%', '100%'],
-                      opacity: [0.6, 0.3, 0.6],
-                    }}
-                    transition={{
-                      x: { duration: 2, repeat: Infinity, ease: 'linear' },
-                      opacity: { duration: 1, repeat: Infinity, ease: 'easeInOut' },
-                    }}
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '20%',
-                      height: '100%',
-                      background: 'linear-gradient(90deg, transparent, rgba(190,40,30,0.4), transparent)',
-                      pointerEvents: 'none',
-                    }}
-                  />
-                </div>
-
-                <div style={{
-                  fontFamily: MONO,
-                  fontSize: '11px',
-                  letterSpacing: '0.18em',
-                  color: COLOR.inkFaint,
-                  textAlign: 'right',
-                }}>
-                  {progress}%
-                </div>
+                {/* Progress — segmented stage track */}
+                {(() => {
+                  const STAGES = [
+                    { key: 'read',       label: 'Read',       threshold: 10  },
+                    { key: 'parse',      label: 'Parse',      threshold: 25  },
+                    { key: 'enrich',     label: 'Enrich',     threshold: 88  },
+                    { key: 'synthesise', label: 'Synthesise', threshold: 96  },
+                    { key: 'complete',   label: 'Complete',   threshold: 100 },
+                  ];
+                  const activeIdx = STAGES.findLastIndex(s => progress >= s.threshold - (s.threshold - (STAGES[STAGES.indexOf(s) - 1]?.threshold ?? 0)) * 0.9) ?? 0;
+                  return (
+                    <div style={{ marginBottom: '2.5rem' }}>
+                      {/* Stage labels */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+                        {STAGES.map((s, i) => {
+                          const done = progress >= s.threshold;
+                          const active = !done && progress >= (STAGES[i - 1]?.threshold ?? 0);
+                          return (
+                            <span key={s.key} style={{
+                              fontFamily: MONO, fontSize: '9px', letterSpacing: '0.18em',
+                              textTransform: 'uppercase',
+                              color: done ? COLOR.ink : active ? COLOR.accent : COLOR.inkFaint,
+                              transition: 'color 0.4s',
+                            }}>
+                              {s.label}
+                            </span>
+                          );
+                        })}
+                      </div>
+                      {/* Track */}
+                      <div style={{ position: 'relative', height: '2px', background: COLOR.inkTrace }}>
+                        <motion.div
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 0.5, ease: EASE }}
+                          style={{
+                            position: 'absolute', top: 0, left: 0,
+                            height: '100%', background: COLOR.accent,
+                          }}
+                        />
+                        {/* Stage tick marks */}
+                        {STAGES.slice(0, -1).map(s => (
+                          <div key={s.key} style={{
+                            position: 'absolute', top: '-3px',
+                            left: `${s.threshold}%`,
+                            width: '1px', height: '8px',
+                            background: progress >= s.threshold ? COLOR.accent : COLOR.inkTrace,
+                            transition: 'background 0.4s',
+                          }} />
+                        ))}
+                      </div>
+                      {/* Percent */}
+                      <div style={{
+                        display: 'flex', justifyContent: 'space-between',
+                        marginTop: '0.5rem',
+                      }}>
+                        <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.12em', color: COLOR.inkFaint }}>
+                          {detail || '\u00A0'}
+                        </span>
+                        <span style={{ fontFamily: MONO, fontSize: '10px', letterSpacing: '0.12em', color: COLOR.accent }}>
+                          {progress}%
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 <div style={{
                   marginTop: '4.5rem',

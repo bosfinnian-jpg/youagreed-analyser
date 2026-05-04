@@ -124,6 +124,7 @@ export interface DeepAnalysis {
   };
 
   privacyScore: number;
+  scoreFactors: ScoreFactorRaw[];
   findings: any;
   juiciestMoments: any[];
   synthesis?: {
@@ -1289,8 +1290,15 @@ function computePrivacyScore(
   avgIntimacy: number,
 ): number {
   const factors = computeScoreFactors(messages, lifeEvents, commercial, dependency, nighttimeRatio, typeBreakdown, avgAnxiety, avgIntimacy);
+  // Express as percentage of total possible maximum across all factor categories
+  // This prevents the score from always saturating at 100 for any substantial export
+  const TOTAL_MAX = 40 + 15 + 20 + 10 + 12 + 8 + 12 + 8 + 25 + 15; // = 165
   const raw = factors.reduce((s, f) => s + f.contribution, 0);
-  return Math.round(Math.min(100, Math.max(0, raw)));
+  // Apply a gentle compression curve so mid-range users score in the 40–70 band
+  // rather than clustering near 100. Sqrt curve, then scale to 0–100.
+  const normalised = raw / TOTAL_MAX;        // 0–1
+  const compressed = Math.sqrt(normalised);  // sqrt curve — spreads the distribution
+  return Math.round(Math.min(100, Math.max(1, compressed * 100)));
 }
 
 // ============================================================================
@@ -1358,6 +1366,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
     psychologicalPortrait,
     topicsByPeriod,
     privacyScore,
+    scoreFactors: computeScoreFactors(messages, lifeEvents, commercialProfile, dependency, nighttimeRatio, typeBreakdown, avgAnxiety, avgIntimacy),
     findings: {
       personalInfo: {
         names: compat.names,

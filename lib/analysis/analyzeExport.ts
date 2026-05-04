@@ -156,6 +156,7 @@ function storeAnalysis(analysis: DeepAnalysis): void {
     psychologicalPortrait: analysis.psychologicalPortrait,
     synthesis: (analysis as any).synthesis,
     scoreBreakdown: (analysis as any).scoreBreakdown,
+    scoreFactors: analysis.scoreFactors,
     aiEnriched: true,
   };
 

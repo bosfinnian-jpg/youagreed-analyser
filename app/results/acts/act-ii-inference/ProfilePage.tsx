@@ -533,38 +533,33 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
       <div className="bordered-list" style={{ display: 'flex', flexDirection: 'column' }}>
         {tells.map((t: any, i: number) => (
           <Reveal key={i} delay={i * 0.08}>
-            <div className="tells-row" style={{
+            <div style={{
               padding: '1.5rem 0',
               borderBottom: `1px solid ${PALETTE.border}`,
-              display: 'grid',
-              gridTemplateColumns: '1fr auto',
-              gap: '2rem',
-              alignItems: 'start',
             }}>
-              <div>
-                <p style={{
-                  fontFamily: TYPE.serif,
-                  fontSize: 'clamp(1.15rem, 2.2vw, 1.4rem)',
-                  fontStyle: 'italic',
-                  color: PALETTE.ink,
-                  letterSpacing: '-0.005em',
-                  marginBottom: '0.6rem',
-                  lineHeight: 1.4,
-                }}>
-                  &ldquo;{t.tell}&rdquo;
-                </p>
-                <p style={{
-                  fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
-                  color: PALETTE.inkMuted, lineHeight: 1.7,
-                  maxWidth: '52ch',
-                }}>
-                  {t.meaning}
-                </p>
-              </div>
+              <p style={{
+                fontFamily: TYPE.serif,
+                fontSize: 'clamp(1.15rem, 2.2vw, 1.4rem)',
+                fontStyle: 'italic',
+                color: PALETTE.ink,
+                letterSpacing: '-0.005em',
+                marginBottom: '0.75rem',
+                lineHeight: 1.4,
+              }}>
+                &ldquo;{t.tell}&rdquo;
+              </p>
+              <p style={{
+                fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.6vw, 1.1rem)',
+                color: PALETTE.inkMuted, lineHeight: 1.7,
+                maxWidth: '60ch',
+                marginBottom: '0.75rem',
+              }}>
+                {t.meaning}
+              </p>
               <span style={{
                 fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
                 color: PALETTE.inkFaint, textTransform: 'uppercase',
-                whiteSpace: 'nowrap', paddingTop: '0.4rem',
+                display: 'block',
               }}>
                 {t.frequency}
               </span>

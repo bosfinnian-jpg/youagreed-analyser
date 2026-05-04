@@ -298,9 +298,9 @@ function mergeEnrichments(analysis: DeepAnalysis, enrichments: MessageEnrichment
   }
   const nameAggregates = dedupeNames(rawNames);
   const aiNames = nameAggregates
-    .filter(a => a.mentions >= 2 || a.hasRelationshipContext)
+    .filter(a => a.mentions >= 1)
     .sort((a, b) => b.mentions - a.mentions)
-    .slice(0, 12)
+    .slice(0, 15)
     .map(a => ({ name: a.canonical, mentions: a.mentions, relationship: a.relationship || undefined, contexts: [] }));
 
   // Sensitive topics

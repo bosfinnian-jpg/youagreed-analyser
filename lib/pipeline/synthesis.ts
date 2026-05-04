@@ -157,7 +157,7 @@ export async function runSynthesis(
   enrichments: MessageEnrichment[]
 ): Promise<Synthesis | null> {
   const topExcerpts = selectTopExcerpts(analysis, enrichments, 35);
-  if (topExcerpts.length < 5) return null; // not enough signal
+  if (topExcerpts.length < 2) return null; // not enough signal
 
   const payload = {
     aggregateStats: {

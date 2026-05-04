@@ -261,7 +261,7 @@ async function callClaude(apiKey: string, userPrompt: string): Promise<any> {
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-6',  // Sonnet — this call matters
+      model: 'claude-sonnet-4-20250514',  // Sonnet — this call matters
       max_tokens: 5000,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],

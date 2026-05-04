@@ -6,13 +6,10 @@ export async function GET() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
 
   if (!apiKey) {
-    return NextResponse.json({
-      status: 'error',
-      issue: 'ANTHROPIC_API_KEY is not set in environment variables',
-    }, { status: 500 });
+    return NextResponse.json({ issue: 'ANTHROPIC_API_KEY not set' }, { status: 500 });
   }
 
-  const test = async (model: string) => {
+  const testModel = async (model: string) => {
     try {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
@@ -25,15 +22,33 @@ export async function GET() {
     }
   };
 
-  const [haiku, sonnet] = await Promise.all([
-    test('claude-haiku-4-5-20251001'),
-    test('claude-sonnet-4-6'),
+  // Test actual enrich endpoint with a real message
+  const testEnrich = async () => {
+    try {
+      const res = await fetch(new URL('/api/enrich', 'https://youagreed.co.uk').toString(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: [{ id: 0, text: "I've been really struggling with my relationship lately and I don't know what to do. My partner keeps saying I'm too needy but I feel like my needs are just not being met.", hour: 23, timestamp: Date.now() / 1000 }]
+        }),
+      });
+      const text = await res.text();
+      return { ok: res.ok, status: res.status, body: text.substring(0, 500) };
+    } catch (e: any) {
+      return { ok: false, status: 0, body: e.message };
+    }
+  };
+
+  const [haiku, sonnet, enrich] = await Promise.all([
+    testModel('claude-haiku-4-5-20251001'),
+    testModel('claude-sonnet-4-6'),
+    testEnrich(),
   ]);
 
   return NextResponse.json({
-    apiKeyPresent: true,
     apiKeyPrefix: apiKey.substring(0, 12) + '...',
-    haiku: { model: 'claude-haiku-4-5-20251001', ...haiku },
-    sonnet: { model: 'claude-sonnet-4-6', ...sonnet },
+    haiku,
+    sonnet,
+    enrichEndpoint: enrich,
   });
 }

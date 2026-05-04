@@ -113,7 +113,7 @@ async function callClaude(apiKey: string, userPrompt: string): Promise<any> {
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-6',  // Sonnet — this call matters
-      max_tokens: 1500,
+      max_tokens: 3000,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: userPrompt }],
     }),
@@ -165,7 +165,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1500,
+        max_tokens: 3000,
         stream: true,
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: userPrompt }],

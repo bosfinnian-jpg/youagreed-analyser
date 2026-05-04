@@ -247,15 +247,23 @@ export async function runSynthesis(
     try {
       parsed = JSON.parse(cleaned);
     } catch (e) {
-      console.error('Synthesis JSON.parse failed:', e, 'last 100 chars:', cleaned.slice(-100));
-      const match = cleaned.match(/\{[\s\S]*\}/);
-      if (match) {
-        try { parsed = JSON.parse(match[0]); } catch (e2) {
-          console.error('Synthesis fallback parse also failed:', e2);
-          return null;
-        }
-      } else {
-        console.error('Synthesis no JSON object found in:', cleaned.substring(0, 200));
+      // Try to recover truncated JSON by finding the last complete top-level field
+      // and closing the object. Sonnet sometimes gets cut off mid-string.
+      let recovered = cleaned;
+      // Remove incomplete last property: trim to last comma or last complete string
+      const lastComma = recovered.lastIndexOf(',\n');
+      const lastBrace = recovered.lastIndexOf('}');
+      if (lastComma > lastBrace) {
+        // Truncated inside a property — trim to last complete one and close
+        recovered = recovered.substring(0, lastComma) + '\n}';
+      } else if (!recovered.endsWith('}')) {
+        recovered = recovered + '}';
+      }
+      try {
+        parsed = JSON.parse(recovered);
+        console.log('Synthesis recovered from truncated JSON');
+      } catch (e2) {
+        console.error('Synthesis parse failed even after recovery:', (e as any).message);
         return null;
       }
     }

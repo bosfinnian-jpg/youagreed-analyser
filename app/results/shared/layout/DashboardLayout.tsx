@@ -56,11 +56,38 @@ const COLOUR_MATRICES: Record<ColourFilter, string> = {
 function applySettings(s: AccessibilitySettings) {
   if (typeof document === 'undefined') return;
   const h = document.documentElement;
-  h.classList.toggle('a11y-high-contrast',  s.highContrast);
-  h.classList.toggle('a11y-large-text',     s.largeText);
-  h.classList.toggle('a11y-reduced-motion', s.reducedMotion);
-  h.classList.toggle('a11y-invert',         s.invertColours);
+
+  // data-attribute for reduced-motion (CSS @media fallback already handles OS pref)
   h.setAttribute('data-colour-filter', s.colourFilter);
+  h.classList.toggle('a11y-reduced-motion', s.reducedMotion);
+
+  // Invert: apply to <html> so pseudo-elements and all children invert uniformly
+  h.style.filter = s.invertColours ? 'invert(1) hue-rotate(180deg)' : '';
+
+  // High contrast: injected <style> beats inline style attributes (class selectors don't)
+  let hcStyle = document.getElementById('a11y-hc') as HTMLStyleElement | null;
+  if (s.highContrast) {
+    if (!hcStyle) {
+      hcStyle = document.createElement('style');
+      hcStyle.id = 'a11y-hc';
+      document.head.appendChild(hcStyle);
+    }
+    hcStyle.textContent = `
+      html, body { background: #faf9f5 !important; color: #000 !important; }
+      body * { color: #000 !important; border-color: rgba(0,0,0,0.5) !important; }
+      body nav, body header, body footer, body main, body aside,
+      body div, body section, body article {
+        background-color: #faf9f5 !important;
+      }
+      body::before, body::after { opacity: 0 !important; }
+      body button, body a { outline-color: #000 !important; }
+    `;
+  } else {
+    hcStyle?.remove();
+  }
+
+  // Large text: scale html font-size so clamp() expressions scale proportionally
+  h.style.fontSize = s.largeText ? '120%' : '';
 }
 
 function useSettings() {
@@ -984,8 +1011,31 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
   useEffect(() => { setMenuOpen(false); }, [page]);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
+    if (menuOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflowY = 'scroll'; // prevent layout shift from scrollbar disappearing
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflowY = '';
+      if (scrollY) {
+        window.scrollTo({ top: parseInt(scrollY || '0') * -1, behavior: 'instant' });
+      }
+    }
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflowY = '';
+    };
   }, [menuOpen]);
 
   const userName = results?.findings?.personalInfo?.names?.[0]?.name;
@@ -1149,6 +1199,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
                 position: 'fixed', inset: 0, zIndex: 150,
                 background: 'rgba(26,24,20,0.18)',
                 backdropFilter: 'blur(6px)',
+                touchAction: 'none',
               }}
             />
 
@@ -1164,6 +1215,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
                 borderLeft: `1px solid rgba(26,24,20,0.12)`,
                 display: 'flex', flexDirection: 'column',
                 overflowY: 'auto',
+                overscrollBehavior: 'contain',
               }}
             >
               {/* Header */}
@@ -1399,6 +1451,7 @@ export default function DashboardLayout({ results, children, page, setPage }: {
 
   return (
     <ErrorBoundary>
+    <>
       {/* Colour blindness SVG filter — hidden, referenced by CSS */}
       <svg aria-hidden="true" style={{ position: 'absolute', width: 0, height: 0, overflow: 'hidden' }}>
         <defs>
@@ -1407,7 +1460,6 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           </filter>
         </defs>
       </svg>
-    <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1895,27 +1947,15 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           clip: rect(0,0,0,0); white-space: nowrap; border: 0;
         }
 
-        /* High contrast — boost text and borders */
-        .a11y-high-contrast body {
-          background: #f0ede5 !important;
-        }
-        .a11y-high-contrast * {
-          color: #000 !important;
-          border-color: rgba(0,0,0,0.4) !important;
-        }
-        .a11y-high-contrast [style*="color: rgba(26"] {
-          color: #000 !important;
-        }
-        .a11y-high-contrast button, .a11y-high-contrast a {
-          outline-color: #000 !important;
-        }
+        /* ── Accessibility ────────────────────────────────────────
+           High contrast, large text, and invert are applied via
+           applySettings() which injects styles directly — the only
+           way to reliably override inline style attributes.
+           Only reduced-motion uses a class selector (it targets
+           animation properties, not inline style values).
+           ──────────────────────────────────────────────────────── */
 
-        /* Large text */
-        .a11y-large-text body, .a11y-large-text p, .a11y-large-text span, .a11y-large-text li {
-          font-size: 120% !important;
-        }
-
-        /* Reduced motion — kills all transitions and animations */
+        /* Reduced motion */
         .a11y-reduced-motion *, .a11y-reduced-motion *::before, .a11y-reduced-motion *::after {
           animation-duration: 0.001ms !important;
           animation-iteration-count: 1 !important;
@@ -1923,20 +1963,9 @@ export default function DashboardLayout({ results, children, page, setPage }: {
           scroll-behavior: auto !important;
         }
 
-        /* Invert colours */
-        .a11y-invert body {
-          filter: invert(1) hue-rotate(180deg);
-        }
-        .a11y-invert img, .a11y-invert video, .a11y-invert canvas, .a11y-invert svg {
-          filter: invert(1) hue-rotate(180deg);
-        }
-
-        /* Colour blindness filter */
+        /* Colour blindness SVG filter applied to body */
         html[data-colour-filter]:not([data-colour-filter="none"]) body {
           filter: url(#cb-filter);
-        }
-        html[data-colour-filter]:not([data-colour-filter="none"]).a11y-invert body {
-          filter: invert(1) hue-rotate(180deg) url(#cb-filter);
         }
 
         /* Respect OS-level prefers-reduced-motion */

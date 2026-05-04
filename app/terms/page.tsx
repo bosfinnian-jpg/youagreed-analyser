@@ -147,7 +147,7 @@ export default function TermsPage() {
         ::selection { background: ${COLOR.accent}; color: ${COLOR.bg}; }
       `}</style>
 
-      <div style={{ minHeight: '100vh', minHeight: '100dvh', display: 'flex', flexDirection: 'column', background: COLOR.bg }}>
+      <div style={{ height: '100vh', minHeight: '100dvh', display: 'flex', flexDirection: 'column', background: COLOR.bg }}>
         <header style={{
           padding: '0 clamp(1.5rem, 4vw, 3rem)',
           height: '52px',
@@ -267,9 +267,12 @@ export default function TermsPage() {
         </main>
 
         <footer style={{
+          position: 'sticky',
+          bottom: 0,
           borderTop: `1px solid ${COLOR.inkTrace}`,
           padding: 'clamp(1.5rem, 3vw, 2rem) clamp(1.5rem, 4vw, 3rem)',
           background: COLOR.bg,
+          zIndex: 10,
         }}>
           <div style={{
             maxWidth: '760px',

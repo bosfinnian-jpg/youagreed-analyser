@@ -448,7 +448,7 @@ function MachineUnlearningDemo() {
 const COOKIE_STEPS = [
   { label: 'You browse a website', detail: 'Cookies track page visits, clicks, dwell time', ok: true },
   { label: 'Data stored in a database', detail: 'A discrete, bounded record with your ID', ok: true },
-  { label: 'You request deletion', detail: 'GDPR Article 17 - right to erasure', ok: true },
+  { label: 'You request deletion', detail: <><a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/individual-rights/individual-rights/right-to-erasure/#:~:text=individual%20for%20ID%3F-,What%20is%20the%20right%20to%20erasure%3F,time%20the%20request%20is%20received." target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>GDPR Article 17</a> - right to erasure</>, ok: true },
   { label: 'Record located and deleted', detail: 'The database deletes the row. Done.', ok: true },
   { label: 'Reversible. Clean.', detail: 'The system returns to its pre-collection state.', ok: true },
 ];

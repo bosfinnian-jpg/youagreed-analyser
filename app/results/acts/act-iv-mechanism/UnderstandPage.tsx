@@ -1189,7 +1189,7 @@ function Module1({
         )}
       </AnimatePresence>
 
-      {step < steps.length && (
+      {step < steps.length - 1 && (
         <motion.button
           onClick={handleNext}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}

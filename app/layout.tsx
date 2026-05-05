@@ -29,10 +29,10 @@ export const metadata: Metadata = {
     "Upload your ChatGPT export and see what your conversations permanently reveal about you. A critical data experience.",
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.png", type: "image/png" },
     ],
-    shortcut: "/favicon.svg",
-    apple: "/favicon.svg",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
   openGraph: {
     title: "Trace.ai",

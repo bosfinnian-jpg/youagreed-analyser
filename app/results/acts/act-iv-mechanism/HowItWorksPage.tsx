@@ -608,6 +608,19 @@ export default function HowItWorksPage({ setPage }: { setPage: (p: string) => vo
           </ThreadSentence>
         </motion.div>
 
+        {/* YouTube link */}
+        <motion.div initial={{ opacity: 0 }} animate={isInView ? { opacity: 1 } : {}} transition={{ delay: 0.65, duration: 0.7 }}
+          style={{ marginTop: 'clamp(1.2rem, 2.5vw, 1.8rem)' }}>
+          <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(0.88rem, 1.4vw, 1rem)', color: PALETTE.inkMuted, lineHeight: 1.7 }}>
+            If you want to understand how neural networks actually learn before reading further,{' '}
+            <a href="https://www.youtube.com/watch?v=aircAruvnKk" target="_blank" rel="noopener noreferrer"
+              style={{ color: PALETTE.ink, textDecoration: 'underline', textUnderlineOffset: '3px', textDecorationColor: 'rgba(26,24,20,0.35)' }}>
+              this video
+            </a>
+            {' '}is the clearest explanation available.
+          </p>
+        </motion.div>
+
         {/* Section pills */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={isInView ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.7, duration: 0.6 }}
           style={{ display: 'flex', gap: '1px', background: PALETTE.border, marginTop: 'clamp(2rem, 4vw, 3rem)' }}>

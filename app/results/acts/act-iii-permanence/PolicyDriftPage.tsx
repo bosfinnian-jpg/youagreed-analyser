@@ -1046,7 +1046,7 @@ export default function PolicyDriftPage({ setPage }: { setPage: (p: DashPage) =>
           marginTop: '1.25rem',
           lineHeight: 1.6,
         }}>
-          trace.ai stores nothing. trace.ai has no terms of service. Everything on this page is from OpenAI.
+          trace.ai stores nothing. Everything on this page is from OpenAI.
         </p>
       </div>
 

@@ -1439,7 +1439,7 @@ const CONTEXT_LINKS: Partial<Record<DashPage, Array<{ label: string; desc: strin
 
 const DEFAULT_CONTEXT_LINKS = [
   { label: 'About', desc: 'The theoretical basis', page: 'about' as DashPage },
-  { label: 'Sources', desc: 'Every claim, sourced', page: 'sources' as DashPage },
+  { label: 'Sources', desc: 'The research behind the analysis', page: 'sources' as DashPage },
 ];
 
 function ContextRail({ page, setPage }: { page: DashPage; setPage: (p: DashPage) => void }) {

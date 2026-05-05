@@ -61,7 +61,7 @@ function TrainingValueHero({ sensitivityIndex, isInView }: { sensitivityIndex: n
         </span>
       </div>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.7, maxWidth: 560 }}>
-        <a href="https://fortune.com/2025/04/01/openai-finalizes-40-billion-funding-at-300-billion-value/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI’s valuation in 2025</a>. That product could not exist without data like yours - contributed without payment, and without the ability to remove your contribution. <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>You cannot opt out retroactively</a>. You cannot be compensated. The data is inside the weights now.
+        OpenAI’s valuation in 2025. That product could not exist without data like yours - contributed without payment, and without the ability to remove your contribution. You cannot opt out retroactively. You cannot be compensated. The data is inside the weights now.
       </p>
     </div>
   );
@@ -377,7 +377,7 @@ function SegmentCards({ segments, isInView }: { segments: DeepAnalysis['commerci
         Inferred vulnerability categories
       </p>
       <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.6, maxWidth: 560, marginBottom: '2rem' }}>
-        These are the vulnerability categories your conversations map onto. OpenAI does not sell this profile to advertisers - but these patterns exist in your data. If exposed through a <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>breach</a> or <a href="https://epic.org/issues/surveillance/law-enforcement/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>subpoena</a>, they would fit directly into <a href="https://www.ftc.gov/reports/data-brokers" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>systems that do trade on them</a>.
+        These are the vulnerability categories your conversations map onto. OpenAI does not sell this profile to advertisers - but these patterns exist in your data. If exposed through a <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>breach</a> or subpoena, they would fit directly into systems that do trade on them.
       </p>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: PALETTE.border }}>
@@ -698,7 +698,7 @@ export default function DataProductSummary({ analysis }: DataProductSummaryProps
           You, as a commercial data asset.
         </h2>
         <p style={{ fontFamily: TYPE.serif, fontSize: 'clamp(1rem, 1.8vw, 1.15rem)', color: PALETTE.inkMuted, lineHeight: 1.75, maxWidth: 580 }}>
-          <a href="https://openai.com/policies/privacy-policy/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>OpenAI does not sell your data to advertisers</a>. The real problem is different: your conversations helped train a <a href="https://fortune.com/2025/04/01/openai-finalizes-40-billion-funding-at-300-billion-value/" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>model worth hundreds of billions of dollars</a>, and <a href="https://arxiv.org/abs/2412.06966" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '2px', textDecorationColor: 'rgba(26,24,20,0.3)' }}>that contribution is not straightforwardly reversible</a>. What follows shows the patterns your data contains - and what could be exposed if that data were ever compromised.
+          OpenAI does not sell your data to advertisers. The real problem is different: your conversations helped train a model worth hundreds of billions of dollars, and that contribution is not straightforwardly reversible. What follows shows the patterns your data contains - and what could be exposed if that data were ever compromised.
         </p>
       </div>
 

@@ -449,7 +449,10 @@ function RTBAuction({ results }: { results: AnalysisResult }) {
   const [winner, setWinner] = useState<{ buyer: string; amount: number; segment: string; timestamp: number } | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const segments = results.commercialProfile?.segments || [];
+  const segments = useMemo(
+    () => results.commercialProfile?.segments || [],
+    [results.commercialProfile?.segments]
+  );
   const homeLoc = results.findings.personalInfo.locations.find(l => l.type === 'lives');
   const nightPct = Math.round((results.nighttimeRatio || 0) * 100);
   const totalMsgs = results.totalUserMessages || results.stats?.userMessages || 0;

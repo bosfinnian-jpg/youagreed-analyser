@@ -581,7 +581,7 @@ function buildPsychologicalPortrait(messages: ScoredMessage[]): PsychologicalPor
   else writingVoice = 'Concise - communicates efficiently without extended elaboration';
 
   // Communication pattern (based on message type distribution - distinct from writing voice)
-  const questionCount = messages.filter(m => m.messageType === 'clarification' || m.text.includes('?')).length;
+  const questionCount = messages.filter(m => m.text.includes('?')).length;
   const questionRatio = questionCount / totalMsgs;
   let communicationPattern: string | null = null;
   if (validationRatio > 0.15) {
@@ -1374,7 +1374,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
     messages,
     totalUserMessages: messages.length,
     timespan: { first: firstDate, last: lastDate, days },
-    hourDistribution, dayDistribution, dayHourMatrix, peakHour, nighttimeRatio,
+    hourDistribution, dayDistribution, peakHour, nighttimeRatio,
     emotionalTimeline,
     avgIntimacy: Math.round(avgIntimacy * 10) / 10,
     avgAnxiety: Math.round(avgAnxiety * 10) / 10,

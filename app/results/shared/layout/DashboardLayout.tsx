@@ -305,7 +305,7 @@ export function ThreadSentence({ children }: { children: React.ReactNode }) {
 // Closing text → italic follow-on → nav grid cards → end label.
 // ============================================================================
 export type FooterNavItem = {
-  page: string;
+  page: DashPage;
   act: string;       // e.g. "ACT III / 05"
   label: string;     // e.g. "Why it cannot be removed"
   body: string;      // one-line description
@@ -322,7 +322,7 @@ export function PageFooter({
   followOn?: string;
   navItems: FooterNavItem[];
   endLabel: string;
-  setPage: (p: string) => void;
+  setPage: (p: DashPage) => void;
 }) {
   return (
     <div style={{

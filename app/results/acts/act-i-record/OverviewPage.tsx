@@ -1055,9 +1055,11 @@ export default function OverviewPage({ results, sources, setPage }: {
   ];
 
   // Keep scroll controller in sync with which chapters are rendered
+  const visibleChaptersKey = visibleChapters.join(',');
   useEffect(() => {
     visibleIdsRef.current = visibleChapters;
-  }, [visibleChapters.join(',')]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleChaptersKey]);
 
   const connected = sources.filter((s: any) => s.connected).length;
 

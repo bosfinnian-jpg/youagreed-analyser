@@ -3,7 +3,6 @@
 import { useRef, useState, useMemo } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence, PageFooter } from '../../shared/layout/DashboardLayout';
-import { RetainedTag } from './CannotBeDeletedPage';
 
 // ============================================================================
 // TYPES
@@ -573,8 +572,8 @@ function VerbalTellsSection({ tells }: { tells: any[] }) {
 
 // ----- RECURRING CONCERNS -----
 function RecurringConcernsSection({ concerns }: { concerns: any[] }) {
-  if (!concerns || concerns.length === 0) return null;
   const [expanded, setExpanded] = useState<number | null>(null);
+  if (!concerns || concerns.length === 0) return null;
   return (
     <ProfileSection index={4}>
       <SectionHeader

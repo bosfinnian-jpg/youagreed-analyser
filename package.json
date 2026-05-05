@@ -2,7 +2,7 @@
   "name": "youagreed",
   "version": "1.0.0",
   "private": true,
-  "description": "An atmospheric, moody, and ethereal Three.js art installation built with Next.js, React 19, and Tailwind CSS.",
+  "description": "trace.ai - a critical art installation examining irreversible AI cognitive data extraction. Built with Next.js, React 19, TypeScript and Framer Motion.",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -10,21 +10,11 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@react-spring/three": "^10.0.3",
-    "@react-three/cannon": "^6.6.0",
-    "@react-three/drei": "^10.7.6",
-    "@react-three/fiber": "^9.4.0",
-    "@react-three/postprocessing": "^3.0.4",
     "animejs": "^4.0.0",
-    "cannon-es": "^0.20.0",
     "framer-motion": "^12.23.24",
-    "glsl-noise": "^0.0.0",
     "next": "^16.1.6",
-    "postprocessing": "^6.37.8",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "three": "^0.180.0",
-    "three-custom-shader-material": "^5.4.0"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.0.0",
@@ -33,7 +23,6 @@
     "@types/node": "^20.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/three": "^0.180.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^9.0.0",
     "eslint-config-next": "15.5.6",

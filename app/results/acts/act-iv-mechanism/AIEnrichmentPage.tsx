@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { PALETTE, TYPE, ActLabel, ThreadSentence } from '../../shared/layout/DashboardLayout';
 
@@ -355,7 +355,7 @@ function CallLog({ batchCount }: { batchCount: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true });
 
-  const lines = [
+  const lines = useMemo(() => [
     { t: 0,    text: `POST /api/enrich - batch 1/${batchCount}`, color: PALETTE.inkMuted },
     { t: 800,  text: `  → model: claude-haiku-4-5-20251001`, color: PALETTE.inkFaint },
     { t: 900,  text: `  → system: "extract psychological signals..."`, color: PALETTE.inkFaint },
@@ -376,7 +376,7 @@ function CallLog({ batchCount }: { batchCount: number }) {
     { t: batchCount > 2 ? 6500 : 5400, text: `  ← 200 OK - profile complete`, color: 'rgba(30,130,55,0.9)' },
     { t: batchCount > 2 ? 6700 : 5600, text: `analysis stored in sessionStorage`, color: PALETTE.inkFaint },
     { t: batchCount > 2 ? 6900 : 5800, text: `done.`, color: PALETTE.red },
-  ];
+  ], [batchCount]);
 
   const replay = useCallback(() => {
     setVisible([]);
@@ -387,11 +387,11 @@ function CallLog({ batchCount }: { batchCount: number }) {
       }, l.t);
     });
     setTimeout(() => setRunning(false), lines[lines.length - 1].t + 200);
-  }, [batchCount]);
+  }, [lines]);
 
   useEffect(() => {
     if (inView) replay();
-  }, [inView]);
+  }, [inView, replay]);
 
   return (
     <div ref={ref}>

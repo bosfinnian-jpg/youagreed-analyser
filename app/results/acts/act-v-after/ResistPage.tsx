@@ -2,22 +2,30 @@
 
 import { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { PALETTE, TYPE, ActLabel } from '../../shared/layout/DashboardLayout';
-import type { DeepAnalysis } from '@/lib/parsers/deepParser';
+import { PALETTE, TYPE, ActLabel, type DashPage } from '../../shared/layout/DashboardLayout';
+
+// Structural shape of what ResistPage actually reads. Loose by design - the
+// caller passes a runtime object that may originate from either DeepAnalysis
+// or the looser AnalysisResult; both supply these fields.
+type ResistAnalysis = {
+  findings?: { personalInfo?: { names?: Array<{ name?: string }> } };
+  totalUserMessages?: number;
+  timespan?: { first: string | Date; last: string | Date; days: number };
+};
 
 interface ResistPageProps {
-  analysis: DeepAnalysis;
+  analysis: ResistAnalysis;
 }
 
 // ============================================================================
 // SAR LETTER GENERATOR
 // ============================================================================
-function generateSAR(analysis: DeepAnalysis): string {
+function generateSAR(analysis: ResistAnalysis): string {
   const name = analysis?.findings?.personalInfo?.names?.[0]?.name || '[YOUR FULL NAME]';
   const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
   const messageCount = analysis?.totalUserMessages || 0;
   const days = analysis?.timespan?.days || 0;
-  const period = days > 0
+  const period = days > 0 && analysis.timespan
     ? `${new Date(analysis.timespan.first).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })} to ${new Date(analysis.timespan.last).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}`
     : '[DATE RANGE]';
 
@@ -197,7 +205,7 @@ function ActionOptOut() {
 // ============================================================================
 // ACTION 02 - SUBJECT ACCESS REQUEST
 // ============================================================================
-function ActionSAR({ analysis }: { analysis: DeepAnalysis }) {
+function ActionSAR({ analysis }: { analysis: ResistAnalysis }) {
   const [copied, setCopied] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const ref = useRef(null);
@@ -399,7 +407,7 @@ function ActionAlternatives() {
 // ============================================================================
 // CLOSING - honest, not dramatic
 // ============================================================================
-function Closing({ messageCount, days, setPage }: { messageCount: number; days: number; setPage?: (p: string) => void }) {
+function Closing({ messageCount, days, setPage }: { messageCount: number; days: number; setPage?: (p: DashPage) => void }) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-15%' });
 
@@ -459,7 +467,7 @@ function Closing({ messageCount, days, setPage }: { messageCount: number; days: 
 // ============================================================================
 // MAIN
 // ============================================================================
-export default function ResistPage({ analysis, setPage }: ResistPageProps & { setPage?: (p: string) => void }) {
+export default function ResistPage({ analysis, setPage }: ResistPageProps & { setPage?: (p: DashPage) => void }) {
   const messageCount = analysis?.totalUserMessages || 0;
   const days = analysis?.timespan?.days || 0;
   const pad = 'clamp(2rem, 6vw, 5rem)';

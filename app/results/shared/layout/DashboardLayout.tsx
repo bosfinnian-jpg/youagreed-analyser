@@ -981,6 +981,138 @@ function FurtherReading({ page, onNav }: { page: DashPage; onNav: (p: DashPage) 
 }
 
 // ============================================================================
+// DRAWER NAV - collapsible acts inside the hamburger drawer
+// ============================================================================
+function DrawerNav({ acts, page, onNav, settings, updateSettings }: {
+  acts: typeof ACTS;
+  page: DashPage;
+  onNav: (p: DashPage) => void;
+  settings: AccessibilitySettings;
+  updateSettings: (patch: Partial<AccessibilitySettings>) => void;
+}) {
+  const currentActId = acts.find(a => a.pages.some(p => p.id === page))?.id;
+  const [openActs, setOpenActs] = useState<Set<string>>(() => new Set(currentActId ? [currentActId] : []));
+
+  const toggleAct = (actId: string) => {
+    setOpenActs(prev => {
+      const next = new Set(prev);
+      if (next.has(actId)) next.delete(actId);
+      else next.add(actId);
+      return next;
+    });
+  };
+
+  return (
+    <div style={{ flex: 1, padding: '0.5rem 0' }}>
+      {acts.map((act) => {
+        const isOpen = openActs.has(act.id);
+        const isCurrentAct = currentActId === act.id;
+        return (
+          <div key={act.id}>
+            <button
+              onClick={() => toggleAct(act.id)}
+              aria-expanded={isOpen}
+              style={{
+                width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+                padding: '0.85rem 1.5rem 0.55rem',
+                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                minHeight: '44px',
+              }}
+            >
+              <span style={{
+                fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.45em',
+                color: isCurrentAct ? PALETTE.red : 'rgba(190,40,30,0.4)', textTransform: 'uppercase',
+                flexShrink: 0,
+              }}>
+                {act.roman}
+              </span>
+              <span style={{
+                fontFamily: TYPE.mono, fontSize: '10px', letterSpacing: '0.2em',
+                color: isCurrentAct ? PALETTE.ink : 'rgba(26,24,20,0.55)', textTransform: 'uppercase',
+                flex: 1,
+              }}>
+                {act.title}
+              </span>
+              <motion.span
+                animate={{ rotate: isOpen ? 90 : 0 }}
+                transition={{ duration: 0.18 }}
+                style={{
+                  fontFamily: TYPE.mono, fontSize: '10px',
+                  color: 'rgba(26,24,20,0.4)',
+                  display: 'inline-block', flexShrink: 0,
+                }}
+              >
+                ›
+              </motion.span>
+            </button>
+
+            <AnimatePresence initial={false}>
+              {isOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.22, ease: [0.22, 0.61, 0.36, 1] }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  {act.pages.map((p) => {
+                    const isActive = page === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        onClick={() => onNav(p.id)}
+                        style={{
+                          width: '100%', background: isActive ? 'rgba(26,24,20,0.05)' : 'none',
+                          border: 'none', cursor: 'pointer', textAlign: 'left',
+                          padding: '0.45rem 1.5rem',
+                          minHeight: '44px',
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          transition: 'background 0.12s',
+                          borderLeft: isActive ? `2px solid ${PALETTE.red}` : '2px solid transparent',
+                        }}
+                        onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = 'rgba(26,24,20,0.03)'; } }}
+                        onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'none'; }}
+                      >
+                        <div>
+                          <span style={{
+                            display: 'block',
+                            fontFamily: TYPE.serif,
+                            fontSize: '1.05rem',
+                            color: isActive ? PALETTE.ink : PALETTE.inkMuted,
+                            letterSpacing: '-0.015em', lineHeight: 1.2,
+                          }}>
+                            {p.label}
+                          </span>
+                          <span style={{
+                            display: 'block',
+                            fontFamily: TYPE.mono, fontSize: '9px',
+                            color: isActive ? 'rgba(26,24,20,0.35)' : PALETTE.inkGhost,
+                            letterSpacing: '0.04em',
+                            marginTop: '1px',
+                          }}>
+                            {p.desc}
+                          </span>
+                        </div>
+                        {isActive && (
+                          <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: PALETTE.red, flexShrink: 0 }} />
+                        )}
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        );
+      })}
+
+      <FurtherReading page={page} onNav={onNav} />
+      <SettingsPanel settings={settings} updateSettings={updateSettings} />
+    </div>
+  );
+}
+
+// ============================================================================
 // NAV
 // ============================================================================
 function Nav({ page, setPage, results, exposureScore, settings, updateSettings }: {
@@ -994,8 +1126,8 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
   const [scrolled, setScrolled] = useState(false);
   const [scrollPct, setScrollPct] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [openAct, setOpenAct] = useState<string | null>(null);
-  const navDesktopRef = useRef<HTMLDivElement>(null);
+  const [hoveredAct, setHoveredAct] = useState<string | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -1008,19 +1140,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Close desktop dropdown on outside click
-  useEffect(() => {
-    if (!openAct) return;
-    const handler = (e: MouseEvent) => {
-      if (navDesktopRef.current && !navDesktopRef.current.contains(e.target as Node)) {
-        setOpenAct(null);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [openAct]);
-
-  useEffect(() => { setMenuOpen(false); setOpenAct(null); }, [page]);
+  useEffect(() => { setMenuOpen(false); }, [page]);
 
   useEffect(() => {
     if (menuOpen) {
@@ -1056,14 +1176,19 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
   const handleNav = (id: DashPage) => {
     setPage(id);
     setMenuOpen(false);
-    setOpenAct(null);
+    setHoveredAct(null);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const currentAct = ACTS.find(a => a.pages.some(p => p.id === page));
 
-  const handleActClick = (actId: string) => {
-    setOpenAct(prev => prev === actId ? null : actId);
+  const handleActEnter = (actId: string) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoveredAct(actId);
+  };
+
+  const handleActLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => setHoveredAct(null), 120);
   };
 
   return (
@@ -1096,27 +1221,27 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
 
         {/* Desktop act nav - hover dropdowns */}
         <div
-          ref={navDesktopRef}
           className="nav-desktop"
           style={{ display: 'flex', alignItems: 'center', position: 'relative', flex: 1, justifyContent: 'center', gap: '0' }}
         >
           {ACTS.map((act) => {
             const isCurrentAct = currentAct?.id === act.id;
-            const isOpen = openAct === act.id;
+            const isHovered = hoveredAct === act.id;
 
             return (
               <div
                 key={act.id}
                 style={{ position: 'relative' }}
+                onMouseEnter={() => handleActEnter(act.id)}
+                onMouseLeave={handleActLeave}
               >
                 <button
-                  onClick={() => handleActClick(act.id)}
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     padding: '0 1.1rem', height: '56px',
                     fontFamily: TYPE.mono, fontSize: '11px', letterSpacing: '0.14em',
                     textTransform: 'uppercase',
-                    color: isCurrentAct ? PALETTE.ink : isOpen ? PALETTE.inkMuted : PALETTE.inkFaint,
+                    color: isCurrentAct ? PALETTE.ink : isHovered ? PALETTE.inkMuted : PALETTE.inkFaint,
                     transition: 'color 0.15s',
                     position: 'relative',
                     whiteSpace: 'nowrap',
@@ -1147,7 +1272,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
                   act={act}
                   currentPage={page}
                   onNav={handleNav}
-                  visible={isOpen}
+                  visible={isHovered}
                 />
               </div>
             );
@@ -1263,86 +1388,7 @@ function Nav({ page, setPage, results, exposureScore, settings, updateSettings }
               </div>
 
               {/* Navigation */}
-              <div style={{ flex: 1, padding: '0.5rem 0' }}>
-                {ACTS.map((act, actIdx) => (
-                  <div key={act.id}>
-                    {/* Act divider */}
-                    <div style={{
-                      padding: '0.7rem 1.5rem 0.2rem',
-                      display: 'flex', alignItems: 'center', gap: '0.5rem',
-                    }}>
-                      <span style={{
-                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.45em',
-                        color: 'rgba(190,40,30,0.4)', textTransform: 'uppercase',
-                      }}>
-                        {act.roman}
-                      </span>
-                      <div style={{ flex: 1, height: '1px', background: 'rgba(26,24,20,0.07)' }} />
-                      <span style={{
-                        fontFamily: TYPE.mono, fontSize: '9px', letterSpacing: '0.2em',
-                        color: 'rgba(26,24,20,0.38)', textTransform: 'uppercase',
-                      }}>
-                        {act.title}
-                      </span>
-                    </div>
-
-                    {/* Pages */}
-                    {act.pages.map((p, i) => {
-                      const isActive = page === p.id;
-                      return (
-                        <motion.button
-                          key={p.id}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.03 + actIdx * 0.05 + i * 0.035, duration: 0.24 }}
-                          onClick={() => handleNav(p.id)}
-                          style={{
-                            width: '100%', background: isActive ? 'rgba(26,24,20,0.05)' : 'none',
-                            border: 'none', cursor: 'pointer', textAlign: 'left',
-                            padding: '0.45rem 1.5rem',
-                            minHeight: '44px',
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            transition: 'background 0.12s',
-                            borderLeft: isActive ? `2px solid ${PALETTE.red}` : '2px solid transparent',
-                          }}
-                          onMouseEnter={e => { if (!isActive) { e.currentTarget.style.background = 'rgba(26,24,20,0.03)'; } }}
-                          onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'none'; }}
-                        >
-                          <div>
-                            <span style={{
-                              display: 'block',
-                              fontFamily: TYPE.serif,
-                              fontSize: '1.05rem',
-                              color: isActive ? PALETTE.ink : PALETTE.inkMuted,
-                              letterSpacing: '-0.015em', lineHeight: 1.2,
-                            }}>
-                              {p.label}
-                            </span>
-                            <span style={{
-                              display: 'block',
-                              fontFamily: TYPE.mono, fontSize: '9px',
-                              color: isActive ? 'rgba(26,24,20,0.35)' : PALETTE.inkGhost,
-                              letterSpacing: '0.04em',
-                              marginTop: '1px',
-                            }}>
-                              {p.desc}
-                            </span>
-                          </div>
-                          {isActive && (
-                            <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: PALETTE.red, flexShrink: 0 }} />
-                          )}
-                        </motion.button>
-                      );
-                    })}
-                  </div>
-                ))}
-
-                {/* Further reading - collapsible */}
-                <FurtherReading page={page} onNav={handleNav} />
-
-                {/* Settings - collapsible */}
-                <SettingsPanel settings={settings} updateSettings={updateSettings} />
-              </div>
+              <DrawerNav acts={ACTS} page={page} onNav={handleNav} settings={settings} updateSettings={updateSettings} />
 
               {/* Footer */}
               <div style={{

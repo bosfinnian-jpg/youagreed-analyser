@@ -35,6 +35,22 @@ const SECTIONS = [
     lead: `The underlying argument is precise.`,
     body: `Contemporary consent frameworks are structurally misaligned with AI systems. User input becomes distributed statistical influence that cannot be meaningfully traced, understood, or fully withdrawn. The mechanisms designed to protect that process - notice, consent, erasure - were built for a different kind of data entirely.`,
   },
+  {
+    id: 'closing',
+    label: 'A Closing Note',
+    lead: `We have already seen what happens when transformative technology scales faster than the frameworks meant to govern it.`,
+    body: `Social media promised connection and delivered, in many cases, harm at population scale. The anxious generation is one consequence of that failure. AI is a larger system, moving faster, with less oversight.
+
+This project examined one ethical problem in one platform. There are others: bias baked into training data, environmental costs that rarely appear in product announcements, questions about creativity and authorship that remain genuinely unresolved. And then there is the existential dimension, which serious researchers take seriously and which deserves more public attention than it receives.
+
+None of this is an argument against the technology. AI is remarkable, and its potential is real. But potential and safety are not the same thing, and enthusiasm has historically moved faster than caution. The least anyone can do is understand what they are participating in.`,
+  },
+  {
+    id: 'acknowledgement',
+    label: 'Acknowledgement',
+    lead: null,
+    body: `Thanks are due to the School of Media and Communications at the University of Leeds, and in particular to Joanne Armitage, whose guidance and support throughout this project made it possible.`,
+  },
 ];
 
 

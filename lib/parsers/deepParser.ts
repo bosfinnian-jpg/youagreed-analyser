@@ -99,6 +99,7 @@ export interface DeepAnalysis {
 
   hourDistribution: number[];
   dayDistribution: number[];
+  dayHourMatrix: number[][];
   peakHour: number;
   nighttimeRatio: number;
 
@@ -1374,7 +1375,7 @@ export function analyzeDeep(rawJson: any[]): DeepAnalysis {
     messages,
     totalUserMessages: messages.length,
     timespan: { first: firstDate, last: lastDate, days },
-    hourDistribution, dayDistribution, peakHour, nighttimeRatio,
+    hourDistribution, dayDistribution, dayHourMatrix, peakHour, nighttimeRatio,
     emotionalTimeline,
     avgIntimacy: Math.round(avgIntimacy * 10) / 10,
     avgAnxiety: Math.round(avgAnxiety * 10) / 10,
